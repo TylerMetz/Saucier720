@@ -1,1 +1,3 @@
-# Meeting 1
+# Project Ideas
+## Music but Social Media
+There are very easy ways to mke playlists on spotify but it is harder to share and discover new ones from other people. There are many features that would come from having a way for users to make "playlists" (lists of songs) and then share them with other users. We could also try to recomend new playlists based on what they have made. Or even like a reddit feature where you can vote up and down playlists.
