@@ -1,6 +1,6 @@
 # User Stories
 - [Link](https://www.mountaingoatsoftware.com/agile/user-stories) from class
-- [Link](https://www.atlassian.com/agile/project-management/user-storiesLinks) from class
+- [Link](https://www.atlassian.com/agile/project-management/user-stories) from class
 - Create a label for User Stories
 - User story should create a way for who/when/how a user would want to interact with the app
 - Can refactor at end of sprints and see if that user story is still reasonable and provides an active goal
