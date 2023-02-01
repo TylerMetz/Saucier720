@@ -11,7 +11,7 @@
 ## User Story Examples
 ```
 - As a site member, I can fill out an application to become a Certified Scrum Trainer so that I can teach CSM and CSPO courses and certify others.
-As a trainer, I want my profile to list my upcoming classes and include a link to a detailed page about each so that prospective attendees can find my courses.
+- As a trainer, I want my profile to list my upcoming classes and include a link to a detailed page about each so that prospective attendees can find my courses.
 - As a site visitor, I can access old news that is no longer on the home page, so I can access things I remember from the past or that others mention to me.
 - As a site visitor, I can see a list of all upcoming “Certification Courses” and can page through them if there are a lot, so I can choose the best course for me.
 ```
