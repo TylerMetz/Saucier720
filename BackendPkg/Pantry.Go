@@ -17,7 +17,7 @@ func (p Pantry) DisplayPantry(){
 }
 
 // update ingredients list by reference, add new ingredient parament to list
-func (p *Pantry) AddToPantry(){
+func (p Pantry) AddToPantry(){
 	
 	// gets name of item in pantry from user
 	fmt.Println("What Item are you looking to add to your pantry?")
@@ -32,7 +32,7 @@ func (p *Pantry) AddToPantry(){
 }
 
 // update ingredients list by reference, remove specific parameter ingredient from list
-func (p *Pantry) RemoveFromPantry(){
+func (p Pantry) RemoveFromPantry(){
 	
 	// gets name of item in pantry to remove from user
 	fmt.Println("What Item are you looking to remove from your pantry?")
