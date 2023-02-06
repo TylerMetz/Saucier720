@@ -4,9 +4,6 @@ MIT
 @angular/core
 MIT
 
-@angular/platform-browser
-MIT
-
 rxjs
 Apache-2.0
                                Apache License
