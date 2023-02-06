@@ -8,12 +8,12 @@ type FoodItem struct {
 }
 
 // generates new FoodItem with defaults set to 0 values, used for pantry items since only name matters
-func NewPantryItem(name string) *FoodItem {
+func NewPantryItem(name string) FoodItem {
 
 	item := FoodItem{Name: name}
 	item.StoreCost = 0
 	item.OnSale = false
 	item.SalePrice = 0
 
-	return &item
+	return item
 }
