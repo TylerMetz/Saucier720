@@ -10,34 +10,35 @@ type Pantry struct{
 
 // displays all pantry using fmt
 func (p Pantry) DisplayPantry(){
-	fmt.Sprintf("User's Current Pantry: (Last Updated on", p.TimeLastUpdated.Format("February 6, 2023, at 15:04"), ")")
+	fmt.Println("User's Current Pantry: (Last Updated on", p.TimeLastUpdated.Format("September 16, 2006, at 15:04"), ")")
+
 	for i, value := range p.FoodInPantry{
 		fmt.Println("Item", i+1, ":", value.Name)
 	}
 }
 
 // update ingredients list by reference, add new ingredient parament to list
-func (p Pantry) AddToPantry(){
+func (p *Pantry) AddToPantry(){
 	
 	// gets name of item in pantry from user
 	fmt.Println("What Item are you looking to add to your pantry?")
 	var name string
-	fmt.Scanln(name)
+	fmt.Scanln(&name)
 
 	// adds new item to fooditem slice
-	p.FoodInPantry = append(p.FoodInPantry, NewPantryItem(name))
 	
+	p.FoodInPantry = append(p.FoodInPantry, NewPantryItem(name))
 	//get updated time
 	p.TimeLastUpdated = time.Now()
 }
 
 // update ingredients list by reference, remove specific parameter ingredient from list
-func (p Pantry) RemoveFromPantry(){
+func (p *Pantry) RemoveFromPantry(){
 	
 	// gets name of item in pantry to remove from user
 	fmt.Println("What Item are you looking to remove from your pantry?")
 	var name string
-	fmt.Scanln(name)
+	fmt.Scanln(&name)
 
 	// cycles through slice to find item to remove
 	var foundIndex int = 0
