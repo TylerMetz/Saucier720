@@ -1,4 +1,4 @@
-package Backend
+package BackendPkg
 
 type FoodItem struct {
 	name      string

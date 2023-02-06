@@ -1,18 +1,18 @@
-package Backend
+package BackendPkg
 
-type GroceryStore struct{
+type GroceryStore struct {
 	// Inventory List
-	name string
+	name    string
 	address string
 }
 
-func ScrapeInventory(){
+func ScrapeInventory() {
 	// Take in Inventory list & change by reference
-} 
-func ScrapeDeals(){
+}
+func ScrapeDeals() {
 	// Webscrape deals from store
 	// Make sure it clears each week
 }
-func DisplayDeals(){
+func DisplayDeals() {
 	// Display
 }
