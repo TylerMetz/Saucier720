@@ -10,7 +10,7 @@ type Pantry struct{
 
 // displays all pantry using fmt
 func (p Pantry) DisplayPantry(){
-	fmt.Sprintf("User's Current Pantry: (Last Updated on", TimeLastUpdated.Format("February 6, 2023, at 15:04"), ")")
+	fmt.Sprintf("User's Current Pantry: (Last Updated on", p.TimeLastUpdated.Format("February 6, 2023, at 15:04"), ")")
 	for i, value := range p.FoodInPantry{
 		fmt.Println("Item", i+1, ":", value.Name)
 	}
@@ -28,7 +28,7 @@ func (p Pantry) AddToPantry(){
 	p.FoodInPantry = append(p.FoodInPantry, NewPantryItem(name))
 	
 	//get updated time
-	TimeLastUpdated = time.Now()
+	p.TimeLastUpdated = time.Now()
 }
 
 // update ingredients list by reference, remove specific parameter ingredient from list
@@ -52,7 +52,7 @@ func (p Pantry) RemoveFromPantry(){
 	if foundIndex != len(p.FoodInPantry) && foundIndex >= 0{
         p.FoodInPantry = append(p.FoodInPantry[0:foundIndex], p.FoodInPantry[foundIndex+1:len(p.FoodInPantry)]...);
 		// get time updated
-		TimeLastUpdated = time.Now()
+		p.TimeLastUpdated = time.Now()
     } else{
 		fmt.Println("Item couldn't be found in your pantry!")
 	}
