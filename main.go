@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"https://github.com/TylerMetz/Saucier720/tree/develop-backend/BackendPkg"
+	"example.com/package/BackendPkg"
 	"time"
 )
 
