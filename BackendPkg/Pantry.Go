@@ -4,15 +4,15 @@ import "fmt"
 import "time"
 
 type Pantry struct{
-	foodInPantry []FoodItem; //slice for all items in pantry
-	timeLastUpdated time.Time; //MMDDYYYY
+	FoodInPantry []FoodItem; //slice for all items in pantry
+	TimeLastUpdated time.Time; //MMDDYYYY
 }
 
 // displays all pantry using fmt
 func (p Pantry) DisplayPantry(){
-	fmt.Sprintf("User's Current Pantry: (Last Updated on", timeLastUpdated.Format("February 6, 2023, at 15:04"), ")")
-	for i, value := range p.foodInPantry{
-		fmt.Println("Item", i+1, ":", value.name)
+	fmt.Sprintf("User's Current Pantry: (Last Updated on", TimeLastUpdated.Format("February 6, 2023, at 15:04"), ")")
+	for i, value := range p.FoodInPantry{
+		fmt.Println("Item", i+1, ":", value.Name)
 	}
 }
 
@@ -25,10 +25,10 @@ func (p Pantry) AddToPantry(){
 	fmt.Scanln(name)
 
 	// adds new item to fooditem slice
-	p.foodInPantry = append(p.foodInPantry, NewPantryItem(new))
+	p.FoodInPantry = append(p.FoodInPantry, NewPantryItem(name))
 	
 	//get updated time
-	timeLastUpdated = time.Now()
+	TimeLastUpdated = time.Now()
 }
 
 // update ingredients list by reference, remove specific parameter ingredient from list
@@ -41,18 +41,18 @@ func (p Pantry) RemoveFromPantry(){
 
 	// cycles through slice to find item to remove
 	var foundIndex int = 0
-	for i, value := range p.foodInPantry{
+	for i, value := range p.FoodInPantry{
 		// finds and saves index of item getting removed
-		if(value.name == name){
+		if(value.Name == name){
 			foundIndex = i
 		}
 	}
 
 	// if index is in range, remove from slice
-	if foundIndex != len(p.foodInPantry) && foundIndex >= 0{
-        p.foodInPantry = append(p.foodInPantry[0:foundIndex], p.foodInPantry[foundIndex+1:len(p.foodInPantry)]...);
+	if foundIndex != len(p.FoodInPantry) && foundIndex >= 0{
+        p.FoodInPantry = append(p.FoodInPantry[0:foundIndex], p.FoodInPantry[foundIndex+1:len(p.FoodInPantry)]...);
 		// get time updated
-		timeLastUpdated = time.Now()
+		TimeLastUpdated = time.Now()
     } else{
 		fmt.Println("Item couldn't be found in your pantry!")
 	}

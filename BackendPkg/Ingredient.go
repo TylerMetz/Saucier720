@@ -1,9 +1,9 @@
 package BackendPkg
 
 type Ingredient struct {
-	item              FoodItem
-	amount            float64
-	unitOfMeasurement string
+	Item              FoodItem
+	Amount            float64
+	UnitOfMeasurement string
 }
 
 func CalculatePrice(food Ingredient) float64 {

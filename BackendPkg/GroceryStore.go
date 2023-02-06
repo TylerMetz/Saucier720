@@ -2,8 +2,8 @@ package BackendPkg
 
 type GroceryStore struct {
 	// Inventory List
-	name    string
-	address string
+	Name    string
+	Address string
 }
 
 func ScrapeInventory() {

@@ -3,11 +3,11 @@ package BackendPkg
 type Recipe struct {
 	// List of steps
 	// List of inegredients
-	name        string
-	servings    int
-	time        int
-	cost        float64
-	servingSize int
+	Name        string
+	Servings    int
+	Time        int
+	Cost        float64
+	ServingSize int
 }
 
 func CalcTotalPrice( /*Need to decide data structure*/ ) float64 {
