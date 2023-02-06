@@ -7,6 +7,7 @@ type Recipe struct{
 	servings int
 	time int
 	cost float64
+	servingSize int
 }
 
 func CalcTotalPrice(/*Need to decide data structure*/) float64{
