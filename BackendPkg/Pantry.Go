@@ -1,15 +1,16 @@
 package Backend
 
 import "fmt"
+import "time"
 
 type Pantry struct{
 	foodInPantry []FoodItem; //slice for all items in pantry
-	dateLastUpdates int; //MMDDYYYY
+	timeLastUpdated time.Time; //MMDDYYYY
 }
 
 // displays all pantry using fmt
 func (p Pantry) DisplayPantry(){
-	fmt.Println("User's Current Pantry: ")
+	fmt.Sprintf("User's Current Pantry: (Last Updated on", timeLastUpdated.Format("February 6, 2023, at 15:04"), ")")
 	for i, value := range p.foodInPantry{
 		fmt.Println("Item", i+1, ":", value.name)
 	}
@@ -25,7 +26,9 @@ func (p *Pantry) AddToPantry(){
 
 	// adds new item to fooditem slice
 	p.foodInPantry = append(p.foodInPantry, NewPantryItem(new))
-
+	
+	//get updated time
+	timeLastUpdated = time.Now()
 }
 
 // update ingredients list by reference, remove specific parameter ingredient from list
@@ -46,7 +49,12 @@ func (p *Pantry) RemoveFromPantry(){
 	}
 
 	// if index is in range, remove from slice
-	if foundIndex < len(p.foodInPantry) && foundIndex >= 0{
-        return append(p.foodInPantry[0:foundIndex], p.foodInPantry[foundIndex+1:len(p.foodInPantry)]...);
-    }
+	if foundIndex != len(p.foodInPantry) && foundIndex >= 0{
+        p.foodInPantry = append(p.foodInPantry[0:foundIndex], p.foodInPantry[foundIndex+1:len(p.foodInPantry)]...);
+		// get time updated
+		timeLastUpdated = time.Now()
+    } else{
+		fmt.Println("Item couldn't be found in your pantry!")
+	}
+
 }
