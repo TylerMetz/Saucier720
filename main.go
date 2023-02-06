@@ -12,7 +12,9 @@ func main() {
 		TimeLastUpdated: time.Now(),
 	}
 	userPantry.AddToPantry()
-	userPantry.DisplayPantry()
+	userPantry.AddToPantry()
+	userPantry.AddToPantry()
+	userPantry.RemoveFromPantry()
 	userPantry.RemoveFromPantry()
 	userPantry.DisplayPantry()
 }
