@@ -24,6 +24,18 @@
   }
  }
 
+.ingredients-list-header {
+  display: flex;
+  width: 100%;
+  padding: 20px;
+  margin: 0;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 42px;
+  color: #20b338;
+  border-bottom: 1px solid #e0dddd;
+
+}
 
 .page {
   width: 100%;
