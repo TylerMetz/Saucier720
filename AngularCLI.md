@@ -19,10 +19,11 @@ ng add angular-cli-ghpages
 - `ng` can help you create new components from the command line
 - `ng generate component <xyz>`
 - to create a new component it needs a 
+
 | File | Description |
 | ----------- | ----------- |
 | .html | component view template |
-| .scss | component common styles|
+| .scss | component common styles |
 | .ts | component file |
 | .spec.ts | component unit tests |
 
