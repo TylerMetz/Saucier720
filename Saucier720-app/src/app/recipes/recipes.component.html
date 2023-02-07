@@ -1,1 +1,35 @@
-<p>recipes works!</p>
+<div class="page">
+    <div class="topnav">
+        <a href="../pantry/pantry.component.html">Pantry</a>
+        <a href="../list/list.component.html">List</a>
+        <a href="../deals/deals.component.html">Deals</a>
+        <a class="active" href="recipes.component.html">Recipes</a>
+      </div>
+    <div class="page-body">
+        <div class="page-body__sidebar">
+            <h2 class ="list-header">Ingredients</h2>
+            <ul class="list"> 
+                <li class="list__item" *ngFor="let ingredient of ingredients">
+                    {{ ingredient.name }}
+                </li>
+            </ul>
+        </div>
+        <div class="page-body__sidebar">
+            <h2 class ="list-header">Quantity</h2>
+            <ul class="list"> 
+                <li class="list__item" *ngFor="let ingredient of ingredients">
+                    {{ ingredient.quanity }}
+                </li>
+            </ul>
+        </div>
+        <div class="page-body__sidebar">
+            <h2 class ="list-header">Price</h2>
+            <ul class="list"> 
+                <li class="list__item" *ngFor="let ingredient of ingredients">
+                    {{ ingredient.price }}
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
