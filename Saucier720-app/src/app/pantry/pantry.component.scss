@@ -1,11 +1,10 @@
-.ingredients-list {
+.list {
   width: 100%;
   padding: 0;
   margin: 0;
   list-style: none;
  
   &__item {
-    content: "Group";
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -25,6 +24,19 @@
   }
  }
 
+.list-header {
+  display: flex;
+  width: 100%;
+  padding: 20px;
+  margin: 0;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 36px;
+  font-weight: 400;
+  color: #20b338;
+  border-bottom: 1px solid #e0dddd;
+
+}
 
 .page {
   width: 100%;
@@ -42,7 +54,7 @@
     border-bottom: 2px solid #007fff;
     font-size: 36px;
     font-weight: 700;
-    color: #0e63c7;
+    color: #20b338;
   }
  
   &-body {
