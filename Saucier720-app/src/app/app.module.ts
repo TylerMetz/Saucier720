@@ -5,6 +5,7 @@ import { PantryComponent } from './pantry/pantry.component';
 import { ListComponent } from './list/list.component';
 import { DealsComponent } from './deals/deals.component';
 import { RecipesComponent } from './recipes/recipes.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 @NgModule({
   declarations: [
@@ -12,7 +13,8 @@ import { RecipesComponent } from './recipes/recipes.component';
     PantryComponent,
     ListComponent,
     DealsComponent,
-    RecipesComponent
+    RecipesComponent,
+    DashboardComponent
   ],
   imports: [
     BrowserModule
