@@ -33,3 +33,4 @@ ng add angular-cli-ghpages
 
 ## Deploying to Github Pages
 - `ng deploy --base_href=/Saucier720/`
+- I created a bash script to deploy run `./deploy.sh` while in the app directory to run it
