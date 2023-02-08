@@ -14,6 +14,7 @@ func main() {
 	userPantry.AddToPantry()
 	userPantry.AddToPantry()
 	userPantry.AddToPantry()
+	userPantry.DisplayPantry()
 	userPantry.RemoveFromPantry()
 	userPantry.RemoveFromPantry()
 	userPantry.DisplayPantry()
