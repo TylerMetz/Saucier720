@@ -6,10 +6,10 @@ import { PantryComponent } from './pantry/pantry.component';
 import { RecipesComponent } from './recipes/recipes.component';
 
 const routes: Routes = [
-  { path: 'pantry', component: PantryComponent},
-  { path: 'list', component: ListComponent},
-  { path: 'deals', component: DealsComponent},
-  { path: 'recipes', component: RecipesComponent}
+  { path: 'Pantry', component: PantryComponent},
+  { path: 'List', component: ListComponent},
+  { path: 'Deals', component: DealsComponent},
+  { path: 'Recipes', component: RecipesComponent}
 ];
 
 @NgModule({
@@ -17,4 +17,4 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
-export const routingComponents =[PantryComponent, ListComponent, DealsComponent, RecipesComponent]
+export const routingComponents = [PantryComponent, ListComponent, DealsComponent, RecipesComponent]
