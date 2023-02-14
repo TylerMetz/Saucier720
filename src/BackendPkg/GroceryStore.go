@@ -52,28 +52,32 @@ func (g *GroceryStore) ScrapeDeals() {
 							span.p-text paragraph-sm strong context--default color--null
 								TEXT
 	*/
-	c.OnHTML("div.p-card p-savings-card p-card--interactive", func(e *colly.HTMLElement) {
-		tempName := ""
-		tempSaleDetails := ""
-		e.ForEach("div.content-wrapper", func(i int, h *colly.HTMLElement) {
-			h.ForEach("div.top-section", func(i int, t *colly.HTMLElement) {
-				t.ForEach("div.title-wrapper", func(i int, m *colly.HTMLElement) {
-					m.ForEach("span.p-text paragraph-md normal context--default color--null line-clamp title", func(i int, l *colly.HTMLElement) {
-						tempName = l.Text //name of product
+
+	// code to scrape deals webpage
+	/*
+		c.OnHTML("div.p-card p-savings-card p-card--interactive", func(e *colly.HTMLElement) {
+			tempName := ""
+			tempSaleDetails := ""
+			e.ForEach("div.content-wrapper", func(i int, h *colly.HTMLElement) {
+				h.ForEach("div.top-section", func(i int, t *colly.HTMLElement) {
+					t.ForEach("div.title-wrapper", func(i int, m *colly.HTMLElement) {
+						m.ForEach("span.p-text paragraph-md normal context--default color--null line-clamp title", func(i int, l *colly.HTMLElement) {
+							tempName = l.Text //name of product
+						})
 					})
-				})
-				t.ForEach("span.p-savings-badge savings-badge bogo", func(i int, m *colly.HTMLElement) {
-					m.ForEach("div.p-savings-badge__text", func(i int, l *colly.HTMLElement) {
-						l.ForEach("span.p-text paragraph-sm strong context--default color--null", func(i int, n *colly.HTMLElement) {
-							tempSaleDetails = n.Text
+					t.ForEach("span.p-savings-badge savings-badge bogo", func(i int, m *colly.HTMLElement) {
+						m.ForEach("div.p-savings-badge__text", func(i int, l *colly.HTMLElement) {
+							l.ForEach("span.p-text paragraph-sm strong context--default color--null", func(i int, n *colly.HTMLElement) {
+								tempSaleDetails = n.Text
+							})
 						})
 					})
 				})
+				g.UpdateInventory(tempName, tempSaleDetails)
 			})
-			g.UpdateInventory(tempName, tempSaleDetails)
-		})
 
-	})
+		})
+	*/
 
 	// visit and scrape deals
 	c.Visit("https://www.publix.com/savings/weekly-ad/view-all")
@@ -87,4 +91,8 @@ func (g *GroceryStore) ScrapeInventory() {
 }
 func (g GroceryStore) DisplayDeals() {
 	// Display
+}
+
+func (g *GroceryStore) PassItemPage(itemURL string) {
+	//parses through pages and using Colly web scrapes the inventory
 }
