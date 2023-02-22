@@ -1,1 +1,1 @@
-ng deploy --base_href=/Saucier720/
+ng deploy --base-href=/Saucier720/
