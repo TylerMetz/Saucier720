@@ -7,6 +7,7 @@ import { IngredientService } from '../core/services/ingredient.service';
   templateUrl: './pantry.component.html',
   styleUrls: ['./pantry.component.scss']
 })
+
 export class PantryComponent implements OnInit {
   ingredients: Array<Ingredient> = [];
 
@@ -15,7 +16,5 @@ export class PantryComponent implements OnInit {
   ngOnInit(){
     this.ingredients = this.ingredientService.getPantry();
   }
-
-
 
 }
