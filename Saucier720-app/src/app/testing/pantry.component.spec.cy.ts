@@ -5,4 +5,10 @@ describe('PantryComponent', () => {
   it('mounts', () => {
     cy.mount(PantryComponent)
   })
+
+  it('inits with', () => {
+    cy.mount(PantryComponent)
+    cy.get('div').should('have.class', 'page')
+  })
+
 });
