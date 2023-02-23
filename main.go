@@ -98,6 +98,19 @@ func main() {
 
 	time.Sleep(20 * time.Second) // wait for page to load
 
+	// Keeps hitting "Load More" button until all of the data is loaded
+	moreLoadingNeeded := true;
+	// triggers page to load more
+	for moreLoadingNeeded{
+		loadMoreButton, err := wd.FindElement(selenium.ByCSSSelector, "#main > div.savings-content-wrapper > div > div.savings-container > div.card-loader.savings-content.search-results-section.-coupons > div.button-container > button")
+		if err != nil{
+			moreLoadingNeeded = false
+		} else{
+			_ = loadMoreButton.Click()
+			time.Sleep(3 * time.Second)
+		}
+	}
+
 	html, err := wd.PageSource()
 	if err != nil {
 		panic(err)
