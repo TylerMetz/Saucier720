@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Pantry } from '../core/interfaces/pantry';
+import { Ingredient } from '../core/interfaces/ingredient';
 import { PantryService } from '../core/services/pantry/pantry.service';
 
 @Component({
@@ -10,16 +10,21 @@ import { PantryService } from '../core/services/pantry/pantry.service';
 })
 
 export class PantryComponent implements OnInit {
-  pantry: Pantry | undefined;
+  pantry: Array<Ingredient> | undefined;
 
   constructor(private pantryService: PantryService) { }
 
   ngOnInit(){
-    //this.pantry = this.pantryService.getPantry();
+    this.getPantry();
+  }
+
+  getPantry(): void {
+    this.pantryService.getPantry()
+      .subscribe(pantry => (this.pantry = pantry)); //doesnt call until subscribed
   }
 
   showPantry() {
     this.pantryService.getPantry()
-      .subscribe((data: Pantry) => this.pantry = { ...data });
+      .subscribe((data: Array<Ingredient>) => this.pantry = { ...data });
   }
 }
