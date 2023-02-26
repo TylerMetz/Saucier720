@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Ingredient } from '../../interfaces/ingredient';
+import { Pantry } from '../../interfaces/pantry';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PantryService {
-  pantryUrl = 'Pantry/getPantry'
+  pantryUrl = 'api/Pantry/getPantry'
 
   constructor(private http: HttpClient) { }
 
   getPantry() {
-    return this.http.get<Ingredient[]>(this.pantryUrl);
+    return this.http.get<Pantry>(this.pantryUrl);
   }
 }
