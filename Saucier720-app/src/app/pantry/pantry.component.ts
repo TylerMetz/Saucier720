@@ -14,8 +14,13 @@ export class PantryComponent implements OnInit {
 
   constructor(private pantryService: PantryService) { }
 
+  //Mockbackend
+  // ngOnInit(){
+  //   this.pantry = this.pantryService.getMockPantry();
+  // }
+
   ngOnInit(){
-    this.getPantry();
+    this.pantryService.getPantry();
   }
 
   getPantry(): void {
