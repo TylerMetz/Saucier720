@@ -17,7 +17,7 @@ func (t *Router) Rout() {
     
 	// creates new router
 	route := mux.NewRouter()
-	route.HandleFunc("/", t.sendResponse)
+	route.HandleFunc("/api/Pantry", t.sendResponse)
 	log.Println("Listening...")
 	http.ListenAndServe(":8080", route) 
 }
