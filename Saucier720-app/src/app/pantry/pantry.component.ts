@@ -27,9 +27,4 @@ export class PantryComponent implements OnInit {
     this.pantryService.getPantry()
       .subscribe(pantry => (this.pantry = pantry)); //doesnt call until subscribed
   }
-
-  showPantry() {
-    this.pantryService.getPantry()
-      .subscribe((data: Array<Ingredient>) => this.pantry = { ...data });
-  }
 }
