@@ -73,6 +73,7 @@
           },
           "defaultConfiguration": "development",
           "options": {
+            "browserTarget": "Saucier720-app:build:development",
             "proxyConfig": "proxy.conf.json"
           }
         },
