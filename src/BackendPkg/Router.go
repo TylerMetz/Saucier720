@@ -5,6 +5,7 @@ import (
     "log"
     "net/http"
 	"encoding/json"
+	"github.com/rs/cors"
     "github.com/gorilla/mux"
 )
 
@@ -17,9 +18,17 @@ func (t *Router) Rout() {
     
 	// creates new router
 	route := mux.NewRouter()
-	route.HandleFunc("/api/Pantry", t.sendResponse)
+	route.HandleFunc("/", t.sendResponse)
+
+	// enables alternate hosts for CORS
+	c := cors.New(cors.Options{
+        AllowedOrigins: []string{"http://localhost:4200"},
+        AllowCredentials: true,
+    })
+
 	log.Println("Listening...")
-	http.ListenAndServe(":8080", route) 
+	handler := c.Handler(route)
+	http.ListenAndServe(":8080", handler) 
 }
 
 func (t *Router) sendResponse(response http.ResponseWriter, request *http.Request) {
