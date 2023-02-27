@@ -3,7 +3,6 @@ package BackendPkg
 import (
 	"fmt"
 	"time"
-	
 	"github.com/tebeka/selenium"
 	"github.com/tebeka/selenium/chrome"
 )
