@@ -1,5 +1,7 @@
 export interface Ingredient {
     name: string;
-    quanity: number;
     price: number;
+    onSale: boolean;
+    quantity: number;
+    saleDetails: string;
 }
