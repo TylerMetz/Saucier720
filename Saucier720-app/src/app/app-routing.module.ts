@@ -4,6 +4,7 @@ import { DealsComponent } from './deals/deals.component';
 import { ListComponent } from './list/list.component';
 import { PantryComponent } from './pantry/pantry.component';
 import { RecipesComponent } from './recipes/recipes.component';
+import { AppComponent } from './app.component';
 
 const routes: Routes = [
   { path: 'Pantry', component: PantryComponent},
@@ -17,4 +18,4 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
-export const routingComponents = [PantryComponent, ListComponent, DealsComponent, RecipesComponent]
+export const routingComponents = [AppComponent, PantryComponent, ListComponent, DealsComponent, RecipesComponent]
