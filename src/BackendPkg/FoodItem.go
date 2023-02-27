@@ -5,6 +5,8 @@ type FoodItem struct {
 	StoreCost float64
 	OnSale    bool
 	SalePrice float64
+	SaleDetails string
+	Quantity int
 }
 
 // generates new FoodItem with defaults set to 0 values, used for pantry items since only name matters
