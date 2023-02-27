@@ -7,7 +7,9 @@
 
 2. Set GOPATH as location of main.go
 
-3. Launch Selenium:
+3. Use ``` go get -u <insert package url> ``` to download the necessary packages
+
+4. Launch Selenium:
     ```
     echo $PATH
     echo 'export PATH=$PATH:/src/SeleniumDrivers/chromedriver_mac64' >> ~/.bash_profile
