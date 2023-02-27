@@ -18,7 +18,7 @@ func (t *Router) Rout() {
     
 	// creates new router
 	route := mux.NewRouter()
-	route.HandleFunc("/", t.sendResponse)
+	route.HandleFunc("/api/Pantry", t.sendResponse)
 
 	// enables alternate hosts for CORS
 	c := cors.New(cors.Options{

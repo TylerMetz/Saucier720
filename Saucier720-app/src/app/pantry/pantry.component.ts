@@ -20,7 +20,7 @@ export class PantryComponent implements OnInit {
   // }
 
   ngOnInit(){
-    this.showPantry();
+    this.getPantry();
   }
 
   getPantry(): void {
