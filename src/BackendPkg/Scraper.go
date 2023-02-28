@@ -81,7 +81,7 @@ func (s *Scraper) PublixScrapeDeals() {
 	// input desired zipcode
 	inputBox, err := wd.FindElement(selenium.ByCSSSelector, "#main > div:nth-child(5) > div > div > div.content.no-padding > div.p-store-locator > div > div > div > form > input[type=search]")
 	if err != nil {
-		alternateLayout = true
+		alternateLayout = true //checks if the alternate windowed version is running
 	}
 	if alternateLayout == false {
 		err = inputBox.SendKeys(s.Store.ZipCode)
@@ -103,7 +103,25 @@ func (s *Scraper) PublixScrapeDeals() {
 			//fmt.Println("search button pressed")
 		}
 	} else {
+		inputBoxTwo, err := wd.FindElement(selenium.ByCSSSelector, "#navBar > div > div.navigation-bar-main > div > div > div.navigation-section.top > div.user-navigation > div > div > div.navigation-sidebar-container > div.navigation-sidebar-body > div > div > div > div > form > input[type=search]")
+		err = inputBoxTwo.SendKeys(s.Store.ZipCode)
+		if err != nil {
+			panic(err)
+		} else {
+			//fmt.Println("zip inputed")
+		}
 
+		// search for stores
+		searchStoreButton, err := wd.FindElement(selenium.ByCSSSelector, "#navBar > div > div.navigation-bar-main > div > div > div.navigation-section.top > div.user-navigation > div > div > div.navigation-sidebar-container > div.navigation-sidebar-body > div > div > div > div > form > button")
+		if err != nil {
+			panic(err)
+		}
+		err = searchStoreButton.Click()
+		if err != nil {
+			panic(err)
+		} else {
+			//fmt.Println("search button pressed")
+		}
 	}
 	time.Sleep(20 * time.Second) // wait for page to load
 

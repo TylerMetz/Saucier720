@@ -60,7 +60,7 @@ func TestOne(t *testing.T) {
 
 	// if the test doesn't pass
 	if portValue != string(itemsInJson) {
-		t.Errorf("Result was incorrect, got: %s, want: %s.", string(itemsInJson), "the test to pass")
+		t.Errorf("Result was incorrect, got: %s, want: %s.", string(itemsInJson), portValue)
 	}
 
 }
