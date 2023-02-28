@@ -9,6 +9,8 @@ import (
 )
 
 func TestingJSON(testItems []interface{}, expectedOutput string) string {
+	//Conversions
+	//Need to add to main 
 	testRouter := BackendPkg.Router{
 		Name:             "test1",
 		ItemsToBeEncoded: testItems,
@@ -25,7 +27,7 @@ func TestingJSON(testItems []interface{}, expectedOutput string) string {
 	if body == expectedOutput {
 		return "Test Passed"
 	} else {
-		return "Fuck you"
+		return "Test not passed"
 	}
 
 }
