@@ -3,7 +3,6 @@ package BackendPkg
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -27,7 +26,7 @@ func (t *Router) Rout() {
 		AllowCredentials: true,
 	})
 
-	log.Println("Listening...")
+	// log.Println("Listening...")
 	handler := c.Handler(route)
 	http.ListenAndServe(":8080", handler)
 }
