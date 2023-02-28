@@ -1,31 +1,42 @@
 package BackendPkg
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"new/http"
-
-	"github.com/gorilla/mux"
+	"net/http"
 )
 
-func TestingJSON(testItems []interface{}, expectedOutput string) string {
-	testRouter := BackendPkg.Router{
+func TestingPortOutput(testItems []interface{}) string {
+
+	// convert items to be translated into json
+	itemsInJson, _ := json.Marshal(testItems)
+
+	// create a router to output items to the port
+	testRouter := Router{
 		Name:             "test1",
 		ItemsToBeEncoded: testItems,
 	}
-	testRouter.Rout()
+
+	// display item on port in background
+	go testRouter.Rout()
+
 	//pull data from local host port
 	resp, err := http.Get("http://localhost:8080/api/Pantry")
 	if err != nil {
-		fmt.Fprint("Error: %v", err)
-		return
+		fmt.Println("Error!")
 	}
 	defer resp.Body.Close()
+
+	// make website data a string
 	body, err := ioutil.ReadAll(resp.Body)
-	if body == expectedOutput {
+	portValue := string(body)
+
+	// compare converted data
+	if portValue == string(itemsInJson) {
 		return "Test Passed"
 	} else {
-		return "Fuck you"
+		return "Test not passed"
 	}
 
 }
