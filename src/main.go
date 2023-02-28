@@ -3,44 +3,42 @@ package main
 import (
 	"BackendPkg"
 	"fmt"
-	"time"
 )
 
 func main() {
+	/*
 
-	testFoodItem := BackendPkg.FoodItem{
-		Name:        "peanut butter",
-		StoreCost:   369.99,
-		OnSale:      true,
-		SaleDetails: "BOGO",
-		Quantity:    10,
-	}
-	testFoodItem2 := BackendPkg.FoodItem{
-		Name:        "jelly",
-		StoreCost:   1.0,
-		OnSale:      false,
-		SaleDetails: "N/A",
-		Quantity:    30,
-	}
-	testFoodItem3 := BackendPkg.FoodItem{
-		Name:        "bread",
-		StoreCost:   10.69,
-		OnSale:      true,
-		SaleDetails: "$2 for 2",
-		Quantity:    2,
-	}
+		testFoodItem := BackendPkg.FoodItem{
+			Name:        "peanut butter",
+			StoreCost:   369.99,
+			OnSale:      true,
+			SaleDetails: "BOGO",
+			Quantity:    10,
+		}
+		testFoodItem2 := BackendPkg.FoodItem{
+			Name:        "jelly",
+			StoreCost:   1.0,
+			OnSale:      false,
+			SaleDetails: "N/A",
+			Quantity:    30,
+		}
+		testFoodItem3 := BackendPkg.FoodItem{
+			Name:        "bread",
+			StoreCost:   10.69,
+			OnSale:      true,
+			SaleDetails: "$2 for 2",
+			Quantity:    2,
+		}
 
-	testFoodSlice := []interface{}{testFoodItem, testFoodItem2, testFoodItem3}
+		testFoodSlice := []interface{}{testFoodItem, testFoodItem2, testFoodItem3}
 
-	// Testing if data correctly outputs to JSON in server
-	// fmt.Println(BackendPkg.TestingPortOutput(testFoodSlice))
+		programRouter := BackendPkg.Router{
+			Name:             "testRouter",
+			ItemsToBeEncoded: testFoodSlice,
+		}
+		programRouter.Rout()
 
-	programRouter := BackendPkg.Router{
-		Name:             "testRouter",
-		ItemsToBeEncoded: testFoodSlice,
-	}
-	programRouter.Rout()
-
+	*/
 	// runs scraper
 	runScraper := false
 	if runScraper {
@@ -52,8 +50,7 @@ func main() {
 
 		// setup user groccery store
 		programScraper := BackendPkg.Scraper{
-			Store:                userPublix,
-			TimeLastDealsScraped: time.Now(),
+			Store: userPublix,
 		}
 
 		// scrape all data
