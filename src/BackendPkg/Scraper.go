@@ -81,7 +81,7 @@ func (s *Scraper) PublixScrapeDeals() {
 	// input desired zipcode
 	inputBox, err := wd.FindElement(selenium.ByCSSSelector, "#main > div:nth-child(5) > div > div > div.content.no-padding > div.p-store-locator > div > div > div > form > input[type=search]")
 	if err != nil {
-		alternateLayout = true //checks if the alternate windowed version is running
+		alternateLayout = true //checks if the alternate windowed version is running (runs on some networks with the window on the right side of the screen)
 	}
 	if alternateLayout == false {
 		err = inputBox.SendKeys(s.Store.ZipCode)
@@ -103,6 +103,7 @@ func (s *Scraper) PublixScrapeDeals() {
 			//fmt.Println("search button pressed")
 		}
 	} else {
+		// sets the input box of the alternate window as the input box
 		inputBoxTwo, err := wd.FindElement(selenium.ByCSSSelector, "#navBar > div > div.navigation-bar-main > div > div > div.navigation-section.top > div.user-navigation > div > div > div.navigation-sidebar-container > div.navigation-sidebar-body > div > div > div > div > form > input[type=search]")
 		err = inputBoxTwo.SendKeys(s.Store.ZipCode)
 		if err != nil {
