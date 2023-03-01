@@ -1,13 +1,47 @@
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { ComponentFixture } from '@angular/core/testing';
+import { PantryService } from 'src/app/core/services/pantry/pantry.service';
+import { TestBed, inject } from '@angular/core/testing';
+import { HttpEvent, HttpEventType } from '@angular/common/http';
+import {HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { PANTRY } from 'src/app/mocks/pantry.mock';
 
 import { PantryComponent } from '../../pantry/pantry.component';
 
 
 describe('PantryComponent', () => {
-  it('mounts', () => {
-    cy.mount(PantryComponent)
-  })
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [ HttpClientTestingModule, PANTRY ],
+      providers: [ PantryService ]
+    });
+  });
+
+  it('can mount', () => {
+    cy.mount(PantryComponent);
+  });
+
+
+  it('should get pantry',
+  inject(
+    [HttpTestingController, PantryService],
+    (httpMock: HttpTestingController, pantryService: PantryService) => {
+      pantryService.getPantry().subscribe((event: HttpEvent<any>) => {
+        switch (event.type) {
+          case HttpEventType.Response:
+            expect(event.body).equal(PANTRY);
+        }
+      });
+
+      const mockReq = httpMock.expectOne(pantryService.pantryUrl);
+
+      expect(mockReq.cancelled).to.equal(false);
+      expect(mockReq.request.responseType).to.equal('json');
+      mockReq.flush(PANTRY);
+
+      httpMock.verify();
+
+    }
+  ))
 
 });
