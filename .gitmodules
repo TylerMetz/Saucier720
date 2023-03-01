@@ -1,0 +1,6 @@
+[submodule "selenium"]
+	path = selenium
+	url = https://github.com/tebeka/selenium
+[submodule "mux"]
+	path = mux
+	url = https://github.com/gorilla/mux
