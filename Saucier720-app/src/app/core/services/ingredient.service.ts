@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Ingredient } from '../interfaces/ingredient';
-import { PANTRY } from '../../mocks/ingredients.mock';
+import { FOODITEM } from 'src/app/mocks/ingredients.mock';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +8,7 @@ import { PANTRY } from '../../mocks/ingredients.mock';
 export class IngredientService {
 
   getPantry(): Array<Ingredient> {
-    return PANTRY;
+    return FOODITEM;
   }
 
 }
