@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpRequest } from '@angular/common/http';
 import { Ingredient } from '../../interfaces/ingredient';
-import { PANTRY } from 'src/app/mocks/ingredients.mock';
+import { PANTRY } from 'src/app/mocks/pantry.mock';
 
 @Injectable({
   providedIn: 'root'
