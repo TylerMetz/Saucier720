@@ -31,7 +31,11 @@ describe('PantryService', () => {
 
       const mockReq = httpMock.expectOne(pantryService.pantryUrl);
 
-      expect(mockReq.cancelled).toBe;
+      expect(mockReq.cancelled).to.equal(false);
+      expect(mockReq.request.responseType).to.equal('json');
+      mockReq.flush(mockPantry);
+
+      httpMock.verify();
 
     }
   ))
