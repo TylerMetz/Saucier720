@@ -6,7 +6,6 @@ import (
 )
 
 func main() {
-
 		testFoodItem := BackendPkg.FoodItem{
 			Name:        "peanut butter",
 			StoreCost:   369.99,
