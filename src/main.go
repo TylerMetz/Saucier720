@@ -6,8 +6,6 @@ import (
 )
 
 func main() {
-	/*
-
 		testFoodItem := BackendPkg.FoodItem{
 			Name:        "peanut butter",
 			StoreCost:   369.99,
@@ -38,7 +36,6 @@ func main() {
 		}
 		programRouter.Rout()
 
-	*/
 	// runs scraper
 	runScraper := false
 	if runScraper {
