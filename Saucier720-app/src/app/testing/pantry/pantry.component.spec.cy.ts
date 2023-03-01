@@ -7,10 +7,4 @@ describe('PantryComponent', () => {
     cy.mount(PantryComponent)
   })
 
-  //TODO: example test for getting a html component
-  // it('inits with', () => {
-  //   cy.mount(PantryComponent)
-  //   cy.get('div').should('have.class', 'page')
-  // })
-
 });
