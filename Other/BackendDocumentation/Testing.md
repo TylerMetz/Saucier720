@@ -6,7 +6,7 @@
 - **How to Test:**
   **1.** In the command line naviagte to the `src` folder:
    ```
-   $ cd Saucier720/src
+   $ cd Saucier720/src/TestingFiles
    ```
   **2.** Run the test function:
    ```
@@ -33,7 +33,7 @@
 - **How to Test:**
   **1.** In the command line naviagte to the `src` folder:
    ```
-   $ cd Saucier720/src
+   $ cd Saucier720/src/TestingFiles
    ```
   **2.** Run the test function:
    ```
