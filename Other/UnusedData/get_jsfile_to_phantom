@@ -1,0 +1,21 @@
+
+	var system = require('system');
+	var page = require('webpage').create();
+	var url = system.args[1];
+	var cookie = system.args[2];
+	var pageEncode = system.args[3];
+	var userAgent = system.args[4];
+	page.onResourceRequested = function(requestData, request) {
+		request.setHeader('Cookie', cookie)
+	};
+	phantom.outputEncoding=pageEncode;
+	page.settings.userAgent = userAgent;
+	page.open(url, function (status) {
+		    if (status !== 'success') {
+		        console.log('Unable to access network');
+		    } else {
+		        console.log(page.content);
+		    }
+		    phantom.exit();
+	});
+	
