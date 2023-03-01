@@ -22,7 +22,7 @@ func (t *Router) Rout() {
 
 	// enables alternate hosts for CORS
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:4200","http://localhost:8081"},
+		AllowedOrigins:   []string{"http://localhost:4200"},
 		AllowCredentials: true,
 	})
 
