@@ -24,7 +24,10 @@ describe('PantryComponent', () => {
     cy.mount(PantryComponent);
     cy.get('h2').contains('Cost');
   });
-  
+  it ('displays on sale', () =>{
+    cy.mount(PantryComponent);
+    cy.get('h2').contains('On Sale');
+  })
 
   it('should get pantry',
   inject(
