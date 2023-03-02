@@ -44,5 +44,4 @@
   **`func (t *Router) sendResponse(response http.ResponseWriter, request *http.Request)`** is referenced in the `Rout()` function and converts the `ItemsToBeEncoded` slice into JSON using the encoding/json package, then sets it to be written to the correct port
 
 ## Functioning API Flowchart
-![Flowchart Image](https://github.com/TylerMetz/Saucier720/blob/pngupload/Other/BackendFrontendCommunication/API.png?raw=true)
-
+![Flowchart Image](../Other/Images/Saucier720Api.png)
