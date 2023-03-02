@@ -36,6 +36,10 @@ describe('PantryComponent', () => {
     cy.mount(PantryComponent);
     cy.get('h2').contains('Sale Info');
   });
+  it ('displays quantity', () => {
+    cy.mount(PantryComponent);
+    cy.get('h2').contains('Quantity');
+  })
   it('should get pantry',
   inject(
     [HttpTestingController, PantryService],
