@@ -20,7 +20,11 @@ describe('PantryComponent', () => {
   it('can mount', () => {
     cy.mount(PantryComponent);
   });
-
+  it ('displays cost', () => {
+    cy.mount(PantryComponent);
+    cy.get('h2').contains('Cost');
+  });
+  
 
   it('should get pantry',
   inject(
@@ -43,5 +47,6 @@ describe('PantryComponent', () => {
 
     }
   ))
+
 
 });
