@@ -20,8 +20,26 @@ describe('PantryComponent', () => {
   it('can mount', () => {
     cy.mount(PantryComponent);
   });
-
-
+  it ('displays cost', () => {
+    cy.mount(PantryComponent);
+    cy.get('h2').contains('Cost');
+  });
+  it ('displays on sale', () =>{
+    cy.mount(PantryComponent);
+    cy.get('h2').contains('On Sale');
+  });
+  it ('displays sale price', () => {
+    cy.mount(PantryComponent);
+    cy.get('h2').contains('Sale Price');
+  });
+  it ('displays sale info', () => {
+    cy.mount(PantryComponent);
+    cy.get('h2').contains('Sale Info');
+  });
+  it ('displays quantity', () => {
+    cy.mount(PantryComponent);
+    cy.get('h2').contains('Quantity');
+  })
   it('should get pantry',
   inject(
     [HttpTestingController, PantryService],
@@ -43,5 +61,6 @@ describe('PantryComponent', () => {
 
     }
   ))
+
 
 });
