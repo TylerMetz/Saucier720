@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpRequest } from '@angular/common/http';
 import { Ingredient } from '../../interfaces/ingredient';
-import { PANTRY } from 'src/app/mocks/ingredients.mock';
+import { PANTRY } from 'src/app/mocks/pantry.mock';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +12,11 @@ export class PantryService {
   constructor(private http: HttpClient) { }
 
   getPantry() {
-    return this.http.get<Array<Ingredient>>(this.pantryUrl);
+    const req = new HttpRequest('GET', this.pantryUrl, { 
+      reportProgress: true
+    });
+    
+    return this.http.request(req);
   }
 
   getMockPantry(): Array<Ingredient> {
