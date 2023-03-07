@@ -4,3 +4,6 @@
 [submodule "mux"]
 	path = mux
 	url = https://github.com/gorilla/mux
+[submodule "cors"]
+	path = cors
+	url = https://github.com/rs/cors
