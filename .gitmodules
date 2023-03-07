@@ -1,0 +1,49 @@
+[submodule "selenium"]
+	path = src/github.com/tebeka/selenium
+	url = https://github.com/tebeka/selenium
+[submodule "mux"]
+	path = src/github.com/gorilla/mux
+	url = https://github.com/gorilla/mux
+[submodule "cors"]
+	path = src/github.com/rs/cors 
+	url = https://github.com/rs/cors
+[submodule "go-crx3"]
+	path = src/github.com/mediabuyerbot/go-crx3
+	url = https://github.com/mmadfox/go-crx3
+[submodule "semver"]
+	path = src/github.com/blang/semver
+	url = https://github.com/blang/semver
+[submodule "chomedp"]
+	path = src/github.com/chromedp/chromedp
+	url = https://github.com/chromedp/chromedp
+[submodule "cdproto"]
+	path = src/github.com/chromedp/cdproto
+	url = https://github.com/chromedp/cdproto
+[submodule "sysutil"]
+	path = src/github.com/chromedp/sysutil
+	url = https://github.com/chromedp/sysutil
+[submodule "glog"]
+	path = src/github.com/golang/glog
+	url = https://github.com/golang/glog
+[submodule "groupcache"]
+	path = src/github.com/golang/groupcache
+	url = https://github.com/golang/groupcache
+[submodule "protobuf"]
+	path = src/github.com/golang/protobuf
+	url = https://github.com/golang/protobuf
+[submodule "go-cmp"]
+	path = src/github.com/google/go-cmp
+	url = https://github.com/google/go-cmp
+[submodule "net"]
+	path = src/golang.org/x/net
+	url = https://github.com/golang/net
+[submodule "text"]
+	path = src/golang.org/x/text
+	url = https://github.com/golang/text
+[submodule "appengine"]
+	path = src/google.golang.org/appengine
+	url = https://github.com/golang/appengine
+[submodule "protobuf"]
+	path = src/google.golang.org/protobuf
+	url = https://github.com/protocolbuffers/protobuf-go
+
