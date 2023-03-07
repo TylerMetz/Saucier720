@@ -10,3 +10,6 @@
 [submodule "go-crx3"]
 	path = src/github.com/mediabuyerbot/go-crx3
 	url = https://github.com/mmadfox/go-crx3
+[submodule "semver"]
+	path = src/github.com/blang/semver
+	url = https://github.com/blang/semver
