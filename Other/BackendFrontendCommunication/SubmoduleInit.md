@@ -29,7 +29,7 @@
 <br>
 
 
-1. Install all external packages to the **GOROOT**
+3. Install all external packages to the **GOROOT**
     ```
     $ cd src
     ```
@@ -44,10 +44,10 @@
     ```
     <br>
 
-2. [Install Node.js](https://nodejs.org/en/download/)
+4. [Install Node.js](https://nodejs.org/en/download/)
    <br>
 
-3. Run in Saucier720 folder:
+5. Run in Saucier720 folder:
    ``` 
    $ npm install -g @angular/cli
    ```

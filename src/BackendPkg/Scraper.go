@@ -3,7 +3,7 @@ package BackendPkg
 import (
 	"fmt"
 	"time"
-
+	"runtime"
 	"github.com/tebeka/selenium"
 	"github.com/tebeka/selenium/chrome"
 )
@@ -33,11 +33,20 @@ func (s *Scraper) Scrape() {
 func (s *Scraper) PublixScrapeDeals() {
 	// init chrome driver
 	opts := []selenium.ServiceOption{}
-	service, err := selenium.NewChromeDriverService("SeleniumDrivers/chromedriver_mac64/chromedriver", 9515, opts...)
-	if err != nil {
-		panic(err)
+	if runtime.GOOS == "windows" {
+		service, err := selenium.NewChromeDriverService("SeleniumDrivers/chromedriver_win32/chromedriver.exe", 9515, opts...)
+		if err != nil {
+			panic(err)
+		}
+		defer service.Stop()
+	} else{
+		service, err := selenium.NewChromeDriverService("SeleniumDrivers/chromedriver_mac64/chromedriver", 9515, opts...)
+		if err != nil {
+			panic(err)
+		}
+		defer service.Stop()
 	}
-	defer service.Stop()
+	
 
 	// init headless browser
 	caps := selenium.Capabilities{
