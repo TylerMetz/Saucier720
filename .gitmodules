@@ -34,7 +34,5 @@
 [submodule "go-cmp"]
 	path = src/github.com/google/go-cmp
 	url = https://github.com/google/go-cmp
-[submodule "net"]
-	path = src/golang.org/x/net
-	url = https://cs.opensource.google/go/x/net
+
 
