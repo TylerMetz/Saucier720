@@ -1,7 +1,8 @@
 .DS_Store
 .angular
+src/github.com/*
 src/github.com/blang/*
-src/github.com/golang/protobuf/*
+src/github.com/golang/
 src/github.com/gorilla/*
 src/github.com/mediabuyerbot/*
 src/github.com/rs/*
