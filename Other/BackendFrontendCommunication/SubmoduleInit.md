@@ -31,7 +31,8 @@ $ git submodule update
      - On MacOS:
        - ``` /usr/local/Cellar/go/1.19.5/libexec ```
 <br>
-5. Install all external packages to the **GOROOT**:
+
+5. Install all external packages to the **GOROOT**
     ```
     $ go get -u github.com/gorilla/mux
     ```
