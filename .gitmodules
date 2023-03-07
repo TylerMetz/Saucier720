@@ -1,5 +1,5 @@
 [submodule "selenium"]
-	path = tebeka
+	path = selenium
 	url = https://github.com/tebeka/selenium
 [submodule "gorilla"]
 	path = gorilla
