@@ -1,9 +1,9 @@
 [submodule "selenium"]
-	path = selenium
+	path = src/github.com/tebeka/selenium
 	url = https://github.com/tebeka/selenium
 [submodule "mux"]
 	path = src/github.com/gorilla/mux
 	url = https://github.com/gorilla/mux
 [submodule "cors"]
-	path = cors 
+	path = src/github.com/rs/cors 
 	url = https://github.com/rs/cors
