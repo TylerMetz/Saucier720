@@ -34,5 +34,16 @@
 [submodule "go-cmp"]
 	path = src/github.com/google/go-cmp
 	url = https://github.com/google/go-cmp
-
+[submodule "net"]
+	path = src/golang.org/x/net
+	url = https://github.com/golang/net
+[submodule "text"]
+	path = src/golang.org/x/text
+	url = https://github.com/golang/text
+[submodule "appengine"]
+	path = src/google.golang.org/appengine
+	url = https://github.com/golang/appengine
+[submodule "protobuf"]
+	path = src/google.golang.org/protobuf
+	url = https://github.com/protocolbuffers/protobuf-go
 
