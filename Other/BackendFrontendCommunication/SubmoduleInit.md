@@ -28,7 +28,7 @@ $ git submodule update
    - **GOROOT** must be the GO install location
      - On Windows:
        - ```C:\Program Files\go``` or ```C:\Program Files (x86)\go```
-     - On MacOS:
+     - On bash (MacOS):
        - ``` /usr/local/Cellar/go/1.19.5/libexec ```
 <br>
 
