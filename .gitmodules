@@ -13,3 +13,12 @@
 [submodule "semver"]
 	path = src/github.com/blang/semver
 	url = https://github.com/blang/semver
+[submodule "chomedp"]
+	path = src/github.com/chromedp/chromedp
+	url = https://github.com/chromedp/chromedp
+[submodule "cdproto"]
+	path = src/github.com/chromedp/cdproto
+	url = https://github.com/chromedp/cdproto
+[submodule "sysutil"]
+	path = src/github.com/chromedp/sysutil
+	url = https://github.com/chromedp/sysutil
