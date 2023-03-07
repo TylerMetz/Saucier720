@@ -2,7 +2,7 @@
 	path = src/github.com/tebeka
 	url = https://github.com/tebeka/selenium
 [submodule "mux"]
-	path = src/github.com/gorilla/mux
+	path = src/github.com/gorilla
 	url = https://github.com/gorilla/mux
 [submodule "cors"]
 	path = src/github.com/rs/cors 
