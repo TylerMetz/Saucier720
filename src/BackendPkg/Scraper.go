@@ -2,8 +2,9 @@ package BackendPkg
 
 import (
 	"fmt"
-	"time"
 	"runtime"
+	"time"
+
 	"github.com/tebeka/selenium"
 	"github.com/tebeka/selenium/chrome"
 )
@@ -39,14 +40,13 @@ func (s *Scraper) PublixScrapeDeals() {
 			panic(err)
 		}
 		defer service.Stop()
-	} else{
+	} else {
 		service, err := selenium.NewChromeDriverService("SeleniumDrivers/chromedriver_mac64/chromedriver", 9515, opts...)
 		if err != nil {
 			panic(err)
 		}
 		defer service.Stop()
 	}
-	
 
 	// init headless browser
 	caps := selenium.Capabilities{
