@@ -44,10 +44,19 @@
     ```
     <br>
 
-4. [Install Node.js](https://nodejs.org/en/download/)
+4. Install Internal Package
+   ```
+   $ cd src
+   ```
+   ```
+   $ go install BackendPkg
+   ```
    <br>
 
-5. Run in Saucier720 folder:
+5. [Install Node.js](https://nodejs.org/en/download/)
+   <br>
+
+6. Run in Saucier720 folder:
    ``` 
    $ npm install -g @angular/cli
    ```
