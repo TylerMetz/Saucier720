@@ -48,5 +48,4 @@
 	url = https://github.com/protocolbuffers/protobuf-go
 [submodule "go-sqlite3"]
 	path = src/github.com/mattn/go-sqlite3
-	url = github.com/mattn/go-sqlite3
-	
+	url = https://github.com/mattn/go-sqlite3
