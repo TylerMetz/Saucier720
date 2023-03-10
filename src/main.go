@@ -34,7 +34,7 @@ func main(){
 	
 	
 	
-	database, _ := sql.Open("sqllite3", "./Publix.db")
+	database, _ := sql.Open("sqlite3", "./Publix.db")
 	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS FoodItems (Name TEXT, StoreCost REAL, OnSale INTEGER, SalePrice REAL, SaleDetails TEXT, Quantity INTEGER)")
 	statement.Exec();
 	statementTwo, _ := database.Prepare("INSERT INTO FoodItems (Name, StoreCost, OnSale, SalePrice, SaleDetails, Quantity) VALUES (?, ?, ?, ?, ?, ?)")
