@@ -1,9 +1,8 @@
 package main
 
 import (
-    "database/sql"
-    _ "github.com/mattn/go-sqlite3"
 	"BackendPkg"
+	"fmt"
 )
 
 func main(){
@@ -31,18 +30,40 @@ func main(){
 	}
 
 	testFoodSlice := []BackendPkg.FoodItem{testFoodItem, testFoodItem2, testFoodItem3}
-	
-	
-	
-	database, _ := sql.Open("sqlite3", "./Publix.db")
-	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS FoodItems (Name TEXT, StoreCost REAL, OnSale INTEGER, SalePrice REAL, SaleDetails TEXT, Quantity INTEGER)")
-	statement.Exec();
-	statementTwo, _ := database.Prepare("INSERT INTO FoodItems (Name, StoreCost, OnSale, SalePrice, SaleDetails, Quantity) VALUES (?, ?, ?, ?, ?, ?)")
+	testFoodInterface := []interface{}{testFoodItem, testFoodItem2, testFoodItem3}
 
-	for _, item := range testFoodSlice {
-		statementTwo.Exec(item.Name, item.StoreCost, item.OnSale, item.SalePrice, item.SaleDetails, item.Quantity)
+	// test scraper
+	runScraper := false
+	if runScraper {
+		// create new groccery store
+		userPublix := BackendPkg.GroceryStore{
+			Name:    "Publix",
+			ZipCode: "32601",
+		}
+
+		// setup user groccery store
+		programScraper := BackendPkg.Scraper{
+			Store: userPublix,
+		}
+
+		// scrape all data
+		programScraper.Scrape()
+
+		// print unparsed data
+		fmt.Println(programScraper.DealsHTML)
 	}
 
-	//rows, _ := database.Query("SELECT Name, StoreCost, OnSale, SalePrice, SaleDetails, Quantity FROM FoodItems")
+	// test database
+	testDatabase := BackendPkg.Database{
+		Name: "Publix Inventory Database",
+	}
+	testDatabase.FoodItemSliceTest(testFoodSlice)
+	
+	// test router
+	programRouter := BackendPkg.Router{
+		Name:             "testRouter",
+		ItemsToBeEncoded: testFoodInterface,
+	}
+	programRouter.Rout()
 
 }
