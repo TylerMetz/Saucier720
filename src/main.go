@@ -70,8 +70,10 @@ func main(){
 		testDatabase.StoreUserDatabase(testUser)
 	}
 
+	// store to .db file
 	testDatabase.StorePublixDatabase(testFoodSlice)
-	
+
+	// read from .db file
 	var testFoodInterface []interface{}
 	for i := 0; i < len(testDatabase.ReadPublixDatabase()); i++{
 		testFoodInterface = append(testFoodInterface, testDatabase.ReadPublixDatabase()[i])
