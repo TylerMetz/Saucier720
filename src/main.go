@@ -30,7 +30,7 @@ func main(){
 	}
 
 	testFoodSlice := []BackendPkg.FoodItem{testFoodItem, testFoodItem2, testFoodItem3}
-	testFoodInterface := []interface{}{testFoodItem, testFoodItem2, testFoodItem3}
+	
 
 	// test scraper
 	runScraper := false
@@ -57,17 +57,25 @@ func main(){
 	testDatabase := BackendPkg.Database{
 		Name: "MealDealz Database",
 	}
-	testUser := BackendPkg.User{
-		FirstName: "Eddie",
-		LastName: "Menello",
-		Email: "Edward@gmail.com",
-		UserName: "Eddiefye69",
-		Password: "ILoveGraham420",
+
+	runUserData := true
+	if runUserData{
+		testUser := BackendPkg.User{
+			FirstName: "Eddie",
+			LastName: "Menello",
+			Email: "Edward@gmail.com",
+			UserName: "Eddiefye69",
+			Password: "ILoveGraham420",
+		}
+		testDatabase.StoreUserDatabase(testUser)
 	}
 
 	testDatabase.StorePublixDatabase(testFoodSlice)
-
-	testDatabase.StoreUserDatabase(testUser)
+	
+	var testFoodInterface []interface{}
+	for i := 0; i < len(testDatabase.ReadPublixDatabase()); i++{
+		testFoodInterface = append(testFoodInterface, testDatabase.ReadPublixDatabase()[i])
+	}
 
 	// test router
 	programRouter := BackendPkg.Router{

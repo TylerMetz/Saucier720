@@ -4,8 +4,8 @@ import "fmt"
 import "time"
 
 type Pantry struct {
-	FoodInPantry    []FoodItem //slice for all items in pantry
-	TimeLastUpdated time.Time  //MMDDYYYY
+	FoodInPantry    []FoodItem // slice for all items in pantry
+	TimeLastUpdated time.Time  // MMDDYYYY
 }
 
 // displays all pantry using fmt
