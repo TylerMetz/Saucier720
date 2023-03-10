@@ -34,7 +34,7 @@ func (d *Database) StorePublixDatabase (f []FoodItem){
 }
 
 func (d *Database) StoreUserDatabase (u User){
-	
+
 	// calls function to open the database
 	database := d.OpenDatabase()
 
@@ -45,7 +45,6 @@ func (d *Database) StoreUserDatabase (u User){
 	// insert into UserData table
 	statementTwo, _ := database.Prepare("INSERT INTO UserData (FirstName, LastName, Email, UserName, Password) VALUES (?, ?, ?, ?, ?)")
 
-	u.PrintUserInfo()
 	// store data from this user into table
 	statementTwo.Exec(u.FirstName, u.LastName, u.Email, u.UserName, u.Password)
 	

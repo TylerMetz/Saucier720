@@ -55,7 +55,7 @@ func main(){
 
 	// test database
 	testDatabase := BackendPkg.Database{
-		Name: "Publix Inventory Database",
+		Name: "MealDealz Database",
 	}
 	testUser := BackendPkg.User{
 		FirstName: "Eddie",
