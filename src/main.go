@@ -73,10 +73,13 @@ func main(){
 	testDatabase.StorePublixDatabase(testFoodSlice)
 	
 	var testFoodInterface []interface{}
-	for i := 0; i < len(testDatabase.ReadPublixDatabase()); i++{
-		testFoodInterface = append(testFoodInterface, testDatabase.ReadPublixDatabase()[i])
-	}
+	// for i := 0; i < len(testDatabase.ReadPublixDatabase()); i++{
+	// 	testFoodInterface = append(testFoodInterface, testDatabase.ReadPublixDatabase()[i])
+	// }
 
+	for i := 0; i < len(testDatabase.ReadPublixDatabase()); i++{
+		fmt.Println(testDatabase.ReadPublixDatabase()[i].Name)
+	}
 	// test router
 	programRouter := BackendPkg.Router{
 		Name:             "testRouter",
