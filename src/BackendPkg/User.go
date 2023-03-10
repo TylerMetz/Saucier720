@@ -11,6 +11,7 @@ type User struct{
 	Email string
 	UserName string
 	Password string
+	UserPantry Pantry
 }
 
 func (u* User) PrintUserInfo(){
@@ -19,5 +20,6 @@ func (u* User) PrintUserInfo(){
 	fmt.Println("Email: " + u.Email)
 	fmt.Println("UserName: " + u.UserName)
 	fmt.Println("Password: " + u.Password)
+	u.UserPantry.DisplayPantry()
 }
 
