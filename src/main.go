@@ -57,8 +57,18 @@ func main(){
 	testDatabase := BackendPkg.Database{
 		Name: "Publix Inventory Database",
 	}
-	testDatabase.FoodItemSliceTest(testFoodSlice)
-	
+	testUser := BackendPkg.User{
+		FirstName: "Eddie",
+		LastName: "Menello",
+		Email: "Edward@gmail.com",
+		UserName: "Eddiefye69",
+		Password: "ILoveGraham420",
+	}
+
+	testDatabase.StorePublixDatabase(testFoodSlice)
+
+	testDatabase.StoreUserDatabase(testUser)
+
 	// test router
 	programRouter := BackendPkg.Router{
 		Name:             "testRouter",
