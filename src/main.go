@@ -2,7 +2,7 @@ package main
 
 import (
     "database/sql"
-    //"github.com/mattn/go-sqlite3"
+    _ "github.com/mattn/go-sqlite3"
 	"BackendPkg"
 )
 
@@ -37,11 +37,12 @@ func main(){
 	database, _ := sql.Open("sqllite3", "./Publix.db")
 	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS FoodItems (Name TEXT, StoreCost REAL, OnSale INTEGER, SalePrice REAL, SaleDetails TEXT, Quantity INTEGER)")
 	statement.Exec();
-	stmt, _ := database.Prepare("INSERT INTO FoodItems (Name, StoreCost, OnSale, SalePrice, SaleDetails, Quantity) VALUES (?, ?, ?, ?, ?, ?)")
-	defer stmt.Close()
-
+	statementTwo, _ := database.Prepare("INSERT INTO FoodItems (Name, StoreCost, OnSale, SalePrice, SaleDetails, Quantity) VALUES (?, ?, ?, ?, ?, ?)")
 
 	for _, item := range testFoodSlice {
-		stmt.Exec(item.Name, item.StoreCost, item.OnSale, item.SalePrice, item.SaleDetails, item.Quantity)
+		statementTwo.Exec(item.Name, item.StoreCost, item.OnSale, item.SalePrice, item.SaleDetails, item.Quantity)
 	}
+
+	//rows, _ := database.Query("SELECT Name, StoreCost, OnSale, SalePrice, SaleDetails, Quantity FROM FoodItems")
+
 }
