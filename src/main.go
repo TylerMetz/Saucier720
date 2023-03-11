@@ -3,6 +3,7 @@ package main
 import (
 	"BackendPkg"
 	"fmt"
+	"time"
 )
 
 func main(){
@@ -57,26 +58,28 @@ func main(){
 	testDatabase := BackendPkg.Database{
 		Name: "MealDealz Database",
 	}
-
-	runUserData := true
-	if runUserData{
-		testUser := BackendPkg.User{
-			FirstName: "Eddie",
-			LastName: "Menello",
-			Email: "Edward@gmail.com",
-			UserName: "Eddiefye69",
-			Password: "ILoveGraham420",
-		}
-		testDatabase.StoreUserDatabase(testUser)
-	}
-
-	// store to .db file
+	// store publix data to .db file
 	testDatabase.StorePublixDatabase(testFoodSlice)
 
-	// read from .db file
+	// create a test user and store their pantry
+	testUser := BackendPkg.User{
+		FirstName: "Eddie",
+		LastName: "Menello",
+		Email: "Edward@gmail.com",
+		UserName: "Eddiefye69",
+		Password: "ILoveGraham420",
+		UserPantry: BackendPkg.Pantry{
+			FoodInPantry: testFoodSlice,
+			TimeLastUpdated: time.Now(),
+		},
+	}
+	testDatabase.StoreUserDatabase(testUser)
+	testDatabase.StoreUserPantry(testUser)
+
+	// read from .db file and output test user's pantry to frontend
 	var testFoodInterface []interface{}
-	for i := 0; i < len(testDatabase.ReadPublixDatabase()); i++{
-		testFoodInterface = append(testFoodInterface, testDatabase.ReadPublixDatabase()[i])
+	for i := 0; i < len(testDatabase.GetUserPantry(testUser.UserName).FoodInPantry); i++{
+		testFoodInterface = append(testFoodInterface, testDatabase.GetUserPantry(testUser.UserName).FoodInPantry[i])
 	}
 
 	// test router
