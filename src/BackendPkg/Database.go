@@ -3,6 +3,8 @@ package BackendPkg
 import (
     "database/sql"
     _"github.com/mattn/go-sqlite3"
+	"time"
+	//"fmt"
 )
 
 type Database struct{
@@ -71,4 +73,61 @@ func (d *Database) StoreUserDatabase (u User){
 	// store data from this user into table
 	statementTwo.Exec(u.FirstName, u.LastName, u.Email, u.UserName, u.Password)
 	
+}
+
+func (d *Database) StoreUserPantry (u User){
+
+	// calls function to open the database
+	database := d.OpenDatabase()
+
+	// make table for food item data
+	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS UserPantries (UserName TEXT, PantryLastUpdated DATETIME, Name TEXT, StoreCost REAL, OnSale INTEGER, SalePrice REAL, SaleDetails TEXT, Quantity INTEGER, PRIMARY KEY (UserName, Name))")
+	statement.Exec();
+
+	// insert into food item table
+	statementTwo, _ := database.Prepare("INSERT OR IGNORE INTO UserPantries (UserName, PantryLastUpdated, Name, StoreCost, OnSale, SalePrice, SaleDetails, Quantity) VALUES (?, datetime(?), ?, ?, ?, ?, ?, ?)")
+
+	for _, item := range u.UserPantry.FoodInPantry {
+		statementTwo.Exec(u.UserName, u.UserPantry.TimeLastUpdated.Format("2006-01-02 15:04:05"), item.Name, item.StoreCost, item.OnSale, item.SalePrice, item.SaleDetails, item.Quantity)
+	}
+}
+
+func (d *Database) GetUserPantry(userName string) Pantry {
+    // calls function to open the database
+    database := d.OpenDatabase()
+
+    // query the database for the pantry data
+    rows, _ := database.Query("SELECT Name, StoreCost, OnSale, SalePrice, SaleDetails, Quantity, PantryLastUpdated FROM UserPantries WHERE UserName = ?", userName)
+
+    // create the pantry object
+    pantry := Pantry{
+        TimeLastUpdated: time.Now(),
+        FoodInPantry:    []FoodItem{},
+    }
+
+    // loop through each row and add the food item to the pantry
+    for rows.Next() {
+        var name, saleDetails string
+        var storeCost, salePrice float64
+		var onSale bool
+        var quantity int
+        var pantryLastUpdated string
+        if err := rows.Scan(&name, &storeCost, &onSale, &salePrice, &saleDetails, &quantity, &pantryLastUpdated); err != nil {
+            return Pantry{}
+        }
+        pantry.FoodInPantry = append(pantry.FoodInPantry, FoodItem{
+            Name:        name,
+            StoreCost:   storeCost,
+            OnSale:      onSale,
+            SalePrice:   salePrice,
+            SaleDetails: saleDetails,
+            Quantity:    quantity,
+        })
+
+        // set the time last updated
+        pantry.TimeLastUpdated, _ = time.Parse("2006-01-02 15:04:05", pantryLastUpdated)
+
+    }
+
+    return pantry
 }
