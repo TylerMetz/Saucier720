@@ -38,7 +38,6 @@ func (g *GroceryStore) OrganizeDeals(deals string, start, end int) {
 	newStart := start
 	var countHelp int
 
-
 	for {
 	
 		var nextStep int = 0
@@ -95,8 +94,6 @@ func (g *GroceryStore) OrganizeDeals(deals string, start, end int) {
 		count++
 	}
 	fmt.Print(count)
-	// Next steps: 
-	// Need to make it recursive or loop until we reach the end of the list 
 	// Once it consistently works, must add each item into the inventory 
 	// Push to database after 
 	//return deal, name
