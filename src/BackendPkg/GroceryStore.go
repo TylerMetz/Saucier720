@@ -28,50 +28,74 @@ func (g *GroceryStore) DisplaySales() {
 	}
 }
 
-func (g *GroceryStore) OrganizeDeals(deals string, start, end int) (string, string) {
+func (g *GroceryStore) OrganizeDeals(deals string, start, end int) {
 	// testing to see what the string reads as 'words'
 	words := strings.Fields(deals)
-
-	newRange := words[48634 : len(words)-1]
+	count := 0
 	var name string
 	var deal string
-	var newStart int
+	newStart := start
 	var countHelp int
-	// Find item name
-	// Most of the names end after we find the loadinglazy string
-	for i := 0; i < len(newRange); i++ {
-		if newRange[i] == "loading=\"lazy\"" {
-			name = strings.Join(newRange[0:i], " ")
-			newStart = start + i
-			break
-		}
-	}
-	// Find item deal
-	// the deal is usually between color--null and span 
-	newRange = words[newStart : len(words)-1]
-	for i := 0; i < len(newRange); i++ {
-		if newRange[i] == "color--null\">" {
-			for j := 0; j < len(newRange); j++ {
-				if newRange[i+j] == "</span>" {
-					countHelp = j
-					break
-				}
-			}
-			deal = strings.Join(newRange[i:i+countHelp], " ")
-			break
-		}
-	}
 
-	// clean up
-	deal = deal[14:]
-	name = name[5:]
-	name = name[:len(name)-1]
+	newRange := words[48634 : len(words)-1]
+
+	for (count != 10){
+	
+		var nextStep int = 0
+		// Find item name
+		// Most of the names end after we find the loadinglazy string
+		for i := 0; i < len(newRange); i++ {
+			if newRange[i] == "loading=\"lazy\"" {
+				name = strings.Join(newRange[0:i], " ")
+				newStart = newStart + i
+				break
+			}
+		}
+		// Find item deal
+		// the deal is usually between color--null and span 
+		newRange = words[newStart : len(words)-1]
+		for i := 0; i < len(newRange); i++ {
+			if newRange[i] == "color--null\">" {
+				for j := 0; j < len(newRange); j++ {
+					if newRange[i+j] == "</span>" {
+						countHelp = j
+						break
+					}
+				}
+				deal = strings.Join(newRange[i:i+countHelp], " ")
+				newStart = newStart + i + countHelp
+				newRange = words[newStart : len(words)-1]
+				break
+			}
+		}
+	
+		// clean up
+		deal = deal[14:]
+		name = name[5:]
+		name = name[:len(name)-1]
+	
+		// find next starting point
+		for i:= 0; i < len(newRange); i++ {
+			if newRange[i] == "data-v-cfc9b7ee=\"\""{
+				nextStep++
+			}
+			if(nextStep == 4){
+				newStart = newStart + i
+				newRange = words[newStart + 1: len(words)-1]
+				break
+			}
+			
+		}
+		fmt.Println(name)
+		fmt.Println(deal)
+		count++
+	}
 
 	// Next steps: 
 	// Need to make it recursive or loop until we reach the end of the list 
 	// Once it consistently works, must add each item into the inventory 
 	// Push to database after 
-	return deal, name
+	//return deal, name
 }
 
 // Take in Inventory list & change by reference
