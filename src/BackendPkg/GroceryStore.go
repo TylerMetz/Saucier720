@@ -31,45 +31,40 @@ func (g *GroceryStore) DisplaySales() {
 func (g *GroceryStore) OrganizeDeals(deals string, start, end int) (string, string) {
 	// testing to see what the string reads as 'words'
 	words := strings.Fields(deals)
-	
-	newRange := words[48634:len(words)-1]
+
+	newRange := words[48634 : len(words)-1]
 	var name string
 	var deal string
 	var newStart int
 	var countHelp int
 	// Find item name
 	for i := 0; i < len(newRange); i++ {
-		if(newRange[i] == "loading=\"lazy\""){
+		if newRange[i] == "loading=\"lazy\"" {
 			name = strings.Join(newRange[0:i], " ")
-			newStart = start + i 
+			newStart = start + i
 			break
 		}
 	}
 	// Find item deal
-	newRange = words[newStart:len(words)-1]
+	newRange = words[newStart : len(words)-1]
 	for i := 0; i < len(newRange); i++ {
-		if(newRange[i] == "color--null\">"){
-			for j := 0; j < len(newRange); j++{
-				if(newRange[i + j] == "</span>"){
+		if newRange[i] == "color--null\">" {
+			for j := 0; j < len(newRange); j++ {
+				if newRange[i+j] == "</span>" {
 					countHelp = j
 					break
-				} 
+				}
 			}
-			deal = strings.Join(newRange[0:i+countHelp]," ")
+			deal = strings.Join(newRange[0:i+countHelp], " ")
 			break
 		}
 	}
-	return deal,name
 
-	/*var itemName string 
-    if end > len(words) {
-        end = len(words)
-    }
-    if start < 0 || start > end {
-        start = 0
-    }*/
-
-    //itemName = strings.Join(words[start:end], " ")
+	// clean up
+	deal = deal[4:]
+	name = name[5:]
+	name = name[:len(name)-1]
+	return deal, name
 }
 
 // Take in Inventory list & change by reference
