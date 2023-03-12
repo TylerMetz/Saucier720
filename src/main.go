@@ -65,6 +65,8 @@ func main() {
 		//fmt.Println(deal)
 		//fmt.Println(name)
 		fmt.Println("Finished")
+
+		//fmt.Println(programScraper.DealsHTML)
 	}
 
 }
