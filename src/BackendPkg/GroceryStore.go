@@ -37,7 +37,7 @@ func (g *GroceryStore) OrganizeDeals(deals string, start, end int) string {
     if start < 0 || start > end {
         start = 0
     }
-    return strings.Join(words[start:end], " ")
+    return strings.Join(words[start:end], "  ")
 }
 
 // Take in Inventory list & change by reference
