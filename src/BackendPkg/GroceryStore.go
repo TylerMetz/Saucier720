@@ -31,15 +31,15 @@ func (g *GroceryStore) DisplaySales() {
 func (g *GroceryStore) OrganizeDeals(deals string, start, end int) {
 	// testing to see what the string reads as 'words'
 	words := strings.Fields(deals)
+	newRange := words[start : len(words)-1]
 	count := 0
 	var name string
 	var deal string
 	newStart := start
 	var countHelp int
 
-	newRange := words[48634 : len(words)-1]
 
-	for (count != 10){
+	for {
 	
 		var nextStep int = 0
 		// Find item name
@@ -73,6 +73,10 @@ func (g *GroceryStore) OrganizeDeals(deals string, start, end int) {
 		deal = deal[14:]
 		name = name[5:]
 		name = name[:len(name)-1]
+
+		if(name == "Paper Coupon"){
+			break
+		}
 	
 		// find next starting point
 		for i:= 0; i < len(newRange); i++ {
@@ -90,7 +94,7 @@ func (g *GroceryStore) OrganizeDeals(deals string, start, end int) {
 		fmt.Println(deal)
 		count++
 	}
-
+	fmt.Print(count)
 	// Next steps: 
 	// Need to make it recursive or loop until we reach the end of the list 
 	// Once it consistently works, must add each item into the inventory 
