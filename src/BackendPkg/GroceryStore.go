@@ -2,7 +2,8 @@ package BackendPkg
 
 import (
 	"fmt"
-)
+	"regexp"
+)	
 
 type GroceryStore struct {
 	Inventory []FoodItem
@@ -26,8 +27,17 @@ func (g *GroceryStore) DisplaySales() {
 	}
 }
 
-func (g *GroceryStore) OrganizeDeals(deals string) {
-	fmt.Println("Method called")
+func (g *GroceryStore) OrganizeDeals(deals string) (string, string) {
+	var food, deal string
+    r1 := regexp.MustCompile(`<span[^>]*>([^<]*)<\/span>\s*<div[^>]*>([^<]*)<\/div>`)
+    r2 := regexp.MustCompile(`<span[^>]*>([^<]*)<\/span>`)
+    if match := r1.FindStringSubmatch(deals); len(match) == 3 {
+        food = match[1]
+        if match2 := r2.FindStringSubmatch(match[2]); len(match2) == 2 {
+            deal = match2[1]
+        }
+    }
+    return food, deal
 }
 
 // Take in Inventory list & change by reference

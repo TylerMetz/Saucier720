@@ -2,7 +2,7 @@ package main
 
 import (
 	"BackendPkg"
-	_ "fmt"
+	"fmt"
 )
 
 func main() {
@@ -58,8 +58,16 @@ func main() {
 		// print unparsed data
 		//fmt.Println(programScraper.DealsHTML)
 
-		// organize unparsed data
-		programScraper.Store.OrganizeDeals(programScraper.DealsHTML)
+		food, deal := programScraper.Store.OrganizeDeals(programScraper.DealsHTML)
+		if food == "" {
+			fmt.Print("failed")
+		}
 
+		if deal == "" {
+			fmt.Print("failed")
+		}
+		fmt.Println(food)
+		fmt.Println(deal)
 	}
+
 }
