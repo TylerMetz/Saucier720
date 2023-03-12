@@ -28,13 +28,15 @@ func (g *GroceryStore) DisplaySales() {
 	}
 }
 
-func (g *GroceryStore) OrganizeDeals(deals string, start, end int) string {
+func (g *GroceryStore) OrganizeDeals(deals string, start, end int) (string, string) {
 	// testing to see what the string reads as 'words'
 	words := strings.Fields(deals)
 	
 	newRange := words[48634:len(words)-1]
 	var name string
+	var deal string
 	var newStart int
+	var countHelp int
 	// Find item name
 	for i := 0; i < len(newRange); i++ {
 		if(newRange[i] == "loading=\"lazy\""){
@@ -45,10 +47,20 @@ func (g *GroceryStore) OrganizeDeals(deals string, start, end int) string {
 	}
 	// Find item deal
 	newRange = words[newStart:len(words)-1]
+	for i := 0; i < len(newRange); i++ {
+		if(newRange[i] == "color--null\">"){
+			for j := 0; j < len(newRange); j++{
+				if(newRange[i + j] == "</span>"){
+					countHelp = j
+					break
+				} 
+			}
+			deal = strings.Join(newRange[0:i+countHelp]," ")
+			break
+		}
+	}
+	return deal,name
 
-
-
-	return name
 	/*var itemName string 
     if end > len(words) {
         end = len(words)
