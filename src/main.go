@@ -58,16 +58,9 @@ func main() {
 		// print unparsed data
 		//fmt.Println(programScraper.DealsHTML)
 
-		food, deal := programScraper.Store.OrganizeDeals(programScraper.DealsHTML)
-		if food == "" {
-			fmt.Print("failed")
-		}
-
-		if deal == "" {
-			fmt.Print("failed")
-		}
-		fmt.Println(food)
-		fmt.Println(deal)
+		result := programScraper.Store.OrganizeDeals(programScraper.DealsHTML, 3000,3500)
+		fmt.Print(result)
+		fmt.Println("Finished")
 	}
 
 }
