@@ -31,13 +31,33 @@ func (g *GroceryStore) DisplaySales() {
 func (g *GroceryStore) OrganizeDeals(deals string, start, end int) string {
 	// testing to see what the string reads as 'words'
 	words := strings.Fields(deals)
+	
+	newRange := words[48634:len(words)-1]
+	var name string
+	var newStart int
+	// Find item name
+	for i := 0; i < len(newRange); i++ {
+		if(newRange[i] == "loading=\"lazy\""){
+			name = strings.Join(newRange[0:i], " ")
+			newStart = start + i 
+			break
+		}
+	}
+	// Find item deal
+	newRange = words[newStart:len(words)-1]
+
+
+
+	return name
+	/*var itemName string 
     if end > len(words) {
         end = len(words)
     }
     if start < 0 || start > end {
         start = 0
-    }
-    return strings.Join(words[start:end], "  ")
+    }*/
+
+    //itemName = strings.Join(words[start:end], " ")
 }
 
 // Take in Inventory list & change by reference
