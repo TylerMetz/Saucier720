@@ -60,10 +60,10 @@ func main() {
 
 		// Takes 48634 'Words' to get to the first items name...
 		// Testing to see if we can grab the name and deal from the function 
-		deal,name := programScraper.Store.OrganizeDeals(programScraper.DealsHTML, 48634, 48635)
 		fmt.Println("Start")
-		fmt.Println(deal)
-		fmt.Println(name)
+		programScraper.Store.OrganizeDeals(programScraper.DealsHTML, 48634, 48635)
+		//fmt.Println(deal)
+		//fmt.Println(name)
 		fmt.Println("Finished")
 	}
 
