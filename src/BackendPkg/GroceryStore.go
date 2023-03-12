@@ -38,6 +38,7 @@ func (g *GroceryStore) OrganizeDeals(deals string, start, end int) (string, stri
 	var newStart int
 	var countHelp int
 	// Find item name
+	// Most of the names end after we find the loadinglazy string
 	for i := 0; i < len(newRange); i++ {
 		if newRange[i] == "loading=\"lazy\"" {
 			name = strings.Join(newRange[0:i], " ")
@@ -46,6 +47,7 @@ func (g *GroceryStore) OrganizeDeals(deals string, start, end int) (string, stri
 		}
 	}
 	// Find item deal
+	// the deal is usually between color--null and span 
 	newRange = words[newStart : len(words)-1]
 	for i := 0; i < len(newRange); i++ {
 		if newRange[i] == "color--null\">" {
@@ -55,15 +57,20 @@ func (g *GroceryStore) OrganizeDeals(deals string, start, end int) (string, stri
 					break
 				}
 			}
-			deal = strings.Join(newRange[0:i+countHelp], " ")
+			deal = strings.Join(newRange[i:i+countHelp], " ")
 			break
 		}
 	}
 
 	// clean up
-	deal = deal[4:]
+	deal = deal[14:]
 	name = name[5:]
 	name = name[:len(name)-1]
+
+	// Next steps: 
+	// Need to make it recursive or loop until we reach the end of the list 
+	// Once it consistently works, must add each item into the inventory 
+	// Push to database after 
 	return deal, name
 }
 
