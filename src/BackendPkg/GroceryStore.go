@@ -26,6 +26,10 @@ func (g *GroceryStore) DisplaySales() {
 	}
 }
 
+func (g *GroceryStore) OrganizeDeals(deals string) {
+	fmt.Println("Method called")
+}
+
 // Take in Inventory list & change by reference
 func (g *GroceryStore) ScrapeDeals() {
 	// find and print all of the deals
