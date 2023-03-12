@@ -62,7 +62,7 @@ func main() {
 		result := programScraper.Store.OrganizeDeals(programScraper.DealsHTML, 48634, 48635)
 		fmt.Println("Start ")
 		fmt.Print(result)
-		fmt.Println("Finished")
+		fmt.Println("\nFinished")
 	}
 
 }
