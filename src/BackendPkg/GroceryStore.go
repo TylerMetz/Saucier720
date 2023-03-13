@@ -28,15 +28,16 @@ func (g *GroceryStore) DisplaySales() {
 	}
 }
 
-func (g *GroceryStore) OrganizeDeals(deals string, start, end int) {
+func (g *GroceryStore) OrganizeDeals(deals string, start int) []FoodItem {
 	// testing to see what the string reads as 'words'
 	words := strings.Fields(deals)
 	newRange := words[start : len(words)-1]
-	count := 0
+	//count := 0
 	var name string
 	var deal string
 	newStart := start
 	var countHelp int
+	dealSlice := make([]FoodItem, 0)
 
 	for {
 	
@@ -89,14 +90,23 @@ func (g *GroceryStore) OrganizeDeals(deals string, start, end int) {
 			}
 			
 		}
-		fmt.Println(name)
+		/*fmt.Println(name)
 		fmt.Println(deal)
-		count++
+		count++*/
+		item := FoodItem{
+				Name:        name,
+				StoreCost:   100,
+				OnSale:      true,
+				SaleDetails: deal,
+				Quantity:    0,
+		}
+
+		dealSlice = append(dealSlice, item)
 	}
-	fmt.Print(count)
+	//fmt.Print(count)
 	// Once it consistently works, must add each item into the inventory 
 	// Push to database after 
-	//return deal, name
+	return dealSlice
 }
 
 // Take in Inventory list & change by reference
