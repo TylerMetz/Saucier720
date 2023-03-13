@@ -72,7 +72,7 @@ func main(){
 		//fmt.Println(programScraper.DealsHTML)
 	}
 
-	testFoodSlice := programScraper.Store.OrganizeDeals(programScraper.DealsHTML, 48645)
+	testFoodSlice := programScraper.Store.OrganizeDeals(programScraper.DealsHTML, 48640)
 
 	// test database
 	testDatabase := BackendPkg.Database{
