@@ -109,37 +109,6 @@ func (g *GroceryStore) OrganizeDeals(deals string, start int) []FoodItem {
 	return dealSlice
 }
 
-// Take in Inventory list & change by reference
-func (g *GroceryStore) ScrapeDeals() {
-	// find and print all of the deals
-
-	// scrapes deals
-	/*
-		Name:
-		div.p-card p-savings-card p-card--interactive
-			div.content-wrapper
-				div.top-section
-					div.title-wrapper
-						span.p-text paragraph-md normal context--default color--null line-clamp title
-							TEXT
-
-		Sale Details:
-		div.p-card p-savings-card p-card--interactive
-			div.content-wrapper
-				div.top-section
-					span.p-savings-badge savings-badge bogo
-						div.p-savings-badge__text
-							span.p-text paragraph-sm strong context--default color--null
-								TEXT
-	*/
-
-}
-
-// Webscrape deals from store
-// Make sure it clears each week
-func (g *GroceryStore) ScrapeInventory() {
-
-}
 func (g GroceryStore) DisplayDeals() {
 	// Display
 }
