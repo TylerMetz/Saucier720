@@ -21,10 +21,8 @@ func (s *Scraper) Scrape() {
 	// calls function based on store
 	if s.Store.Name == "Publix" {
 		s.PublixScrapeDeals()
-		//s.PublixScrapeInventory()
 	} else if s.Store.Name == "Walmart" {
 		s.WalmartScrapeDeals()
-		s.WalmartScrapeInventory()
 	}
 
 	// saves current time to ref later

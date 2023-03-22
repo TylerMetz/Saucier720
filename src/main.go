@@ -8,78 +8,34 @@ import (
 
 func main(){
 	
-	// testFoodItem := BackendPkg.FoodItem{
-	// 	Name:        "peanut butter",
-	// 	StoreCost:   369.99,
-	// 	OnSale:      true,
-	// 	SaleDetails: "BOGO",
-	// 	Quantity:    10,
-	// }
-	// testFoodItem2 := BackendPkg.FoodItem{
-	// 	Name:        "jelly",
-	// 	StoreCost:   1.0,
-	// 	OnSale:      false,
-	// 	SaleDetails: "N/A",
-	// 	Quantity:    30,
-	// }
-	// testFoodItem3 := BackendPkg.FoodItem{
-	// 	Name:        "bread",
-	// 	StoreCost:   10.69,
-	// 	OnSale:      true,
-	// 	SaleDetails: "$2 for 2",
-	// 	Quantity:    2,
-	// }
-
-	//testFoodSlice := []BackendPkg.FoodItem{testFoodItem, testFoodItem2, testFoodItem3}
-	
-
-	// test scraper
-	//Putting variables outsde for the sake of testing db
-	userPublix := BackendPkg.GroceryStore{
-		Name:    "Publix",
-		ZipCode: "32601",
+	// test food items to test user fxns
+	testFoodItem := BackendPkg.FoodItem{
+		Name:        "peanut butter",
+		StoreCost:   369.99,
+		OnSale:      true,
+		SaleDetails: "BOGO",
+		Quantity:    10,
 	}
-
-	// setup user groccery store
-	programScraper := BackendPkg.Scraper{
-		Store: userPublix,
+	testFoodItem2 := BackendPkg.FoodItem{
+		Name:        "jelly",
+		StoreCost:   1.0,
+		OnSale:      false,
+		SaleDetails: "N/A",
+		Quantity:    30,
 	}
-	runScraper := true
-	if runScraper {
-		// create new groccery store
-		/*userPublix := BackendPkg.GroceryStore{
-			Name:    "Publix",
-			ZipCode: "32601",
-		}
-
-		// setup user groccery store
-		programScraper := BackendPkg.Scraper{
-			Store: userPublix,
-		}*/
-
-		// scrape all data
-		programScraper.Scrape()
-
-		// print unparsed data
-		//fmt.Println(programScraper.DealsHTML)
-
-		// Takes 48634 'Words' to get to the first items name...
-		// Testing to see if we can grab the name and deal from the function 
-		//testFoodSlice = programScraper.Store.OrganizeDeals(programScraper.DealsHTML, 48634)
-		fmt.Println("Finished")
-
-		//Print the scraper data
-		//fmt.Println(programScraper.DealsHTML)
+	testFoodItem3 := BackendPkg.FoodItem{
+		Name:        "bread",
+		StoreCost:   10.69,
+		OnSale:      true,
+		SaleDetails: "$2 for 2",
+		Quantity:    2,
 	}
-
-	testFoodSlice := programScraper.Store.OrganizeDeals(programScraper.DealsHTML, 48640)
+	testUserFoodSlice := []BackendPkg.FoodItem{testFoodItem, testFoodItem2, testFoodItem3}
 
 	// test database
 	testDatabase := BackendPkg.Database{
 		Name: "MealDealz Database",
 	}
-	// store publix data to .db file
-	testDatabase.StorePublixDatabase(testFoodSlice)
 
 	// create a test user and store their pantry
 	testUser := BackendPkg.User{
@@ -89,24 +45,115 @@ func main(){
 		UserName: "Eddiefye69",
 		Password: "ILoveGraham420",
 		UserPantry: BackendPkg.Pantry{
-			FoodInPantry: testFoodSlice,
+			FoodInPantry: testUserFoodSlice,
 			TimeLastUpdated: time.Now(),
 		},
 	}
+
+	testUserTwo := BackendPkg.User{
+		FirstName: "Sam",
+		LastName: "Forsnot",
+		Email: "samuel@gmail.com",
+		UserName: "SameHatesBigWordsXXX",
+		Password: "ILoveJess420",
+		UserPantry: BackendPkg.Pantry{
+			FoodInPantry: testUserFoodSlice,
+			TimeLastUpdated: time.Now(),
+		},
+	}
+
+	// store Eddie
 	testDatabase.StoreUserDatabase(testUser)
 	testDatabase.StoreUserPantry(testUser)
 
+	// store Eddie version of Sam
+	testDatabase.StoreUserDatabase(testUserTwo)
+	testDatabase.StoreUserPantry(testUserTwo)
+
+	// runs scraper if new deals at publix
+	CheckIfScrapeNewDeals(testDatabase)
+	
+	// routs deals to deals page
+	go RoutWeeklyDeals(testDatabase)
+
+	// routs Eddie's pantry
+	RoutUserPantry(testDatabase, testUser)
+ 
+}
+
+func RoutUserPantry(d BackendPkg.Database, u BackendPkg.User){
+	
 	// read from .db file and output test user's pantry to frontend
 	var testFoodInterface []interface{}
-	for i := 0; i < len(testDatabase.GetUserPantry(testUser.UserName).FoodInPantry); i++{
-		testFoodInterface = append(testFoodInterface, testDatabase.GetUserPantry(testUser.UserName).FoodInPantry[i])
+	for i := 0; i < len(d.GetUserPantry(u.UserName).FoodInPantry); i++{
+		testFoodInterface = append(testFoodInterface, d.GetUserPantry(u.UserName).FoodInPantry[i])
 	}
-
 	// test router
 	programRouter := BackendPkg.Router{
 		Name:             "testRouter",
 		ItemsToBeEncoded: testFoodInterface,
 	}
-	programRouter.Rout()
+	programRouter.Rout("/api/Pantry", ":8080")
+}
 
+func CheckIfScrapeNewDeals(d BackendPkg.Database){
+
+	// Set the location to Eastern Standard Time (EST)
+	est, _ := time.LoadLocation("America/New_York")
+
+	// Get the current time in EST
+	now := time.Now().In(est)
+
+	// Get the previous Thursday at 8am EST
+	previousThursday := now.AddDate(0, 0, -int(now.Weekday()+3)%7)
+	previousThursday8am := time.Date(previousThursday.Year(), previousThursday.Month(), previousThursday.Day(), 8, 0, 0, 0, est)
+
+	// Check if scrapeTime occurred before the previous Thursday at 8am EST
+	if d.ReadDealsScrapedTime().In(est).Before(previousThursday8am) {
+
+		// deletes old weekly deals from .db file
+		d.ClearPublixDeals()
+
+		userPublix := BackendPkg.GroceryStore{
+			Name:    "Publix",
+			ZipCode: "32601",
+		}
+		// setup user groccery store
+		programScraper := BackendPkg.Scraper{
+			Store: userPublix,
+		}
+		// scrape all data
+		programScraper.Scrape()
+
+		// print unparsed data
+		//fmt.Println(programScraper.DealsHTML)
+
+		// Takes 48634 'Words' to get to the first items name...
+		// Testing to see if we can grab the name and deal from the function 
+		fmt.Println("Finished Scraping")
+
+		//Print the scraper data
+		//fmt.Println(programScraper.DealsHTML)
+
+		testFoodSlice := programScraper.Store.OrganizeDeals(programScraper.DealsHTML, 48640)
+		
+		// store publix data to .db file
+		d.StorePublixDatabase(testFoodSlice)
+		d.StoreDealsScrapedTime(programScraper.TimeLastDealsScraped)
+	}
+}
+
+func RoutWeeklyDeals(d BackendPkg.Database){
+	
+	// read from .db file and output test user's pantry to frontend
+	var testFoodInterface []interface{}
+	for i := 0; i < len(d.ReadPublixDatabase()); i++{
+		testFoodInterface = append(testFoodInterface, d.ReadPublixDatabase()[i])
+	}
+	// test router
+	programRouter := BackendPkg.Router{
+		Name:             "testRouter",
+		ItemsToBeEncoded: testFoodInterface,
+	}
+	programRouter.Rout("/api/Deals", ":8080")
 }
