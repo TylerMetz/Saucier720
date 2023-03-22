@@ -131,3 +131,44 @@ func (d *Database) GetUserPantry(userName string) Pantry {
 
     return pantry
 }
+
+func (d *Database) ClearPublixDeals(){
+	// open the database
+	database := d.OpenDatabase()
+
+	// delete the deals table if it exists
+	database.Exec("DROP TABLE IF EXISTS PublixData")
+
+	// delete the deals scraped time if it exists
+	database.Exec("DROP TABLE IF EXISTS DealsScrapedTime")
+}
+
+func (d* Database) StoreDealsScrapedTime(t time.Time){
+	// calls function to open the database
+	database := d.OpenDatabase()
+
+	// make table for user data
+	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS DealsScrapedTime (DealsLastScraped DATETIME)")
+	statement.Exec();
+
+	// insert into UserData table
+	statementTwo, _ := database.Prepare("INSERT INTO DealsScrapedTime (DealsLastScraped) VALUES (?)")
+
+	// store data from this user into table
+	statementTwo.Exec(t.Format("2006-01-02 15:04:05"))
+}
+
+func (d *Database) ReadDealsScrapedTime() time.Time {
+	// calls function to open the database
+	database := d.OpenDatabase()
+
+	// make a query to return the last scrape time value
+	row := database.QueryRow("SELECT DealsLastScraped FROM DealsScrapedTime")
+	var dealsLastScrapedStr string
+	row.Scan(&dealsLastScrapedStr)
+
+	// Parse the datetime string into a time.Time object
+	dealsLastScraped, _ := time.Parse("2006-01-02 15:04:05", dealsLastScrapedStr)
+
+	return dealsLastScraped
+}
