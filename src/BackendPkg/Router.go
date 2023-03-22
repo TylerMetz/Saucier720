@@ -14,11 +14,11 @@ type Router struct {
 	ItemsToBeEncoded []interface{}
 }
 
-func (t *Router) Rout() {
+func (t *Router) Rout(endLink string, port string) {
 
 	// creates new router
 	route := mux.NewRouter()
-	route.HandleFunc("/api/Pantry", t.sendResponse).Methods("GET")
+	route.HandleFunc(endLink, t.sendResponse).Methods("GET")
 
 	// enables alternate hosts for CORS
 	c := cors.New(cors.Options{
@@ -28,7 +28,7 @@ func (t *Router) Rout() {
 
 	// log.Println("Listening...")
 	handler := c.Handler(route)
-	http.ListenAndServe(":8080", handler)
+	http.ListenAndServe(port, handler)
 }
 
 func (t *Router) sendResponse(response http.ResponseWriter, request *http.Request) {
