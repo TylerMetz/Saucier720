@@ -51,9 +51,9 @@ func main(){
 	}
 
 	testUserTwo := BackendPkg.User{
-		FirstName: "Eddie",
-		LastName: "Menello",
-		Email: "Edward@gmail.com",
+		FirstName: "Sam",
+		LastName: "Forsnot",
+		Email: "samuel@gmail.com",
 		UserName: "SameHatesBigWordsXXX",
 		Password: "ILoveJess420",
 		UserPantry: BackendPkg.Pantry{
@@ -62,17 +62,22 @@ func main(){
 		},
 	}
 
+	// store Eddie
 	testDatabase.StoreUserDatabase(testUser)
 	testDatabase.StoreUserPantry(testUser)
 
+	// store Eddie version of Sam
 	testDatabase.StoreUserDatabase(testUserTwo)
 	testDatabase.StoreUserPantry(testUserTwo)
 
+	// runs scraper if new deals at publix
 	CheckIfScrapeNewDeals(testDatabase)
-	//fmt.Println(testDatabase.ReadDealsScrapedTime().Format("2006-01-02 15:04:05"))
 	
-	RoutWeeklyDeals(testDatabase)
-	go RoutUserPantry(testDatabase, testUser)
+	// routs deals to deals page
+	go RoutWeeklyDeals(testDatabase)
+
+	// routs Eddie's pantry
+	RoutUserPantry(testDatabase, testUser)
  
 }
 
@@ -93,16 +98,18 @@ func RoutUserPantry(d BackendPkg.Database, u BackendPkg.User){
 
 func CheckIfScrapeNewDeals(d BackendPkg.Database){
 
-	// Get the current time in the EST timezone
-	loc, _ := time.LoadLocation("America/New_York")
-	now := time.Now().In(loc)
+	// Set the location to Eastern Standard Time (EST)
+	est, _ := time.LoadLocation("America/New_York")
 
-	// Calculate the previous Thursday at 8am EST
-	prevThursday := now.Add(-time.Duration(now.Weekday()-time.Thursday-7) * 24 * time.Hour)
-	prevThursday8am := time.Date(prevThursday.Year(), prevThursday.Month(), prevThursday.Day(), 8, 0, 0, 0, loc)
+	// Get the current time in EST
+	now := time.Now().In(est)
 
-	// check if the scrape time was before the most recent thursday at 8am EST, rescrape if so
-	if d.ReadDealsScrapedTime().Before(prevThursday8am) {
+	// Get the previous Thursday at 8am EST
+	previousThursday := now.AddDate(0, 0, -int(now.Weekday()+3)%7)
+	previousThursday8am := time.Date(previousThursday.Year(), previousThursday.Month(), previousThursday.Day(), 8, 0, 0, 0, est)
+
+	// Check if scrapeTime occurred before the previous Thursday at 8am EST
+	if d.ReadDealsScrapedTime().In(est).Before(previousThursday8am) {
 
 		// deletes old weekly deals from .db file
 		d.ClearPublixDeals()
