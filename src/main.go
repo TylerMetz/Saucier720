@@ -49,10 +49,27 @@ func main(){
 			TimeLastUpdated: time.Now(),
 		},
 	}
+
+	testUserTwo := BackendPkg.User{
+		FirstName: "Eddie",
+		LastName: "Menello",
+		Email: "Edward@gmail.com",
+		UserName: "SameHatesBigWordsXXX",
+		Password: "ILoveJess420",
+		UserPantry: BackendPkg.Pantry{
+			FoodInPantry: testUserFoodSlice,
+			TimeLastUpdated: time.Now(),
+		},
+	}
+
 	testDatabase.StoreUserDatabase(testUser)
 	testDatabase.StoreUserPantry(testUser)
 
+	testDatabase.StoreUserDatabase(testUserTwo)
+	testDatabase.StoreUserPantry(testUserTwo)
+
 	CheckIfScrapeNewDeals(testDatabase)
+	//fmt.Println(testDatabase.ReadDealsScrapedTime().Format("2006-01-02 15:04:05"))
 	
 	RoutWeeklyDeals(testDatabase)
 	go RoutUserPantry(testDatabase, testUser)
@@ -83,8 +100,6 @@ func CheckIfScrapeNewDeals(d BackendPkg.Database){
 	// Calculate the previous Thursday at 8am EST
 	prevThursday := now.Add(-time.Duration(now.Weekday()-time.Thursday-7) * 24 * time.Hour)
 	prevThursday8am := time.Date(prevThursday.Year(), prevThursday.Month(), prevThursday.Day(), 8, 0, 0, 0, loc)
-	
-	// fmt.Println(d.ReadDealsScrapedTime().Format("2006-01-02 15:04:05"))
 
 	// check if the scrape time was before the most recent thursday at 8am EST, rescrape if so
 	if d.ReadDealsScrapedTime().Before(prevThursday8am) {

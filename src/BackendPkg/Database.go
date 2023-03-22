@@ -148,7 +148,7 @@ func (d* Database) StoreDealsScrapedTime(t time.Time){
 	database := d.OpenDatabase()
 
 	// make table for user data
-	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS DealsScrapedTime (DealsLastScraped DATETIME)")
+	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS DealsScrapedTime (DealsLastScraped DATETIME PRIMARY KEY)")
 	statement.Exec();
 
 	// insert into UserData table
@@ -168,7 +168,7 @@ func (d *Database) ReadDealsScrapedTime() time.Time {
 	row.Scan(&dealsLastScrapedStr)
 
 	// Parse the datetime string into a time.Time object
-	dealsLastScraped, _ := time.Parse("2006-01-02 15:04:05", dealsLastScrapedStr)
+	dealsLastScraped, _ := time.Parse(time.RFC3339, dealsLastScrapedStr)
 
 	return dealsLastScraped
 }
