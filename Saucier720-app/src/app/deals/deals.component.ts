@@ -1,24 +1,25 @@
 import { HttpEvent, HttpEventType } from "@angular/common/http"
 import { Component, OnInit } from '@angular/core';
-import { PantryService } from '../core/services/pantry/pantry.service';
+import { DealsService } from "../core/services/deals/deals.service";
 
 
 @Component({
   selector: 'app-deals',
   templateUrl: './deals.component.html',
+  providers: [DealsService],
   styleUrls: ['./deals.component.scss']
 })
 export class DealsComponent implements OnInit{
   pantry: any;
 
-  constructor(private pantryService: PantryService) { }
+  constructor(private dealsService: DealsService) { }
 
   ngOnInit(){
     this.populatePantry();
   }
 
   populatePantry(): void {
-    this.pantryService.getPantry()
+    this.dealsService.getPantry()
       .subscribe((event: HttpEvent<any>) => {
         switch(event.type) {
           case HttpEventType.Sent:
