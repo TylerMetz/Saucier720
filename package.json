@@ -1,0 +1,19 @@
+{
+  "name": "saucier720",
+  "version": "1.0.0",
+  "description": "1. Tyler Metz\r 2. Edward Menello\r ## Backend Engineers\r 1. Sam Forstot\r 2. Riley Cleavenger",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TylerMetz/Saucier720.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TylerMetz/Saucier720/issues"
+  },
+  "homepage": "https://github.com/TylerMetz/Saucier720#readme"
+}
