@@ -155,5 +155,5 @@ func RoutWeeklyDeals(d BackendPkg.Database){
 		Name:             "testRouter",
 		ItemsToBeEncoded: testFoodInterface,
 	}
-	programRouter.Rout("/api/Deals", ":8080")
+	programRouter.Rout("/api/Deals", ":8081")
 }
