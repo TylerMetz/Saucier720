@@ -9,18 +9,22 @@ import { PantryService } from 'src/app/core/services/pantry/pantry.service';
     <table class="table table-striped table-bordered">
       <thead>
         <tr>
-          <th>Food Name</th>
+          <th>Ingredients</th>
           <th>Cost</th>
+          <th>On Sale</th>
           <th>Sale Price</th>
           <th>Sale Info</th>
+          <th>Quantity</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let ingredient of pantry">
           <td>{{ ingredient.Name }}</td>
           <td>{{ ingredient.StoreCost }}</td>
+          <td>{{ ingredient.OnSale }}</td>
           <td>{{ ingredient.SalePrice }}</td>
           <td>{{ ingredient.SaleDetails }}</td>
+          <td>{{ ingredient.Quantity }}</td>
         </tr>
       </tbody>
     </table>
