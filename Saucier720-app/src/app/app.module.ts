@@ -5,13 +5,15 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule, routingComponents } from './app-routing.module';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
+import { DealsTableComponent } from './deals/FEC/deals-table/deals-table.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     routingComponents,
     LoginComponent,
-    SignupComponent
+    SignupComponent,
+    DealsTableComponent
   ],
   imports: [
     AppRoutingModule,
