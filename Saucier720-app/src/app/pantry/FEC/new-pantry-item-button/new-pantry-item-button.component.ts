@@ -5,7 +5,7 @@ import { PantryService } from 'src/app/core/services/pantry/pantry.service';
 
 @Component({
   selector: 'app-new-pantry-item-button',
-  template: '<button (click)="postPantryItem()">Post</button>',
+  templateUrl: './new-pantry-item-button.component.html',
   providers: [PantryService]
 })
 
