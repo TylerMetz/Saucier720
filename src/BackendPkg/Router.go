@@ -67,7 +67,15 @@ func (t *Router) Listen(endLink string, port string) {
 func (t *Router) sendPostResponse(response http.ResponseWriter, request *http.Request) {
 	fmt.Println("Received a POST request")
 
+	jsonResponse, jsonError := json.Marshal(t.ItemsToBeEncoded) //currently returning all items from the database
+
+	if jsonError != nil {
+		fmt.Println("Unable to encode JSON")
+	}
+
     // Set the response status code to 200
+	response.Header().Set("Content-Type", "application/json")
     response.WriteHeader(http.StatusOK)
+	response.Write(jsonResponse)
 }
 
