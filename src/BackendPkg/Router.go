@@ -45,3 +45,37 @@ func (t *Router) sendResponse(response http.ResponseWriter, request *http.Reques
 	response.WriteHeader(http.StatusOK)
 	response.Write(jsonResponse)
 }
+
+func (t *Router) Listen(endLink string, port string) {
+
+    // creates new router
+    route := mux.NewRouter()
+    route.HandleFunc(endLink, t.sendPostResponse).Methods("POST")
+
+    // enables alternate hosts for CORS
+    c := cors.New(cors.Options{
+        AllowedOrigins:   []string{"http://localhost:4200"},
+        AllowCredentials: true,
+    })
+
+    // log.Println("Listening...")
+    handler := c.Handler(route)
+    http.ListenAndServe(port, handler)
+
+}
+
+func (t *Router) sendPostResponse(response http.ResponseWriter, request *http.Request) {
+	fmt.Println("Received a POST request")
+
+	jsonResponse, jsonError := json.Marshal(t.ItemsToBeEncoded) //currently returning all items from the database
+
+	if jsonError != nil {
+		fmt.Println("Unable to encode JSON")
+	}
+
+    // Set the response status code to 200
+	response.Header().Set("Content-Type", "application/json")
+    response.WriteHeader(http.StatusOK)
+	response.Write(jsonResponse)
+}
+

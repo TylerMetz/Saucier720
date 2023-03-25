@@ -77,8 +77,10 @@ func main(){
 	go RoutWeeklyDeals(testDatabase)
 
 	// routs Eddie's pantry
-	RoutUserPantry(testDatabase, testUser)
- 
+	go RoutUserPantry(testDatabase, testUser)
+
+	
+	ListenForPost(testDatabase);
 }
 
 func RoutUserPantry(d BackendPkg.Database, u BackendPkg.User){
@@ -156,4 +158,16 @@ func RoutWeeklyDeals(d BackendPkg.Database){
 		ItemsToBeEncoded: testFoodInterface,
 	}
 	programRouter.Rout("/api/Deals", ":8081")
+}
+
+func ListenForPost(d BackendPkg.Database){
+	var testFoodInterface2 []interface{}
+	for i := 0; i < len(d.ReadPublixDatabase()); i++{
+		testFoodInterface2 = append(testFoodInterface2, d.ReadPublixDatabase()[i])
+	}
+	programRouter2 := BackendPkg.Router{
+		Name:             "testRouter",
+		ItemsToBeEncoded: testFoodInterface2,
+	}
+	programRouter2.Listen("/api/NewPantryItem", ":8082")
 }
