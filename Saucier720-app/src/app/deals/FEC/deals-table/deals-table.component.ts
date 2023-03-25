@@ -6,7 +6,7 @@ import { DealsService } from 'src/app/core/services/deals/deals.service';
   selector: 'app-deals-table',
   providers: [DealsService],
   template: `
-    <table>
+    <table class="table table-striped table-bordered">
       <thead>
         <tr>
           <th>Food Name</th>
@@ -17,8 +17,8 @@ import { DealsService } from 'src/app/core/services/deals/deals.service';
       </thead>
       <tbody>
         <tr *ngFor="let ingredient of pantry">
-          <td>{{ ingredient.StoreCost }}</td>
           <td>{{ ingredient.Name }}</td>
+          <td>{{ ingredient.StoreCost }}</td>
           <td>{{ ingredient.SalePrice }}</td>
           <td>{{ ingredient.SaleDetails }}</td>
         </tr>
