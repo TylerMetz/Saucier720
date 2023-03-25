@@ -7,6 +7,7 @@ import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
 import { DealsTableComponent } from './deals/FEC/deals-table/deals-table.component';
 import { PantryTableComponent } from './pantry/FEC/pantry-table/pantry-table.component';
+import { NewPantryItemButtonComponent } from './pantry/FEC/new-pantry-item-button/new-pantry-item-button.component';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { PantryTableComponent } from './pantry/FEC/pantry-table/pantry-table.com
     LoginComponent,
     SignupComponent,
     DealsTableComponent,
-    PantryTableComponent
+    PantryTableComponent,
+    NewPantryItemButtonComponent
   ],
   imports: [
     AppRoutingModule,
