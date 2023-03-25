@@ -6,7 +6,7 @@ import { DealsService } from 'src/app/core/services/deals/deals.service';
   selector: 'app-deals-table',
   providers: [DealsService],
   template: `
-    <table class="table table-striped table-bordered">
+    <table class="table w-100 table-striped table-bordered">
       <thead>
         <tr>
           <th>Food Name</th>
