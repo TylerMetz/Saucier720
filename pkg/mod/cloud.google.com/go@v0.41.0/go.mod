@@ -14,10 +14,10 @@ require (
 	go.opencensus.io v0.22.0
 	golang.org/x/exp v0.0.0-20190510132918-efd6b22b2522
 	golang.org/x/lint v0.0.0-20190409202823-959b441ac422
-	golang.org/x/net v0.0.0-20220722155237-a158d28d115b
+	golang.org/x/net v0.7.0
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
 	golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4
-	golang.org/x/text v0.3.8
+	golang.org/x/text v0.7.0
 	golang.org/x/time v0.0.0-20190308202827-9d24e82272b4
 	golang.org/x/tools v0.1.12
 	google.golang.org/api v0.7.0
