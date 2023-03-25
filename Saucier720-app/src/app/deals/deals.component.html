@@ -1,36 +1,6 @@
 <div class="page">
     <div class="page-body">
-        <div class="row">
-            <div class="col">
-                <h2 class ="list-header">Ingredient</h2>
-                <ul class="list">
-                    <li class="list__item" *ngFor="let ingredient of pantry">
-                        {{ ingredient.Name }}
-                </li>
-            </ul>
-        </div>
-            <div class="col">
-                <h2 class ="list-header">Cost</h2>
-                <ul class="list"> 
-                    <li class="list__item" *ngFor="let ingredient of pantry">
-                        {{ ingredient.StoreCost }}
-                    </li>
-                </ul>
-            </div>
-            <div class="col">
-                <h2 class ="list-header">Sale Price</h2>
-                <ul class="list"> 
-                    <li class="list__item" *ngFor="let ingredient of pantry">
-                        {{ ingredient.SalePrice }}
-                    </li>
-                </ul></div>
-            <div class="col">
-                <h2 class ="list-header">Sale Info</h2>
-                <ul class="list"> 
-                    <li class="list__item" *ngFor="let ingredient of pantry">
-                        {{ ingredient.SaleDetails }}
-                    </li>
-                </ul></div>
-          </div>
+        <app-deals-table>
+        </app-deals-table>
     </div>
 </div>
