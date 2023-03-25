@@ -24,6 +24,26 @@
     background-color: #04AA6D;
     color: white;
   }
+
+  .topnav b {
+    float: right;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+  }
+
+  .topnav b:hover {
+    background-color: #ddd;
+    color: black;
+  }
+  
+  /* Add a color to the active/current link */
+  .topnav b.active {
+    background-color: #04AA6D;
+    color: white;
+  }
   
   .list-header {
     display: flex;
