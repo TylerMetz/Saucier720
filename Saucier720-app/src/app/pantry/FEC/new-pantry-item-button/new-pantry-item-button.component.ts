@@ -1,19 +1,34 @@
 import { Component } from '@angular/core';
-import { HttpClient, HttpRequest } from '@angular/common/http';
+import { HttpClient, HttpEvent } from '@angular/common/http';
+import { PantryService } from 'src/app/core/services/pantry/pantry.service';
+
 
 @Component({
   selector: 'app-new-pantry-item-button',
-  template: '<button (click)="postPantryItem()">Submit</button>',
+  template: '<button (click)="postPantryItem()">Post</button>',
+  providers: [PantryService]
 })
+
 export class NewPantryItemButtonComponent {
-  pantryPostUrl = 'http://localhost:8082/api/NewPantryItem'
+  pantryPostUrl = 'http://localhost:8082/api/NewPantryItem';
 
-  constructor(private http: HttpClient) { }
+  constructor(private pantryService: PantryService) { }
 
-  postPantryItem() {
-    const req = new HttpRequest('POST', this.pantryPostUrl, { 
-      reportProgress: true
-    });
+postPantryItem() {
+  const itemData = {
+    name: 'New Item',
+    quantity: 1,
+    category: 'Other'
+  };
+  this.pantryService.postPantryItem(itemData)
+    .subscribe(
+      response => {
+        console.log(response);
+      },
+      error => {
+        console.error(error);
+      }
+    );
+}
 
-  }
 }
