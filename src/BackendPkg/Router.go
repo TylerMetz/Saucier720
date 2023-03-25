@@ -84,6 +84,7 @@ func (t *Router) sendPostResponse(response http.ResponseWriter, request *http.Re
 
     // Do something with the ingredient struct, e.g. store it in a database
     fmt.Println(newFoodItem.Name)
+	//InsertPantryItemPost() -- insert into backend database
 
     // Return a 200 OK response
     response.WriteHeader(http.StatusOK)
