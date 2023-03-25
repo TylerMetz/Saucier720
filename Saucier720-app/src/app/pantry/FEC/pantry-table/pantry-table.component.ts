@@ -5,32 +5,7 @@ import { PantryService } from 'src/app/core/services/pantry/pantry.service';
 @Component({
   selector: 'app-pantry-table',
   providers: [PantryService],
-  template: `
-  <div class="table-responsive">
-    <table class="table w-100 table-striped table-bordered">
-      <thead>
-        <tr>
-          <th>Ingredients</th>
-          <th>Cost</th>
-          <th>On Sale</th>
-          <th>Sale Price</th>
-          <th>Sale Info</th>
-          <th>Quantity</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let ingredient of pantry">
-          <td>{{ ingredient.Name }}</td>
-          <td>{{ ingredient.StoreCost }}</td>
-          <td>{{ ingredient.OnSale }}</td>
-          <td>{{ ingredient.SalePrice }}</td>
-          <td>{{ ingredient.SaleDetails }}</td>
-          <td>{{ ingredient.Quantity }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  `
+  templateUrl: './pantry-table.component.html',
 })
 export class PantryTableComponent implements OnInit {
 
