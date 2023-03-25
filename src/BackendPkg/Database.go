@@ -60,10 +60,6 @@ func (d* Database) ReadPublixDatabase() []FoodItem{
 
 func (d *Database) StoreUserDatabase (u User){
 
-	testDatabase := Database{
-		Name: "MealDealz Database",
-	}
-
 	// calls function to open the database
 	database := d.OpenDatabase()
 
@@ -82,7 +78,7 @@ func (d *Database) StoreUserDatabase (u User){
 func StoreUserPantry (u User){
 
 	// calls function to open the database
-	database := d.OpenDatabase()
+	database := d.OpenDatabase() // need to open database
 
 	// make table for food item data
 	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS UserPantries (UserName TEXT, PantryLastUpdated DATETIME, Name TEXT, StoreCost REAL, OnSale INTEGER, SalePrice REAL, SaleDetails TEXT, Quantity INTEGER, PRIMARY KEY (UserName, Name))")
