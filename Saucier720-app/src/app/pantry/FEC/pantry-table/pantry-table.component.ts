@@ -6,7 +6,8 @@ import { PantryService } from 'src/app/core/services/pantry/pantry.service';
   selector: 'app-pantry-table',
   providers: [PantryService],
   template: `
-    <table class="table table-striped table-bordered">
+  <div class="table-responsive">
+    <table class="table w-100 table-striped table-bordered">
       <thead>
         <tr>
           <th>Ingredients</th>
@@ -28,6 +29,7 @@ import { PantryService } from 'src/app/core/services/pantry/pantry.service';
         </tr>
       </tbody>
     </table>
+  </div>
   `
 })
 export class PantryTableComponent implements OnInit {
