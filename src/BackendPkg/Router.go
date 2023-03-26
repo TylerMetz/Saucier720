@@ -86,6 +86,12 @@ func (t *Router) sendPostResponse(response http.ResponseWriter, request *http.Re
     fmt.Println(newFoodItem.Name)
 	//InsertPantryItemPost() -- insert into backend database
 
+    testDatabase := Database{
+		Name: "MealDealz Database",
+	}
+
+    testDatabase.InsertPantryItemPost(newFoodItem)
+
     // Return a 200 OK response
     response.WriteHeader(http.StatusOK)
 }

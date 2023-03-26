@@ -75,7 +75,7 @@ func (d *Database) StoreUserDatabase (u User){
 	
 }
 
-func StoreUserPantry (u User){
+func (d *Database) StoreUserPantry (u User){
 
 	// calls function to open the database
 	database := d.OpenDatabase() // need to open database
