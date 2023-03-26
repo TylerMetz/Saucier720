@@ -169,5 +169,5 @@ func ListenForPost(d BackendPkg.Database){
 		Name:             "testRouter",
 		ItemsToBeEncoded: testFoodInterface2,
 	}
-	programRouter2.Listen("/api/NewPantryItem", ":8082", d)
+	programRouter2.Listen("/api/NewPantryItem", ":8082") //should pass in database here
 }
