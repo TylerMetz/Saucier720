@@ -87,3 +87,36 @@
     ```
 <br>
 
+## Deals Database Testing
+- In order to test if the scraped deals are being written and read correctly to and from the SQL database we setup up `func TestFour()` in the `DealsDb_test.go` file
+  <br>
+- **How to Test:**
+  **1.** In the command line naviagte to the `src` folder:
+   ```
+   $ cd Saucier720/src/TestingFiles
+   ```
+  **2.** Run the test function:
+   ```
+   $ go test DealsDb_test.go
+   ```
+   <br>
+-  If the test <span style = "color:green"> <b>passed</b> </span> the following code block should be returned:
+    ```
+    ok  	command-line-arguments	143.874s
+    ```
+- If the test <span style = "color:red"> <b>failed</b> </span> one of the following code blocks should be returned:
+    ```
+    --- FAIL: TestFour (153.804s)
+    DealsDb_test.go:39: Scrape times don't match.
+    FAIL
+    FAIL	command-line-arguments	153.804s
+    FAIL
+    ```
+    ```
+    --- FAIL: TestFour (135.878s)
+    DealsDb_test.go:45: Failed to return item #_ correctly.
+    FAIL
+    FAIL	command-line-arguments	135.878s
+    FAIL
+    ```
+<br>
