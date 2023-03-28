@@ -117,6 +117,8 @@ func (g *GroceryStore) OrganizeDeals(deals string) []FoodItem {
 	//fmt.Print(count)
 	// Once it consistently works, must add each item into the inventory 
 	// Push to database after 
+	// Cleaning up edge case
+	dealSlice = dealSlice[1:]
 	return dealSlice
 }
 
