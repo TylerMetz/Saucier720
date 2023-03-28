@@ -2,6 +2,7 @@ package main
 
 import (
 	"BackendPkg"
+	_"fmt"
 	"testing"
 	"time"
 )
@@ -63,7 +64,10 @@ func TestThree(t *testing.T){
 		}
 	}
 
-	
+	returnUser := testingDatabase.ReadUserDatabase("SameHatesBigWordsXXX")
+	if(returnUser.Email != "samuel@gmail.com" || returnUser.FirstName != "Sam" || returnUser.LastName != "Forstot" || returnUser.UserName != "SameHatesBigWordsXXX" || returnUser.Password != "ILoveJess420"){
+		t.Errorf("User data does not match")
+	}
 }
 
 
