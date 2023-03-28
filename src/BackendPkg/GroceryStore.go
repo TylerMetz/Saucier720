@@ -36,14 +36,14 @@ func (g * GroceryStore) FindStart(phrase, s string) (string) {
     return s[i:]
 }
 
-func (g *GroceryStore) OrganizeDeals(deals string, start int) []FoodItem {
+func (g *GroceryStore) OrganizeDeals(deals string) []FoodItem {
 	// testing to see what the string reads as 'words'
 	words := strings.Fields(deals)
-	newRange := words[start : len(words)-1]
+	newRange := words[0 : len(words)-1]
 	//count := 0
 	var name string
 	var deal string
-	newStart := start
+	newStart := 0
 	var countHelp int
 	dealSlice := make([]FoodItem, 0)
 
