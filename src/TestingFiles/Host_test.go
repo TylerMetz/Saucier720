@@ -45,7 +45,7 @@ func TestOne(t *testing.T) {
 	}
 
 	// display item on port in background
-	go testRouter.Rout()
+	go testRouter.Rout("/testing","8080")
 
 	//pull data from local host port
 	resp, err := http.Get("http://localhost:8080/api/Pantry")

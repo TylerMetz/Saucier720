@@ -77,6 +77,9 @@ func (g *GroceryStore) OrganizeDeals(deals string, start int) []FoodItem {
 		if(name == "Paper Coupon"){
 			break
 		}
+		// need to check for interesting deals and clean them into their own spot 
+		//bigDeal := strings.Fields(name)
+		//if()
 	
 		// find next starting point
 		for i:= 0; i < len(newRange); i++ {
