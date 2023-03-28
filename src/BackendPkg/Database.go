@@ -1,31 +1,32 @@
 package BackendPkg
 
 import (
-    "database/sql"
-    _"github.com/mattn/go-sqlite3"
+	"database/sql"
 	"time"
+
+	_ "github.com/mattn/go-sqlite3"
 	//"fmt"
 )
 
-type Database struct{
+type Database struct {
 	Name string
 }
 
 // initializes application database file
-func (d *Database) OpenDatabase() *sql.DB{
+func (d *Database) OpenDatabase() *sql.DB {
 	database, _ := sql.Open("sqlite3", "./MealDealz.db")
 	return database
 }
 
 // need to pass in the inventory slice from the grocery store item
-func (d *Database) StorePublixDatabase (f []FoodItem){
+func (d *Database) StorePublixDatabase(f []FoodItem) {
 
 	// calls function to open the database
 	database := d.OpenDatabase()
 
 	// make table for food item data
 	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS PublixData (Name TEXT PRIMARY KEY, StoreCost REAL, OnSale INTEGER, SalePrice REAL, SaleDetails TEXT, Quantity INTEGER)")
-	statement.Exec();
+	statement.Exec()
 
 	// insert into food item table
 	statementTwo, _ := database.Prepare("INSERT OR IGNORE INTO PublixData (Name, StoreCost, OnSale, SalePrice, SaleDetails, Quantity) VALUES (?, ?, ?, ?, ?, ?)")
@@ -35,7 +36,7 @@ func (d *Database) StorePublixDatabase (f []FoodItem){
 	}
 }
 
-func (d* Database) ReadPublixDatabase() []FoodItem{
+func (d *Database) ReadPublixDatabase() []FoodItem {
 	// calls function to open the database
 	database := d.OpenDatabase()
 
@@ -47,51 +48,57 @@ func (d* Database) ReadPublixDatabase() []FoodItem{
 	for rows.Next() {
 		var item FoodItem
 		rows.Scan(&item.Name, &item.StoreCost, &item.OnSale, &item.SalePrice, &item.SaleDetails, &item.Quantity)
-    	items = append(items, item)
+		items = append(items, item)
 	}
 
 	return items
 }
 
-func (d* Database) ReadUserDatabase(userName string) User{
+func (d *Database) ReadUserDatabase(userName string) User {
 	// return user data from a unique username
 	// used to validate password
 	database := d.OpenDatabase()
 
 	var returnUser User
 
-	row := database.QueryRow("SELECT FirstName, LastName, Email, UserName, Password FROM UserData WHERE UserName='%s'", userName)
+	stmt, err := database.Prepare("SELECT FirstName, LastName, Email, UserName, Password FROM UserData WHERE UserName=?")
+	if err != nil {
+		// handle error
+	}
+	defer stmt.Close()
+
+	row := stmt.QueryRow(userName)
 	row.Scan(&returnUser.FirstName, &returnUser.LastName, &returnUser.Email, &returnUser.UserName, &returnUser.Password)
 
 	return returnUser
-	
+
 }
 
-func (d *Database) StoreUserDatabase (u User){
+func (d *Database) StoreUserDatabase(u User) {
 
 	// calls function to open the database
 	database := d.OpenDatabase()
 
 	// make table for user data
 	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS UserData (FirstName TEXT, LastName TEXT, Email TEXT, UserName TEXT PRIMARY KEY, Password TEXT)")
-	statement.Exec();
+	statement.Exec()
 
 	// insert into UserData table
 	statementTwo, _ := database.Prepare("INSERT OR IGNORE INTO UserData (FirstName, LastName, Email, UserName, Password) VALUES (?, ?, ?, ?, ?)")
 
 	// store data from this user into table
 	statementTwo.Exec(u.FirstName, u.LastName, u.Email, u.UserName, u.Password)
-	
+
 }
 
-func (d *Database) StoreUserPantry (u User){
+func (d *Database) StoreUserPantry(u User) {
 
 	// calls function to open the database
 	database := d.OpenDatabase()
 
 	// make table for food item data
 	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS UserPantries (UserName TEXT, PantryLastUpdated DATETIME, Name TEXT, StoreCost REAL, OnSale INTEGER, SalePrice REAL, SaleDetails TEXT, Quantity INTEGER, PRIMARY KEY (UserName, Name))")
-	statement.Exec();
+	statement.Exec()
 
 	// insert into food item table
 	statementTwo, _ := database.Prepare("INSERT OR IGNORE INTO UserPantries (UserName, PantryLastUpdated, Name, StoreCost, OnSale, SalePrice, SaleDetails, Quantity) VALUES (?, datetime(?), ?, ?, ?, ?, ?, ?)")
@@ -102,46 +109,46 @@ func (d *Database) StoreUserPantry (u User){
 }
 
 func (d *Database) GetUserPantry(userName string) Pantry {
-    // calls function to open the database
-    database := d.OpenDatabase()
+	// calls function to open the database
+	database := d.OpenDatabase()
 
-    // query the database for the pantry data
-    rows, _ := database.Query("SELECT Name, StoreCost, OnSale, SalePrice, SaleDetails, Quantity, PantryLastUpdated FROM UserPantries WHERE UserName = ?", userName)
+	// query the database for the pantry data
+	rows, _ := database.Query("SELECT Name, StoreCost, OnSale, SalePrice, SaleDetails, Quantity, PantryLastUpdated FROM UserPantries WHERE UserName = ?", userName)
 
-    // create the pantry object
-    pantry := Pantry{
-        TimeLastUpdated: time.Now(),
-        FoodInPantry:    []FoodItem{},
-    }
+	// create the pantry object
+	pantry := Pantry{
+		TimeLastUpdated: time.Now(),
+		FoodInPantry:    []FoodItem{},
+	}
 
-    // loop through each row and add the food item to the pantry
-    for rows.Next() {
-        var name, saleDetails string
-        var storeCost, salePrice float64
+	// loop through each row and add the food item to the pantry
+	for rows.Next() {
+		var name, saleDetails string
+		var storeCost, salePrice float64
 		var onSale bool
-        var quantity int
-        var pantryLastUpdated string
-        if err := rows.Scan(&name, &storeCost, &onSale, &salePrice, &saleDetails, &quantity, &pantryLastUpdated); err != nil {
-            return Pantry{}
-        }
-        pantry.FoodInPantry = append(pantry.FoodInPantry, FoodItem{
-            Name:        name,
-            StoreCost:   storeCost,
-            OnSale:      onSale,
-            SalePrice:   salePrice,
-            SaleDetails: saleDetails,
-            Quantity:    quantity,
-        })
+		var quantity int
+		var pantryLastUpdated string
+		if err := rows.Scan(&name, &storeCost, &onSale, &salePrice, &saleDetails, &quantity, &pantryLastUpdated); err != nil {
+			return Pantry{}
+		}
+		pantry.FoodInPantry = append(pantry.FoodInPantry, FoodItem{
+			Name:        name,
+			StoreCost:   storeCost,
+			OnSale:      onSale,
+			SalePrice:   salePrice,
+			SaleDetails: saleDetails,
+			Quantity:    quantity,
+		})
 
-        // set the time last updated
-        pantry.TimeLastUpdated, _ = time.Parse("2006-01-02 15:04:05", pantryLastUpdated)
+		// set the time last updated
+		pantry.TimeLastUpdated, _ = time.Parse("2006-01-02 15:04:05", pantryLastUpdated)
 
-    }
+	}
 
-    return pantry
+	return pantry
 }
 
-func (d *Database) ClearPublixDeals(){
+func (d *Database) ClearPublixDeals() {
 	// open the database
 	database := d.OpenDatabase()
 
@@ -152,13 +159,13 @@ func (d *Database) ClearPublixDeals(){
 	database.Exec("DROP TABLE IF EXISTS DealsScrapedTime")
 }
 
-func (d* Database) StoreDealsScrapedTime(t time.Time){
+func (d *Database) StoreDealsScrapedTime(t time.Time) {
 	// calls function to open the database
 	database := d.OpenDatabase()
 
 	// make table for user data
 	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS DealsScrapedTime (DealsLastScraped DATETIME PRIMARY KEY)")
-	statement.Exec();
+	statement.Exec()
 
 	// insert into UserData table
 	statementTwo, _ := database.Prepare("INSERT INTO DealsScrapedTime (DealsLastScraped) VALUES (?)")
