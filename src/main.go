@@ -127,20 +127,17 @@ func CheckIfScrapeNewDeals(d BackendPkg.Database){
 		// scrape all data
 		programScraper.Scrape()
 
-		// print unparsed data
-		//fmt.Println(programScraper.DealsHTML[44000: 48000])
+		
 
-		// Takes 48634 'Words' to get to the first items name...
 		// Testing to see if we can grab the name and deal from the function 
 		fmt.Println("Finished Scraping")
 
 		newString := programScraper.Store.FindStart("view all results",(programScraper.DealsHTML))
-		fmt.Println(newString)
+		//Check to see what string actually looks like
+		//fmt.Println(newString)
+		
 
-		//Print the scraper data
-		//fmt.Println(programScraper.DealsHTML)
-
-		testFoodSlice := programScraper.Store.OrganizeDeals(programScraper.DealsHTML, 48640)
+		testFoodSlice := programScraper.Store.OrganizeDeals(newString)
 		
 		// store publix data to .db file
 		d.StorePublixDatabase(testFoodSlice)

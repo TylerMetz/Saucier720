@@ -27,8 +27,10 @@ func TestFour(t *testing.T){
 	// scrape all data
 	testScraper.Scrape()
 
+	newString := testScraper.Store.FindStart("view all results",(testScraper.DealsHTML))
+
 	// organize scraped data
-	testFoodSlice := testScraper.Store.OrganizeDeals(testScraper.DealsHTML, 48640)
+	testFoodSlice := testScraper.Store.OrganizeDeals(newString)
 	
 	// store publix data to .db file
 	testDatabase.StorePublixDatabase(testFoodSlice)
