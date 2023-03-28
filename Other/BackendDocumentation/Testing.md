@@ -26,7 +26,6 @@
     FAIL
     ```
 <br>
-
 ## Web Scraper Testing
 - In order to test if data was being correctly webscraped from the Publix website we setup up `func TestTwo()` in the `Scrape_test.go` file
   <br>
@@ -53,3 +52,38 @@
     FAIL
     ```
 <br>
+
+## User Database Testing
+- In order to test if user data was being written and read correctly to and from the SQL database we setup up `func TestThree()` in the `Db_test.go` file
+  <br>
+- **How to Test:**
+  **1.** In the command line naviagte to the `src` folder:
+   ```
+   $ cd Saucier720/src/TestingFiles
+   ```
+  **2.** Run the test function:
+   ```
+   $ go test Db_test.go
+   ```
+   <br>
+-  If the test <span style = "color:green"> <b>passed</b> </span> the following code block should be returned:
+    ```
+    ok  	command-line-arguments	0.424s
+    ```
+- If the test <span style = "color:red"> <b>failed</b> </span> one of the following code blocks should be returned:
+    ```
+    --- FAIL: TestThree (1.324s)
+    Db_test.go:57: Pantries do not match.
+    FAIL
+    FAIL	command-line-arguments	1.324s
+    FAIL
+    ```
+    ```
+    --- FAIL: TestThree (1.544s)
+    Db_test.go:69: User data does not match.
+    FAIL
+    FAIL	command-line-arguments	1.544s
+    FAIL
+    ```
+<br>
+
