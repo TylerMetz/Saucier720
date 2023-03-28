@@ -28,6 +28,14 @@ func (g *GroceryStore) DisplaySales() {
 	}
 }
 
+func (g * GroceryStore) FindStart(phrase, s string) (string) {
+    i := strings.Index(s, phrase)
+    if i == -1 {
+        return ""
+    }
+    return s[i:]
+}
+
 func (g *GroceryStore) OrganizeDeals(deals string, start int) []FoodItem {
 	// testing to see what the string reads as 'words'
 	words := strings.Fields(deals)
