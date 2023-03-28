@@ -140,7 +140,7 @@ func CheckIfScrapeNewDeals(d BackendPkg.Database){
 		//Print the scraper data
 		//fmt.Println(programScraper.DealsHTML)
 
-		testFoodSlice := programScraper.Store.OrganizeDeals(programScraper.DealsHTML, 48640)
+		testFoodSlice := programScraper.Store.OrganizeDeals(newString)
 		
 		// store publix data to .db file
 		d.StorePublixDatabase(testFoodSlice)
