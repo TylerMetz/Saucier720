@@ -128,11 +128,14 @@ func CheckIfScrapeNewDeals(d BackendPkg.Database){
 		programScraper.Scrape()
 
 		// print unparsed data
-		//fmt.Println(programScraper.DealsHTML)
+		//fmt.Println(programScraper.DealsHTML[44000: 48000])
 
 		// Takes 48634 'Words' to get to the first items name...
 		// Testing to see if we can grab the name and deal from the function 
 		fmt.Println("Finished Scraping")
+
+		newString := programScraper.Store.FindStart("view all results",(programScraper.DealsHTML))
+		fmt.Println(newString)
 
 		//Print the scraper data
 		//fmt.Println(programScraper.DealsHTML)
