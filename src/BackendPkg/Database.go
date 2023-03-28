@@ -53,10 +53,19 @@ func (d* Database) ReadPublixDatabase() []FoodItem{
 	return items
 }
 
-// func (d* Database) ReadUserDatabase(userName string) User{
-// 	// return user data from a unique username
-// 	// used to validate password
-// }
+func (d* Database) ReadUserDatabase(userName string) User{
+	// return user data from a unique username
+	// used to validate password
+	database := d.OpenDatabase()
+
+	var returnUser User
+
+	row := database.QueryRow("SELECT FirstName, LastName, Email, UserName, Password FROM UserData WHERE UserName='%s'", userName)
+	row.Scan(&returnUser.FirstName, &returnUser.LastName, &returnUser.Email, &returnUser.UserName, &returnUser.Password)
+
+	return returnUser
+	
+}
 
 func (d *Database) StoreUserDatabase (u User){
 
