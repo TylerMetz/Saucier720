@@ -18,7 +18,21 @@
 - [#132](https://github.com/TylerMetz/Saucier720/issues/132) - Create a User Data Struct
 
 ## Frontend Successes
-- 
+- [#83](https://github.com/TylerMetz/Saucier720/issues/83) - Create Deals Page
+- [#93](https://github.com/TylerMetz/Saucier720/issues/93) - Create login page
+- [#95](https://github.com/TylerMetz/Saucier720/issues/95) - Meet with Backend to see what they are planning to store so we can form a wireframe 
+- [#97](https://github.com/TylerMetz/Saucier720/issues/97) - Create wireframe for Deals Page
+- [#104](https://github.com/TylerMetz/Saucier720/issues/104) - Create dashboard Page
+- [#156](https://github.com/TylerMetz/Saucier720/issues/156) - Further pantry functionality
+- [#173](https://github.com/TylerMetz/Saucier720/issues/173) - Use bootstrap for styling
+- [#192](https://github.com/TylerMetz/Saucier720/issues/192) - Deals Page Update
+- [#194](https://github.com/TylerMetz/Saucier720/issues/194) - Deals Page Bootstrap Update
+- [#195](https://github.com/TylerMetz/Saucier720/issues/195) - Pantry Page Bootstrap Update
+- [#196](https://github.com/TylerMetz/Saucier720/issues/196) - Login Page Button
+- [#203](https://github.com/TylerMetz/Saucier720/issues/203) - New HTTP Requests
+- [#204](https://github.com/TylerMetz/Saucier720/issues/204) - Post New Pantry Item
+- [#208](https://github.com/TylerMetz/Saucier720/issues/208) - Post to Database from Frontend
+- [#221](https://github.com/TylerMetz/Saucier720/issues/221) - Implement end to end testing
 
 ## Backend Failures 
 
@@ -36,7 +50,11 @@
   - Working on it, but it isn't fully functioning yet so pushed to Sprint 4
 
 ## Frontend Failures (Pushed to Sprint 4)
-- 
+- [#82](https://github.com/TylerMetz/Saucier720/issues/221) - Create list page
+- [#84](https://github.com/TylerMetz/Saucier720/issues/221) - Create recipes page
+- [#96](https://github.com/TylerMetz/Saucier720/issues/221) - Create wireframe for list page
+- [#101](https://github.com/TylerMetz/Saucier720/issues/221) - Create wireframe for recipes page
+
 
 ## Backend Unit Testing (For new Sprint 3 functionalities)
 #### User Database Testing
