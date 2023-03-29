@@ -1,16 +1,39 @@
 # Sprint 3
 
 ## Overall Successes 
-- 
+- [#138](https://github.com/TylerMetz/Saucier720/issues/138) - Make an extensive How-to-run file
+- [#137](https://github.com/TylerMetz/Saucier720/issues/137) - Create a script to run all necessary start files
+- [#143](https://github.com/TylerMetz/Saucier720/issues/143) - Clean up Branches
 
 ## Backend Successes
-- 
+- [#112](https://github.com/TylerMetz/Saucier720/issues/112) - Fully Implement Web Scraper
+- [#189](https://github.com/TylerMetz/Saucier720/issues/189) - Develop Unit Tests for Sprint 3 functions
+- [#207](https://github.com/TylerMetz/Saucier720/issues/207) - First Item in Database scraped incorrectly
+- [#192](https://github.com/TylerMetz/Saucier720/issues/188) - Figure out how to rout to multiple localhost ports at once
+- [#176](https://github.com/TylerMetz/Saucier720/issues/176) - Bash Test Script
+- [#131](https://github.com/TylerMetz/Saucier720/issues/131) - Implement Database
+- [#128](https://github.com/TylerMetz/Saucier720/issues/128) - Create functions to parse through Publix data
+- [#170](https://github.com/TylerMetz/Saucier720/issues/170) - Backend Submodules
+- [#119](https://github.com/TylerMetz/Saucier720/issues/119) - Figure out how to include other Packages in our repo
+- [#132](https://github.com/TylerMetz/Saucier720/issues/132) - Create a User Data Struct
 
 ## Frontend Successes
 - 
 
-## Backend Failures (Pushed to Sprint 4)
-- 
+## Backend Failures 
+
+- [#117](https://github.com/TylerMetz/Saucier720/issues/117) - Push Gorillamux data to non-local server port 
+  - discovered this isn't needed
+- [#130](https://github.com/TylerMetz/Saucier720/issues/130) - Develop Function to Calculate the Cost of a Recipe
+  - Pushed to Sprint 4
+- [#71](https://github.com/TylerMetz/Saucier720/issues/71) - Implement Recipe API or Database
+  - Pushed to Sprint 4
+- [#129](https://github.com/TylerMetz/Saucier720/issues/129) - Develop function to calculate price of sale items
+  - Pushed to Sprint 4
+- [#65](https://github.com/TylerMetz/Saucier720/issues/65) - Have BackendPkg import from GitHub
+  - Pushed to Sprint 4, not a priority
+- [#206](https://github.com/TylerMetz/Saucier720/issues/206) - Update Database after POST request
+  - Working on it, but it isn't fully functioning yet so pushed to Sprint 4
 
 ## Frontend Failures (Pushed to Sprint 4)
 - 
