@@ -65,17 +65,33 @@ func (t *Router) Listen(endLink string, port string) {
 }
 
 func (t *Router) sendPostResponse(response http.ResponseWriter, request *http.Request) {
-	fmt.Println("Received a POST request")
+    // Decode JSON payload into Ingredient struct
+    var foodItem FoodItem
+    err := json.NewDecoder(request.Body).Decode(&foodItem)
+    if err != nil {
+        http.Error(response, err.Error(), http.StatusBadRequest)
+        return
+    }
 
-	jsonResponse, jsonError := json.Marshal(t.ItemsToBeEncoded) //currently returning all items from the database
+	newFoodItem := FoodItem{
+        Name:        foodItem.Name,
+        StoreCost:   foodItem.StoreCost,
+        OnSale:      foodItem.OnSale,
+        SalePrice:   foodItem.SalePrice,
+        SaleDetails: foodItem.SaleDetails,
+        Quantity:    foodItem.Quantity,
+    }
 
-	if jsonError != nil {
-		fmt.Println("Unable to encode JSON")
+    // Do something with the ingredient struct, e.g. store it in a database
+    fmt.Println(newFoodItem.Name)
+	//InsertPantryItemPost() -- insert into backend database
+
+    testDatabase := Database{
+		Name: "MealDealz Database",
 	}
 
-    // Set the response status code to 200
-	response.Header().Set("Content-Type", "application/json")
-    response.WriteHeader(http.StatusOK)
-	response.Write(jsonResponse)
-}
+    testDatabase.InsertPantryItemPost(newFoodItem)
 
+    // Return a 200 OK response
+    response.WriteHeader(http.StatusOK)
+}

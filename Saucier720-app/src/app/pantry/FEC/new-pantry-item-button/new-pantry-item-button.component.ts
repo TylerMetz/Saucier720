@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { HttpClient, HttpEvent } from '@angular/common/http';
 import { PantryService } from 'src/app/core/services/pantry/pantry.service';
+import { PANTRY } from 'src/app/mocks/pantry.mock';
 
 
 @Component({
@@ -15,12 +16,7 @@ export class NewPantryItemButtonComponent {
   constructor(private pantryService: PantryService) { }
 
 postPantryItem() {
-  const itemData = {
-    name: 'New Item',
-    quantity: 1,
-    category: 'Other'
-  };
-  this.pantryService.postPantryItem(itemData)
+  this.pantryService.postPantryItem(PANTRY[0])
     .subscribe(
       response => {
         console.log(response);
