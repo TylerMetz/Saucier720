@@ -6,6 +6,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { PANTRY } from 'src/app/mocks/pantry.mock';
 
 import { PantryComponent } from '../../pantry/pantry.component';
+import { PantryTableComponent } from 'src/app/pantry/FEC/pantry-table/pantry-table.component';
 
 
 describe('PantryComponent', () => {
@@ -15,31 +16,14 @@ describe('PantryComponent', () => {
       imports: [ HttpClientTestingModule ],
       providers: [ PantryService ]
     });
-  });
-
-  it('can mount', () => {
     cy.mount(PantryComponent);
   });
-  it ('displays cost', () => {
-    cy.mount(PantryComponent);
-    cy.get('h2').contains('Cost');
+  it ('displays table', () => {
+    cy.get('app-pantry-table');
   });
-  it ('displays on sale', () =>{
-    cy.mount(PantryComponent);
-    cy.get('h2').contains('On Sale');
+  it ('displays post button', () =>{
+    cy.get('app-new-pantry-item-button');
   });
-  it ('displays sale price', () => {
-    cy.mount(PantryComponent);
-    cy.get('h2').contains('Sale Price');
-  });
-  it ('displays sale info', () => {
-    cy.mount(PantryComponent);
-    cy.get('h2').contains('Sale Info');
-  });
-  it ('displays quantity', () => {
-    cy.mount(PantryComponent);
-    cy.get('h2').contains('Quantity');
-  })
   it('should get pantry',
   inject(
     [HttpTestingController, PantryService],
@@ -60,7 +44,7 @@ describe('PantryComponent', () => {
       httpMock.verify();
 
     }
-  ))
+  ));
 
 
 });
