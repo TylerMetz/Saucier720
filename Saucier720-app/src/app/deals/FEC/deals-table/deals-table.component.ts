@@ -14,10 +14,10 @@ export class DealsTableComponent implements OnInit {
   constructor(private dealsService: DealsService) { }
 
   ngOnInit(){
-    this.populatePantry();
+    this.populateDeals();
   }
-  populatePantry(): void {
-    this.dealsService.getPantry()
+  populateDeals(): void {
+    this.dealsService.getDeals()
       .subscribe((event: HttpEvent<any>) => {
         switch(event.type) {
           case HttpEventType.Sent:
