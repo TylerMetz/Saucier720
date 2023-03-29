@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"time"
+	//"time"
 
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
@@ -66,6 +66,18 @@ func (t *Router) Listen(endLink string, port string) {
 }
 
 func (t *Router) sendPostResponse(response http.ResponseWriter, request *http.Request) {
+	jsonResponse, jsonError := json.Marshal(t.ItemsToBeEncoded)
+
+	if jsonError != nil {
+		fmt.Println("Unable to encode JSON")
+	}
+
+	// fmt.Println(string(jsonResponse)) // used to test
+
+	response.Header().Set("Content-Type", "application/json")
+	response.WriteHeader(http.StatusOK)
+	response.Write(jsonResponse)
+
     // Decode JSON payload into Ingredient struct
     var foodItem FoodItem
     err := json.NewDecoder(request.Body).Decode(&foodItem)
@@ -84,30 +96,30 @@ func (t *Router) sendPostResponse(response http.ResponseWriter, request *http.Re
     }
 	
     // Do something with the ingredient struct, e.g. store it in a database
-    fmt.Println(newFoodItem.Name)
+    //fmt.Println(newFoodItem.Name)
 	//InsertPantryItemPost() -- insert into backend database
 
     testDatabase := Database{
 		Name: "MealDealz Database",
 	}
 
-	foodSlice := []FoodItem {newFoodItem};
+	//foodSlice := []FoodItem {newFoodItem};
 
-    testUser := User{
-		FirstName: "Eddie",
-		LastName: "Menello",
-		Email: "Edward@gmail.com",
-		UserName: "Eddiefye69",
-		Password: "ILoveGraham420",
-		UserPantry: Pantry{
-			FoodInPantry: foodSlice,
-			TimeLastUpdated: time.Now(),
-		},
-	}
+    // testUser := User{
+	// 	FirstName: "Eddie",
+	// 	LastName: "Menello",
+	// 	Email: "Edward@gmail.com",
+	// 	UserName: "Eddiefye69",
+	// 	Password: "ILoveGraham420",
+	// 	UserPantry: Pantry{
+	// 		FoodInPantry: foodSlice,
+	// 		TimeLastUpdated: time.Now(),
+	// 	},
+	// }
 
     testDatabase.InsertPantryItemPost(newFoodItem)
 
-    go RoutUserPantry(testDatabase, testUser)
+    //go RoutUserPantry(testDatabase, testUser)
 
     // Return a 200 OK response
     response.WriteHeader(http.StatusOK)
