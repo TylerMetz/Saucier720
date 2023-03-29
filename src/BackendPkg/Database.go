@@ -94,7 +94,7 @@ func (d *Database) StoreUserDatabase(u User) {
 func (d *Database) StoreUserPantry(u User) {
 
 	// calls function to open the database
-	database := d.OpenDatabase()
+	database := d.OpenDatabase() // need to open database
 
 	// make table for food item data
 	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS UserPantries (UserName TEXT, PantryLastUpdated DATETIME, Name TEXT, StoreCost REAL, OnSale INTEGER, SalePrice REAL, SaleDetails TEXT, Quantity INTEGER, PRIMARY KEY (UserName, Name))")
@@ -106,6 +106,23 @@ func (d *Database) StoreUserPantry(u User) {
 	for _, item := range u.UserPantry.FoodInPantry {
 		statementTwo.Exec(u.UserName, u.UserPantry.TimeLastUpdated.Format("2006-01-02 15:04:05"), item.Name, item.StoreCost, item.OnSale, item.SalePrice, item.SaleDetails, item.Quantity)
 	}
+}
+
+func (d *Database) InsertPantryItemPost (u FoodItem){
+
+	// calls function to open the database
+	database := d.OpenDatabase()
+
+	// make table for food item data
+	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS UserPantries (UserName TEXT, PantryLastUpdated DATETIME, Name TEXT, StoreCost REAL, OnSale INTEGER, SalePrice REAL, SaleDetails TEXT, Quantity INTEGER, PRIMARY KEY (UserName, Name))")
+	statement.Exec();
+
+	var exampleUser = "RileySmellsLol"
+	var exampleTime = "2023-03-24 22:56:28"
+
+	// insert into food item table
+	statementTwo, _ := database.Prepare("INSERT OR IGNORE INTO UserPantries (UserName, PantryLastUpdated, Name, StoreCost, OnSale, SalePrice, SaleDetails, Quantity) VALUES (?, datetime(?), ?, ?, ?, ?, ?, ?)")
+	statementTwo.Exec(exampleUser, exampleTime, u.Name, u.StoreCost, u.OnSale, u.SalePrice, u.SaleDetails, u.Quantity)
 }
 
 func (d *Database) GetUserPantry(userName string) Pantry {
