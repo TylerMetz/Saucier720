@@ -33,7 +33,7 @@ func TestOne(t *testing.T) {
 		Quantity:    2,
 	}
 
-	testItems := []interface{}{testFoodItem, testFoodItem2, testFoodItem3}
+	testItems := []interface{}{testFoodItem3, testFoodItem2, testFoodItem}
 
 	// convert items to be translated into json
 	itemsInJson, _ := json.Marshal(testItems)
@@ -45,7 +45,7 @@ func TestOne(t *testing.T) {
 	}
 
 	// display item on port in background
-	go testRouter.Rout("/testing","8080")
+	go testRouter.Rout("/api/Pantry","8080")
 
 	//pull data from local host port
 	resp, err := http.Get("http://localhost:8080/api/Pantry")
