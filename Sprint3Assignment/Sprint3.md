@@ -127,7 +127,10 @@
 
 
 ## Frontend Unit Testing (For new Sprint 3 functionalities)
-- 
+
+### Component Testing
+
+### End to End Testing
 
 ## Backend API Documentation 
 #### Database.go
