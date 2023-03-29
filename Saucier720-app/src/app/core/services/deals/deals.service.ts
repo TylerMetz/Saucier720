@@ -7,12 +7,12 @@ import { PANTRY } from 'src/app/mocks/pantry.mock';
   providedIn: 'root'
 })
 export class DealsService {
-  pantryUrl = 'http://localhost:8081/api/Deals'
+  dealsUrl = 'http://localhost:8081/api/Deals'
 
   constructor(private http: HttpClient) { }
 
-  getPantry() {
-    const req = new HttpRequest('GET', this.pantryUrl, { 
+  getDeals() {
+    const req = new HttpRequest('GET', this.dealsUrl, { 
       reportProgress: true
     });
     
