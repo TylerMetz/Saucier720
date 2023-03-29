@@ -1,10 +1,9 @@
 /// <reference types="cypress" />
-export const PANTRY = [
-  {"Name":"peanut butter","StoreCost":369.99,"OnSale":true,"SalePrice":0,"SaleDetails":"BOGO","Quantity":10},
-  {"Name":"jelly","StoreCost":1,"OnSale":false,"SalePrice":0,"SaleDetails":"N/A","Quantity":30},
-  {"Name":"bread","StoreCost":10.69,"OnSale":true,"SalePrice":0,"SaleDetails":"$2 for 2","Quantity":2}
+let PANTRY = [
+  {"Name":"bread","OnSale":true,"Quantity":2,"SaleDetails":"$2 for 2","SalePrice":0,"StoreCost":10.69,},
+  {"Name":"jelly","OnSale":false,"Quantity":30,"SaleDetails":"N/A","SalePrice":0,"StoreCost":1,},
+  {"Name":"peanut butter","OnSale":true,"Quantity":10,"SaleDetails":"BOGO","SalePrice":0,"StoreCost":369.99,},
 ];
-
 
 context('Network Requests', () => {
   let pantryPageUrl = 'http://localhost:4200/Pantry';
@@ -15,7 +14,7 @@ context('Network Requests', () => {
 
   // Manage HTTP requests in your app
 
-  it('cy.request() - make an XHR request', () => {
+  it('cy.request() - make a GET request when loading the page', () => {
     // https://on.cypress.io/request
     cy.request(pantryGETUrl)
       .should((response) => {
@@ -23,6 +22,16 @@ context('Network Requests', () => {
         // the server sometimes gets an extra comment posted from another machine
         // which gets returned as 1 extra object
         expect(response.body).to.have.property('length').and.be.equal(PANTRY.length)
+        expect(response).to.have.property('headers')
+        expect(response).to.have.property('duration')
+      })
+  })
+
+  it('cy.click - pushing the POST button on the Pantry Page', () => {
+    cy.get('app-new-pantry-item-button').click()
+    cy.request(pantryGETUrl)
+      .should((response) => {
+        expect(response.status).to.eq(200)
         expect(response).to.have.property('headers')
         expect(response).to.have.property('duration')
       })
