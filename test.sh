@@ -1,3 +1,3 @@
 #!/bin/bash
 
-./cypress.sh & ./serve.sh & ./go.sh && fg
+./cypress.sh  & ./go.sh & ./serve.sh && fg
