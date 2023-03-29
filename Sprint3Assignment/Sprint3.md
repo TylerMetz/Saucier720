@@ -127,10 +127,18 @@
 
 
 ## Frontend Unit Testing (For new Sprint 3 functionalities)
+- We are using to conduct our frontend unit tests
 
 ### Component Testing
-
+- Our component tests in cypress are
+  - Pantry service should get Pantry in [pantry.service.spec.cy.ts](../Saucier720-app/src/app/testing/pantry/pantry.service.spec.cy.ts)
+  - Pantry component displays table, post button, and gets pantry in [pantry.component.spec.cy.ts](../Saucier720-app/src/app/testing/pantry/pantry.component.spec.cy.ts)
+  - Deals component displays table in [deals.component.spec.cy.ts](../Saucier720-app/src/app/testing/deals/deals.component.spec.cy.ts)
 ### End to End Testing
+- Our end to end tests in cypress are
+  - Requests deals from backend database and receives status code `200` if properly received and responsed to in [deals.http.spec.cy.ts](../Saucier720-app/cypress/e2e/HttpRequests/deals.http.spec.cy.ts)
+  - Requests user pantry from backend database and recevies status code 200 if properly received[pantry.http.spec.cy.ts](../Saucier720-app/cypress/e2e/HttpRequests/pantry.http.spec.cy.ts)
+  - Posts new FoodItem from the frontend to the backend database and receives status code 200 if properly received and posted to database[pantry.http.spec.cy.ts](../Saucier720-app/cypress/e2e/HttpRequests/pantry.http.spec.cy.ts)
 
 ## Backend API Documentation 
 #### Database.go
