@@ -42,6 +42,4 @@ describe('PantryComponent', () => {
 
     }
   ));
-
-
 });
