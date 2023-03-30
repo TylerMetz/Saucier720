@@ -12,7 +12,7 @@ describe('PantryService', () => {
     });
   });
 
-  it('should get pantry',
+  it('Receives pantry when loading page',
   inject(
     [HttpTestingController, PantryService],
     (httpMock: HttpTestingController, pantryService: PantryService) => {
