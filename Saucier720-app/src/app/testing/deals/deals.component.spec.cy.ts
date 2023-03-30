@@ -3,7 +3,7 @@ import { TestBed, inject } from '@angular/core/testing';
 import { HttpEvent, HttpEventType } from '@angular/common/http';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { DealsComponent } from '../../deals/deals.component';
-import { PANTRY } from 'src/app/mocks/pantry.mock';
+import { DEALS } from 'src/app/mocks/deals.mock';
 
 describe('DealsComponent', () => {
 
@@ -33,7 +33,7 @@ describe('DealsComponent', () => {
 
       expect(mockReq.cancelled).to.equal(false);
       expect(mockReq.request.responseType).to.equal('json');
-      mockReq.flush(PANTRY);
+      mockReq.flush(DEALS);
 
       httpMock.verify();
 
