@@ -35,6 +35,7 @@ describe('PantryService', () => {
 
     }
   ))
+  
   it('Receives riley butter when clicking post button',
   inject(
     [HttpTestingController, PantryService],
@@ -42,7 +43,7 @@ describe('PantryService', () => {
       pantryService.getPantry().subscribe((event: HttpEvent<any>) => {
         switch (event.type) {
           case HttpEventType.Response:
-            expect(event.body).equal(PANTRY);
+            expect(event.body).equal(PANTRY[1]);
         }
       });
 
@@ -51,7 +52,7 @@ describe('PantryService', () => {
       const mockReq = httpMock.expectOne(pantryService.pantryUrl);
       expect(mockReq.cancelled).to.equal(false);
       expect(mockReq.request.responseType).to.equal('json');
-      mockReq.flush(PANTRY);
+      mockReq.flush(PANTRY[1]);
 
       httpMock.verify();
 
