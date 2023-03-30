@@ -24,6 +24,8 @@ describe('DealsService', () => {
         }
       });
 
+      // when navigating to the Deals Page you make a request to
+      // localhost:8081/api/Deals that loads the Deals from Publix
       const mockReq = httpMock.expectOne(dealsService.dealsUrl);
       expect(mockReq.cancelled).to.equal(false);
       expect(mockReq.request.responseType).to.equal('json');

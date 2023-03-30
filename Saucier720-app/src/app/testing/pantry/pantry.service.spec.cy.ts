@@ -23,8 +23,9 @@ describe('PantryService', () => {
         }
       });
 
+      // when navigating to the Pantry Page you make a request to
+      // localhost:8080/api/Pantry that loads a User's Pantry
       const mockReq = httpMock.expectOne(pantryService.pantryUrl);
-
       expect(mockReq.cancelled).to.equal(false);
       expect(mockReq.request.responseType).to.equal('json');
       mockReq.flush(PANTRY);
