@@ -1,5 +1,5 @@
 /// <reference types="cypress" />
-let PANTRY = [
+var PANTRY = [
   {"Name":"bread","OnSale":true,"Quantity":2,"SaleDetails":"$2 for 2","SalePrice":0,"StoreCost":10.69,},
   {"Name":"jelly","OnSale":false,"Quantity":30,"SaleDetails":"N/A","SalePrice":0,"StoreCost":1,},
   {"Name":"peanut butter","OnSale":true,"Quantity":10,"SaleDetails":"BOGO","SalePrice":0,"StoreCost":369.99,},
