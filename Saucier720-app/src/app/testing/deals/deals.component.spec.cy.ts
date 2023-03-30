@@ -25,7 +25,7 @@ describe('DealsComponent', () => {
       dealsService.getDeals().subscribe((event: HttpEvent<any>) => {
         switch (event.type) {
           case HttpEventType.Response:
-            expect(event.body).equal(PANTRY);
+            expect(event.body).equal(DEALS);
         }
       });
 
