@@ -1,6 +1,6 @@
 import { TestBed, inject } from '@angular/core/testing';
 import { HttpEvent, HttpEventType } from '@angular/common/http';
-import {HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { DealsService } from '../../core/services/deals/deals.service';
 import { DEALS } from 'src/app/mocks/deals.mock';
 
