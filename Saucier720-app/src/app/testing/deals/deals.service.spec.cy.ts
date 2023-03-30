@@ -13,7 +13,7 @@ describe('DealsService', () => {
     });
   });
 
-  it('should get deals',
+  it('Receives deals when loading page',
   inject(
     [HttpTestingController, DealsService],
     (httpMock: HttpTestingController, dealsService: DealsService) => {
@@ -25,7 +25,6 @@ describe('DealsService', () => {
       });
 
       const mockReq = httpMock.expectOne(dealsService.dealsUrl);
-
       expect(mockReq.cancelled).to.equal(false);
       expect(mockReq.request.responseType).to.equal('json');
       mockReq.flush(DEALS);
