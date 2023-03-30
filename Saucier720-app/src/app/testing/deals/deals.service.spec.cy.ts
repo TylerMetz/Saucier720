@@ -13,7 +13,7 @@ describe('DealsService', () => {
     });
   });
 
-  it('should get pantry',
+  it('should get deals',
   inject(
     [HttpTestingController, DealsService],
     (httpMock: HttpTestingController, dealsService: DealsService) => {
