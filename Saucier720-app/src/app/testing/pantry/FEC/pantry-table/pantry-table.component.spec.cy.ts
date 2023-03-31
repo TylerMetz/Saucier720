@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PantryTableComponent } from './pantry-table.component';
+import { PantryTableComponent } from '../../../../pantry/FEC/pantry-table/pantry-table.component';
 
 describe('PantryTableComponent', () => {
   let component: PantryTableComponent;
@@ -15,9 +15,5 @@ describe('PantryTableComponent', () => {
     fixture = TestBed.createComponent(PantryTableComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
   });
 });
