@@ -28,10 +28,6 @@ describe('PantryTableComponent', () => {
     httpMock = TestBed.inject(HttpTestingController);
   });
 
-  it('should create', () => {
-    expect(component);
-  });
-
   it('should get pantry',
     inject(
       [HttpTestingController, PantryService],
