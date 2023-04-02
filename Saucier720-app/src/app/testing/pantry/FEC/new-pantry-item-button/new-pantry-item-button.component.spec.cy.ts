@@ -28,28 +28,24 @@ describe('NewPantryItemButtonComponent', () => {
     httpMock = TestBed.inject(HttpTestingController);
   });
 
-  it('should post pantry item',
-    inject(
-      [HttpTestingController, PantryService],
-      (httpMock: HttpTestingController, pantryService: PantryService) => {
-        component.postPantryItem();
+  it('should post pantry item', () => {
+    component.postPantryItem();
 
-        const mockReq = httpMock.expectOne(component.pantryPostUrl);
+    const mockReq = httpMock.expectOne(component.pantryPostUrl);
 
-        expect(mockReq.cancelled).to.be.false;
-        expect(mockReq.request.responseType).equal('json');
-        mockReq.flush({});
+    expect(mockReq.cancelled).to.be.false;
+    expect(mockReq.request.responseType).to.equal('json');
 
-        httpMock.verify();
+    mockReq.flush({});
 
-      }
-  ));
+    httpMock.verify();
+  });
 
   it('should call postPantryItem method on button click', () => {
-    const button = fixture.nativeElement.querySelector('button');
     cy.spy(component, 'postPantryItem');
-    button.click();
-    expect(component.postPantryItem).to.have.been.called;
+    cy.get('button').click().then(() => {
+      expect(component.postPantryItem).to.have.been.called;
+    });
   });
 
   it('should display "Post" inside button', () => {
