@@ -12,13 +12,13 @@ export class PantryTableComponent implements OnInit {
 
   pantry: any;
 
-  constructor(private pantryService: PantryService) { }
+  constructor(public pantryService: PantryService) { }
 
   async ngOnInit(){
     await this.populatePantry();
   }
 
-  async populatePantry(): Promise<void> {
+  public async populatePantry(): Promise<void> {
     try {
       const event: HttpEvent<any> = await lastValueFrom(this.pantryService.getPantry());
       switch(event.type) {

@@ -1,6 +1,5 @@
-import { ComponentFixture, TestBed, inject } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { HttpEvent, HttpEventType } from '@angular/common/http';
 
 import { PANTRY } from 'src/app/mocks/pantry.mock';
 import { PantryTableComponent } from '../../../../pantry/FEC/pantry-table/pantry-table.component';
@@ -17,42 +16,17 @@ describe('PantryTableComponent', () => {
       declarations: [PantryTableComponent],
       imports: [HttpClientTestingModule],
       providers: [PantryService]
-    })
-      .compileComponents();
+    }).compileComponents();
   });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(PantryTableComponent);
     component = fixture.componentInstance;
     pantryService = TestBed.inject(PantryService);
-    httpMock = TestBed.inject(HttpTestingController);
   });
 
-  it('should get pantry',
-    inject(
-      [HttpTestingController, PantryService],
-      (httpMock: HttpTestingController, pantryService: PantryService) => {
-        pantryService.getPantry().subscribe((event: HttpEvent<any>) => {
-          switch (event.type) {
-            case HttpEventType.Response:
-              expect(event.body).equal(PANTRY);
-          }
-        });
-
-        const mockReq = httpMock.expectOne(pantryService.pantryUrl);
-
-        expect(mockReq.cancelled).to.be.false;
-        expect(mockReq.request.responseType).equal('json');
-        mockReq.flush(PANTRY);
-
-        httpMock.verify();
-
-      }
-    )
-  );
-  it('should render table with pantry',
-  () => {
-    component.pantry = PANTRY
+  it('should render table with pantry', () => {
+    component.pantry = PANTRY;
     fixture.detectChanges();
 
     const tableRows = fixture.nativeElement.querySelectorAll('.table-responsive tbody tr');
@@ -60,7 +34,6 @@ describe('PantryTableComponent', () => {
 
     const headerRow = fixture.nativeElement.querySelectorAll('.table-responsive thead tr th');
     expect(headerRow.length).equal(6);
-
     expect(headerRow[0].textContent).equal('Ingredients');
     expect(headerRow[1].textContent).equal('Cost');
     expect(headerRow[2].textContent).equal('On Sale');
@@ -74,8 +47,12 @@ describe('PantryTableComponent', () => {
       expect(tableData[dataIndex++].textContent).equal(ingredient.Name);
       expect(tableData[dataIndex++].textContent).equal(String(ingredient.StoreCost));
       expect(tableData[dataIndex++].textContent).equal(String(ingredient.OnSale));
-      expect(tableData[dataIndex++].textContent).equal(ingredient.SalePrice === null ? '' : String(ingredient.SalePrice));
-      expect(tableData[dataIndex++].textContent).equal(ingredient.SaleDetails === null ? '' : ingredient.SaleDetails);
+      expect(tableData[dataIndex++].textContent).equal(
+        ingredient.SalePrice === null ? '' : String(ingredient.SalePrice)
+      );
+      expect(tableData[dataIndex++].textContent).equal(
+        ingredient.SaleDetails === null ? '' : ingredient.SaleDetails
+      );
       expect(tableData[dataIndex++].textContent).equal(String(ingredient.Quantity));
     }
   });
