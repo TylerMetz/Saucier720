@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { HttpClient, HttpEvent } from '@angular/common/http';
 import { PantryService } from 'src/app/core/services/pantry/pantry.service';
 import { PANTRY } from 'src/app/mocks/pantry.mock';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-new-pantry-item-button',
@@ -16,7 +16,7 @@ export class NewPantryItemButtonComponent {
 
   async postPantryItem() {
     try {
-      const response = await this.pantryService.postPantryItem(PANTRY[0]).toPromise();
+      const response = await lastValueFrom(this.pantryService.postPantryItem(PANTRY[0]));
       console.log(response);
     } catch (error) {
       console.error(error);
