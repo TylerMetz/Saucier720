@@ -43,6 +43,12 @@ describe('NewPantryItemButtonComponent', () => {
         httpMock.verify();
 
       }
-    )
-  );
+  ));
+
+  it('should call postPantryItem method on button click', () => {
+    const button = fixture.nativeElement.querySelector('button');
+    cy.spy(component, 'postPantryItem');
+    button.click();
+    expect(component.postPantryItem).to.have.been.called;
+  });
 });
