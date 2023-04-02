@@ -1,12 +1,9 @@
-import { ComponentFixture } from '@angular/core/testing';
 import { PantryService } from 'src/app/core/services/pantry/pantry.service';
 import { TestBed, inject } from '@angular/core/testing';
 import { HttpEvent, HttpEventType } from '@angular/common/http';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { PANTRY } from 'src/app/mocks/pantry.mock';
-
 import { PantryComponent } from '../../pantry/pantry.component';
-import { PantryTableComponent } from 'src/app/pantry/FEC/pantry-table/pantry-table.component';
 
 
 describe('PantryComponent', () => {
@@ -45,6 +42,4 @@ describe('PantryComponent', () => {
 
     }
   ));
-
-
 });
