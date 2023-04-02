@@ -51,4 +51,8 @@ describe('NewPantryItemButtonComponent', () => {
     button.click();
     expect(component.postPantryItem).to.have.been.called;
   });
+
+  it('should display "Post" inside button', () => {
+    cy.get('button').contains('Post');
+  });
 });
