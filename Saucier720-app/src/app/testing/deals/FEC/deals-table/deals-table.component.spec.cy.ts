@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed, inject } from '@angular/core/testing';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 
 import { DEALS } from 'src/app/mocks/deals.mock';
 import { DealsTableComponent } from '../../../../deals/FEC/deals-table/deals-table.component';
@@ -8,11 +9,12 @@ describe('DealsTableComponent', () => {
   let component: DealsTableComponent;
   let fixture: ComponentFixture<DealsTableComponent>;
   let dealsService: DealsService;
+  let httpMock: HttpTestingController;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DealsTableComponent],
-      imports: [],
+      imports: [HttpClientTestingModule],
       providers: [DealsService]
     })
       .compileComponents();
