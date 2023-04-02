@@ -1,19 +1,48 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, inject } from '@angular/core/testing';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpEvent, HttpEventType } from '@angular/common/http';
 
-import { NewPantryItemButtonComponent } from '../../../../pantry/FEC/new-pantry-item-button/new-pantry-item-button.component';
+import { PANTRY } from 'src/app/mocks/pantry.mock';
+import { NewPantryItemButtonComponent } from 'src/app/pantry/FEC/new-pantry-item-button/new-pantry-item-button.component';
+import { PantryService } from 'src/app/core/services/pantry/pantry.service';
 
 describe('NewPantryItemButtonComponent', () => {
   let component: NewPantryItemButtonComponent;
   let fixture: ComponentFixture<NewPantryItemButtonComponent>;
+  let pantryService: PantryService;
+  let httpMock: HttpTestingController;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ NewPantryItemButtonComponent ]
+      declarations: [NewPantryItemButtonComponent],
+      imports: [HttpClientTestingModule],
+      providers: [PantryService]
     })
-    .compileComponents();
+      .compileComponents();
+  });
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(NewPantryItemButtonComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    pantryService = TestBed.inject(PantryService);
+    httpMock = TestBed.inject(HttpTestingController);
   });
+
+  it('should post pantry item',
+    inject(
+      [HttpTestingController, PantryService],
+      (httpMock: HttpTestingController, pantryService: PantryService) => {
+        component.postPantryItem();
+
+        const mockReq = httpMock.expectOne(component.pantryPostUrl);
+
+        expect(mockReq.cancelled).to.be.false;
+        expect(mockReq.request.responseType).equal('json');
+        mockReq.flush({});
+
+        httpMock.verify();
+
+      }
+    )
+  );
 });
