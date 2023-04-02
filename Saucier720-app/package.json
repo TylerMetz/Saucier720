@@ -29,7 +29,7 @@
     "@angular/compiler-cli": "^15.1.0",
     "@types/jasmine": "~4.3.0",
     "angular-cli-ghpages": "^1.0.5",
-    "cypress": "^12.6.0",
+    "cypress": "^12.9.0",
     "expect": "^29.4.3",
     "jasmine-core": "~4.5.0",
     "karma": "~6.4.0",
