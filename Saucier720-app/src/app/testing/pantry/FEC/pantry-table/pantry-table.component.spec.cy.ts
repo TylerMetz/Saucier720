@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 
 import { PANTRY } from 'src/app/mocks/pantry.mock';
 import { PantryTableComponent } from '../../../../pantry/FEC/pantry-table/pantry-table.component';
@@ -8,11 +9,12 @@ describe('PantryTableComponent', () => {
   let component: PantryTableComponent;
   let fixture: ComponentFixture<PantryTableComponent>;
   let pantryService: PantryService;
+  let httpMock: HttpTestingController;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [PantryTableComponent],
-      imports: [],
+      imports: [HttpClientTestingModule],
       providers: [PantryService]
     }).compileComponents();
   });
@@ -21,6 +23,7 @@ describe('PantryTableComponent', () => {
     fixture = TestBed.createComponent(PantryTableComponent);
     component = fixture.componentInstance;
     pantryService = TestBed.inject(PantryService);
+    httpMock = TestBed.inject(HttpTestingController);
   });
 
   it('should render table with pantry', () => {
