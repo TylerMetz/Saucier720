@@ -1,6 +1,6 @@
 import { Ingredient } from "../core/interfaces/ingredient";
 
-    var mockIngredient1: Ingredient = {
+    var mockDeals1: Ingredient = {
         "Name":"riley butter",
         "StoreCost":369.99,
         "OnSale":true,
@@ -9,7 +9,7 @@ import { Ingredient } from "../core/interfaces/ingredient";
         "Quantity":10
     };
 
-    var mockIngredient2: Ingredient = {
+    var mockDeals2: Ingredient = {
         "Name":"peanut butter",
         "StoreCost":369.99,
         "OnSale":true,
@@ -18,7 +18,7 @@ import { Ingredient } from "../core/interfaces/ingredient";
         "Quantity":10
     };
 
-    var mockIngredient3: Ingredient = {
+    var mockDeals3: Ingredient = {
         "Name":"jelly",
         "StoreCost":1,
         "OnSale":false,
@@ -27,7 +27,7 @@ import { Ingredient } from "../core/interfaces/ingredient";
         "Quantity":30
     };
     
-    var mockIngredient4: Ingredient = {
+    var mockDeals4: Ingredient = {
         "Name":"bread",
         "StoreCost":10.69,
         "OnSale":true,
@@ -36,9 +36,9 @@ import { Ingredient } from "../core/interfaces/ingredient";
         "Quantity":2
     };
 
-export const PANTRY: Ingredient[] = [
-    mockIngredient1,
-    mockIngredient2,
-    mockIngredient3,
-    mockIngredient4,
+export const DEALS: Ingredient[] = [
+    mockDeals1,
+    mockDeals2,
+    mockDeals3,
+    mockDeals4,
 ];

@@ -1,39 +1,58 @@
 import { TestBed, inject } from '@angular/core/testing';
 import { HttpEvent, HttpEventType } from '@angular/common/http';
-import {HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { PantryService } from '../../core/services/pantry/pantry.service';
+import { PANTRY } from 'src/app/mocks/pantry.mock';
 
 describe('PantryService', () => {
-
+  
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ HttpClientTestingModule ],
       providers: [ PantryService ]
     });
   });
-  it('should get pantry',
+
+  it('Receives pantry when loading page',
   inject(
     [HttpTestingController, PantryService],
     (httpMock: HttpTestingController, pantryService: PantryService) => {
-      const mockPantry = [
-        {"Name":"peanut butter","StoreCost":369.99,"OnSale":true,"SalePrice":0,"SaleDetails":"BOGO","Quantity":10},
-        {"Name":"jelly","StoreCost":1,"OnSale":false,"SalePrice":0,"SaleDetails":"N/A","Quantity":30},
-        {"Name":"bread","StoreCost":10.69,"OnSale":true,"SalePrice":0,"SaleDetails":"$2 for 2","Quantity":2}
-      ];
-
       pantryService.getPantry().subscribe((event: HttpEvent<any>) => {
         switch (event.type) {
           case HttpEventType.Response:
-            expect(event.body).equal(mockPantry);
+            expect(event.body).equal(PANTRY);
         }
       });
 
+      // when navigating to the Pantry Page you make a request to
+      // localhost:8080/api/Pantry that loads a User's Pantry
       const mockReq = httpMock.expectOne(pantryService.pantryUrl);
-
       expect(mockReq.cancelled).to.equal(false);
       expect(mockReq.request.responseType).to.equal('json');
-      mockReq.flush(mockPantry);
+      mockReq.flush(PANTRY);
+
+      httpMock.verify();
+
+    }
+  ))
+  
+  it('Receives riley butter when clicking post button',
+  inject(
+    [HttpTestingController, PantryService],
+    (httpMock: HttpTestingController, pantryService: PantryService) => {
+      pantryService.getPantry().subscribe((event: HttpEvent<any>) => {
+        switch (event.type) {
+          case HttpEventType.Response:
+            expect(event.body).equal(PANTRY[1]);
+        }
+      });
+
+      // when navigating to the Pantry Page you make a request to
+      // localhost:8080/api/Pantry that loads a User's Pantry
+      const mockReq = httpMock.expectOne(pantryService.pantryUrl);
+      expect(mockReq.cancelled).to.equal(false);
+      expect(mockReq.request.responseType).to.equal('json');
+      mockReq.flush(PANTRY[1]);
 
       httpMock.verify();
 
