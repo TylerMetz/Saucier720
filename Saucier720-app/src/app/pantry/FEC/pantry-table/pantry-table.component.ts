@@ -12,7 +12,7 @@ export class PantryTableComponent implements OnInit {
 
   pantry: any;
 
-  constructor(public pantryService: PantryService) { }
+  constructor(private pantryService: PantryService) { }
 
   async ngOnInit(){
     await this.populatePantry();

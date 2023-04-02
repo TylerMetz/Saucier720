@@ -1,6 +1,7 @@
 import { HttpEvent, HttpEventType } from "@angular/common/http"
 import { Component, OnInit } from '@angular/core';
 import { DealsService } from 'src/app/core/services/deals/deals.service';
+import { lastValueFrom } from "rxjs";
 
 @Component({
   selector: 'app-deals-table',
@@ -13,28 +14,32 @@ export class DealsTableComponent implements OnInit {
 
   constructor(private dealsService: DealsService) { }
 
-  ngOnInit(){
-    this.populateDeals();
+  async ngOnInit() {
+    await this.populateDeals();
   }
-  populateDeals(): void {
-    this.dealsService.getDeals()
-      .subscribe((event: HttpEvent<any>) => {
-        switch(event.type) {
-          case HttpEventType.Sent:
-            console.log('Request sent!');
-            break;
-          case HttpEventType.ResponseHeader:
-            console.log('Response header received!');
-            break;
-            case HttpEventType.DownloadProgress:
-              const kbLoaded = Math.round(event.loaded / 1024);
-              console.log(`Download in progress! ${kbLoaded}Kb loaded`);
-              break;
-            case HttpEventType.Response:
-              console.log('Done!', event.body);
-              this.pantry = event.body;
-        }
-      }); //doesnt call until subscribed
+
+  async populateDeals() {
+     try {
+      const event: HttpEvent<any> = await lastValueFrom(this.dealsService.getDeals());
+      switch(event.type) {
+        case HttpEventType.Sent:
+          console.log('Request sent!');
+          break;
+        case HttpEventType.ResponseHeader:
+          console.log('Response header received!');
+          break;
+        case HttpEventType.DownloadProgress:
+          const kbLoaded = Math.round(event.loaded / 1024);
+          console.log(`Download in progress! ${kbLoaded}Kb loaded`);
+          break;
+        case HttpEventType.Response:
+          console.log('Done!', event.body);
+          this.pantry = event.body;
+          break;
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }
 
 }

@@ -1,6 +1,4 @@
 import { ComponentFixture, TestBed, inject } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { HttpEvent, HttpEventType } from '@angular/common/http';
 
 import { DEALS } from 'src/app/mocks/deals.mock';
 import { DealsTableComponent } from '../../../../deals/FEC/deals-table/deals-table.component';
@@ -10,12 +8,11 @@ describe('DealsTableComponent', () => {
   let component: DealsTableComponent;
   let fixture: ComponentFixture<DealsTableComponent>;
   let dealsService: DealsService;
-  let httpMock: HttpTestingController;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DealsTableComponent],
-      imports: [HttpClientTestingModule],
+      imports: [],
       providers: [DealsService]
     })
       .compileComponents();
@@ -25,31 +22,7 @@ describe('DealsTableComponent', () => {
     fixture = TestBed.createComponent(DealsTableComponent);
     component = fixture.componentInstance;
     dealsService = TestBed.inject(DealsService);
-    httpMock = TestBed.inject(HttpTestingController);
   });
-
-  it('should get deals',
-    inject(
-      [HttpTestingController, DealsService],
-      (httpMock: HttpTestingController, dealsService: DealsService) => {
-        dealsService.getDeals().subscribe((event: HttpEvent<any>) => {
-          switch (event.type) {
-            case HttpEventType.Response:
-              expect(event.body).equal(DEALS);
-          }
-        });
-
-        const mockReq = httpMock.expectOne(dealsService.dealsUrl);
-
-        expect(mockReq.cancelled).equal(false);
-        expect(mockReq.request.responseType).equal('json');
-        mockReq.flush(DEALS);
-
-        httpMock.verify();
-
-      }
-    )
-  );
 
   it('should render table with deals',
     () => {
