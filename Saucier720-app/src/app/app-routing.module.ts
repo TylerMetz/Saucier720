@@ -4,22 +4,25 @@ import { DealsComponent } from './deals/deals.component';
 import { ListComponent } from './list/list.component';
 import { PantryComponent } from './pantry/pantry.component';
 import { RecipesComponent } from './recipes/recipes.component';
-import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
+import { HttpClientModule } from '@angular/common/http';
+import { AuthGuard } from './core/services/Auth/auth.guard.service';
+import { AuthService } from './core/services/Auth/auth.service';
 
 const routes: Routes = [
-  { path: 'Pantry', component: PantryComponent},
-  { path: 'List', component: ListComponent},
-  { path: 'Deals', component: DealsComponent},
-  { path: 'Recipes', component: RecipesComponent},
+  { path: 'Pantry', component: PantryComponent, canActivate: [AuthGuard]},
+  { path: 'List', component: ListComponent, canActivate: [AuthGuard]},
+  { path: 'Deals', component: DealsComponent, canActivate: [AuthGuard]},
+  { path: 'Recipes', component: RecipesComponent, canActivate: [AuthGuard]},
   { path: 'Login', component: LoginComponent},
   { path: 'Signup', component: SignupComponent}
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  imports: [RouterModule.forRoot(routes), HttpClientModule],
+  exports: [RouterModule],
+  providers: [AuthGuard, AuthService]
 })
 export class AppRoutingModule { }
-export const routingComponents = [AppComponent, PantryComponent, ListComponent, DealsComponent, RecipesComponent]
+export const routingComponents = [PantryComponent, ListComponent, DealsComponent, RecipesComponent, LoginComponent, SignupComponent];
