@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable()
@@ -7,15 +7,16 @@ export class AuthService {
 
   private loggedIn = false;
 
-  private loginUrl = 'api/login';
-  private logoutUrl = 'api/logout';
+  private loginUrl = 'api/Login';
+  private logoutUrl = 'api/logout'; //we dont have one yet
 
   constructor(private http: HttpClient) { }
 
   public login(username: string, password: string): Observable<any> {
-    return this.http.post(this.loginUrl, { username, password });
-    
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    const body = { username, password };
     this.loggedIn = true;
+    return this.http.post<any>(this.loginUrl, body, { headers, withCredentials: true });
   }
 
   public logout(): Observable<any> {
