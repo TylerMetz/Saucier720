@@ -5,10 +5,10 @@ import { Observable } from 'rxjs';
 @Injectable()
 export class AuthService {
 
-  private loggedIn = false;
+  private loggedIn: boolean = false;
 
-  private loginUrl = 'api/Login';
-  private logoutUrl = 'api/logout'; //we dont have one yet
+  private loginUrl: string = 'api/Login';
+  private logoutUrl: string = 'api/logout'; //we dont have one yet
 
   constructor(private http: HttpClient) { }
 
