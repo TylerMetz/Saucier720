@@ -14,10 +14,14 @@ export class AuthService {
 
   public login(username: string, password: string): Observable<any> {
     return this.http.post(this.loginUrl, { username, password });
+    
+    this.loggedIn = true;
   }
 
   public logout(): Observable<any> {
     return this.http.post(this.logoutUrl, {});
+    
+    this.loggedIn = false;
   }
 
   public isLoggedIn(): boolean {
