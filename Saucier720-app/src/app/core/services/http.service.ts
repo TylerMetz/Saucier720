@@ -1,16 +1,32 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class HttpService {
 
-  private url = 'https://my-json-server.typicode.com/JSGund/XHR-Fetch-Request-JavaScript/posts';
-
   constructor(private http: HttpClient) { }
 
-  getPosts() {
-    return this.http.get(this.url);
+  // GET method
+  get(url: string): Observable<any> {
+    return this.http.get(url);
+  }
+
+  // POST method
+  post(url: string, data: any): Observable<any> {
+    return this.http.post(url, data);
+  }
+
+  // PUT method
+  put(url: string, data: any): Observable<any> {
+    return this.http.put(url, data);
+  }
+
+  // DELETE method
+  delete(url: string): Observable<any> {
+    return this.http.delete(url);
   }
 }
+

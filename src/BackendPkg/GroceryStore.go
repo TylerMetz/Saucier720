@@ -2,6 +2,8 @@ package BackendPkg
 
 import (
 	"fmt"
+	_ "regexp"
+	"strings"
 )
 
 type GroceryStore struct {
@@ -26,37 +28,100 @@ func (g *GroceryStore) DisplaySales() {
 	}
 }
 
-// Take in Inventory list & change by reference
-func (g *GroceryStore) ScrapeDeals() {
-	// find and print all of the deals
-
-	// scrapes deals
-	/*
-		Name:
-		div.p-card p-savings-card p-card--interactive
-			div.content-wrapper
-				div.top-section
-					div.title-wrapper
-						span.p-text paragraph-md normal context--default color--null line-clamp title
-							TEXT
-
-		Sale Details:
-		div.p-card p-savings-card p-card--interactive
-			div.content-wrapper
-				div.top-section
-					span.p-savings-badge savings-badge bogo
-						div.p-savings-badge__text
-							span.p-text paragraph-sm strong context--default color--null
-								TEXT
-	*/
-
+func (g * GroceryStore) FindStart(phrase, s string) (string) {
+    i := strings.Index(s, phrase)
+    if i == -1 {
+        return ""
+    }
+    return s[i:]
 }
 
-// Webscrape deals from store
-// Make sure it clears each week
-func (g *GroceryStore) ScrapeInventory() {
+func (g *GroceryStore) OrganizeDeals(deals string) []FoodItem {
+	// testing to see what the string reads as 'words'
+	words := strings.Fields(deals)
+	newRange := words[0 : len(words)-1]
+	//count := 0
+	var name string
+	var deal string
+	newStart := 0
+	var countHelp int
+	dealSlice := make([]FoodItem, 0)
 
+	for {
+	
+		var nextStep int = 0
+		// Find item name
+		// Most of the names end after we find the loadinglazy string
+		for i := 0; i < len(newRange); i++ {
+			if newRange[i] == "loading=\"lazy\"" {
+				name = strings.Join(newRange[0:i], " ")
+				newStart = newStart + i
+				break
+			}
+		}
+		// Find item deal
+		// the deal is usually between color--null and span 
+		newRange = words[newStart : len(words)-1]
+		for i := 0; i < len(newRange); i++ {
+			if newRange[i] == "color--null\">" {
+				for j := 0; j < len(newRange); j++ {
+					if newRange[i+j] == "</span>" {
+						countHelp = j
+						break
+					}
+				}
+				deal = strings.Join(newRange[i:i+countHelp], " ")
+				newStart = newStart + i + countHelp
+				newRange = words[newStart : len(words)-1]
+				break
+			}
+		}
+	
+		// clean up
+		deal = deal[14:]
+		name = name[5:]
+		name = name[:len(name)-1]
+
+		if(name == "Paper Coupon"){
+			break
+		}
+		// need to check for interesting deals and clean them into their own spot 
+		//bigDeal := strings.Fields(name)
+		//if()
+	
+		// find next starting point
+		for i:= 0; i < len(newRange); i++ {
+			if newRange[i] == "data-v-cfc9b7ee=\"\""{
+				nextStep++
+			}
+			if(nextStep == 4){
+				newStart = newStart + i
+				newRange = words[newStart + 1: len(words)-1]
+				break
+			}
+			
+		}
+		/*fmt.Println(name)
+		fmt.Println(deal)
+		count++*/
+		item := FoodItem{
+				Name:        name,
+				StoreCost:   100,
+				OnSale:      true,
+				SaleDetails: deal,
+				Quantity:    0,
+		}
+
+		dealSlice = append(dealSlice, item)
+	}
+	//fmt.Print(count)
+	// Once it consistently works, must add each item into the inventory 
+	// Push to database after 
+	// Cleaning up edge case
+	dealSlice = dealSlice[1:]
+	return dealSlice
 }
+
 func (g GroceryStore) DisplayDeals() {
 	// Display
 }

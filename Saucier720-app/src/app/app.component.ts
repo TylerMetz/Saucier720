@@ -12,8 +12,5 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.title = "Saucier720-app"
-    this.httpService.getPosts().subscribe(
-    (response) => { this.posts = response; },
-    (error) => { console.log(error); });
   }
 }

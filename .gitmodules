@@ -28,7 +28,7 @@
 [submodule "groupcache"]
 	path = src/github.com/golang/groupcache
 	url = https://github.com/golang/groupcache
-[submodule "protobuf"]
+[submodule "protobuf1"]
 	path = src/github.com/golang/protobuf
 	url = https://github.com/golang/protobuf
 [submodule "go-cmp"]
@@ -46,4 +46,6 @@
 [submodule "protobuf"]
 	path = src/google.golang.org/protobuf
 	url = https://github.com/protocolbuffers/protobuf-go
-
+[submodule "go-sqlite3"]
+	path = src/github.com/mattn/go-sqlite3
+	url = https://github.com/mattn/go-sqlite3

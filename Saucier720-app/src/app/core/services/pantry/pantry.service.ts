@@ -7,7 +7,8 @@ import { PANTRY } from 'src/app/mocks/pantry.mock';
   providedIn: 'root'
 })
 export class PantryService {
-  pantryUrl = 'http://localhost:8080/api/Pantry'
+  pantryUrl = 'http://localhost:8080/api/Pantry';
+  pantryPostUrl = 'http://localhost:8082/api/NewPantryItem';
 
   constructor(private http: HttpClient) { }
 
@@ -17,6 +18,10 @@ export class PantryService {
     });
     
     return this.http.request(req);
+  }
+
+  postPantryItem(itemData: any) {
+    return this.http.post(this.pantryPostUrl, itemData);
   }
 
   getMockPantry(): Array<Ingredient> {

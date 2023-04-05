@@ -2,6 +2,7 @@ package BackendPkg
 
 import (
 	"fmt"
+	"runtime"
 	"time"
 
 	"github.com/tebeka/selenium"
@@ -20,10 +21,8 @@ func (s *Scraper) Scrape() {
 	// calls function based on store
 	if s.Store.Name == "Publix" {
 		s.PublixScrapeDeals()
-		//s.PublixScrapeInventory()
 	} else if s.Store.Name == "Walmart" {
 		s.WalmartScrapeDeals()
-		s.WalmartScrapeInventory()
 	}
 
 	// saves current time to ref later
@@ -33,11 +32,19 @@ func (s *Scraper) Scrape() {
 func (s *Scraper) PublixScrapeDeals() {
 	// init chrome driver
 	opts := []selenium.ServiceOption{}
-	service, err := selenium.NewChromeDriverService("SeleniumDrivers/chromedriver_mac64/chromedriver", 9515, opts...)
-	if err != nil {
-		panic(err)
+	if runtime.GOOS == "windows" {
+		service, err := selenium.NewChromeDriverService("SeleniumDrivers/chromedriver_win32/chromedriver.exe", 9515, opts...)
+		if err != nil {
+			panic(err)
+		}
+		defer service.Stop()
+	} else {
+		service, err := selenium.NewChromeDriverService("SeleniumDrivers/chromedriver_mac64/chromedriver", 9515, opts...)
+		if err != nil {
+			panic(err)
+		}
+		defer service.Stop()
 	}
-	defer service.Stop()
 
 	// init headless browser
 	caps := selenium.Capabilities{
@@ -84,6 +91,7 @@ func (s *Scraper) PublixScrapeDeals() {
 		alternateLayout = true //checks if the alternate windowed version is running (runs on some networks with the window on the right side of the screen)
 	}
 	if alternateLayout == false {
+		time.Sleep(10 * time.Second)
 		err = inputBox.SendKeys(s.Store.ZipCode)
 		if err != nil {
 			panic(err)
@@ -103,25 +111,44 @@ func (s *Scraper) PublixScrapeDeals() {
 			//fmt.Println("search button pressed")
 		}
 	} else {
+		alternateLayoutThree := false
 		// sets the input box of the alternate window as the input box
 		inputBoxTwo, err := wd.FindElement(selenium.ByCSSSelector, "#navBar > div > div.navigation-bar-main > div > div > div.navigation-section.top > div.user-navigation > div > div > div.navigation-sidebar-container > div.navigation-sidebar-body > div > div > div > div > form > input[type=search]")
-		err = inputBoxTwo.SendKeys(s.Store.ZipCode)
 		if err != nil {
-			panic(err)
-		} else {
-			//fmt.Println("zip inputed")
+			alternateLayoutThree = true //checks if the alternate windowed version is running (runs on some networks with the window on the right side of the screen)
 		}
-
-		// search for stores
-		searchStoreButton, err := wd.FindElement(selenium.ByCSSSelector, "#navBar > div > div.navigation-bar-main > div > div > div.navigation-section.top > div.user-navigation > div > div > div.navigation-sidebar-container > div.navigation-sidebar-body > div > div > div > div > form > button")
-		if err != nil {
-			panic(err)
-		}
-		err = searchStoreButton.Click()
-		if err != nil {
-			panic(err)
+		if !alternateLayoutThree {
+			time.Sleep(10 * time.Second)
+			err = inputBoxTwo.SendKeys(s.Store.ZipCode)
+			// search for stores
+			searchStoreButton, err := wd.FindElement(selenium.ByCSSSelector, "#navBar > div > div.navigation-bar-main > div > div > div.navigation-section.top > div.user-navigation > div > div > div.navigation-sidebar-container > div.navigation-sidebar-body > div > div > div > div > form > button")
+			if err != nil {
+				panic(err)
+			}
+			err = searchStoreButton.Click()
+			if err != nil {
+				panic(err)
+			} else {
+				//fmt.Println("search button pressed")
+			}
 		} else {
-			//fmt.Println("search button pressed")
+			inputBoxThree, err := wd.FindElement(selenium.ByCSSSelector, "#navBar > div > div.navigation-bar-main > div > div > div.navigation-section.top > div.user-navigation > div > div > div.navigation-sidebar-container > div.navigation-sidebar-body > div > div > div > div.search-container > form > input[type=search]")
+			time.Sleep(10 * time.Second)
+			err = inputBoxThree.SendKeys(s.Store.ZipCode)
+			if err != nil {
+				fmt.Println("not third layout")
+			}
+			// search for stores
+			searchStoreButton, err := wd.FindElement(selenium.ByCSSSelector, "#navBar > div > div.navigation-bar-main > div > div > div.navigation-section.top > div.user-navigation > div > div > div.navigation-sidebar-container > div.navigation-sidebar-body > div > div > div > div.search-container > form > button")
+			if err != nil {
+				panic(err)
+			}
+			err = searchStoreButton.Click()
+			if err != nil {
+				panic(err)
+			} else {
+				//fmt.Println("search button pressed")
+			}
 		}
 	}
 	time.Sleep(20 * time.Second) // wait for page to load

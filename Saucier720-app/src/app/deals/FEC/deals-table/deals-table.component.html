@@ -1,0 +1,19 @@
+<table class="table w-100 table-striped table-bordered">
+    <thead>
+      <tr>
+        <th>Food Name</th>
+        <th>Cost</th>
+        <th>Sale Price</th>
+        <th>Sale Info</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let ingredient of pantry">
+        <td>{{ ingredient.Name }}</td>
+        <td>{{ ingredient.StoreCost }}</td>
+        <td>{{ ingredient.SalePrice }}</td>
+        <td>{{ ingredient.SaleDetails }}</td>
+      </tr>
+    </tbody>
+  </table>
+  

@@ -1,2 +1,13 @@
 .DS_Store
 .angular
+src/github.com/*
+src/github.com/blang/*
+src/github.com/golang/
+src/github.com/gorilla/*
+src/github.com/mediabuyerbot/*
+src/github.com/mattn*
+src/github.com/rs/*
+src/github.com/tebeka/*
+src/golang.org/*
+src/google.golang.org/*
+node_modules/*
