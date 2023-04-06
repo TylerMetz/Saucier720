@@ -125,15 +125,10 @@ func main(){
 	// runs scraper if new deals at publix
 	CheckIfScrapeNewDeals(programDatabase)
 
+	// routs all data
 	RoutAllData(programDatabase, testUser)
 
 	//testReccList := BackendPkg.BestRecipes(programDatabase.GetUserPantry("Eddiefye69"), programDatabase.ReadRecipes(), programDatabase.ReadPublixDatabase())
-	/*for i := 0; i < len(testReccList); i++{
-		fmt.Println(testReccList[i].R.Title)
-		for j := 0; j < len(testReccList[i].ItemsInPantry); j++{
-			fmt.Println(testReccList[i].ItemsInPantry[j].Name)
-		}
-	}*/
 
 	BackendPkg.ListenForAllPosts();
 }
@@ -212,22 +207,22 @@ func RoutWeeklyDeals(d BackendPkg.Database){
 		Name:             "testRouter",
 		ItemsToBeEncoded: testFoodInterface,
 	}
-	go programRouter.Rout("/api/Deals", ":8081")
+	programRouter.Rout("/api/Deals", ":8081")
 }
 
-func RoutReccommendedRecipes(d BackendPkg.Database, currUser BackendPkg.User){
+func RoutRecommendedRecipes(d BackendPkg.Database, currUser BackendPkg.User){
 
-	userReccList := BackendPkg.BestRecipes(d.GetUserPantry(currUser.UserName), d.ReadRecipes(), d.ReadPublixDatabase())
+	userRecList := BackendPkg.BestRecipes(d.GetUserPantry(currUser.UserName), d.ReadRecipes(), d.ReadPublixDatabase())
 	var testFoodInterface []interface{}
-	for i := 0; i < len(userReccList); i++{
-		testFoodInterface = append(testFoodInterface, userReccList[i])
+	for i := 0; i < len(userRecList); i++{
+		testFoodInterface = append(testFoodInterface, userRecList[i])
 	}
 
 	programRouter := BackendPkg.Router{
 		Name:             "testRouter",
 		ItemsToBeEncoded: testFoodInterface,
 	}
-	go programRouter.Rout("/api/Recipes", ":8082")
+	programRouter.Rout("/api/Recipes", ":8082")
 }
 
 func RoutAllData(d BackendPkg.Database, currUser BackendPkg.User){
@@ -239,5 +234,5 @@ func RoutAllData(d BackendPkg.Database, currUser BackendPkg.User){
 	go RoutWeeklyDeals(d)
 
 	// routs reccommended recipes to recipes page
-	go RoutReccommendedRecipes(d, currUser)
+	go RoutRecommendedRecipes(d, currUser)
 }
