@@ -12,15 +12,20 @@ type Recipe struct {
 	PictureLink    string   `json:"picture_link"`
 }
 
-func ReadInAllRecipes() []Recipe {
-	// read the JSON data from the file
-    file, _ := ioutil.ReadFile("recipes.json")
+func ReadInAllRecipes() ([]Recipe, error) {
+	var recipes []Recipe
 
-    // unmarshal the JSON data into a map[string]Recipe
-    var recipes []Recipe
-	_ = json.Unmarshal(file, &recipes)
+	file, err := ioutil.ReadFile("recipes.json")
+	if err != nil {
+		return nil, err
+	}
 
-	return recipes 
+	err = json.Unmarshal([]byte(file), &recipes)
+	if err != nil {
+		return nil, err
+	}
+
+	return recipes, nil
 }
 
 
