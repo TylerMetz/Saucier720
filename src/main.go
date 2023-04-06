@@ -78,7 +78,7 @@ func main(){
 
 	testSlice, _ := BackendPkg.ReadInAllRecipes()
 
-	fmt.Println(len(testSlice.Recipes));
+	fmt.Println(testSlice);
 
 	// prints recipes
 	/*for i := 0; i < testSlice; i++{
