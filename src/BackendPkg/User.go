@@ -9,8 +9,8 @@ type User struct{
 	FirstName string
 	LastName string
 	Email string
-	UserName string
-	Password string
+    UserName string `json:"username"`
+    Password string `json:"password"`
 	UserPantry Pantry
 }
 

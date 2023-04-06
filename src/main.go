@@ -82,7 +82,7 @@ func main(){
 	testUserFoodSlice := []BackendPkg.FoodItem{testFoodItem, testFoodItem2, testFoodItem3, testFoodItem4, testFoodItem5, testFoodItem6, testFoodItem7, testFoodItem8, testFoodItem9, testFoodItem10}
 
 	// test database
-	testDatabase := BackendPkg.Database{
+	programDatabase := BackendPkg.Database{
 		Name: "MealDealz Database",
 	}
 
@@ -112,50 +112,26 @@ func main(){
 	}
 
 	// store Eddie
-	testDatabase.StoreUserDatabase(testUser)
-	testDatabase.StoreUserPantry(testUser)
+	programDatabase.StoreUserDatabase(testUser)
+	programDatabase.StoreUserPantry(testUser)
 
-	// store Eddie version of Sam
-	testDatabase.StoreUserDatabase(testUserTwo)
-	testDatabase.StoreUserPantry(testUserTwo)
+	// store Sam
+	programDatabase.StoreUserDatabase(testUserTwo)
+	programDatabase.StoreUserPantry(testUserTwo)
 
-	// Reads recipes dataset
-	testDatabase.WriteRecipes()
+	// Reads recipes dataset in not read in yet and stores in DB
+	programDatabase.WriteRecipes()
 
 	// runs scraper if new deals at publix
-	CheckIfScrapeNewDeals(testDatabase)
+	CheckIfScrapeNewDeals(programDatabase)
 
-	// routs deals to deals page
-	go RoutWeeklyDeals(testDatabase)
+	// routs all data
+	go RoutAllData(programDatabase, testUser)
 
-	// routs Eddie's pantry, lol
-	go RoutUserPantry(testDatabase, testUser)
-
-	testReccList := BackendPkg.BestRecipes(testDatabase.GetUserPantry("Eddiefye69"), testDatabase.ReadRecipes(), testDatabase.ReadPublixDatabase())
-
-	for i := 0; i < len(testReccList); i++{
-		fmt.Println(testReccList[i].R.Title)
-		for j := 0; j < len(testReccList[i].ItemsInPantry); j++{
-			fmt.Println(testReccList[i].ItemsInPantry[j].Name)
-		}
-	}
-
-	ListenForPost(testDatabase);
-}
-
-func RoutUserPantry(d BackendPkg.Database, u BackendPkg.User){
+	//testReccList := BackendPkg.BestRecipes(programDatabase.GetUserPantry("Eddiefye69"), programDatabase.ReadRecipes(), programDatabase.ReadPublixDatabase())
 	
-	// read from .db file and output test user's pantry to frontend
-	var testFoodInterface []interface{}
-	for i := 0; i < len(d.GetUserPantry(u.UserName).FoodInPantry); i++{
-		testFoodInterface = append(testFoodInterface, d.GetUserPantry(u.UserName).FoodInPantry[i])
-	}
-	// test router
-	programRouter := BackendPkg.Router{
-		Name:             "testRouter",
-		ItemsToBeEncoded: testFoodInterface,
-	}
-	programRouter.Rout("/api/Pantry", ":8080")
+	BackendPkg.ListenForAllPosts();
+	
 }
 
 func CheckIfScrapeNewDeals(d BackendPkg.Database){
@@ -205,6 +181,21 @@ func CheckIfScrapeNewDeals(d BackendPkg.Database){
 	}
 }
 
+func RoutUserPantry(d BackendPkg.Database, u BackendPkg.User){
+	
+	// read from .db file and output test user's pantry to frontend
+	var testFoodInterface []interface{}
+	for i := 0; i < len(d.GetUserPantry(u.UserName).FoodInPantry); i++{
+		testFoodInterface = append(testFoodInterface, d.GetUserPantry(u.UserName).FoodInPantry[i])
+	}
+	// test router
+	programRouter := BackendPkg.Router{
+		Name:             "testRouter",
+		ItemsToBeEncoded: testFoodInterface,
+	}
+	programRouter.Rout("/api/Pantry", ":8080")
+}
+
 func RoutWeeklyDeals(d BackendPkg.Database){
 	
 	// read from .db file and output test user's pantry to frontend
@@ -217,12 +208,32 @@ func RoutWeeklyDeals(d BackendPkg.Database){
 		Name:             "testRouter",
 		ItemsToBeEncoded: testFoodInterface,
 	}
-	go programRouter.Rout("/api/Deals", ":8081")
+	programRouter.Rout("/api/Deals", ":8081")
 }
 
-func ListenForPost(d BackendPkg.Database){
-	programRouter2 := BackendPkg.Router{
-		Name:             "testRouter",
+func RoutRecommendedRecipes(d BackendPkg.Database, currUser BackendPkg.User){
+
+	userRecList := BackendPkg.BestRecipes(d.GetUserPantry(currUser.UserName), d.ReadRecipes(), d.ReadPublixDatabase())
+	var testFoodInterface []interface{}
+	for i := 0; i < len(userRecList); i++{
+		testFoodInterface = append(testFoodInterface, userRecList[i])
 	}
-	programRouter2.Listen("/api/NewPantryItem", ":8082") //should pass in database here
+
+	programRouter := BackendPkg.Router{
+		Name:             "testRouter",
+		ItemsToBeEncoded: testFoodInterface,
+	}
+	programRouter.Rout("/api/Recipes", ":8082")
+}
+
+func RoutAllData(d BackendPkg.Database, currUser BackendPkg.User){
+
+	// routs Eddie's pantry, lol
+	go RoutUserPantry(d, currUser)
+
+	// routs deals to deals page
+	go RoutWeeklyDeals(d)
+
+	// routs reccommended recipes to recipes page
+	RoutRecommendedRecipes(d, currUser)
 }

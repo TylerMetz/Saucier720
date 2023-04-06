@@ -107,5 +107,14 @@ func min(a, b int) int {
     return b
 }
 
+func OutputRecommendations(r []Reccomendation){
+	for i := 0; i < len(r); i++{
+		fmt.Println(r[i].R.Title)
+		for j := 0; j < len(r[i].ItemsInPantry); j++{
+			fmt.Println(r[i].ItemsInPantry[j].Name)
+		}
+	}
+}
+
 
 
