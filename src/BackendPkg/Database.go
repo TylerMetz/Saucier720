@@ -225,4 +225,6 @@ func (d* Database) WriteRecipes(){
 		statementTwo.Exec(recipe.Title, string(ingredients), recipe.Instructions)
 	}
 
+	database.Exec("DELETE FROM RecipeData WHERE ingredients = '[]'")
+
 }
