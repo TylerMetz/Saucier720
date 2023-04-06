@@ -139,3 +139,16 @@ func RoutUserPantry(d Database, u User){
 	}
 	programRouter.Rout("/api/Pantry", ":8080")
 }
+
+func ListenForNewUser(){
+
+	// create a router to output items to the port
+	testRouter := BackendPkg.Router{
+		Name:             "NewUser",
+	}
+	resp, err := http.Get("http://localhost:8080/api/Signup")
+
+	var user User
+	err = json.NewDecoder(resp.Body).Decode(&user)
+
+}
