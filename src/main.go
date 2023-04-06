@@ -30,7 +30,56 @@ func main(){
 		SaleDetails: "$2 for 2",
 		Quantity:    2,
 	}
-	testUserFoodSlice := []BackendPkg.FoodItem{testFoodItem, testFoodItem2, testFoodItem3}
+	testFoodItem4 := BackendPkg.FoodItem{
+		Name:        "eggs",
+		StoreCost:   10.69,
+		OnSale:      true,
+		SaleDetails: "$2 for 2",
+		Quantity:    2,
+	}
+	testFoodItem5 := BackendPkg.FoodItem{
+		Name:        "milk",
+		StoreCost:   10.69,
+		OnSale:      true,
+		SaleDetails: "$2 for 2",
+		Quantity:    2,
+	}
+	testFoodItem6 := BackendPkg.FoodItem{
+		Name:        "sugar",
+		StoreCost:   10.69,
+		OnSale:      true,
+		SaleDetails: "$2 for 2",
+		Quantity:    2,
+	}
+	testFoodItem7 := BackendPkg.FoodItem{
+		Name:        "flour",
+		StoreCost:   10.69,
+		OnSale:      true,
+		SaleDetails: "$2 for 2",
+		Quantity:    2,
+	}
+	testFoodItem8 := BackendPkg.FoodItem{
+		Name:        "vanilla",
+		StoreCost:   10.69,
+		OnSale:      true,
+		SaleDetails: "$2 for 2",
+		Quantity:    2,
+	}
+	testFoodItem9 := BackendPkg.FoodItem{
+		Name:        "butter",
+		StoreCost:   10.69,
+		OnSale:      true,
+		SaleDetails: "$2 for 2",
+		Quantity:    2,
+	}
+	testFoodItem10 := BackendPkg.FoodItem{
+		Name:        "apple",
+		StoreCost:   10.69,
+		OnSale:      true,
+		SaleDetails: "$2 for 2",
+		Quantity:    2,
+	}
+	testUserFoodSlice := []BackendPkg.FoodItem{testFoodItem, testFoodItem2, testFoodItem3, testFoodItem4, testFoodItem5, testFoodItem6, testFoodItem7, testFoodItem8, testFoodItem9, testFoodItem10}
 
 	// test database
 	testDatabase := BackendPkg.Database{
@@ -81,6 +130,15 @@ func main(){
 
 	// routs Eddie's pantry, lol
 	go RoutUserPantry(testDatabase, testUser)
+
+	testReccList := BackendPkg.BestRecipes(testDatabase.GetUserPantry("Eddiefye69"), testDatabase.ReadRecipes(), testDatabase.ReadPublixDatabase())
+
+	for i := 0; i < len(testReccList); i++{
+		fmt.Println(testReccList[i].R.Title)
+		for j := 0; j < len(testReccList[i].ItemsInPantry); j++{
+			fmt.Println(testReccList[i].ItemsInPantry[j].Name)
+		}
+	}
 
 	ListenForPost(testDatabase);
 }

@@ -6,9 +6,9 @@ import (
 )
 
 type Reccomendation struct {
-	r Recipe
-	itemsInPantry []FoodItem
-	itemsOnSale []FoodItem
+	R Recipe
+	ItemsInPantry []FoodItem
+	ItemsOnSale []FoodItem
 }
 
 func BestRecipes(userPantry Pantry, allRecipes []Recipe, deals []FoodItem) []Reccomendation{
@@ -25,7 +25,7 @@ func BestRecipes(userPantry Pantry, allRecipes []Recipe, deals []FoodItem) []Rec
 					tempScore++
 				}
 			}
-			scoreList[j] = tempScore
+			scoreList = append(scoreList, tempScore)
 		}
 	}
 
@@ -63,9 +63,9 @@ func BestRecipes(userPantry Pantry, allRecipes []Recipe, deals []FoodItem) []Rec
 					}
 				}
 				newRecc := Reccomendation{
-					r: allRecipes[m],
-					itemsInPantry: pantryItemsInRecipe,
-					itemsOnSale: dealsItemsInRecipe,
+					R: allRecipes[m],
+					ItemsInPantry: pantryItemsInRecipe,
+					ItemsOnSale: dealsItemsInRecipe,
 				}
 				returnReccomendations = append(returnReccomendations, newRecc)
 			}
