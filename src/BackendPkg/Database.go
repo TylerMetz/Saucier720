@@ -208,17 +208,19 @@ func (d *Database) ReadDealsScrapedTime() time.Time {
 
 func (d* Database) WriteRecipes(){
 	// Read the recipes from the file
-	//recipes, _ := ReadInAllRecipes()
+
+	recipes, _ := GetRecipes()
 
 	// calls function to open the database
 	database := d.OpenDatabase()
 
 	// Create a new table for the recipes
-	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS RecipeData (title TEXT, ingredients TEXT, instructions TEXT)")
+	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS RecipeData (title TEXT PRIMARY KEY, ingredients TEXT, instructions TEXT)")
 	statement.Exec()
 
 	// Insert each recipe into the table
-	//statementTwo, _ := database.Prepare("INSERT INTO RecipeData (title, ingredients, instructions) values (?, ?, ?)")
+
+	statementTwo, _ := database.Prepare("INSERT OR IGNORE INTO RecipeData (title, ingredients, instructions) values (?, ?, ?)")
 
 	/*for _, recipe := range recipes {
 		ingredients, _ := json.Marshal(recipe.Ingredients)

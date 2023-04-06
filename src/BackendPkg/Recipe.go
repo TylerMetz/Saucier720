@@ -1,10 +1,10 @@
 package BackendPkg
 
 import (
-	"encoding/json"
-	"fmt"
-	"os"
-	"io/ioutil"
+
+    "encoding/json"
+    //"fmt"
+    "io/ioutil"
 )
 
 type Recipes struct {
@@ -12,20 +12,30 @@ type Recipes struct {
 }
 
 type Recipe struct {
-	Instructions   string   `json:"instructions"`
-	Ingredients    []string `json:"ingredients"`
-	Title          string   `json:"title"`
-	PictureLink    string   `json:"picture_link"`
+    Instructions   string   `json:"instructions"`
+    Ingredients    []string `json:"ingredients"`
+    Title          string   `json:"title"`
+    PictureLink    *string  `json:"picture_link"`
 }
 
-type Colors struct {
-	Colors []Color `json:"colors"`
-}
 
-type Color struct {
-	Color          string   `json:"color"`
-	Value          string   `json:"value"`
+func GetRecipes() ([]Recipe, error) {
+    file, err := ioutil.ReadFile("recipes.json")
+    if err != nil {
+        return nil, err
+    }
 
+    var recipes map[string]Recipe
+    if err := json.Unmarshal(file, &recipes); err != nil {
+        return nil, err
+    }
+
+    result := make([]Recipe, 0, len(recipes))
+    for _, recipe := range recipes {
+        result = append(result, recipe)
+    }
+
+    return result, nil
 }
 
 
@@ -47,6 +57,6 @@ func ReadInAllRecipes() (Recipes, error) {
         fmt.Println("User Type: " + recipes.Recipes[i].Title)
     }
 	return recipes, nil
-}
 
+}
 
