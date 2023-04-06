@@ -74,16 +74,7 @@ func main(){
 	CheckIfScrapeNewDeals(testDatabase)
 	
 	// Reads recipes dataset
-	//testDatabase.WriteRecipes()
-
-	testSlice, _ := BackendPkg.GetRecipes()
-
-	fmt.Println(len(testSlice));
-
-	// prints recipes
-	for i := 0; i < len(testSlice); i++{
-		fmt.Println(testSlice[i]);
-	}
+	testDatabase.WriteRecipes()
 
 	// routs deals to deals page
 	go RoutWeeklyDeals(testDatabase)
