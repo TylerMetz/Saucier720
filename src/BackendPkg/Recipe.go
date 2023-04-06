@@ -2,8 +2,14 @@ package BackendPkg
 
 import (
 	"encoding/json"
+	"fmt"
+	"os"
 	"io/ioutil"
 )
+
+type Recipes struct {
+	Recipes []Recipe `json:"recipes"`
+}
 
 type Recipe struct {
 	Instructions   string   `json:"instructions"`
@@ -12,19 +18,34 @@ type Recipe struct {
 	PictureLink    string   `json:"picture_link"`
 }
 
-func ReadInAllRecipes() ([]Recipe, error) {
-	var recipes []Recipe
+type Colors struct {
+	Colors []Color `json:"colors"`
+}
 
-	file, err := ioutil.ReadFile("recipes.json")
+type Color struct {
+	Color          string   `json:"color"`
+	Value          string   `json:"value"`
+
+}
+
+
+func ReadInAllRecipes() (Recipes, error) {
+
+	file, err := os.Open("recipes.json")
 	if err != nil {
-		return nil, err
+		fmt.Println(err)
 	}
 
-	err = json.Unmarshal([]byte(file), &recipes)
-	if err != nil {
-		return nil, err
-	}
+	fmt.Println("Successfully Opened recipes.json")
 
+	byteValue, _ := ioutil.ReadAll(file)
+	var recipes Recipes
+
+	json.Unmarshal(byteValue, &recipes)
+
+	for i := 0; i < len(recipes.Recipes); i++ {
+        fmt.Println("User Type: " + recipes.Recipes[i].Title)
+    }
 	return recipes, nil
 }
 

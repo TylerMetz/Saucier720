@@ -78,12 +78,12 @@ func main(){
 
 	testSlice, _ := BackendPkg.ReadInAllRecipes()
 
-	fmt.Println(len(testSlice));
+	fmt.Println(testSlice);
 
 	// prints recipes
-	for i := 0; i < len(testSlice); i++{
-		fmt.Println(testSlice[i]);
-	}
+	/*for i := 0; i < testSlice; i++{
+		fmt.Println(testSlice);
+	}*/
 
 	// routs deals to deals page
 	go RoutWeeklyDeals(testDatabase)
