@@ -1,40 +1,34 @@
 package BackendPkg
 
 import (
-	"encoding/json"
-	"io/ioutil"
-	"log"
+    "encoding/json"
+    //"fmt"
+    "io/ioutil"
 )
 
 type Recipe struct {
-	Title       string   `json:"title"`
-	Ingredients []string `json:"ingredients"`
-	Instructions string  `json:"instructions"`
-	PictureLink string   `json:"picture_link"`
-}
-
-type Recipes struct {
-	Recipes map[string]Recipe `json:"recipes"`
+    Instructions   string   `json:"instructions"`
+    Ingredients    []string `json:"ingredients"`
+    Title          string   `json:"title"`
+    PictureLink    *string  `json:"picture_link"`
 }
 
 func GetRecipes() ([]Recipe, error) {
-	var recipes []Recipe
+    file, err := ioutil.ReadFile("recipes.json")
+    if err != nil {
+        return nil, err
+    }
 
-	file, err := ioutil.ReadFile("recipes.json")
-	if err != nil {
-		log.Fatal(err)
-	}
+    var recipes map[string]Recipe
+    if err := json.Unmarshal(file, &recipes); err != nil {
+        return nil, err
+    }
 
-	var data Recipes
-	err = json.Unmarshal(file, &data)
-	if err != nil {
-		return nil, err
-	}
+    result := make([]Recipe, 0, len(recipes))
+    for _, recipe := range recipes {
+        result = append(result, recipe)
+    }
 
-	for _, recipe := range data.Recipes {
-		recipes = append(recipes, recipe)
-	}
-
-	return recipes, nil
+    return result, nil
 }
 
