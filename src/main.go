@@ -73,6 +73,18 @@ func main(){
 	// runs scraper if new deals at publix
 	CheckIfScrapeNewDeals(testDatabase)
 	
+	// Reads recipes dataset
+	//testDatabase.WriteRecipes()
+
+	testSlice, _ := BackendPkg.ReadInAllRecipes()
+
+	fmt.Println(len(testSlice));
+
+	// prints recipes
+	for i := 0; i < len(testSlice); i++{
+		fmt.Println(testSlice[i]);
+	}
+
 	// routs deals to deals page
 	go RoutWeeklyDeals(testDatabase)
 
@@ -157,17 +169,12 @@ func RoutWeeklyDeals(d BackendPkg.Database){
 		Name:             "testRouter",
 		ItemsToBeEncoded: testFoodInterface,
 	}
-	programRouter.Rout("/api/Deals", ":8081")
+	go programRouter.Rout("/api/Deals", ":8081")
 }
 
 func ListenForPost(d BackendPkg.Database){
-	var testFoodInterface2 []interface{}
-	for i := 0; i < len(d.ReadPublixDatabase()); i++{
-		testFoodInterface2 = append(testFoodInterface2, d.ReadPublixDatabase()[i])
-	}
 	programRouter2 := BackendPkg.Router{
 		Name:             "testRouter",
-		ItemsToBeEncoded: testFoodInterface2,
 	}
 	programRouter2.Listen("/api/NewPantryItem", ":8082") //should pass in database here
 }
