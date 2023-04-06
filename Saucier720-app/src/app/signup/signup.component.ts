@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { SignupService } from '../signup.service';
+import { tap } from 'cypress/types/lodash';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-signup',
@@ -9,6 +13,7 @@ export class SignupComponent implements OnInit {
   type: string = "password";
   isText: boolean = false;
   eyeIcon: string = "fa-eye-slash";
+  constructor(private signupService: SignupService, private router: Router) { }
   ngOnInit(): void {
     this.signup()
   }
@@ -19,7 +24,7 @@ export class SignupComponent implements OnInit {
     this.isText ? this.type = "text" : this.type = "password";
   }
 
-  signup(): void{
-
+  signup(): void {
+    this.signupService.signup()
   }
 }
