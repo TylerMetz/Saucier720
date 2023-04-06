@@ -7,6 +7,10 @@ import (
 	"io/ioutil"
 )
 
+type Recipes struct {
+	Recipes []Recipes `json:"recipes"`
+}
+
 type Recipe struct {
 	Instructions   string   `json:"instructions"`
 	Ingredients    []string `json:"ingredients"`
@@ -25,24 +29,21 @@ type Color struct {
 }
 
 
-func ReadInAllRecipes() (Colors, error) {
-	//var recipes []Recipe
+func ReadInAllRecipes() (Recipes, error) {
 
-	file, err := os.Open("colors.json")
+	file, err := os.Open("recipes.json")
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	fmt.Println("Successfully Opened colors.json")
+	fmt.Println("Successfully Opened recipes.json")
 
 	byteValue, _ := ioutil.ReadAll(file)
-	var colors Colors
+	var recipes Recipes
 
-	json.Unmarshal(byteValue, &colors)
-	fmt.Println("Color: " + colors.Colors[0].Color)
-	fmt.Println("Value: " + colors.Colors[0].Value)
+	json.Unmarshal(byteValue, &recipes)
 
-	return colors, nil
+	return recipes, nil
 }
 
 
