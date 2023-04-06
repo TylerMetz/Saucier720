@@ -13,18 +13,14 @@ type Recipe struct {
 }
 
 func ReadInAllRecipes() []Recipe {
-	var recipes []Recipe
+	// read the JSON data from the file
+    file, _ := ioutil.ReadFile("recipes.json")
 
-	fileBytes, _ := ioutil.ReadFile("recipes.json")
+    // unmarshal the JSON data into a map[string]Recipe
+    var recipes []Recipe
+	_ = json.Unmarshal(file, &recipes)
 
-	data := make(map[string]Recipe)
-	_ = json.Unmarshal(fileBytes, &data)
-
-	for _, recipe := range data {
-		recipes = append(recipes, recipe)
-	}
-
-	return recipes
+	return recipes 
 }
 
 

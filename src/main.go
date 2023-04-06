@@ -76,7 +76,7 @@ func main(){
 	// Reads recipes dataset
 	//testDatabase.WriteRecipes()
 
-	testSlice, _ := BackendPkg.ReadInAllRecipes()
+	testSlice := BackendPkg.ReadInAllRecipes()
 
 	fmt.Println(len(testSlice));
 
