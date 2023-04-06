@@ -3,6 +3,7 @@ package BackendPkg
 import (
 	"strings"
 	"sort"
+	"fmt"
 )
 
 type Reccomendation struct {
@@ -31,7 +32,12 @@ func BestRecipes(userPantry Pantry, allRecipes []Recipe, deals []FoodItem) []Rec
 					tempScore++
 				}
 			}
-			scoreList = append(scoreList, tempScore)
+			if i == 0{
+				scoreList = append(scoreList, tempScore)
+			} else{
+				scoreList[j] += tempScore
+			}
+			
 		}
 	}
 
@@ -52,13 +58,22 @@ func BestRecipes(userPantry Pantry, allRecipes []Recipe, deals []FoodItem) []Rec
     // copy the first 30 indices (or all of the indices, if there are fewer than 30) into the highestScoreIndices slice
     copy(highestScoreIndices, indices[:min(30, len(indices))])
 
+
+	
+
 	// finding corresponding recipes at highest scoring indices 
 	for m := 0; m < len(allRecipes); m++{
+		
 		for n := 0; n < len(highestScoreIndices); n++{
 			if(m == highestScoreIndices[n]){
+
+				//fmt.Println(highestScoreIndices[n])
+
 				// get items in pantry
 				var pantryItemsInRecipe []FoodItem
 				var dealsItemsInRecipe []FoodItem
+
+				
 
 				// check which food items are actually contained in recipe
 				for i := 0; i < len(userPantry.FoodInPantry); i++{
@@ -68,6 +83,9 @@ func BestRecipes(userPantry Pantry, allRecipes []Recipe, deals []FoodItem) []Rec
 						}
 					}
 				}
+
+				
+
 				newRecc := Reccomendation{
 					R: allRecipes[m],
 					ItemsInPantry: pantryItemsInRecipe,
