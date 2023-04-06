@@ -145,7 +145,7 @@ func ListenForAllPosts(){
 	for true{
 	
 		// listens for new user
-		go ListenForNewUser()
+		ListenForNewUser()
 
 	}
 }
