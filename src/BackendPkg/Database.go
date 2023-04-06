@@ -3,7 +3,7 @@ package BackendPkg
 import (
 	"database/sql"
 	"time"
-	_"encoding/json"
+	"encoding/json"
 	_ "github.com/mattn/go-sqlite3"
 	//"fmt"
 )
@@ -208,7 +208,6 @@ func (d *Database) ReadDealsScrapedTime() time.Time {
 
 func (d* Database) WriteRecipes(){
 	// Read the recipes from the file
-
 	recipes, _ := GetRecipes()
 
 	// calls function to open the database
@@ -219,12 +218,11 @@ func (d* Database) WriteRecipes(){
 	statement.Exec()
 
 	// Insert each recipe into the table
-
 	statementTwo, _ := database.Prepare("INSERT OR IGNORE INTO RecipeData (title, ingredients, instructions) values (?, ?, ?)")
 
-	/*for _, recipe := range recipes {
+	for _, recipe := range recipes {
 		ingredients, _ := json.Marshal(recipe.Ingredients)
 		statementTwo.Exec(recipe.Title, string(ingredients), recipe.Instructions)
-	}*/
+	}
 
 }
