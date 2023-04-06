@@ -153,19 +153,20 @@ func ListenForAllPosts(){
 func ListenForNewUser(){
 
 	// reads from signup page
-	resp, _ := http.Get("http://localhost:8080/api/Signup")
+	resp, _ := http.Get("http://localhost:8085/api/Signup")
 
 	// stores data as new user
-	var user User
-	_ = json.NewDecoder(resp.Body).Decode(&user)
-	defer resp.Body.Close()
+	if(resp != nil){
+		var user User
+		json.NewDecoder(resp.Body).Decode(&user)
+		defer resp.Body.Close()
 
-	// creates database object to store info in MealDealz.sb
-	newUserDatabase := Database{
-		Name: "MealDealz Database",
+		// creates database object to store info in MealDealz.sb
+		newUserDatabase := Database{
+			Name: "MealDealz Database",
+		}
+
+		// store the new user in the database
+		newUserDatabase.StoreUserDatabase(user)
 	}
-
-	// store the new user in the database
-	newUserDatabase.StoreUserDatabase(user)
-
 }

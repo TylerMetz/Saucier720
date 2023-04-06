@@ -115,7 +115,7 @@ func main(){
 	programDatabase.StoreUserDatabase(testUser)
 	programDatabase.StoreUserPantry(testUser)
 
-	// store Eddie version of Sam
+	// store Sam
 	programDatabase.StoreUserDatabase(testUserTwo)
 	programDatabase.StoreUserPantry(testUserTwo)
 
@@ -136,21 +136,6 @@ func main(){
 	}*/
 
 	BackendPkg.ListenForAllPosts();
-}
-
-func RoutUserPantry(d BackendPkg.Database, u BackendPkg.User){
-	
-	// read from .db file and output test user's pantry to frontend
-	var testFoodInterface []interface{}
-	for i := 0; i < len(d.GetUserPantry(u.UserName).FoodInPantry); i++{
-		testFoodInterface = append(testFoodInterface, d.GetUserPantry(u.UserName).FoodInPantry[i])
-	}
-	// test router
-	programRouter := BackendPkg.Router{
-		Name:             "testRouter",
-		ItemsToBeEncoded: testFoodInterface,
-	}
-	programRouter.Rout("/api/Pantry", ":8080")
 }
 
 func CheckIfScrapeNewDeals(d BackendPkg.Database){
@@ -198,6 +183,21 @@ func CheckIfScrapeNewDeals(d BackendPkg.Database){
 		d.StorePublixDatabase(testFoodSlice)
 		d.StoreDealsScrapedTime(programScraper.TimeLastDealsScraped)
 	}
+}
+
+func RoutUserPantry(d BackendPkg.Database, u BackendPkg.User){
+	
+	// read from .db file and output test user's pantry to frontend
+	var testFoodInterface []interface{}
+	for i := 0; i < len(d.GetUserPantry(u.UserName).FoodInPantry); i++{
+		testFoodInterface = append(testFoodInterface, d.GetUserPantry(u.UserName).FoodInPantry[i])
+	}
+	// test router
+	programRouter := BackendPkg.Router{
+		Name:             "testRouter",
+		ItemsToBeEncoded: testFoodInterface,
+	}
+	programRouter.Rout("/api/Pantry", ":8080")
 }
 
 func RoutWeeklyDeals(d BackendPkg.Database){
