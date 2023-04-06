@@ -208,7 +208,7 @@ func (d *Database) ReadDealsScrapedTime() time.Time {
 
 func (d* Database) WriteRecipes(){
 	// Read the recipes from the file
-	recipes := ReadInAllRecipes()
+	recipes, _ := ReadInAllRecipes()
 
 	// calls function to open the database
 	database := d.OpenDatabase()
