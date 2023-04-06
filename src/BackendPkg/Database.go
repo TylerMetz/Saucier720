@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"time"
 	"encoding/json"
+	"strings"
 	_ "github.com/mattn/go-sqlite3"
 	//"fmt"
 )
@@ -229,6 +230,30 @@ func (d* Database) WriteRecipes(){
 
 }
 
-func (d* Database) ReadRecipes(){
-	
+func (d* Database) ReadRecipes() []Recipe{
+	// calls function to open the database
+	database := d.OpenDatabase()
+
+	// Execute a SELECT statement to retrieve all rows from the RecipeData table
+	rows, _ := database.Query("SELECT * FROM RecipeData")
+
+	// Iterate through the rows and create a slice of Recipe structs
+	var recipes []Recipe
+	for rows.Next() {
+		var title, ingredientsStr, instructions string
+		rows.Scan(&title, &ingredientsStr, &instructions)
+
+		// Convert the comma-separated list of ingredients to a slice
+		ingredients := strings.Split(ingredientsStr, ",")
+
+		// Create a new Recipe struct and append it to the slice
+		recipe := Recipe{
+			Title:        title,
+			Ingredients:  ingredients,
+			Instructions: instructions,
+		}
+		recipes = append(recipes, recipe)
+	}
+
+	return recipes;
 }
