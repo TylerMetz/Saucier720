@@ -3,7 +3,7 @@ package BackendPkg
 import (
 	"strings"
 	"sort"
-	//"fmt"
+	"fmt"
 )
 
 type Reccomendation struct {
@@ -99,6 +99,15 @@ func min(a, b int) int {
         return a
     }
     return b
+}
+
+func OutputRecommendations(r []Reccomendation){
+	for i := 0; i < len(r); i++{
+		fmt.Println(r[i].R.Title)
+		for j := 0; j < len(r[i].ItemsInPantry); j++{
+			fmt.Println(r[i].ItemsInPantry[j].Name)
+		}
+	}
 }
 
 
