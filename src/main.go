@@ -79,7 +79,7 @@ func main(){
 	// routs deals to deals page
 	go RoutWeeklyDeals(testDatabase)
 
-	// routs Eddie's pantry
+	// routs Eddie's pantry, lol
 	go RoutUserPantry(testDatabase, testUser)
 
 	
