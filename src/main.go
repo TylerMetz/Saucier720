@@ -70,11 +70,11 @@ func main(){
 	testDatabase.StoreUserDatabase(testUserTwo)
 	testDatabase.StoreUserPantry(testUserTwo)
 
-	// runs scraper if new deals at publix
-	CheckIfScrapeNewDeals(testDatabase)
-	
 	// Reads recipes dataset
 	testDatabase.WriteRecipes()
+
+	// runs scraper if new deals at publix
+	CheckIfScrapeNewDeals(testDatabase)
 
 	// routs deals to deals page
 	go RoutWeeklyDeals(testDatabase)
