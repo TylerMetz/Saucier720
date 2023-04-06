@@ -228,3 +228,7 @@ func (d* Database) WriteRecipes(){
 	database.Exec("DELETE FROM RecipeData WHERE ingredients = '[]'")
 
 }
+
+func (d* Database) ReadRecipes(){
+	
+}
