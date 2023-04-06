@@ -87,8 +87,6 @@ func (g *GroceryStore) OrganizeDeals(deals string) []FoodItem {
 		}
 		// need to check for interesting deals and clean them into their own spot 
 		//bigDeal := strings.Fields(name)
-		//if()
-	
 		// find next starting point
 		for i:= 0; i < len(newRange); i++ {
 			if newRange[i] == "data-v-cfc9b7ee=\"\""{
@@ -104,6 +102,7 @@ func (g *GroceryStore) OrganizeDeals(deals string) []FoodItem {
 		/*fmt.Println(name)
 		fmt.Println(deal)
 		count++*/
+		
 		item := FoodItem{
 				Name:        name,
 				StoreCost:   100,
