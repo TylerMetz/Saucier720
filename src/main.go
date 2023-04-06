@@ -140,7 +140,7 @@ func main(){
 		}
 	}
 
-	ListenForPost(testDatabase);
+	BackendPkg.ListenForAllPosts();
 }
 
 func RoutUserPantry(d BackendPkg.Database, u BackendPkg.User){
@@ -218,11 +218,4 @@ func RoutWeeklyDeals(d BackendPkg.Database){
 		ItemsToBeEncoded: testFoodInterface,
 	}
 	go programRouter.Rout("/api/Deals", ":8081")
-}
-
-func ListenForPost(d BackendPkg.Database){
-	programRouter2 := BackendPkg.Router{
-		Name:             "testRouter",
-	}
-	programRouter2.Listen("/api/NewPantryItem", ":8082") //should pass in database here
 }

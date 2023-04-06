@@ -140,15 +140,32 @@ func RoutUserPantry(d Database, u User){
 	programRouter.Rout("/api/Pantry", ":8080")
 }
 
+func ListenForAllPosts(){
+	// all listen functions go in here
+	for true{
+	
+		// listens for new user
+		go ListenForNewUser()
+
+	}
+}
+
 func ListenForNewUser(){
 
-	// create a router to output items to the port
-	testRouter := BackendPkg.Router{
-		Name:             "NewUser",
-	}
-	resp, err := http.Get("http://localhost:8080/api/Signup")
+	// reads from signup page
+	resp, _ := http.Get("http://localhost:8080/api/Signup")
 
+	// stores data as new user
 	var user User
-	err = json.NewDecoder(resp.Body).Decode(&user)
+	_ = json.NewDecoder(resp.Body).Decode(&user)
+	defer resp.Body.Close()
+
+	// creates database object to store info in MealDealz.sb
+	newUserDatabase := Database{
+		Name: "MealDealz Database",
+	}
+
+	// store the new user in the database
+	newUserDatabase.StoreUserDatabase(user)
 
 }
