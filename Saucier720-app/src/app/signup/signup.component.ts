@@ -10,11 +10,16 @@ export class SignupComponent implements OnInit {
   isText: boolean = false;
   eyeIcon: string = "fa-eye-slash";
   ngOnInit(): void {
-    
+    this.signup()
   }
+
   hideShowPass(){
     this.isText = !this.isText;
     this.isText ? this.eyeIcon = "fa-eye" : this.eyeIcon = "fa-eye-slash";
     this.isText ? this.type = "text" : this.type = "password";
+  }
+
+  signup(): void{
+
   }
 }
