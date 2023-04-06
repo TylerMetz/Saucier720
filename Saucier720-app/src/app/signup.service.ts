@@ -15,7 +15,7 @@ let mockUser: any = {
 })
 export class SignupService {
 
-  private signupUrl: string = "api/Signup"
+  private signupUrl: string = 'http://localhost:8085/api/Signup';
 
   constructor(private http: HttpClient) {}
 
