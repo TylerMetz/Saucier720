@@ -8,7 +8,7 @@ import (
 )
 
 type Recipes struct {
-	Recipes []Recipes `json:"recipes"`
+	Recipes []Recipe `json:"recipes"`
 }
 
 type Recipe struct {
@@ -43,6 +43,9 @@ func ReadInAllRecipes() (Recipes, error) {
 
 	json.Unmarshal(byteValue, &recipes)
 
+	for i := 0; i < len(recipes.Recipes); i++ {
+        fmt.Println("User Type: " + recipes.Recipes[i].Title)
+    }
 	return recipes, nil
 }
 
