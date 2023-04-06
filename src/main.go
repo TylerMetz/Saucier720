@@ -82,17 +82,6 @@ func main(){
 	// routs Eddie's pantry, lol
 	go RoutUserPantry(testDatabase, testUser)
 
-
-	testSlice := testDatabase.ReadRecipes()
-	for i := 0; i < 10; i++{
-		fmt.Println(testSlice[i].Title)
-		//fmt.Println(testSlice[i].Instructions)
-		/*for j := 0; j < len(testSlice[i].Ingredients); j++{
-			fmt.Print(j + 1)
-			fmt.Println(testSlice[i].Ingredients[j])
-		}*/
-	}
-
 	ListenForPost(testDatabase);
 }
 
