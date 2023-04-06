@@ -82,7 +82,7 @@ func main(){
 
 	// prints recipes
 	for i := 0; i < len(testSlice); i++{
-		fmt.Println(testSlice[i]);
+		fmt.Println(testSlice);
 	}
 
 	// routs deals to deals page
