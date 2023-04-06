@@ -126,11 +126,12 @@ func main(){
 	CheckIfScrapeNewDeals(programDatabase)
 
 	// routs all data
-	RoutAllData(programDatabase, testUser)
+	go RoutAllData(programDatabase, testUser)
 
 	//testReccList := BackendPkg.BestRecipes(programDatabase.GetUserPantry("Eddiefye69"), programDatabase.ReadRecipes(), programDatabase.ReadPublixDatabase())
-
+	
 	BackendPkg.ListenForAllPosts();
+	
 }
 
 func CheckIfScrapeNewDeals(d BackendPkg.Database){
@@ -234,5 +235,5 @@ func RoutAllData(d BackendPkg.Database, currUser BackendPkg.User){
 	go RoutWeeklyDeals(d)
 
 	// routs reccommended recipes to recipes page
-	go RoutRecommendedRecipes(d, currUser)
+	RoutRecommendedRecipes(d, currUser)
 }
