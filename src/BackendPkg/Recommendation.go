@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"sort"
 	"strings"
-
 	"golang.org/x/exp/slices"
 )
 
@@ -15,16 +14,9 @@ type Reccomendation struct {
 }
 
 func BestRecipes(userPantry Pantry, allRecipes []Recipe, deals []FoodItem) []Reccomendation {
-
-	//Plan
-	//1. Figure out why nothing is being returned
-	//2. Compare key ingredients to current deals
-	//3. WIN.
-	//4. Babayaga
 	var returnReccomendations []Reccomendation
 
 	var scoreList []int
-	// Eddie lol
 	// ranks recipes based off of what is in pantry
 	for i := 0; i < len(userPantry.FoodInPantry); i++ {
 		for j := 0; j < len(allRecipes); j++ {
