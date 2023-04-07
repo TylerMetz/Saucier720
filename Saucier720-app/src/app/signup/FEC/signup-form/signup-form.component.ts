@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { User } from 'src/app/core/interfaces/user';
 import { SignupService } from 'src/app/signup.service';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-signup-form',
@@ -15,8 +16,8 @@ export class SignupFormComponent {
   password: string = '';
 
   constructor(private signupService: SignupService) {}
-
-  signup() {
+  
+  async signup() {
     const user: User = {
       FirstName: this.firstName,
       LastName: this.lastName,
@@ -24,6 +25,14 @@ export class SignupFormComponent {
       UserName: this.userName,
       Password: this.password,
     };
-    this.signupService.signup(user)
+    try {
+      console.log(user)
+      const response = await lastValueFrom(this.signupService.signup(user));
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
+
+    
   }
 }
