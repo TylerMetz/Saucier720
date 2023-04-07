@@ -49,6 +49,6 @@
 [submodule "go-sqlite3"]
 	path = src/github.com/mattn/go-sqlite3
 	url = https://github.com/mattn/go-sqlite3
-[submodule "src/golang.org/x/exp"]
+[submodule "exp"]
 	path = src/golang.org/x/exp
-	url = https://golang.org/x/exp/slices
+	url = https://github.com/golang/exp
