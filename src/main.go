@@ -128,8 +128,11 @@ func main(){
 	// routs all data
 	go RoutAllData(programDatabase, testUser)
 
-	//testReccList := BackendPkg.BestRecipes(programDatabase.GetUserPantry("Eddiefye69"), programDatabase.ReadRecipes(), programDatabase.ReadPublixDatabase())
-	
+	testReccList := BackendPkg.BestRecipes(programDatabase.GetUserPantry("Eddiefye69"), programDatabase.ReadRecipes(), programDatabase.ReadPublixDatabase())
+	BackendPkg.OutputRecommendations(testReccList)
+
+	// bahhhhh
+
 	BackendPkg.ListenForAllPosts();
 	
 }
@@ -216,7 +219,15 @@ func RoutRecommendedRecipes(d BackendPkg.Database, currUser BackendPkg.User){
 	userRecList := BackendPkg.BestRecipes(d.GetUserPantry(currUser.UserName), d.ReadRecipes(), d.ReadPublixDatabase())
 	var testFoodInterface []interface{}
 	for i := 0; i < len(userRecList); i++{
-		testFoodInterface = append(testFoodInterface, userRecList[i])
+		testFoodInterface = append(testFoodInterface, userRecList[i].R)
+		testFoodInterface = append(testFoodInterface, "Pantry Data:")
+		for j := 0; j < len(userRecList[i].ItemsInPantry); j++{
+			testFoodInterface = append(testFoodInterface, userRecList[i].ItemsInPantry[j].Name)
+		}
+		testFoodInterface = append(testFoodInterface, "Publix Data:")
+		for k := 0; k < len(userRecList[i].ItemsOnSale); k++{
+			testFoodInterface = append(testFoodInterface, userRecList[i].ItemsOnSale[k].Name)
+		}
 	}
 
 	programRouter := BackendPkg.Router{

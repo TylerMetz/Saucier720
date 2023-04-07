@@ -47,11 +47,11 @@ func (t *Router) sendResponse(response http.ResponseWriter, request *http.Reques
 	response.Write(jsonResponse)
 }
 
-func (t *Router) Listen(endLink string, port string) {
+func ListenPantry(endLink string, port string) {
 
     // creates new router
     route := mux.NewRouter()
-    route.HandleFunc(endLink, t.sendPostResponse).Methods("POST")
+    route.HandleFunc(endLink, PantryItemPostResponse).Methods("POST")
 
     // enables alternate hosts for CORS
     c := cors.New(cors.Options{
@@ -65,18 +65,13 @@ func (t *Router) Listen(endLink string, port string) {
 
 }
 
-func (t *Router) sendPostResponse(response http.ResponseWriter, request *http.Request) {
-	jsonResponse, jsonError := json.Marshal(t.ItemsToBeEncoded)
-
-	if jsonError != nil {
-		fmt.Println("Unable to encode JSON")
-	}
+func PantryItemPostResponse(response http.ResponseWriter, request *http.Request) {
 
 	// fmt.Println(string(jsonResponse)) // used to test
 
 	response.Header().Set("Content-Type", "application/json")
 	response.WriteHeader(http.StatusOK)
-	response.Write(jsonResponse)
+	response.Write([]byte("hi"))
 
     // Decode JSON payload into Ingredient struct
     var foodItem FoodItem
@@ -84,15 +79,6 @@ func (t *Router) sendPostResponse(response http.ResponseWriter, request *http.Re
     if err != nil {
         http.Error(response, err.Error(), http.StatusBadRequest)
         return
-    }
-
-	newFoodItem := FoodItem{
-        Name:        foodItem.Name,
-        StoreCost:   foodItem.StoreCost,
-        OnSale:      foodItem.OnSale,
-        SalePrice:   foodItem.SalePrice,
-        SaleDetails: foodItem.SaleDetails,
-        Quantity:    foodItem.Quantity,
     }
 	
     // Do something with the ingredient struct, e.g. store it in a database
@@ -117,7 +103,7 @@ func (t *Router) sendPostResponse(response http.ResponseWriter, request *http.Re
 	// 	},
 	// }
 
-    testDatabase.InsertPantryItemPost(newFoodItem)
+    testDatabase.InsertPantryItemPost(foodItem)
 
     //go RoutUserPantry(testDatabase, testUser)
 
@@ -144,8 +130,8 @@ func ListenForAllPosts(){
 	// all listen functions go in here
 	for true{
 	
-		// listens for new user
-		ListenForNewUser()
+		// listens for new pantry item
+		ListenPantry("/api/NewPantryItem", "8083")
 
 	}
 }

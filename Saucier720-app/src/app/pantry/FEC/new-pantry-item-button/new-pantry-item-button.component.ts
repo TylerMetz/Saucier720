@@ -10,7 +10,6 @@ import { lastValueFrom } from 'rxjs';
 })
 
 export class NewPantryItemButtonComponent {
-  pantryPostUrl = 'http://localhost:8082/api/NewPantryItem';
 
   constructor(private pantryService: PantryService) { }
 
