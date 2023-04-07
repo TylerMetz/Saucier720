@@ -8,6 +8,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
+	"log"
 )
 
 type Router struct {
@@ -47,112 +48,77 @@ func (t *Router) sendResponse(response http.ResponseWriter, request *http.Reques
 	response.Write(jsonResponse)
 }
 
-func ListenPantry(endLink string, port string) {
+func ListenPantry() {
 
-    // creates new router
-    route := mux.NewRouter()
-    route.HandleFunc(endLink, PantryItemPostResponse).Methods("POST")
-
-    // enables alternate hosts for CORS
-    c := cors.New(cors.Options{
-        AllowedOrigins:   []string{"http://localhost:4200"},
-        AllowCredentials: true,
-    })
-
-    // log.Println("Listening...")
-    handler := c.Handler(route)
-    http.ListenAndServe(port, handler)
+	// Listens and Serves pantry
+    http.HandleFunc("/api/NewPantryItem", PantryItemPostResponse)
+    log.Fatal(http.ListenAndServe(":8083", nil))
 
 }
 
-func PantryItemPostResponse(response http.ResponseWriter, request *http.Request) {
+func PantryItemPostResponse(w http.ResponseWriter, r *http.Request) {
 
-	// fmt.Println(string(jsonResponse)) // used to test
-
-	response.Header().Set("Content-Type", "application/json")
-	response.WriteHeader(http.StatusOK)
-	response.Write([]byte("hi"))
-
-    // Decode JSON payload into Ingredient struct
-    var foodItem FoodItem
-    err := json.NewDecoder(request.Body).Decode(&foodItem)
-    if err != nil {
-        http.Error(response, err.Error(), http.StatusBadRequest)
+	if r.Method != "POST" {
+        http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
         return
     }
-	
-    // Do something with the ingredient struct, e.g. store it in a database
-    //fmt.Println(newFoodItem.Name)
-	//InsertPantryItemPost() -- insert into backend database
 
-    testDatabase := Database{
-		Name: "MealDealz Database",
+    var newItem FoodItem;
+
+    err := json.NewDecoder(r.Body).Decode(&newItem)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusBadRequest)
+        return
+    }
+
+	funcDatabase := Database{
+		Name: "func db",
 	}
+    funcDatabase.InsertPantryItemPost(newItem)
 
-	//foodSlice := []FoodItem {newFoodItem};
-
-    // testUser := User{
-	// 	FirstName: "Eddie",
-	// 	LastName: "Menello",
-	// 	Email: "Edward@gmail.com",
-	// 	UserName: "Eddiefye69",
-	// 	Password: "ILoveGraham420",
-	// 	UserPantry: Pantry{
-	// 		FoodInPantry: foodSlice,
-	// 		TimeLastUpdated: time.Now(),
-	// 	},
-	// }
-
-    testDatabase.InsertPantryItemPost(foodItem)
-
-    //go RoutUserPantry(testDatabase, testUser)
-
-    // Return a 200 OK response
-    response.WriteHeader(http.StatusOK)
+    w.WriteHeader(http.StatusOK)
 }
 
-func RoutUserPantry(d Database, u User){
-	
-	// read from .db file and output test user's pantry to frontend
-	var testFoodInterface []interface{}
-	for i := 0; i < len(d.GetUserPantry(u.UserName).FoodInPantry); i++{
-		testFoodInterface = append(testFoodInterface, d.GetUserPantry(u.UserName).FoodInPantry[i])
+func ListenNewUser() {
+
+	// Listens and Serves pantry
+    http.HandleFunc("/api/Signup", NewUserResponse)
+    log.Fatal(http.ListenAndServe(":8085", nil))
+
+}
+
+func NewUserResponse(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method != "POST" {
+        http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+        return
+    }
+
+    var newUser User;
+
+    err := json.NewDecoder(r.Body).Decode(&newUser)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusBadRequest)
+        return
+    }
+
+	funcDatabase := Database{
+		Name: "func db",
 	}
-	// test router
-	programRouter := Router{
-		Name:             "testRouter",
-		ItemsToBeEncoded: testFoodInterface,
-	}
-	programRouter.Rout("/api/Pantry", ":8080")
+    funcDatabase.StoreUserDatabase(newUser)
+
+    w.WriteHeader(http.StatusOK)
 }
 
 func ListenForAllPosts(){
 	// all listen functions go in here
-	for true{
-	
-		// listens for new pantry item
-		ListenPantry("/api/NewPantryItem", "8083")
 
-	}
+	// listens for new user
+	go ListenNewUser()
+
+	// listens for new pantry item
+	ListenPantry()
+
 }
 
-func ListenForNewUser(){
 
-	// reads from signup page
-	resp, _ := http.Get("http://localhost:8085/api/Signup")
-
-	// stores data as new user
-	if(resp != nil){
-		var user User
-		json.NewDecoder(resp.Body).Decode(&user)
-		defer resp.Body.Close()
-
-		// creates database object to store info in MealDealz.sb
-		newUserDatabase := Database{
-			Name: "MealDealz Database",
-		}
-
-		// store the new user in the database
-		newUserDatabase.StoreUserDatabase(user)
-	}
-}

@@ -1,12 +1,12 @@
 package BackendPkg
 
 type FoodItem struct {
-	Name      string
-	StoreCost float64
-	OnSale    bool
-	SalePrice float64
-	SaleDetails string
-	Quantity int
+	Name      string `json:"Name"`
+	StoreCost float64 `json:"StoreCost"`
+	OnSale    bool `json:"OnSale"`
+	SalePrice float64 `json:"SalePrice"`
+	SaleDetails string `json:"SaleDetails"`
+	Quantity int `json:"Quantity"`
 }
 
 // generates new FoodItem with defaults set to 0 values, used for pantry items since only name matters
