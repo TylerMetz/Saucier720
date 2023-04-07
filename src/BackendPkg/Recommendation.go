@@ -74,7 +74,7 @@ func BestRecipes(userPantry Pantry, allRecipes []Recipe, deals []FoodItem) []Rec
 
 				// get items in pantry
 				var pantryItemsInRecipe []FoodItem
-				var dealsItemsInRecipe []FoodItem
+				var dealsItemsInRecipe []string
 
 				// check which food items are actually contained in recipe
 				for i := 0; i < len(userPantry.FoodInPantry); i++ {
@@ -87,10 +87,32 @@ func BestRecipes(userPantry Pantry, allRecipes []Recipe, deals []FoodItem) []Rec
 					}
 				}
 
+				// check which deals can be recommended
+				for i:= 0; i < len(deals); i++{
+					dealWords:= strings.Split((deals[i].Name), " ")
+					for j:= 0; j < len(allRecipes[m].Ingredients); j++{
+						for k:= 0; k < len(dealWords); k++{
+							if strings.Contains(allRecipes[m].Ingredients[j], dealWords[i]) {
+								if !slices.Contains(dealsItemsInRecipe, dealWords[i]){
+									dealsItemsInRecipe = append(dealsItemsInRecipe, deals[i].Name)
+								}
+							}
+						}
+					}
+				}
+				
+				var realDealz []FoodItem
+				for i:= 0; i < len(dealsItemsInRecipe); i++{
+					tempItem := FoodItem{
+						Name: dealsItemsInRecipe[i],
+					}
+					realDealz = append(realDealz, tempItem)
+				}
+
 				newRecc := Reccomendation{
 					R:             allRecipes[m],
 					ItemsInPantry: pantryItemsInRecipe,
-					ItemsOnSale:   dealsItemsInRecipe,
+					ItemsOnSale:   realDealz,
 				}
 				returnReccomendations = append(returnReccomendations, newRecc)
 			}
@@ -111,8 +133,13 @@ func min(a, b int) int {
 func OutputRecommendations(r []Reccomendation) {
 	for i := 0; i < len(r); i++ {
 		fmt.Println(r[i].R.Title)
+		fmt.Println("From Pantry:")
 		for j := 0; j < len(r[i].ItemsInPantry); j++ {
 			fmt.Println(r[i].ItemsInPantry[j].Name)
+		}
+		fmt.Println("From Publix:")
+		for k := 0; k < len(r[i].ItemsOnSale); k++{
+			fmt.Println(r[i].ItemsOnSale[k].Name)
 		}
 	}
 }
