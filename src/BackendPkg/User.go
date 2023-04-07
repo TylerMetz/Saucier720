@@ -6,11 +6,11 @@ import(
 
 
 type User struct{
-	FirstName string
-	LastName string
-	Email string
-    UserName string `json:"username"`
-    Password string `json:"password"`
+	FirstName string `json:"FirstName"`
+	LastName string `json:"LastName"`
+	Email string `json:"Email"`
+    UserName string `json:"UserName"`
+    Password string `json:"Password"`
 	UserPantry Pantry
 }
 
