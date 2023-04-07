@@ -80,7 +80,9 @@ func BestRecipes(userPantry Pantry, allRecipes []Recipe, deals []FoodItem) []Rec
 				for i := 0; i < len(userPantry.FoodInPantry); i++ {
 					for j := 0; j < len(allRecipes[m].Ingredients); j++ {
 						if strings.Contains(allRecipes[m].Ingredients[j], userPantry.FoodInPantry[i].Name) {
-							pantryItemsInRecipe = append(pantryItemsInRecipe, userPantry.FoodInPantry[i])
+							if !slices.Contains(pantryItemsInRecipe, userPantry.FoodInPantry[i]){
+								pantryItemsInRecipe = append(pantryItemsInRecipe, userPantry.FoodInPantry[i])
+							}
 						}
 					}
 				}
