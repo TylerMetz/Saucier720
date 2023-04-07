@@ -92,8 +92,8 @@ func BestRecipes(userPantry Pantry, allRecipes []Recipe, deals []FoodItem) []Rec
 					dealWords:= strings.Split((deals[i].Name), " ")
 					for j:= 0; j < len(allRecipes[m].Ingredients); j++{
 						for k:= 0; k < len(dealWords); k++{
-							if strings.Contains(allRecipes[m].Ingredients[j], dealWords[i]) {
-								if !slices.Contains(dealsItemsInRecipe, dealWords[i]){
+							if strings.Contains(allRecipes[m].Ingredients[j], (" " + dealWords[k] + " ")) {
+								if !slices.Contains(dealsItemsInRecipe, deals[i].Name){
 									dealsItemsInRecipe = append(dealsItemsInRecipe, deals[i].Name)
 								}
 							}
