@@ -128,8 +128,9 @@ func main(){
 	// routs all data
 	go RoutAllData(programDatabase, testUser)
 
-	//testReccList := BackendPkg.BestRecipes(programDatabase.GetUserPantry("Eddiefye69"), programDatabase.ReadRecipes(), programDatabase.ReadPublixDatabase())
-	
+	testReccList := BackendPkg.BestRecipes(programDatabase.GetUserPantry("Eddiefye69"), programDatabase.ReadRecipes(), programDatabase.ReadPublixDatabase())
+	BackendPkg.OutputRecommendations(testReccList)
+
 	BackendPkg.ListenForAllPosts();
 	
 }
