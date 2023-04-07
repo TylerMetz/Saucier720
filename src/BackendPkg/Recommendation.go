@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sort"
 	"strings"
+
 	"golang.org/x/exp/slices"
 )
 
@@ -31,9 +32,9 @@ func BestRecipes(userPantry Pantry, allRecipes []Recipe, deals []FoodItem) []Rec
 			var currRecipe []string
 			for k := 0; k < len(allRecipes[j].Ingredients); k++ {
 				if strings.Contains(allRecipes[j].Ingredients[k], userPantry.FoodInPantry[i].Name) {
-					if !slices.Contains(currRecipe, allRecipes[j].Ingredients[k]) {
+					if !(slices.Contains(currRecipe, userPantry.FoodInPantry[i].Name)) {
 						tempScore++
-						currRecipe = append(currRecipe, allRecipes[j].Ingredients[k])
+						currRecipe = append(currRecipe, userPantry.FoodInPantry[i].Name)
 					}
 				}
 			}
