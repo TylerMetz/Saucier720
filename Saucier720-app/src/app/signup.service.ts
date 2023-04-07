@@ -3,11 +3,11 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 let mockUser: any = {
-  "FirstName":"Eddie",
-  "LastName":"Menello",
-  "Email":"Edward@gmail.com",
-  "UserName":"Eddiefye69",
-  "Password":"ILoveGraham420",
+  "FirstName":"Riley",
+  "LastName":"Cleavenger",
+  "Email":"riley.cleavenger@gmail.com",
+  "UserName":"RileyButterDrip",
+  "Password":"bah69FantasticFour",
 };
 
 @Injectable({

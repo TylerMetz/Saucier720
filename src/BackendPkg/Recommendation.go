@@ -4,6 +4,7 @@ import (
 	"strings"
 	"sort"
 	"fmt"
+	"golang.org/x/exp/slices"
 )
 
 type Reccomendation struct {
@@ -27,9 +28,13 @@ func BestRecipes(userPantry Pantry, allRecipes []Recipe, deals []FoodItem) []Rec
 	for i := 0; i < len(userPantry.FoodInPantry); i++{
 		for j:= 0; j < len(allRecipes); j++{
 			tempScore := 0
+			var currRecipe []string
 			for k:=0; k < len(allRecipes[j].Ingredients); k++{
 				if(strings.Contains(allRecipes[j].Ingredients[k],userPantry.FoodInPantry[i].Name)){
-					tempScore++
+					if !slices.Contains(currRecipe, allRecipes[j].Ingredients[k]){
+						tempScore++
+						currRecipe = append(currRecipe, allRecipes[j].Ingredients[k])
+					}
 				}
 			}
 			if i == 0{
