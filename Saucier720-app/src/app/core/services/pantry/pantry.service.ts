@@ -20,9 +20,9 @@ export class PantryService {
     return this.http.request(req);
   }
 
-  postPantryItem(itemData: Ingredient) {
+  postPantryItem(ingredient: Ingredient) {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    const body = { itemData };
+    const body = { ingredient };
     console.log(body)
     return this.http.post<any>(this.pantryPostUrl, body, { headers, withCredentials: true });
   }
