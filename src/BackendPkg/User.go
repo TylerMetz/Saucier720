@@ -24,5 +24,5 @@ func (u* User) PrintUserInfo(){
 }
 
 func ValidateUser(currUser User){
-	fmt.Println(currUser)
+	
 }
