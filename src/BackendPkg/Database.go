@@ -288,5 +288,23 @@ func (d *Database) StoreCookie(username string, cookie string) {
 
 }
 
+func (d *Database) ReadCookie(username string) string {
+	// return user data from a unique username
+	database := d.OpenDatabase()
+
+	var returnCookie string
+
+	stmt, err := database.Prepare("SELECT Cookie FROM Cookies WHERE UserName=?")
+	if err != nil {
+		// handle error
+	}
+	defer stmt.Close()
+
+	row := stmt.QueryRow(username)
+	row.Scan(returnCookie)
+
+	return returnCookie
+}
+
 
 
