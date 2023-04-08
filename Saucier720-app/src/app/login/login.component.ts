@@ -16,6 +16,7 @@ export class LoginComponent implements OnInit {
   eyeIcon: string = "fa-eye-slash";
 
   username: string = '';
+  sessionId: string = 'abc';
   password: string = '';
   errorMessage: string = '';
 
@@ -29,7 +30,7 @@ export class LoginComponent implements OnInit {
   }
 
   login(): void {
-    this.cookieService.set('myCookie', 'sessionId', 15);
+    this.cookieService.set('myCookie', this.sessionId, 7);
     const myCookieValue = this.cookieService.get('myCookie');
     this.authService.login(this.username, this.password)
       .pipe(
