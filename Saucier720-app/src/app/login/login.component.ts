@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../core/services/Auth/auth.service';
 import { tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-login',
@@ -18,15 +19,18 @@ export class LoginComponent implements OnInit {
   password: string = '';
   errorMessage: string = '';
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(private authService: AuthService, private router: Router,
+    private cookieService: CookieService) { }
 
   ngOnInit(): void {
-    // this.username = 'TylerTests'
-    // this.password = 'password'
+    this.username = 'TylerTests'
+    this.password = 'password'
     this.login()
   }
 
   login(): void {
+    this.cookieService.set('myCookie', 'sessionId', 15);
+    const myCookieValue = this.cookieService.get('myCookie');
     this.authService.login(this.username, this.password)
       .pipe(
         tap(response => {

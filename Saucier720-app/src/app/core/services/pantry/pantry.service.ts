@@ -7,8 +7,8 @@ import { PANTRY } from 'src/app/mocks/pantry.mock';
   providedIn: 'root'
 })
 export class PantryService {
-  pantryUrl = 'http://localhost:8080/api/Pantry';
-  pantryPostUrl = 'http://localhost:8083/api/NewPantryItem';
+  private pantryUrl = 'http://localhost:8080/api/Pantry';
+  private pantryPostUrl = 'http://localhost:8083/api/NewPantryItem';
 
   constructor(private http: HttpClient) { }
 

@@ -7,8 +7,8 @@ export class AuthService {
 
   private loggedIn: boolean = true;
 
-  private loginUrl: string = 'api/Login';
-  private logoutUrl: string = 'api/logout'; //we dont have one yet
+  private loginUrl: string = 'http://localhost:8084/api/Login';
+  private logoutUrl: string = 'api/Logout'; //we dont have one yet
 
   constructor(private http: HttpClient) { }
 
