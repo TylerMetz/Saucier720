@@ -15,7 +15,7 @@ export class SignupComponent implements OnInit {
   eyeIcon: string = "fa-eye-slash";
   constructor(private signupService: SignupService, private router: Router) { }
   ngOnInit(): void {
-    this.signup()
+    
   }
 
   hideShowPass(){
@@ -24,7 +24,5 @@ export class SignupComponent implements OnInit {
     this.isText ? this.type = "text" : this.type = "password";
   }
 
-  signup(): void {
-    this.signupService.signup()
-  }
+  
 }

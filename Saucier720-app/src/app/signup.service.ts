@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { User } from './core/interfaces/user';
 
 let mockUser: any = {
   "FirstName":"Riley",
@@ -19,9 +20,10 @@ export class SignupService {
 
   constructor(private http: HttpClient) {}
 
-  public signup(): Observable<any>{
+  public signup(user: User): Observable<any>{
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    const body = { mockUser };
+    const body = { user };
+    console.log(body)
     return this.http.post<any>(this.signupUrl, body, { headers, withCredentials: true });
   }
 }
