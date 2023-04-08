@@ -24,5 +24,12 @@ func (u* User) PrintUserInfo(){
 }
 
 func ValidateUser(currUser User){
-	
+	passwordDb := Database{
+		Name: "func pwdb",
+	}
+
+	returnPassword := passwordDb.GetUserPassword(currUser.UserName)
+	if returnPassword == currUser.Password{
+		//gen cookies
+	}
 }
