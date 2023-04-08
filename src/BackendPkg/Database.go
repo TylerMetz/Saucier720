@@ -255,3 +255,19 @@ func (d* Database) ReadRecipes() []Recipe{
 	return recipes;
 }
 
+func (d* Database) GetUserPassword(username string) string{
+	database := d.OpenDatabase()
+	var password string 
+
+	stmt, err := database.Prepare("SELECT Password FROM UserData WHERE UserName=?")
+	if err != nil {
+		// handle error
+	}
+	defer stmt.Close()
+
+	row := stmt.QueryRow(username)
+	row.Scan(&password)
+
+	return password
+}
+
