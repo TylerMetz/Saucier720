@@ -255,3 +255,56 @@ func (d* Database) ReadRecipes() []Recipe{
 	return recipes;
 }
 
+func (d* Database) GetUserPassword(username string) string{
+	database := d.OpenDatabase()
+	var password string 
+
+	stmt, err := database.Prepare("SELECT Password FROM UserData WHERE UserName=?")
+	if err != nil {
+		// handle error
+	}
+	defer stmt.Close()
+
+	row := stmt.QueryRow(username)
+	row.Scan(&password)
+
+	return password
+}
+
+func (d *Database) StoreCookie(username string, cookie string) {
+
+	// calls function to open the database
+	database := d.OpenDatabase()
+
+	// make table for user data
+	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS Cookies (UserName TEXT PRIMARY KEY, Cookie TEXT)")
+	statement.Exec()
+
+	// insert into UserData table
+	statementTwo, _ := database.Prepare("INSERT OR IGNORE INTO Cookies (UserName, Cookie) VALUES (?, ?)")
+
+	// store data from this user into table
+	statementTwo.Exec(username, cookie)
+
+}
+
+func (d *Database) ReadCookie(username string) string {
+	// return user data from a unique username
+	database := d.OpenDatabase()
+
+	var returnCookie string
+
+	stmt, err := database.Prepare("SELECT Cookie FROM Cookies WHERE UserName=?")
+	if err != nil {
+		// handle error
+	}
+	defer stmt.Close()
+
+	row := stmt.QueryRow(username)
+	row.Scan(returnCookie)
+
+	return returnCookie
+}
+
+
+
