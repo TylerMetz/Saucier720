@@ -181,6 +181,8 @@ func RoutUserPantry(d Database, u User){
 		// lock the data
 		dataMutex.Lock()
 
+		var testFoodInterfaceRefresh []interface{}
+		testFoodInterface = testFoodInterfaceRefresh
 		for i := 0; i < len(d.GetUserPantry(u.UserName).FoodInPantry); i++{
 			testFoodInterface = append(testFoodInterface, d.GetUserPantry(u.UserName).FoodInPantry[i])
 		}
@@ -198,8 +200,11 @@ func RoutUserPantry(d Database, u User){
 
 func RoutWeeklyDeals(d Database){
 	
+	// reset global var
+	var testFoodInterfaceRefresh []interface{}
+	testFoodInterface = testFoodInterfaceRefresh
+
 	// read from .db file and output test user's pantry to frontend
-	var testFoodInterface []interface{}
 	for i := 0; i < len(d.ReadPublixDatabase()); i++{
 		testFoodInterface = append(testFoodInterface, d.ReadPublixDatabase()[i])
 	}
@@ -212,8 +217,11 @@ func RoutWeeklyDeals(d Database){
 
 func RoutRecommendedRecipes(d Database, currUser User){
 
+	// reset global var
+	var testFoodInterfaceRefresh []interface{}
+	testFoodInterface = testFoodInterfaceRefresh
+
 	userRecList := BestRecipes(d.GetUserPantry(currUser.UserName), d.ReadRecipes(), d.ReadPublixDatabase())
-	var testFoodInterface []interface{}
 	for i := 0; i < len(userRecList); i++{
 		testFoodInterface = append(testFoodInterface, userRecList[i].R)
 		testFoodInterface = append(testFoodInterface, "Pantry Data:")
