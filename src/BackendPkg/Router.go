@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	//"time"
-
+	"io/ioutil"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 	"log"
@@ -51,8 +51,17 @@ func (t *Router) sendResponse(response http.ResponseWriter, request *http.Reques
 func ListenPantry() {
 
 	// Listens and Serves pantry
-    http.HandleFunc("/api/NewPantryItem", PantryItemPostResponse)
-    log.Fatal(http.ListenAndServe(":8083", nil))
+	route := mux.NewRouter()
+    route.HandleFunc("/api/NewPantryItem", PantryItemPostResponse).Methods("POST")
+
+	// enables alternate hosts for CORS
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:4200"},
+		AllowCredentials: true,
+	})
+
+	handler := c.Handler(route)
+    log.Fatal(http.ListenAndServe(":8083", handler))
 
 }
 
@@ -63,9 +72,13 @@ func PantryItemPostResponse(w http.ResponseWriter, r *http.Request) {
         return
     }
 
+	body, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+
     var newItem FoodItem;
 
-    err := json.NewDecoder(r.Body).Decode(&newItem)
+	
+    err = json.Unmarshal(body, &newItem)
     if err != nil {
         http.Error(w, err.Error(), http.StatusBadRequest)
         return
@@ -81,9 +94,18 @@ func PantryItemPostResponse(w http.ResponseWriter, r *http.Request) {
 
 func ListenNewUser() {
 
-	// Listens and Serves pantry
-    http.HandleFunc("/api/Signup", NewUserResponse)
-    log.Fatal(http.ListenAndServe(":8085", nil))
+	// Listens and Serves New User
+	route := mux.NewRouter()
+    route.HandleFunc("/api/Signup", NewUserResponse).Methods("POST")
+
+	// enables alternate hosts for CORS
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:4200"},
+		AllowCredentials: true,
+	})
+
+	handler := c.Handler(route)
+    log.Fatal(http.ListenAndServe(":8085", handler))
 
 }
 
@@ -94,9 +116,16 @@ func NewUserResponse(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    var newUser User;
+    body, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
 
-    err := json.NewDecoder(r.Body).Decode(&newUser)
+    type UserResponse struct {
+		User User `json:"user"`
+	}
+
+	var newUser UserResponse
+	
+    err = json.Unmarshal(body, &newUser)
     if err != nil {
         http.Error(w, err.Error(), http.StatusBadRequest)
         return
@@ -105,7 +134,8 @@ func NewUserResponse(w http.ResponseWriter, r *http.Request) {
 	funcDatabase := Database{
 		Name: "func db",
 	}
-    funcDatabase.StoreUserDatabase(newUser)
+
+    funcDatabase.StoreUserDatabase(newUser.User)
 
     w.WriteHeader(http.StatusOK)
 }
