@@ -229,6 +229,49 @@ func NewUserResponse(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func ListenLogin() {
+
+	// Listens and Serves New User
+	route := mux.NewRouter()
+    route.HandleFunc("/api/Login", NewLoginResponse).Methods("POST")
+
+	// enables alternate hosts for CORS
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:4200"},
+		AllowCredentials: true,
+	})
+
+	handler := c.Handler(route)
+    log.Fatal(http.ListenAndServe(":8084", handler))
+
+}
+
+func NewLoginResponse(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method != "POST" {
+        http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+        return
+    }
+
+    body, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+
+    type UserResponse struct {
+		User User `json:"user"`
+	}
+
+	var currUser UserResponse
+	
+    err = json.Unmarshal(body, &currUser)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusBadRequest)
+        return
+    }
+
+	ValidateUser(currUser.User)
+
+}
+
 func ListenForAllPosts(currUser User){
 	// all listen functions go in here
 

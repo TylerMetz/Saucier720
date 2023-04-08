@@ -23,3 +23,6 @@ func (u* User) PrintUserInfo(){
 	u.UserPantry.DisplayPantry()
 }
 
+func ValidateUser(currUser User){
+	fmt.Println(currUser)
+}
