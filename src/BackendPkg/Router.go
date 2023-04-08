@@ -48,11 +48,14 @@ func (t *Router) sendResponse(response http.ResponseWriter, request *http.Reques
 	response.Write(jsonResponse)
 }
 
-func ListenPantry() {
+func ListenPantry(currUser User) {
 
 	// Listens and Serves pantry
+    
 	route := mux.NewRouter()
-    route.HandleFunc("/api/NewPantryItem", PantryItemPostResponse).Methods("POST")
+	route.HandleFunc("/api/NewPantryItem", func(w http.ResponseWriter, r *http.Request) {
+        PantryItemPostResponse(w, r, currUser)
+    })
 
 	// enables alternate hosts for CORS
 	c := cors.New(cors.Options{
@@ -65,7 +68,7 @@ func ListenPantry() {
 
 }
 
-func PantryItemPostResponse(w http.ResponseWriter, r *http.Request) {
+func PantryItemPostResponse(w http.ResponseWriter, r *http.Request, currUser User) {
 
 	if r.Method != "POST" {
         http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -87,7 +90,7 @@ func PantryItemPostResponse(w http.ResponseWriter, r *http.Request) {
 	funcDatabase := Database{
 		Name: "func db",
 	}
-    funcDatabase.InsertPantryItemPost(newItem)
+    funcDatabase.InsertPantryItemPost(currUser, newItem)
 
     w.WriteHeader(http.StatusOK)
 }
@@ -140,14 +143,14 @@ func NewUserResponse(w http.ResponseWriter, r *http.Request) {
     w.WriteHeader(http.StatusOK)
 }
 
-func ListenForAllPosts(){
+func ListenForAllPosts(currUser User){
 	// all listen functions go in here
 
 	// listens for new user
 	go ListenNewUser()
 
 	// listens for new pantry item
-	ListenPantry()
+	ListenPantry(currUser)
 
 }
 
