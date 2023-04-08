@@ -41,7 +41,6 @@ export class LoginComponent implements OnInit {
   .subscribe({
     next: (response) => {
       const sessionID = response.headers.get('Set-Cookie');
-      console.log(sessionID)
       if (sessionID) {
         this.cookieService.set('sessionID', sessionID);
         this.router.navigate(['/']);
