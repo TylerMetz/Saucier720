@@ -120,7 +120,7 @@ func (d *Database) InsertPantryItemPost (currUser User, f FoodItem){
 
 	// insert into food item table
 	statementTwo, _ := database.Prepare("INSERT OR IGNORE INTO UserPantries (UserName, PantryLastUpdated, Name, StoreCost, OnSale, SalePrice, SaleDetails, Quantity) VALUES (?, datetime(?), ?, ?, ?, ?, ?, ?)")
-	statementTwo.Exec(currUser, time.Now(), f.Name, f.StoreCost, f.OnSale, f.SalePrice, f.SaleDetails, f.Quantity)
+	statementTwo.Exec(currUser.UserName, time.Now().Format("2006-01-02 15:04:05"), f.Name, f.StoreCost, f.OnSale, f.SalePrice, f.SaleDetails, f.Quantity)
 }
 
 func (d *Database) GetUserPantry(userName string) Pantry {
