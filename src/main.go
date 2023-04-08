@@ -99,25 +99,9 @@ func main(){
 		},
 	}
 
-	testUserTwo := BackendPkg.User{
-		FirstName: "Sam",
-		LastName: "Forsnot",
-		Email: "samuel@gmail.com",
-		UserName: "SameHatesBigWordsXXX",
-		Password: "ILoveJess420",
-		UserPantry: BackendPkg.Pantry{
-			FoodInPantry: testUserFoodSlice,
-			TimeLastUpdated: time.Now(),
-		},
-	}
-
 	// store Eddie
 	programDatabase.StoreUserDatabase(testUser)
 	programDatabase.StoreUserPantry(testUser)
-
-	// store Sam
-	programDatabase.StoreUserDatabase(testUserTwo)
-	programDatabase.StoreUserPantry(testUserTwo)
 
 	// Reads recipes dataset in not read in yet and stores in DB
 	programDatabase.WriteRecipes()
@@ -128,10 +112,7 @@ func main(){
 	// routs all data
 	go RoutAllData(programDatabase, testUser)
 
-	// testReccList := BackendPkg.BestRecipes(programDatabase.GetUserPantry("Eddiefye69"), programDatabase.ReadRecipes(), programDatabase.ReadPublixDatabase())
-	// BackendPkg.OutputRecommendations(testReccList)
-
-	BackendPkg.ListenForAllPosts();
+	BackendPkg.ListenForAllPosts(testUser);
 	
 }
 
