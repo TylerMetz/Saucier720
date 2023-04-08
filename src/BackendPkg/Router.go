@@ -78,8 +78,13 @@ func PantryItemPostResponse(w http.ResponseWriter, r *http.Request, currUser Use
 	body, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 
-    var newItem FoodItem;
+	fmt.Println(body)
 
+	type Ingredient struct {
+		FoodItem FoodItem `json:"Ingredient"`
+	}
+
+    var newItem Ingredient;
 	
     err = json.Unmarshal(body, &newItem)
     if err != nil {
@@ -87,10 +92,12 @@ func PantryItemPostResponse(w http.ResponseWriter, r *http.Request, currUser Use
         return
     }
 
+	fmt.Println(newItem)
+
 	funcDatabase := Database{
 		Name: "func db",
 	}
-    funcDatabase.InsertPantryItemPost(currUser, newItem)
+    funcDatabase.InsertPantryItemPost(currUser, newItem.FoodItem)
 
     w.WriteHeader(http.StatusOK)
 }
