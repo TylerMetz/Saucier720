@@ -271,3 +271,22 @@ func (d* Database) GetUserPassword(username string) string{
 	return password
 }
 
+func (d *Database) StoreCookie(username string, cookie string) {
+
+	// calls function to open the database
+	database := d.OpenDatabase()
+
+	// make table for user data
+	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS Cookies (UserName TEXT PRIMARY KEY, Cookie TEXT)")
+	statement.Exec()
+
+	// insert into UserData table
+	statementTwo, _ := database.Prepare("INSERT OR IGNORE INTO Cookies (UserName, Cookie) VALUES (?, ?)")
+
+	// store data from this user into table
+	statementTwo.Exec(username, cookie)
+
+}
+
+
+
