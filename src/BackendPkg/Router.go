@@ -256,11 +256,12 @@ func NewLoginResponse(w http.ResponseWriter, r *http.Request) {
     body, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 
-    type UserResponse struct {
-		User User `json:"user"`
+	type LoginUser struct{
+		UserName string `json:"username"`
+    	Password string `json:"password"`
 	}
 
-	var currUser UserResponse
+	var currUser LoginUser
 	
     err = json.Unmarshal(body, &currUser)
     if err != nil {
@@ -268,12 +269,20 @@ func NewLoginResponse(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-	ValidateUser(currUser.User)
+	activeUser := User{
+		Password: currUser.Password,
+		UserName: currUser.UserName,
+	}
+
+	ValidateUser(activeUser)
 
 }
 
 func ListenForAllPosts(currUser User){
 	// all listen functions go in here
+
+	// listens for user login
+	go ListenLogin()
 
 	// listens for new user
 	go ListenNewUser()
