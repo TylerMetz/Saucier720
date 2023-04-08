@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 @Injectable()
 export class AuthService {
 
-  private loggedIn: boolean = false;
+  private loggedIn: boolean = true;
 
   private loginUrl: string = 'api/Login';
   private logoutUrl: string = 'api/logout'; //we dont have one yet
