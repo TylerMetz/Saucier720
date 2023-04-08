@@ -29,7 +29,7 @@ export class LoginComponent implements OnInit {
   }
 
   login(): void {
-    this.cookieService.set('myCookie', 'myvalue', 7);
+    this.cookieService.set('myCookie', 'sessionId', 15);
     const myCookieValue = this.cookieService.get('myCookie');
     this.authService.login(this.username, this.password)
       .pipe(
