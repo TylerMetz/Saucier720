@@ -1,1 +1,7 @@
-<button (click)="postPantryItem()">Post</button>
+<h2 class="container-title">Signup</h2>
+<form>
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" [(ngModel)]="name"><br><br>
+
+    <button type="button" (click)="postPantryItem()">Post</button>
+</form>
