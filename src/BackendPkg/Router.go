@@ -282,7 +282,8 @@ func NewLoginResponse(w http.ResponseWriter, r *http.Request) {
 		cookie := &http.Cookie{
 			Name:     "sessionID",
 			Value:    ValidateUser(activeUser),
-			HttpOnly: false,
+			Path:     "/",
+			HttpOnly: true,
     		Secure:   false,
 			SameSite: http.SameSiteLaxMode,
 		}
