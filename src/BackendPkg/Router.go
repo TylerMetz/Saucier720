@@ -282,11 +282,14 @@ func NewLoginResponse(w http.ResponseWriter, r *http.Request) {
 		cookie := &http.Cookie{
 			Name:     "sessionID",
 			Value:    ValidateUser(activeUser),
-			HttpOnly: true,
-    		Secure:   true,
-			SameSite: http.SameSiteNoneMode,
+			HttpOnly: false,
+    		Secure:   false,
+			SameSite: http.SameSiteLaxMode,
 		}
 		http.SetCookie(w, cookie)
+
+		// Allow the 'Set-Cookie' header to be exposed to the frontend
+		w.Header().Set("Access-Control-Expose-Headers", "Set-Cookie")
 
 		// Return a response to the frontend
 		w.WriteHeader(http.StatusOK)
