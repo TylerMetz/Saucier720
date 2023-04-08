@@ -17,16 +17,18 @@ var dataMutex sync.Mutex
 
 // global var to be routed
 var testFoodInterface []interface{}
+var dealsFoodInterface []interface{}
+var recipesFoodInterface []interface{}
 
 type Router struct {
 	Name             string
 }
 
-func (t *Router) Rout(endLink string, port string) {
+func (t *Router) RoutPantry(endLink string, port string) {
 
 	// creates new router
 	route := mux.NewRouter()
-	route.HandleFunc(endLink, t.sendResponse).Methods("GET")
+	route.HandleFunc(endLink, t.sendResponsePantry).Methods("GET")
 
 	// enables alternate hosts for CORS
 	c := cors.New(cors.Options{
@@ -39,9 +41,73 @@ func (t *Router) Rout(endLink string, port string) {
 	http.ListenAndServe(port, handler)
 }
 
-func (t *Router) sendResponse(response http.ResponseWriter, request *http.Request) {
+func (t *Router) RoutDeals(endLink string, port string) {
+
+	// creates new router
+	route := mux.NewRouter()
+	route.HandleFunc(endLink, t.sendResponseDeals).Methods("GET")
+
+	// enables alternate hosts for CORS
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:4200"},
+		AllowCredentials: true,
+	})
+
+	// log.Println("Listening...")
+	handler := c.Handler(route)
+	http.ListenAndServe(port, handler)
+}
+
+func (t *Router) RoutRecipes(endLink string, port string) {
+
+	// creates new router
+	route := mux.NewRouter()
+	route.HandleFunc(endLink, t.sendResponseRecipes).Methods("GET")
+
+	// enables alternate hosts for CORS
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:4200"},
+		AllowCredentials: true,
+	})
+
+	// log.Println("Listening...")
+	handler := c.Handler(route)
+	http.ListenAndServe(port, handler)
+}
+
+func (t *Router) sendResponsePantry(response http.ResponseWriter, request *http.Request) {
 
 	jsonResponse, jsonError := json.Marshal(testFoodInterface)
+
+	if jsonError != nil {
+		fmt.Println("Unable to encode JSON")
+	}
+
+	// fmt.Println(string(jsonResponse)) // used to test
+
+	response.Header().Set("Content-Type", "application/json")
+	response.WriteHeader(http.StatusOK)
+	response.Write(jsonResponse)
+}
+
+func (t *Router) sendResponseDeals(response http.ResponseWriter, request *http.Request) {
+
+	jsonResponse, jsonError := json.Marshal(dealsFoodInterface)
+
+	if jsonError != nil {
+		fmt.Println("Unable to encode JSON")
+	}
+
+	// fmt.Println(string(jsonResponse)) // used to test
+
+	response.Header().Set("Content-Type", "application/json")
+	response.WriteHeader(http.StatusOK)
+	response.Write(jsonResponse)
+}
+
+func (t *Router) sendResponseRecipes(response http.ResponseWriter, request *http.Request) {
+
+	jsonResponse, jsonError := json.Marshal(recipesFoodInterface)
 
 	if jsonError != nil {
 		fmt.Println("Unable to encode JSON")
@@ -194,50 +260,43 @@ func RoutUserPantry(d Database, u User){
 		programRouter := Router{
 			Name:             "testRouter",
 		}
-		programRouter.Rout("/api/Pantry", ":8080")
+		programRouter.RoutPantry("/api/Pantry", ":8080")
 	}
 }
 
 func RoutWeeklyDeals(d Database){
-	
-	// reset global var
-	var testFoodInterfaceRefresh []interface{}
-	testFoodInterface = testFoodInterfaceRefresh
 
-	// read from .db file and output test user's pantry to frontend
-	for i := 0; i < len(d.ReadPublixDatabase()); i++{
-		testFoodInterface = append(testFoodInterface, d.ReadPublixDatabase()[i])
-	}
-	// test router
-	programRouter := Router{
-		Name:             "testRouter",
-	}
-	programRouter.Rout("/api/Deals", ":8081")
+		// read from .db file and output test user's pantry to frontend
+		for i := 0; i < len(d.ReadPublixDatabase()); i++{
+			dealsFoodInterface = append(dealsFoodInterface, d.ReadPublixDatabase()[i])
+		}
+		// test router
+		programRouter := Router{
+			Name:             "testRouter",
+		}
+		programRouter.RoutDeals("/api/Deals", ":8081")
+
 }
 
 func RoutRecommendedRecipes(d Database, currUser User){
 
-	// reset global var
-	var testFoodInterfaceRefresh []interface{}
-	testFoodInterface = testFoodInterfaceRefresh
-
 	userRecList := BestRecipes(d.GetUserPantry(currUser.UserName), d.ReadRecipes(), d.ReadPublixDatabase())
 	for i := 0; i < len(userRecList); i++{
-		testFoodInterface = append(testFoodInterface, userRecList[i].R)
-		testFoodInterface = append(testFoodInterface, "Pantry Data:")
+		recipesFoodInterface = append(recipesFoodInterface, userRecList[i].R)
+		recipesFoodInterface = append(recipesFoodInterface, "Pantry Data:")
 		for j := 0; j < len(userRecList[i].ItemsInPantry); j++{
-			testFoodInterface = append(testFoodInterface, userRecList[i].ItemsInPantry[j].Name)
+			recipesFoodInterface = append(recipesFoodInterface, userRecList[i].ItemsInPantry[j].Name)
 		}
-		testFoodInterface = append(testFoodInterface, "Publix Data:")
+		recipesFoodInterface = append(recipesFoodInterface, "Publix Data:")
 		for k := 0; k < len(userRecList[i].ItemsOnSale); k++{
-			testFoodInterface = append(testFoodInterface, userRecList[i].ItemsOnSale[k].Name)
+			recipesFoodInterface = append(recipesFoodInterface, userRecList[i].ItemsOnSale[k].Name)
 		}
 	}
 
 	programRouter := Router{
 		Name:             "testRouter",
 	}
-	programRouter.Rout("/api/Recipes", ":8082")
+	programRouter.RoutRecipes("/api/Recipes", ":8082")
 }
 
 func RoutAllData(d Database, currUser User){
