@@ -29,30 +29,32 @@ export class LoginComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.username = 'TylerTests'
-    this.password = 'password'
-    this.login()
-    this.sessionID = this.cookieService.get('sessionID')
-    console.log('Session ID from cookie:', this.sessionID);
+    this.username = 'TylerTests';
+    this.password = 'password';
+    this.login();
   }
-
+  
   login(): void {
+    const body = { username: this.username, password: this.password };
+    const options = { withCredentials: true };
     this.authService.login(this.username, this.password)
-      .pipe(
-        tap(response => {
-          const sessionID = response.headers.get('Set-Cookie');
-          if (sessionID) {
-            this.cookieService.set('sessionID', sessionID);
-            this.router.navigate(['/']);
-          }
-        })
-      )
-      .subscribe({
-        error: (error) => {
-          this.errorMessage = error.message;
-        },
-      });
+  .subscribe({
+    next: (response) => {
+      const sessionID = response.headers.get('Set-Cookie');
+      console.log(sessionID)
+      if (sessionID) {
+        this.cookieService.set('sessionID', sessionID);
+        this.router.navigate(['/']);
+      } else {
+        console.log(response.body); // Log the plain text response
+      }
+    },
+    error: (error) => {
+      this.errorMessage = error.message;
+    },
+  });
   }
+    
   
   hideShowPass(){
     this.isText = !this.isText;
