@@ -23,7 +23,7 @@ func (u* User) PrintUserInfo(){
 	u.UserPantry.DisplayPantry()
 }
 
-func ValidateUser(currUser User){
+func ValidateUser(currUser User) string{
 	passwordDb := Database{
 		Name: "func pwdb",
 	}
@@ -33,9 +33,10 @@ func ValidateUser(currUser User){
 	returnPassword := passwordDb.GetUserPassword(currUser.UserName)
 	if returnPassword == currUser.Password{
 		passwordDb.StoreCookie(currUser.UserName,GenerateCookie(currUser.UserName))
-		// read cookie
+		returnCookie = passwordDb.ReadCookie(currUser.UserName)
 	} 
-
+	
+	return returnCookie
 }
 
 func GenerateCookie(username string) string{
