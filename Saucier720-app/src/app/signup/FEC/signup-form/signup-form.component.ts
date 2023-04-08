@@ -26,7 +26,7 @@ export class SignupFormComponent {
       Password: this.password,
     };
     try {
-      console.log(user)
+      console.log(user.UserName)
       const response = await lastValueFrom(this.signupService.signup(user));
       console.log(response);
     } catch (error) {
