@@ -88,9 +88,9 @@ func main(){
 
 	// create a test user and store their pantry
 	testUser := BackendPkg.User{
-		FirstName: "Eddie",
-		LastName: "Menello",
-		Email: "Edward@gmail.com",
+		FirstName: "Tyler",
+		LastName: "Metz",
+		Email: "tmbs@gmail.com",
 		UserName: "TylerTests",
 		Password: "password",
 		UserPantry: BackendPkg.Pantry{
@@ -99,7 +99,7 @@ func main(){
 		},
 	}
 
-	// store Eddie
+	// store Tyler
 	programDatabase.StoreUserDatabase(testUser)
 	programDatabase.StoreUserPantry(testUser)
 
@@ -112,6 +112,7 @@ func main(){
 	// routs all data
 	go BackendPkg.RoutAllData(programDatabase, testUser)
 
+	// listens for data from frontend
 	BackendPkg.ListenForAllPosts(testUser);
 	
 }
