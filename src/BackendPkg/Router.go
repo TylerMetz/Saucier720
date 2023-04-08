@@ -167,7 +167,7 @@ func PantryItemPostResponse(w http.ResponseWriter, r *http.Request, currUser Use
 	}
     funcDatabase.InsertPantryItemPost(currUser, newItem.FoodItem)
 
-    w.WriteHeader(http.StatusOK)
+	w.WriteHeader(http.StatusOK)
 
 	if http.StatusOK == 200{
 		d := Database{
@@ -177,7 +177,6 @@ func PantryItemPostResponse(w http.ResponseWriter, r *http.Request, currUser Use
 		var testFoodInterfaceRefresh []interface{}
 		testFoodInterface = testFoodInterfaceRefresh
 		UpdateData(d, currUser)
-		fmt.Println("new item unlocked!")
 	}
 
 }
@@ -274,7 +273,33 @@ func NewLoginResponse(w http.ResponseWriter, r *http.Request) {
 		UserName: currUser.UserName,
 	}
 
-	ValidateUser(activeUser)
+	// checks if validate user function returned an empty cookie, if not then setts the cookies
+	if ValidateUser(activeUser) == ""{
+		http.Error(w, "Invalid login credentials", http.StatusUnauthorized)
+        return
+	} else{
+		// Set the cookie
+		cookie := &http.Cookie{
+			Name:     "sessionID",
+			Value:    ValidateUser(activeUser),
+			Path:     "/",
+			HttpOnly: true,
+    		Secure:   false,
+			SameSite: http.SameSiteLaxMode,
+		}
+		http.SetCookie(w, cookie)
+
+		// Allow the 'Set-Cookie' header to be exposed to the frontend
+		w.Header().Set("Access-Control-Expose-Headers", "Set-Cookie")
+
+		// Return a response to the frontend
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("Login successful"))
+
+		fmt.Println(cookie.Value)
+		fmt.Println(http.StatusOK)
+
+	}
 
 }
 

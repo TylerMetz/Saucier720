@@ -293,7 +293,6 @@ func (d *Database) ReadCookie(username string) string {
 	database := d.OpenDatabase()
 
 	var returnCookie string
-
 	stmt, err := database.Prepare("SELECT Cookie FROM Cookies WHERE UserName=?")
 	if err != nil {
 		// handle error
@@ -301,7 +300,7 @@ func (d *Database) ReadCookie(username string) string {
 	defer stmt.Close()
 
 	row := stmt.QueryRow(username)
-	row.Scan(returnCookie)
+	row.Scan(&returnCookie)
 
 	return returnCookie
 }
