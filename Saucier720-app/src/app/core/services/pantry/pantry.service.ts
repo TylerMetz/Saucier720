@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpRequest } from '@angular/common/http';
+import { HttpClient, HttpRequest, HttpHeaders } from '@angular/common/http';
 import { Ingredient } from '../../interfaces/ingredient';
 import { PANTRY } from 'src/app/mocks/pantry.mock';
 
@@ -20,8 +20,11 @@ export class PantryService {
     return this.http.request(req);
   }
 
-  postPantryItem(itemData: any) {
-    return this.http.post(this.pantryPostUrl, itemData);
+  postPantryItem(itemData: Ingredient) {
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    const body = { itemData };
+    console.log(body)
+    return this.http.post<any>(this.pantryPostUrl, body, { headers, withCredentials: true });
   }
 
   getMockPantry(): Array<Ingredient> {
