@@ -30,16 +30,20 @@ func ValidateUser(currUser User) string{
 
 	var returnCookie string 
 
+	// checks if password read in is equal to db password
 	returnPassword := passwordDb.GetUserPassword(currUser.UserName)
 	if returnPassword == currUser.Password{
+		// stores new cookie in database
 		passwordDb.StoreCookie(currUser.UserName,GenerateCookie(currUser.UserName))
 		returnCookie = passwordDb.ReadCookie(currUser.UserName)
+
 	} 
 	
 	return returnCookie
 }
 
 func GenerateCookie(username string) string{
+	// cookie generation function
 	var returnCookie string = username + "720"
 
 	return returnCookie

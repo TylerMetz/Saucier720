@@ -3,11 +3,14 @@ import { AuthService } from '../core/services/Auth/auth.service';
 import { tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
+import { HttpClient } from '@angular/common/http';
+
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
+  
 })
 export class LoginComponent implements OnInit {
 
@@ -16,37 +19,43 @@ export class LoginComponent implements OnInit {
   eyeIcon: string = "fa-eye-slash";
 
   username: string = '';
-  sessionId: string = 'abc';
+  sessionID: string = ' ';
   password: string = '';
   errorMessage: string = '';
 
-  constructor(private authService: AuthService, private router: Router,
-    private cookieService: CookieService) { }
+  constructor(private authService: AuthService, private router: Router, private http: HttpClient,
+    private cookieService: CookieService) { 
+    }
+
 
   ngOnInit(): void {
-    this.username = 'TylerTests'
-    this.password = 'password'
-    this.login()
+    this.username = 'TylerTests';
+    this.password = 'password';
+    this.login();
   }
-
+  
   login(): void {
-    this.cookieService.set('myCookie', this.sessionId, 7);
-    const myCookieValue = this.cookieService.get('myCookie');
+    const body = { username: this.username, password: this.password };
+    const options = { withCredentials: true };
     this.authService.login(this.username, this.password)
-      .pipe(
-        tap(response => {
-          // Cookies are now stored in the browser
-          // Redirect to the home page or another protected page
-          this.router.navigate(['/']);
-        })
-      )
-      .subscribe({
-        error: error => {
-          this.errorMessage = error.message;
-        }
-      });
+  .subscribe({
+    next: (response) => {
+      const sessionID = response.headers.get('Set-Cookie');
+      console.log(sessionID)
+      if (sessionID) {
+        this.cookieService.set('sessionID', sessionID);
+        this.router.navigate(['/']);
+      } else {
+        console.log(response.body); // Log the plain text response
+      }
+    },
+    error: (error) => {
+      this.errorMessage = error.message;
+    },
+  });
   }
-
+    
+  
   hideShowPass(){
     this.isText = !this.isText;
     this.isText ? this.eyeIcon = "fa-eye" : this.eyeIcon = "fa-eye-slash";
