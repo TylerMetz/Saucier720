@@ -91,8 +91,8 @@ func main(){
 		FirstName: "Eddie",
 		LastName: "Menello",
 		Email: "Edward@gmail.com",
-		UserName: "Eddiefye69",
-		Password: "ILoveGraham420",
+		UserName: "TylerTests",
+		Password: "password",
 		UserPantry: BackendPkg.Pantry{
 			FoodInPantry: testUserFoodSlice,
 			TimeLastUpdated: time.Now(),
