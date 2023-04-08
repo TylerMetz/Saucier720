@@ -21,7 +21,7 @@ export class NewPantryItemButtonComponent {
   constructor(private pantryService: PantryService) { }
 
   async postPantryItem() {
-    const user: Ingredient = {
+    const newPantryItem: Ingredient = {
       Name: this.name,
       StoreCost: this.storeCost,
       OnSale: this.onSale,
@@ -30,7 +30,7 @@ export class NewPantryItemButtonComponent {
       Quantity: this.quantity,
     };
     try {
-      const response = await lastValueFrom(this.pantryService.postPantryItem(PANTRY[0]));
+      const response = await lastValueFrom(this.pantryService.postPantryItem(newPantryItem));
       console.log(response);
     } catch (error) {
       console.error(error);

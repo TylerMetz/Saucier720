@@ -2,6 +2,16 @@
 <form>
     <label for="name">Name:</label>
     <input type="text" id="name" name="name" [(ngModel)]="name"><br><br>
+    <label for="storeCost">Store Cost:</label>
+    <input type="number" id="storeCost" name="storeCost" [(ngModel)]="storeCost"><br><br>
+    <label for="onSale">On Sale:</label>
+    <input type="checkbox" id="onSale" name="onSale" [(ngModel)]="onSale"><br><br>
+    <label for="salePrice">Sale Price:</label>
+    <input type="number" id="salePrice" name="salePrice" [(ngModel)]="salePrice"><br><br>
+    <label for="saleDetails">Sale Details:</label>
+    <input type="number" id="saleDetails" name="saleDetails" [(ngModel)]="saleDetails"><br><br>
+    <label for="quantity">Quantity:</label>
+    <input type="number" id="quantity" name="quantity" [(ngModel)]="quantity"><br><br>
 
     <button type="button" (click)="postPantryItem()">Post</button>
 </form>
