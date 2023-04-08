@@ -9,11 +9,17 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 	"log"
+	"sync"
 )
+
+// global mutex
+var dataMutex sync.Mutex
+
+// global var to be routed
+var testFoodInterface []interface{}
 
 type Router struct {
 	Name             string
-	ItemsToBeEncoded []interface{}
 }
 
 func (t *Router) Rout(endLink string, port string) {
@@ -35,7 +41,7 @@ func (t *Router) Rout(endLink string, port string) {
 
 func (t *Router) sendResponse(response http.ResponseWriter, request *http.Request) {
 
-	jsonResponse, jsonError := json.Marshal(t.ItemsToBeEncoded)
+	jsonResponse, jsonError := json.Marshal(testFoodInterface)
 
 	if jsonError != nil {
 		fmt.Println("Unable to encode JSON")
@@ -78,10 +84,8 @@ func PantryItemPostResponse(w http.ResponseWriter, r *http.Request, currUser Use
 	body, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 
-	fmt.Println(body)
-
 	type Ingredient struct {
-		FoodItem FoodItem `json:"Ingredient"`
+		FoodItem FoodItem `json:"ingredient"`
 	}
 
     var newItem Ingredient;
@@ -92,14 +96,24 @@ func PantryItemPostResponse(w http.ResponseWriter, r *http.Request, currUser Use
         return
     }
 
-	fmt.Println(newItem)
-
 	funcDatabase := Database{
 		Name: "func db",
 	}
     funcDatabase.InsertPantryItemPost(currUser, newItem.FoodItem)
 
     w.WriteHeader(http.StatusOK)
+
+	if http.StatusOK == 200{
+		d := Database{
+			Name: "func db",
+		} 
+		
+		var testFoodInterfaceRefresh []interface{}
+		testFoodInterface = testFoodInterfaceRefresh
+		UpdateData(d, currUser)
+		fmt.Println("new item unlocked!")
+	}
+
 }
 
 func ListenNewUser() {
@@ -147,7 +161,6 @@ func NewUserResponse(w http.ResponseWriter, r *http.Request) {
 
     funcDatabase.StoreUserDatabase(newUser.User)
 
-    w.WriteHeader(http.StatusOK)
 }
 
 func ListenForAllPosts(currUser User){
@@ -161,4 +174,84 @@ func ListenForAllPosts(currUser User){
 
 }
 
+func RoutUserPantry(d Database, u User){
+	
+	// read from .db file and output test user's pantry to frontend
+	for{
+		// lock the data
+		dataMutex.Lock()
 
+		for i := 0; i < len(d.GetUserPantry(u.UserName).FoodInPantry); i++{
+			testFoodInterface = append(testFoodInterface, d.GetUserPantry(u.UserName).FoodInPantry[i])
+		}
+
+		// unlock the data
+		dataMutex.Unlock()
+
+		// test router
+		programRouter := Router{
+			Name:             "testRouter",
+		}
+		programRouter.Rout("/api/Pantry", ":8080")
+	}
+}
+
+func RoutWeeklyDeals(d Database){
+	
+	// read from .db file and output test user's pantry to frontend
+	var testFoodInterface []interface{}
+	for i := 0; i < len(d.ReadPublixDatabase()); i++{
+		testFoodInterface = append(testFoodInterface, d.ReadPublixDatabase()[i])
+	}
+	// test router
+	programRouter := Router{
+		Name:             "testRouter",
+	}
+	programRouter.Rout("/api/Deals", ":8081")
+}
+
+func RoutRecommendedRecipes(d Database, currUser User){
+
+	userRecList := BestRecipes(d.GetUserPantry(currUser.UserName), d.ReadRecipes(), d.ReadPublixDatabase())
+	var testFoodInterface []interface{}
+	for i := 0; i < len(userRecList); i++{
+		testFoodInterface = append(testFoodInterface, userRecList[i].R)
+		testFoodInterface = append(testFoodInterface, "Pantry Data:")
+		for j := 0; j < len(userRecList[i].ItemsInPantry); j++{
+			testFoodInterface = append(testFoodInterface, userRecList[i].ItemsInPantry[j].Name)
+		}
+		testFoodInterface = append(testFoodInterface, "Publix Data:")
+		for k := 0; k < len(userRecList[i].ItemsOnSale); k++{
+			testFoodInterface = append(testFoodInterface, userRecList[i].ItemsOnSale[k].Name)
+		}
+	}
+
+	programRouter := Router{
+		Name:             "testRouter",
+	}
+	programRouter.Rout("/api/Recipes", ":8082")
+}
+
+func RoutAllData(d Database, currUser User){
+
+	// routs Eddie's pantry, lol
+	go RoutUserPantry(d, currUser)
+
+	// routs deals to deals page
+	go RoutWeeklyDeals(d)
+
+	// routs reccommended recipes to recipes page
+	RoutRecommendedRecipes(d, currUser)
+}
+
+func UpdateData(d Database, u User) {
+
+    // Lock the mutex to update the data
+    dataMutex.Lock()
+    // Update the global variable with the updated data
+	for i := 0; i < len(d.GetUserPantry(u.UserName).FoodInPantry); i++{
+		testFoodInterface = append(testFoodInterface, d.GetUserPantry(u.UserName).FoodInPantry[i])
+	}
+    // Unlock the mutex
+    dataMutex.Unlock()
+}
