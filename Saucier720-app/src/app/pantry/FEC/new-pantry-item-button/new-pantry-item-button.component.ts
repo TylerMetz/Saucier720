@@ -29,6 +29,7 @@ export class NewPantryItemButtonComponent {
       SaleDetails: this.saleDetails,
       Quantity: this.quantity,
     };
+    console.log(newPantryItem)
     try {
       const response = await lastValueFrom(this.pantryService.postPantryItem(newPantryItem));
       console.log(response);
