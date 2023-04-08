@@ -28,8 +28,18 @@ func ValidateUser(currUser User){
 		Name: "func pwdb",
 	}
 
+	var returnCookie string 
+
 	returnPassword := passwordDb.GetUserPassword(currUser.UserName)
 	if returnPassword == currUser.Password{
-		//gen cookies
-	}
+		passwordDb.StoreCookie(currUser.UserName,GenerateCookie(currUser.UserName))
+		// read cookie
+	} 
+
+}
+
+func GenerateCookie(username string) string{
+	var returnCookie string = username + "720"
+
+	return returnCookie
 }
