@@ -110,7 +110,7 @@ func main(){
 	CheckIfScrapeNewDeals(programDatabase)
 
 	// routs all data
-	go RoutAllData(programDatabase, testUser)
+	go BackendPkg.RoutAllData(programDatabase, testUser)
 
 	BackendPkg.ListenForAllPosts(testUser);
 	
@@ -163,67 +163,3 @@ func CheckIfScrapeNewDeals(d BackendPkg.Database){
 	}
 }
 
-func RoutUserPantry(d BackendPkg.Database, u BackendPkg.User){
-	
-	// read from .db file and output test user's pantry to frontend
-	var testFoodInterface []interface{}
-	for i := 0; i < len(d.GetUserPantry(u.UserName).FoodInPantry); i++{
-		testFoodInterface = append(testFoodInterface, d.GetUserPantry(u.UserName).FoodInPantry[i])
-	}
-	// test router
-	programRouter := BackendPkg.Router{
-		Name:             "testRouter",
-		ItemsToBeEncoded: testFoodInterface,
-	}
-	programRouter.Rout("/api/Pantry", ":8080")
-}
-
-func RoutWeeklyDeals(d BackendPkg.Database){
-	
-	// read from .db file and output test user's pantry to frontend
-	var testFoodInterface []interface{}
-	for i := 0; i < len(d.ReadPublixDatabase()); i++{
-		testFoodInterface = append(testFoodInterface, d.ReadPublixDatabase()[i])
-	}
-	// test router
-	programRouter := BackendPkg.Router{
-		Name:             "testRouter",
-		ItemsToBeEncoded: testFoodInterface,
-	}
-	programRouter.Rout("/api/Deals", ":8081")
-}
-
-func RoutRecommendedRecipes(d BackendPkg.Database, currUser BackendPkg.User){
-
-	userRecList := BackendPkg.BestRecipes(d.GetUserPantry(currUser.UserName), d.ReadRecipes(), d.ReadPublixDatabase())
-	var testFoodInterface []interface{}
-	for i := 0; i < len(userRecList); i++{
-		testFoodInterface = append(testFoodInterface, userRecList[i].R)
-		testFoodInterface = append(testFoodInterface, "Pantry Data:")
-		for j := 0; j < len(userRecList[i].ItemsInPantry); j++{
-			testFoodInterface = append(testFoodInterface, userRecList[i].ItemsInPantry[j].Name)
-		}
-		testFoodInterface = append(testFoodInterface, "Publix Data:")
-		for k := 0; k < len(userRecList[i].ItemsOnSale); k++{
-			testFoodInterface = append(testFoodInterface, userRecList[i].ItemsOnSale[k].Name)
-		}
-	}
-
-	programRouter := BackendPkg.Router{
-		Name:             "testRouter",
-		ItemsToBeEncoded: testFoodInterface,
-	}
-	programRouter.Rout("/api/Recipes", ":8082")
-}
-
-func RoutAllData(d BackendPkg.Database, currUser BackendPkg.User){
-
-	// routs Eddie's pantry, lol
-	go RoutUserPantry(d, currUser)
-
-	// routs deals to deals page
-	go RoutWeeklyDeals(d)
-
-	// routs reccommended recipes to recipes page
-	RoutRecommendedRecipes(d, currUser)
-}
