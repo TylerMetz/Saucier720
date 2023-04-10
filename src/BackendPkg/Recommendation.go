@@ -88,7 +88,7 @@ func BestRecipes(userPantry Pantry, allRecipes []Recipe, deals []FoodItem) []Rec
 					for j:= 0; j < len(allRecipes[m].Ingredients); j++{
 						for k:= 0; k < len(dealWords); k++{
 							if strings.Contains(allRecipes[m].Ingredients[j], (" " + dealWords[k] + " ")) {
-								if (" " + dealWords[k] + " ") != " or "  && (" " + dealWords[k] + " ") != " and " && (" " + dealWords[k] + " ") != " the " && (" " + dealWords[k] + " ") != " 1 " && (" " + dealWords[k] + " ") != " 2 " && (" " + dealWords[k] + " ") != " 3 " && (" " + dealWords[k] + " ") != " ground " && (" " + dealWords[k] + " ") != " AND " && (" " + dealWords[k] + " ") != " Any " && (" " + dealWords[k] + " ") != " ANY " && (" " + dealWords[k] + " ") != " Sauce "{
+								if (" " + dealWords[k] + " ") != " or "  && (" " + dealWords[k] + " ") != " and " && (" " + dealWords[k] + " ") != " the " && (" " + dealWords[k] + " ") != " 1 " && (" " + dealWords[k] + " ") != " 2 " && (" " + dealWords[k] + " ") != " 3 " && (" " + dealWords[k] + " ") != " ground " && (" " + dealWords[k] + " ") != " AND " && (" " + dealWords[k] + " ") != " Any " && (" " + dealWords[k] + " ") != " ANY " && (" " + dealWords[k] + " ") != " Sauce " && (" " + dealWords[k] + " ") != " gallon " && (" " + dealWords[k] + " ") != " quart "{
 									if !slices.Contains(dealsItemsInRecipe, deals[i].Name){
 										dealsItemsInRecipe = append(dealsItemsInRecipe, deals[i].Name)
 									}
