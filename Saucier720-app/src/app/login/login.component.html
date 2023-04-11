@@ -11,20 +11,20 @@
                             <div class="form-group pt-3">
                                 <div class="input-field">
                                     <span class="fa fa-user p-2"></span>
-                                    <input type="text" placeholder="Username">
+                                    <input type="text" placeholder="Username" id="username" name="username"[(ngModel)]="username"><br><br>
                                 </div>
                             </div>
                             <div class="form-group pt-3">
                                 <div class="input-field">
                                     <span class="fa fa-lock p-2"></span>
-                                    <input [type]="type" placeholder="Password">
+                                    <input [type]="type" placeholder="Password" id="password" name="password"[(ngModel)]="password"><br><br>
                                     <span (click)="hideShowPass()" class="fa {{eyeIcon}}"></span>
                                 </div>
                             </div>
                             <div class="form-inline fr mt-4">
                                 <a id="forget" class="font-weight-bold">Forget Password</a>
                             </div>
-                            <button type="submit" class="btn btn-primary btn-block mt-4 w-100">Submit</button>
+                            <button type="submit" (click)="login()" class="btn btn-primary btn-block mt-4 w-100">Submit</button>
                             <div class="text-center pt-4 text-muted">Not signed up? <a id="forget" routerLink="/Signup">Signup</a></div>
                         </form>
                     </div>
