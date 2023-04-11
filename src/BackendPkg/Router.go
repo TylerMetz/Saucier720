@@ -144,13 +144,6 @@ func ListenPantry(currUser User) {
 
 func PantryItemPostResponse(w http.ResponseWriter, r *http.Request, currUser User) {
 
-	// Get the "sessionID" cookie value
-	cookie, _ := r.Cookie("sessionID")
-	sessionID := cookie.Value
-
-	// print for testing
-	fmt.Println(sessionID)
-
 	if r.Method != "POST" {
         http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
         return
@@ -237,11 +230,13 @@ func NewUserResponse(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func ListenLogin() {
+func ListenLogin(sessionCookie* string) {
 
 	// Listens and Serves New User
 	route := mux.NewRouter()
-    route.HandleFunc("/api/Login", NewLoginResponse).Methods("POST")
+	route.HandleFunc("/api/Login", func(w http.ResponseWriter, r *http.Request) {
+        NewLoginResponse(w, r, sessionCookie)
+    }).Methods("POST")
 
 	// enables alternate hosts for CORS
 	c := cors.New(cors.Options{
@@ -254,7 +249,7 @@ func ListenLogin() {
 
 }
 
-func NewLoginResponse(w http.ResponseWriter, r *http.Request) {
+func NewLoginResponse(w http.ResponseWriter, r *http.Request, sessionCookie *string) {
 
 	if r.Method != "POST" {
         http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -305,18 +300,21 @@ func NewLoginResponse(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("Login successful"))
 
-		fmt.Println(cookie.Value)
-		fmt.Println(http.StatusOK)
-
 	}
+
+	// Get the "sessionID" cookie value
+	cookie, _ := r.Cookie("sessionID")
+	*sessionCookie = cookie.Value
+	
+	// fmt.Println(*sessionCookie) // print for testing
 
 }
 
-func ListenForAllPosts(currUser User){
+func ListenForAllPosts(currUser User, cookie string){
 	// all listen functions go in here
 
 	// listens for user login
-	go ListenLogin()
+	// go ListenLogin(&cookie)
 
 	// listens for new user
 	go ListenNewUser()
