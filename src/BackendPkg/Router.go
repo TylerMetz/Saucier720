@@ -129,6 +129,15 @@ func ListenPantry(currUser User) {
         PantryItemPostResponse(w, r, currUser)
     })
 
+	var cookie string = "testing"
+
+	route.HandleFunc("/api/cookies", func(w http.ResponseWriter, r *http.Request) {
+        CookieHandler(w, r, cookie)
+    })
+
+	fmt.Println(cookie)
+
+
 	// enables alternate hosts for CORS
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:4200"},
@@ -179,6 +188,14 @@ func PantryItemPostResponse(w http.ResponseWriter, r *http.Request, currUser Use
 		UpdateData(d, currUser)
 	}
 
+}
+
+func CookieHandler(w http.ResponseWriter, r *http.Request, cookie string){
+	currCookie , err := r.Cookie("sessionID")
+	if err != nil {
+		log.Fatal(err)
+	}
+	cookie = currCookie.Value
 }
 
 func ListenNewUser() {
