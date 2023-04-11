@@ -303,8 +303,8 @@ func NewLoginResponse(w http.ResponseWriter, r *http.Request, sessionCookie *str
 		w.Write([]byte("Login successful"))
 
 		// Get the new "sessionID" cookie value
-		readInCookie, _ := r.Cookie("sessionID")
-		*sessionCookie = readInCookie.Value
+		// readInCookie, _ := r.Cookie("sessionID")
+		*sessionCookie = cookie.Value
 
 	}
 	
