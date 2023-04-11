@@ -11,6 +11,7 @@ import (
 	"log"
 	"sync"
 	//"strings"
+	//"bytes"
 )
 
 // global mutex
@@ -245,13 +246,12 @@ func ListenLogin(sessionCookie* string) {
 	})
 
 	handler := c.Handler(route)
+
     log.Fatal(http.ListenAndServe(":8084", handler))
 
 }
 
 func NewLoginResponse(w http.ResponseWriter, r *http.Request, sessionCookie *string) {
-
-	http.SetCookie(w, &http.Cookie{Name: "sessionID", MaxAge: -1, Path: "/"})
 
 	if r.Method != "POST" {
         http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
