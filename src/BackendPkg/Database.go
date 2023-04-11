@@ -306,18 +306,20 @@ func (d *Database) ReadCookie(username string) string {
 }
 
 func (d *Database) UserFromCookie(cookie string) User {
+	// return user based off of the cookie
 	database := d.OpenDatabase()
 	var returnUser User
 	var userName string
 	stmt, err := database.Prepare("SELECT UserName FROM Cookies WHERE Cookie=?")
 	if err != nil {
-		
+		// handle error
 	}
 	defer stmt.Close()
 
 	row := stmt.QueryRow(cookie)
 	row.Scan(&userName)
 
+	// grabs the user based of the username
 	returnUser = d.ReadUserDatabase(userName)
 
 	return returnUser
