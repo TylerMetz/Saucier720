@@ -251,6 +251,8 @@ func ListenLogin(sessionCookie* string) {
 
 func NewLoginResponse(w http.ResponseWriter, r *http.Request, sessionCookie *string) {
 
+	http.SetCookie(w, &http.Cookie{Name: "sessionID", MaxAge: -1, Path: "/"})
+
 	if r.Method != "POST" {
         http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
         return
@@ -300,11 +302,11 @@ func NewLoginResponse(w http.ResponseWriter, r *http.Request, sessionCookie *str
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("Login successful"))
 
-	}
+		// Get the new "sessionID" cookie value
+		readInCookie, _ := r.Cookie("sessionID")
+		*sessionCookie = readInCookie.Value
 
-	// Get the "sessionID" cookie value
-	cookie, _ := r.Cookie("sessionID")
-	*sessionCookie = cookie.Value
+	}
 	
 	// fmt.Println(*sessionCookie) // print for testing
 
@@ -405,4 +407,12 @@ func UpdateData(d Database, u User) {
 	}
     // Unlock the mutex
     dataMutex.Unlock()
+}
+
+func deleteAllCookies(w http.ResponseWriter, r *http.Request) {
+    cookies := r.Cookies()
+    for _, cookie := range cookies {
+        cookie.MaxAge = -1
+        http.SetCookie(w, cookie)
+    }
 }
