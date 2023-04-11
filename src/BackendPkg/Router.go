@@ -10,6 +10,7 @@ import (
 	"github.com/rs/cors"
 	"log"
 	"sync"
+	//"strings"
 )
 
 // global mutex
@@ -123,19 +124,11 @@ func (t *Router) sendResponseRecipes(response http.ResponseWriter, request *http
 func ListenPantry(currUser User) {
 
 	// Listens and Serves pantry
-    
+
 	route := mux.NewRouter()
 	route.HandleFunc("/api/NewPantryItem", func(w http.ResponseWriter, r *http.Request) {
         PantryItemPostResponse(w, r, currUser)
     })
-
-	var cookie string = "testing"
-
-	route.HandleFunc("/api/cookies", func(w http.ResponseWriter, r *http.Request) {
-        CookieHandler(w, r, &cookie)
-    })
-
-	fmt.Println(cookie)
 
 
 	// enables alternate hosts for CORS
@@ -150,6 +143,13 @@ func ListenPantry(currUser User) {
 }
 
 func PantryItemPostResponse(w http.ResponseWriter, r *http.Request, currUser User) {
+
+	// Get the "sessionID" cookie value
+	cookie, _ := r.Cookie("sessionID")
+	sessionID := cookie.Value
+
+	// print for testing
+	fmt.Println(sessionID)
 
 	if r.Method != "POST" {
         http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -188,14 +188,6 @@ func PantryItemPostResponse(w http.ResponseWriter, r *http.Request, currUser Use
 		UpdateData(d, currUser)
 	}
 
-}
-
-func CookieHandler(w http.ResponseWriter, r *http.Request, cookie *string){
-	currCookie , err := r.Cookie("sessionID")
-	if err != nil {
-		log.Fatal(err)
-	}
-	*cookie = currCookie.Value
 }
 
 func ListenNewUser() {
