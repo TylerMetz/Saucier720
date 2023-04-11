@@ -368,17 +368,17 @@ func RoutRecommendedRecipes(d Database, currUser User){
 
 	userRecList := BestRecipes(d.GetUserPantry(currUser.UserName), d.ReadRecipes(), d.ReadPublixDatabase())
 	for i := 0; i < len(userRecList); i++{
-		recipesFoodInterface = append(recipesFoodInterface, userRecList[i].R)
+		recipesFoodInterface = append(recipesFoodInterface, userRecList[i])
 		//recipesFoodInterface = append(recipesFoodInterface, "Pantry Data:")
 		/*for j := 0; j < len(userRecList[i].ItemsInPantry); j++{
 			recipesFoodInterface = append(recipesFoodInterface, userRecList[i].ItemsInPantry[j].Name)
 		}*/
-		recipesFoodInterface = append(recipesFoodInterface, userRecList[i].ItemsInPantry)
+		//recipesFoodInterface = append(recipesFoodInterface, userRecList[i].ItemsInPantry)
 		//recipesFoodInterface = append(recipesFoodInterface, "Publix Data:")
 		/*for k := 0; k < len(userRecList[i].ItemsOnSale); k++{
 			recipesFoodInterface = append(recipesFoodInterface, userRecList[i].ItemsOnSale[k].Name)
 		}*/
-		recipesFoodInterface = append(recipesFoodInterface, userRecList[i].ItemsOnSale)
+		//recipesFoodInterface = append(recipesFoodInterface, userRecList[i].ItemsOnSale)
 	}
 
 	programRouter := Router{
