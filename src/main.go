@@ -8,100 +8,16 @@ import (
 
 func main(){
 	
-	// test food items to test user fxns
-	testFoodItem := BackendPkg.FoodItem{
-		Name:        "peanut butter",
-		StoreCost:   369.99,
-		OnSale:      true,
-		SaleDetails: "BOGO",
-		Quantity:    10,
-	}
-	testFoodItem2 := BackendPkg.FoodItem{
-		Name:        "jelly",
-		StoreCost:   1.0,
-		OnSale:      false,
-		SaleDetails: "N/A",
-		Quantity:    30,
-	}
-	testFoodItem3 := BackendPkg.FoodItem{
-		Name:        "bread",
-		StoreCost:   10.69,
-		OnSale:      true,
-		SaleDetails: "$2 for 2",
-		Quantity:    2,
-	}
-	testFoodItem4 := BackendPkg.FoodItem{
-		Name:        "eggs",
-		StoreCost:   10.69,
-		OnSale:      true,
-		SaleDetails: "$2 for 2",
-		Quantity:    2,
-	}
-	testFoodItem5 := BackendPkg.FoodItem{
-		Name:        "milk",
-		StoreCost:   10.69,
-		OnSale:      true,
-		SaleDetails: "$2 for 2",
-		Quantity:    2,
-	}
-	testFoodItem6 := BackendPkg.FoodItem{
-		Name:        "sugar",
-		StoreCost:   10.69,
-		OnSale:      true,
-		SaleDetails: "$2 for 2",
-		Quantity:    2,
-	}
-	testFoodItem7 := BackendPkg.FoodItem{
-		Name:        "flour",
-		StoreCost:   10.69,
-		OnSale:      true,
-		SaleDetails: "$2 for 2",
-		Quantity:    2,
-	}
-	testFoodItem8 := BackendPkg.FoodItem{
-		Name:        "vanilla",
-		StoreCost:   10.69,
-		OnSale:      true,
-		SaleDetails: "$2 for 2",
-		Quantity:    2,
-	}
-	testFoodItem9 := BackendPkg.FoodItem{
-		Name:        "butter",
-		StoreCost:   10.69,
-		OnSale:      true,
-		SaleDetails: "$2 for 2",
-		Quantity:    2,
-	}
-	testFoodItem10 := BackendPkg.FoodItem{
-		Name:        "apple",
-		StoreCost:   10.69,
-		OnSale:      true,
-		SaleDetails: "$2 for 2",
-		Quantity:    2,
-	}
-	testUserFoodSlice := []BackendPkg.FoodItem{testFoodItem, testFoodItem2, testFoodItem3, testFoodItem4, testFoodItem5, testFoodItem6, testFoodItem7, testFoodItem8, testFoodItem9, testFoodItem10}
-
 	// test database
 	programDatabase := BackendPkg.Database{
 		Name: "MealDealz Database",
 	}
 
-	// create a test user and store their pantry
-	testUser := BackendPkg.User{
-		FirstName: "Tyler",
-		LastName: "Metz",
-		Email: "tmbs@gmail.com",
-		UserName: "TylerTests",
-		Password: "password",
-		UserPantry: BackendPkg.Pantry{
-			FoodInPantry: testUserFoodSlice,
-			TimeLastUpdated: time.Now(),
-		},
-	}
+	// set session cookie
+	var sessionCookie string;
 
-	// store Tyler
-	programDatabase.StoreUserDatabase(testUser)
-	programDatabase.StoreUserPantry(testUser)
+	// wait for user to login and return a cookie
+	go BackendPkg.ListenLogin(&sessionCookie)
 
 	// Reads recipes dataset in not read in yet and stores in DB
 	programDatabase.WriteRecipes()
@@ -109,12 +25,19 @@ func main(){
 	// runs scraper if new deals at publix
 	CheckIfScrapeNewDeals(programDatabase)
 
-	// routs all data
-	go BackendPkg.RoutAllData(programDatabase, testUser)
+	for(true){
+		if(sessionCookie != ""){
+			// determine session user based on cookies
+			sessionUser := programDatabase.UserFromCookie(sessionCookie)
+			fmt.Println(sessionUser)
+			
+			// routs all data
+			go BackendPkg.RoutAllData(programDatabase, sessionUser) // make sessionUser
 
-	// listens for data from frontend
-	BackendPkg.ListenForAllPosts(testUser);
-	
+			// listens for data from frontend
+			BackendPkg.ListenForAllPosts(sessionUser, sessionCookie); // make sessionUser
+		}
+	}
 }
 
 func CheckIfScrapeNewDeals(d BackendPkg.Database){
