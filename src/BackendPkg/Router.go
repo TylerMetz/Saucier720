@@ -369,7 +369,7 @@ func RoutRecommendedRecipes(d Database, currUser User) {
 
 	userRecList := BestRecipes(d.GetUserPantry(currUser.UserName), d.ReadRecipes(), d.ReadPublixDatabase())
 	for i := 0; i < len(userRecList); i++ {
-		// Sends recipe, items in recipe, and recommended deals
+		// sends recipes, items in recipe, and deals related 
 		recipesFoodInterface = append(recipesFoodInterface, userRecList[i])
 	}
 
