@@ -10,6 +10,7 @@ import (
 	"github.com/rs/cors"
 	"log"
 	"sync"
+	//"strings"
 )
 
 // global mutex
@@ -123,11 +124,12 @@ func (t *Router) sendResponseRecipes(response http.ResponseWriter, request *http
 func ListenPantry(currUser User) {
 
 	// Listens and Serves pantry
-    
+
 	route := mux.NewRouter()
 	route.HandleFunc("/api/NewPantryItem", func(w http.ResponseWriter, r *http.Request) {
         PantryItemPostResponse(w, r, currUser)
     })
+
 
 	// enables alternate hosts for CORS
 	c := cors.New(cors.Options{
@@ -141,6 +143,13 @@ func ListenPantry(currUser User) {
 }
 
 func PantryItemPostResponse(w http.ResponseWriter, r *http.Request, currUser User) {
+
+	// Get the "sessionID" cookie value
+	cookie, _ := r.Cookie("sessionID")
+	sessionID := cookie.Value
+
+	// print for testing
+	fmt.Println(sessionID)
 
 	if r.Method != "POST" {
         http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
