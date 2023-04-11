@@ -132,7 +132,7 @@ func ListenPantry(currUser User) {
 	var cookie string = "testing"
 
 	route.HandleFunc("/api/cookies", func(w http.ResponseWriter, r *http.Request) {
-        CookieHandler(w, r, cookie)
+        CookieHandler(w, r, &cookie)
     })
 
 	fmt.Println(cookie)
@@ -190,12 +190,12 @@ func PantryItemPostResponse(w http.ResponseWriter, r *http.Request, currUser Use
 
 }
 
-func CookieHandler(w http.ResponseWriter, r *http.Request, cookie string){
+func CookieHandler(w http.ResponseWriter, r *http.Request, cookie *string){
 	currCookie , err := r.Cookie("sessionID")
 	if err != nil {
 		log.Fatal(err)
 	}
-	cookie = currCookie.Value
+	*cookie = currCookie.Value
 }
 
 func ListenNewUser() {
