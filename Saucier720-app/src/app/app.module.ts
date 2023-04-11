@@ -10,6 +10,7 @@ import { PantryTableComponent } from './pantry/FEC/pantry-table/pantry-table.com
 import { NewPantryItemButtonComponent } from './pantry/FEC/new-pantry-item-button/new-pantry-item-button.component';
 import { SignupFormComponent } from './signup/FEC/signup-form/signup-form.component';
 import { FormsModule } from '@angular/forms';
+import { RecipeCardComponent } from './recipes/FEC/recipe-card/recipe-card.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { FormsModule } from '@angular/forms';
     DealsTableComponent,
     PantryTableComponent,
     NewPantryItemButtonComponent,
-    SignupFormComponent
+    SignupFormComponent,
+    RecipeCardComponent
   ],
   imports: [
     AppRoutingModule,
