@@ -4,7 +4,7 @@ import { tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { HttpClient } from '@angular/common/http';
-
+import { User } from '../core/interfaces/user';
 
 @Component({
   selector: 'app-login',
@@ -29,13 +29,20 @@ export class LoginComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.username = 'TylerTests';
-    this.password = 'password';
-    this.login();
+    
   }
   
-  login(): void {
-    const body = { username: this.username, password: this.password };
+  login() {
+    const user: User = {
+      FirstName: "",
+      LastName: "",
+      Email: "",
+      UserName: this.username,
+      Password: this.password,
+    }
+    console.log(user.UserName);
+    console.log(user.Password);
+    const body = { username: user.UserName, password: user.Password };
     const options = { withCredentials: true };
     this.authService.login(this.username, this.password)
   .subscribe({
