@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { HttpEvent, HttpEventType } from '@angular/common/http';
 import { RecipeService } from 'src/app/core/services/recipes/recipe.service';
 import { lastValueFrom } from 'rxjs';
+import { RecipePost } from 'src/app/core/interfaces/recipe';
+import { Recipe } from 'src/app/core/interfaces/recipe';
 
 @Component({
   selector: 'app-recipe-card',
@@ -10,7 +12,9 @@ import { lastValueFrom } from 'rxjs';
 })
 export class RecipeCardComponent implements OnInit {
 
-  recipes: any;
+  recipes: RecipePost[] = [];
+  currentRecipeIndex: number = 0;
+
   constructor(
     private recipeService: RecipeService
     ) {}
