@@ -25,22 +25,20 @@ func main() {
 	CheckIfScrapeNewDeals(programDatabase)
 
 	for {
+		// create a new context with a cancel function
+		ctx, cancel := context.WithCancel(context.Background())
+
 		// reset sessionCookie and cookieChanged bool
 		sessionCookie = ""
 		cookieChange = false
 
-		// create a new context with a cancel function
-        ctx, cancel := context.WithCancel(context.Background())
-
 		// run program again
-		for(BackendPkg.Servers != nil){}
 		go runProgram(&cookieChange, ctx)
-		// go runProgram(&cookieChange) // should be this but it's broken
 
 		// do nothing while waiting for cookie to be changed
 		for !cookieChange{}
 
-		// TO-DO: cancel all go routines
+		// cancel all go routines
 		cancel()
 
 		//shutdown all active ListenAndServe functions
@@ -50,6 +48,8 @@ func main() {
 }
 
 func runProgram(cookieChange *bool, ctx context.Context) {
+	// testing
+	fmt.Println("New User Program running...")
 
 	// wait for user to login and return a cookie
 	go BackendPkg.ListenLogin(&sessionCookie, cookieChange, ctx)
@@ -59,11 +59,12 @@ func runProgram(cookieChange *bool, ctx context.Context) {
 	sessionUser = programDatabase.UserFromCookie(sessionCookie)
 
 	// routs all data
-	go BackendPkg.RoutAllData(programDatabase, sessionUser)
+	BackendPkg.RoutAllData(programDatabase, sessionUser, ctx)
 
 	// listens for data from frontend
 	BackendPkg.ListenForAllPosts(sessionUser, sessionCookie, ctx)
 }
+
 
 func CheckIfScrapeNewDeals(d BackendPkg.Database){
 
