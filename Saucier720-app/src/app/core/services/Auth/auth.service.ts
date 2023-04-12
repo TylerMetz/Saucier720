@@ -6,7 +6,7 @@ import { CookieService } from 'ngx-cookie-service';
 @Injectable()
 export class AuthService {
 
-  private loggedIn: boolean = false;
+  private loggedIn: boolean = true;
 
 
   private loginUrl: string = 'http://localhost:8084/api/Login';

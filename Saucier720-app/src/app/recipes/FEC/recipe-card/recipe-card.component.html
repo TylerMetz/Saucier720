@@ -1,15 +1,8 @@
-<div class="table-responsive">
-    <table class="table w-100 table-striped table-bordered">
-      <thead>
-        <tr>
-          <th>Recipe Title</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let recipe of recipes">
-          <td>{{ recipe.R.title }}</td>
-        </tr>
-      </tbody>
-    </table>
+<div class="card">
+  <div class="recipe-content">
+    <div class="recipe-title">
+      <div *ngIf="recipes && recipes.length > 0">
+        <h2>{{ recipes[currentRecipeIndex].R.title }}</h2>
+    </div>
   </div>
-  
+</div>
