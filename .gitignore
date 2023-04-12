@@ -12,3 +12,4 @@ src/golang.org/*
 src/google.golang.org/*
 node_modules/*
 pkg/mod/*
+src/MealDealz.db
