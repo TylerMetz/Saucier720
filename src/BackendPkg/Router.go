@@ -63,7 +63,6 @@ func (t *Router) RoutPantry(endLink string, port string, ctx context.Context) {
     wg.Add(1)
 	// listen and serve until context is cancelled
 	func() {
-		fmt.Println("routing pantry...")
 		defer wg.Done()
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("listen: %s\n", err)
@@ -304,7 +303,7 @@ func ListenNewUser(ctx context.Context) {
 	wg.Add(1)
 
 	// listens and serves in a new goroutine
-	func() {
+	go func() {
 		defer wg.Done() // decrement the counter when this goroutine is done
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("listen: %s\n", err)
@@ -462,25 +461,24 @@ func ListenForAllPosts(currUser User, cookie string, ctx context.Context){
 func RoutUserPantry(d Database, u User, ctx context.Context){
 	
 	// read from .db file and output test user's pantry to frontend
-	for{
-		// lock the data
-		dataMutex.Lock()
 
-		var testFoodInterfaceRefresh []interface{}
-		testFoodInterface = testFoodInterfaceRefresh
-		for i := 0; i < len(d.GetUserPantry(u.UserName).FoodInPantry); i++{
-			testFoodInterface = append(testFoodInterface, d.GetUserPantry(u.UserName).FoodInPantry[i])
-		}
+	// lock the data
+	dataMutex.Lock()
 
-		// unlock the data
-		dataMutex.Unlock()
-
-		// test router
-		programRouter := Router{
-			Name:             "testRouter",
-		}
-		programRouter.RoutPantry("/api/Pantry", ":8080", ctx)
+	var testFoodInterfaceRefresh []interface{}
+	testFoodInterface = testFoodInterfaceRefresh
+	for i := 0; i < len(d.GetUserPantry(u.UserName).FoodInPantry); i++{
+		testFoodInterface = append(testFoodInterface, d.GetUserPantry(u.UserName).FoodInPantry[i])
 	}
+
+	// unlock the data
+	dataMutex.Unlock()
+
+	// test router
+	programRouter := Router{
+		Name:             "testRouter",
+	}
+	programRouter.RoutPantry("/api/Pantry", ":8080", ctx)
 }
 
 func RoutWeeklyDeals(d Database, ctx context.Context){
@@ -521,10 +519,10 @@ func RoutRecommendedRecipes(d Database, currUser User, ctx context.Context){
 func RoutAllData(d Database, currUser User, ctx context.Context){
 
 	// routs Eddie's pantry, lol
-	RoutUserPantry(d, currUser, ctx)
+	go RoutUserPantry(d, currUser, ctx) 
 
 	// routs reccommended recipes to recipes page
-	RoutRecommendedRecipes(d, currUser, ctx)
+	go RoutRecommendedRecipes(d, currUser, ctx)
 
 	// routs deals to deals page
 	RoutWeeklyDeals(d, ctx)
