@@ -4,7 +4,7 @@ import (
 	"BackendPkg"
 	"fmt"
 	"time"
-	//"context"
+	"context"
 	//"os"
 	//"os/signal"
     //"syscall"
@@ -25,17 +25,21 @@ func main() {
 	CheckIfScrapeNewDeals(programDatabase)
 
 	for {
+		// create a new context with a cancel function
+		ctx, cancel := context.WithCancel(context.Background())
+
 		// reset sessionCookie and cookieChanged bool
 		sessionCookie = ""
 		cookieChange = false
 
 		// run program again
-		for(BackendPkg.Servers != nil){}
-		runProgram(&cookieChange)
-		// go runProgram(&cookieChange) // should be this but it's broken
+		go runProgram(&cookieChange, ctx)
 
 		// do nothing while waiting for cookie to be changed
 		for !cookieChange{}
+
+		// cancel all go routines
+		cancel()
 
 		//shutdown all active ListenAndServe functions
 		BackendPkg.ShutdownServers()
@@ -43,21 +47,22 @@ func main() {
 	}
 }
 
-func runProgram(cookieChange *bool) {
+func runProgram(cookieChange *bool, ctx context.Context) {
 
 	// wait for user to login and return a cookie
-	go BackendPkg.ListenLogin(&sessionCookie, cookieChange)
+	go BackendPkg.ListenLogin(&sessionCookie, cookieChange, ctx)
 	for sessionCookie == "" {}
 
 	// determine session user based on cookies
 	sessionUser = programDatabase.UserFromCookie(sessionCookie)
 
 	// routs all data
-	go BackendPkg.RoutAllData(programDatabase, sessionUser)
+	go BackendPkg.RoutAllData(programDatabase, sessionUser, ctx)
 
 	// listens for data from frontend
-	BackendPkg.ListenForAllPosts(sessionUser, sessionCookie)
+	BackendPkg.ListenForAllPosts(sessionUser, sessionCookie, ctx)
 }
+
 
 func CheckIfScrapeNewDeals(d BackendPkg.Database){
 
