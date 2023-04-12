@@ -48,8 +48,6 @@ func main() {
 }
 
 func runProgram(cookieChange *bool, ctx context.Context) {
-	// testing
-	fmt.Println("New User Program running...")
 
 	// wait for user to login and return a cookie
 	go BackendPkg.ListenLogin(&sessionCookie, cookieChange, ctx)
@@ -59,7 +57,7 @@ func runProgram(cookieChange *bool, ctx context.Context) {
 	sessionUser = programDatabase.UserFromCookie(sessionCookie)
 
 	// routs all data
-	BackendPkg.RoutAllData(programDatabase, sessionUser, ctx)
+	go BackendPkg.RoutAllData(programDatabase, sessionUser, ctx)
 
 	// listens for data from frontend
 	BackendPkg.ListenForAllPosts(sessionUser, sessionCookie, ctx)
