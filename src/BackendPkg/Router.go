@@ -165,7 +165,10 @@ func (t *Router) sendResponseRecipes(response http.ResponseWriter, request *http
 	response.Write(jsonResponse)
 }
 
-func ListenPantry(currUser User) {
+func ListenPantry(currUser User, ctx context.Context) {
+	// create a new context with cancel function
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
 
 	// Listens and Serves pantry
 	route := mux.NewRouter()
@@ -190,8 +193,15 @@ func ListenPantry(currUser User) {
 	wg.Add(1)
 
 	// listens and serves in a new goroutine
-	defer wg.Done() // decrement the counter when this goroutine is done
-	log.Fatal(server.ListenAndServe())
+	go func() {
+		defer wg.Done() // decrement the counter when this goroutine is done
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("listen: %s\n", err)
+		}
+	}()
+
+	// wait for cancellation signal
+	<-ctx.Done()
 
 }
 
@@ -236,7 +246,11 @@ func PantryItemPostResponse(w http.ResponseWriter, r *http.Request, currUser Use
 
 }
 
-func ListenNewUser() {
+func ListenNewUser(ctx context.Context) {
+
+	// create a new context with cancel function
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
 
 	// Listens and Serves New User
 	route := mux.NewRouter()
@@ -259,8 +273,15 @@ func ListenNewUser() {
 	wg.Add(1)
 
 	// listens and serves in a new goroutine
-	defer wg.Done() // decrement the counter when this goroutine is done
-	log.Fatal(server.ListenAndServe())
+	go func() {
+		defer wg.Done() // decrement the counter when this goroutine is done
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("listen: %s\n", err)
+		}
+	}()
+
+	// wait for cancellation signal
+	<-ctx.Done()
 
 }
 
@@ -294,7 +315,10 @@ func NewUserResponse(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func ListenLogin(sessionCookie* string, cookieChanged* bool) {
+func ListenLogin(sessionCookie* string, cookieChanged* bool, ctx context.Context) {
+	// create a new context with cancel function
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
 
 	// Listens and Serves New User
 	route := mux.NewRouter()
@@ -319,8 +343,15 @@ func ListenLogin(sessionCookie* string, cookieChanged* bool) {
 	wg.Add(1)
 
 	// listens and serves in a new goroutine
-	defer wg.Done() // decrement the counter when this goroutine is done
-	log.Fatal(server.ListenAndServe())
+	go func() {
+		defer wg.Done() // decrement the counter when this goroutine is done
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("listen: %s\n", err)
+		}
+	}()
+
+	// wait for cancellation signal
+	<-ctx.Done()
 
 }
 
@@ -386,17 +417,14 @@ func NewLoginResponse(w http.ResponseWriter, r *http.Request, sessionCookie *str
 
 }
 
-func ListenForAllPosts(currUser User, cookie string){
+func ListenForAllPosts(currUser User, cookie string, ctx context.Context){
 	// all listen functions go in here
 
-	// listens for user login
-	// go ListenLogin(&cookie)
-
 	// listens for new user
-	go ListenNewUser()
+	go ListenNewUser(ctx)
 
 	// listens for new pantry item
-	ListenPantry(currUser)
+	ListenPantry(currUser, ctx)
 
 }
 
