@@ -1,6 +1,14 @@
+.page {
+  margin-top: 60px;
+}
 .topnav {
     background-color: #323232;
-    overflow: hidden;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    left: 0;
+    z-index: 20;
   }
   
   /* Style the links inside the navigation bar */

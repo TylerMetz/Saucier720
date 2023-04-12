@@ -46,4 +46,11 @@ export class RecipeCardComponent implements OnInit {
         console.error(error);
       }
     }
+
+    goToNextRecipe() {
+      this.currentRecipeIndex++;
+      if (this.currentRecipeIndex >= this.recipes.length) {
+        this.currentRecipeIndex = 0;
+      }
+    }
 }

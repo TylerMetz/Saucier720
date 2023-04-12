@@ -1,8 +1,16 @@
-<div class="card">
-  <div class="recipe-content">
-    <div class="recipe-title">
-      <div *ngIf="recipes && recipes.length > 0">
-        <h2>{{ recipes[currentRecipeIndex].R.title }}</h2>
+<div class="card-container">
+  <div class="card">
+    <div class="recipe-content">
+      <div *ngIf="recipes && recipes.length > 0" class="recipe-title">
+        {{ recipes[currentRecipeIndex].R.title }}
+      </div>
+      <div *ngIf="recipes && recipes.length > 0" class="recipe-ingredients">
+      {{ recipes[currentRecipeIndex].R.ingredients }}
+      </div>
+      <div *ngIf="recipes && recipes.length > 0" class="recipe-picture">
+        {{ recipes[currentRecipeIndex].R.pictureLink }}
+      </div>
     </div>
   </div>
+  <button (click)="goToNextRecipe()">Next Recipe</button>
 </div>
