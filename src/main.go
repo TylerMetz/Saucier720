@@ -25,24 +25,26 @@ func main() {
 	CheckIfScrapeNewDeals(programDatabase)
 
 	for {
-		// create a new context with a cancel function
-		ctx, cancel := context.WithCancel(context.Background())
+		if(BackendPkg.Servers == nil){
+			// create a new context with a cancel function
+			ctx, cancel := context.WithCancel(context.Background())
 
-		// reset sessionCookie and cookieChanged bool
-		sessionCookie = ""
-		cookieChange = false
+			// reset sessionCookie and cookieChanged bool
+			sessionCookie = ""
+			cookieChange = false
 
-		// run program again
-		go runProgram(&cookieChange, ctx)
+			// run program again
+			go runProgram(&cookieChange, ctx)
 
-		// do nothing while waiting for cookie to be changed
-		for !cookieChange{}
+			// do nothing while waiting for cookie to be changed
+			for !cookieChange{}
 
-		// cancel all go routines
-		cancel()
+			// cancel all go routines
+			cancel()
 
-		//shutdown all active ListenAndServe functions
-		BackendPkg.ShutdownServers()
+			//shutdown all active ListenAndServe functions
+			BackendPkg.ShutdownServers()
+		}
 		
 	}
 }
