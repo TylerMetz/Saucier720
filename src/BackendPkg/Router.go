@@ -10,6 +10,7 @@ import (
 	"github.com/rs/cors"
 	"log"
 	"sync"
+	"context"
 	//"strings"
 	//"bytes"
 )
@@ -17,10 +18,16 @@ import (
 // global mutex
 var dataMutex sync.Mutex
 
+// global wait group
+var wg sync.WaitGroup
+
 // global var to be routed
 var testFoodInterface []interface{}
 var dealsFoodInterface []interface{}
 var recipesFoodInterface []interface{}
+
+// global Servers list
+var Servers []*http.Server
 
 type Router struct {
 	Name             string
@@ -38,9 +45,21 @@ func (t *Router) RoutPantry(endLink string, port string) {
 		AllowCredentials: true,
 	})
 
-	// log.Println("Listening...")
+	// define handler
 	handler := c.Handler(route)
-	http.ListenAndServe(port, handler)
+
+	// create server to add to global var
+	server := &http.Server{
+		Addr:    port,
+		Handler: handler,
+	}
+	// append the server to the global list
+	Servers = append(Servers, server)
+
+	// increment the WaitGroup counter
+    wg.Add(1)
+	defer wg.Done()
+	server.ListenAndServe()
 }
 
 func (t *Router) RoutDeals(endLink string, port string) {
@@ -55,9 +74,21 @@ func (t *Router) RoutDeals(endLink string, port string) {
 		AllowCredentials: true,
 	})
 
-	// log.Println("Listening...")
+	// define handler
 	handler := c.Handler(route)
-	http.ListenAndServe(port, handler)
+
+	// create server to add to global var
+	server := &http.Server{
+		Addr:    port,
+		Handler: handler,
+	}
+	// append the server to the global list
+	Servers = append(Servers, server)
+
+	// increment the WaitGroup counter
+    wg.Add(1)
+	defer wg.Done()
+	server.ListenAndServe()
 }
 
 func (t *Router) RoutRecipes(endLink string, port string) {
@@ -72,9 +103,21 @@ func (t *Router) RoutRecipes(endLink string, port string) {
 		AllowCredentials: true,
 	})
 
-	// log.Println("Listening...")
+	// define handler
 	handler := c.Handler(route)
-	http.ListenAndServe(port, handler)
+
+	// create server to add to global var
+	server := &http.Server{
+		Addr:    port,
+		Handler: handler,
+	}
+	// append the server to the global list
+	Servers = append(Servers, server)
+
+	// increment the WaitGroup counter
+    wg.Add(1)
+	defer wg.Done()
+	server.ListenAndServe()
 }
 
 func (t *Router) sendResponsePantry(response http.ResponseWriter, request *http.Request) {
@@ -125,12 +168,10 @@ func (t *Router) sendResponseRecipes(response http.ResponseWriter, request *http
 func ListenPantry(currUser User) {
 
 	// Listens and Serves pantry
-
 	route := mux.NewRouter()
 	route.HandleFunc("/api/NewPantryItem", func(w http.ResponseWriter, r *http.Request) {
         PantryItemPostResponse(w, r, currUser)
     })
-
 
 	// enables alternate hosts for CORS
 	c := cors.New(cors.Options{
@@ -138,8 +179,19 @@ func ListenPantry(currUser User) {
 		AllowCredentials: true,
 	})
 
+	// creates handler
 	handler := c.Handler(route)
-    log.Fatal(http.ListenAndServe(":8083", handler))
+
+	// creates server to be appended to global list
+	server := &http.Server{Addr: ":8083", Handler: handler}
+	Servers = append(Servers, server)
+
+	// increment the WaitGroup counter
+	wg.Add(1)
+
+	// listens and serves in a new goroutine
+	defer wg.Done() // decrement the counter when this goroutine is done
+	log.Fatal(server.ListenAndServe())
 
 }
 
@@ -196,8 +248,19 @@ func ListenNewUser() {
 		AllowCredentials: true,
 	})
 
+	// creates handler
 	handler := c.Handler(route)
-    log.Fatal(http.ListenAndServe(":8085", handler))
+
+	// creates server to be appended to global list
+	server := &http.Server{Addr: ":8085", Handler: handler}
+	Servers = append(Servers, server)
+
+	// increment the WaitGroup counter
+	wg.Add(1)
+
+	// listens and serves in a new goroutine
+	defer wg.Done() // decrement the counter when this goroutine is done
+	log.Fatal(server.ListenAndServe())
 
 }
 
@@ -231,12 +294,12 @@ func NewUserResponse(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func ListenLogin(sessionCookie* string) {
+func ListenLogin(sessionCookie* string, cookieChanged* bool) {
 
 	// Listens and Serves New User
 	route := mux.NewRouter()
 	route.HandleFunc("/api/Login", func(w http.ResponseWriter, r *http.Request) {
-        NewLoginResponse(w, r, sessionCookie)
+        NewLoginResponse(w, r, sessionCookie, cookieChanged)
     }).Methods("POST")
 
 	// enables alternate hosts for CORS
@@ -245,13 +308,23 @@ func ListenLogin(sessionCookie* string) {
 		AllowCredentials: true,
 	})
 
+	// creates handler
 	handler := c.Handler(route)
 
-    log.Fatal(http.ListenAndServe(":8084", handler))
+	// creates server to be appended to global list
+	server := &http.Server{Addr: ":8084", Handler: handler}
+	Servers = append(Servers, server)
+
+	// increment the WaitGroup counter
+	wg.Add(1)
+
+	// listens and serves in a new goroutine
+	defer wg.Done() // decrement the counter when this goroutine is done
+	log.Fatal(server.ListenAndServe())
 
 }
 
-func NewLoginResponse(w http.ResponseWriter, r *http.Request, sessionCookie *string) {
+func NewLoginResponse(w http.ResponseWriter, r *http.Request, sessionCookie *string, cookieChanged *bool) {
 
 	if r.Method != "POST" {
         http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -295,6 +368,9 @@ func NewLoginResponse(w http.ResponseWriter, r *http.Request, sessionCookie *str
 		}
 		http.SetCookie(w, cookie)
 
+		// sets cookie changed to true
+		*cookieChanged = true
+
 		// Allow the 'Set-Cookie' header to be exposed to the frontend
 		w.Header().Set("Access-Control-Expose-Headers", "Set-Cookie")
 
@@ -307,8 +383,6 @@ func NewLoginResponse(w http.ResponseWriter, r *http.Request, sessionCookie *str
 		*sessionCookie = cookie.Value
 
 	}
-	
-	// fmt.Println(*sessionCookie) // print for testing
 
 }
 
@@ -390,11 +464,11 @@ func RoutAllData(d Database, currUser User){
 	// routs Eddie's pantry, lol
 	go RoutUserPantry(d, currUser)
 
-	// routs deals to deals page
-	go RoutWeeklyDeals(d)
-
 	// routs reccommended recipes to recipes page
-	RoutRecommendedRecipes(d, currUser)
+	go RoutRecommendedRecipes(d, currUser)
+
+	// routs deals to deals page
+	RoutWeeklyDeals(d)
 }
 
 func UpdateData(d Database, u User) {
@@ -415,4 +489,17 @@ func deleteAllCookies(w http.ResponseWriter, r *http.Request) {
         cookie.MaxAge = -1
         http.SetCookie(w, cookie)
     }
+}
+
+func ShutdownServers() {
+    for _, server := range Servers {
+        // gracefully shut down the server
+        if err := server.Shutdown(context.Background()); err != nil {
+            log.Fatal("Server shutdown failed:", err)
+        }
+    }
+    // wait for all the servers to shut down before returning
+    wg.Wait()
+	Servers = nil
+	return
 }

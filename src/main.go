@@ -4,20 +4,19 @@ import (
 	"BackendPkg"
 	"fmt"
 	"time"
+	//"context"
+	//"os"
+	//"os/signal"
+    //"syscall"
 )
 
-func main(){
-	
-	// test database
-	programDatabase := BackendPkg.Database{
-		Name: "MealDealz Database",
-	}
+// global vars
+var sessionCookie string
+var sessionUser BackendPkg.User
+var programDatabase BackendPkg.Database
+var cookieChange bool
 
-	// set session cookie
-	var sessionCookie string;
-
-	// wait for user to login and return a cookie
-	go BackendPkg.ListenLogin(&sessionCookie)
+func main() {
 
 	// Reads recipes dataset in not read in yet and stores in DB
 	programDatabase.WriteRecipes()
@@ -25,19 +24,39 @@ func main(){
 	// runs scraper if new deals at publix
 	CheckIfScrapeNewDeals(programDatabase)
 
-	for(true){
-		if(sessionCookie != ""){
-			// determine session user based on cookies
-			sessionUser := programDatabase.UserFromCookie(sessionCookie)
-			fmt.Println(sessionUser)
-			
-			// routs all data
-			go BackendPkg.RoutAllData(programDatabase, sessionUser) // make sessionUser
+	for {
+		// reset sessionCookie and cookieChanged bool
+		sessionCookie = ""
+		cookieChange = false
 
-			// listens for data from frontend
-			BackendPkg.ListenForAllPosts(sessionUser, sessionCookie); // make sessionUser
-		}
+		// run program again
+		for(BackendPkg.Servers != nil){}
+		runProgram(&cookieChange)
+		// go runProgram(&cookieChange) // should be this but it's broken
+
+		// do nothing while waiting for cookie to be changed
+		for !cookieChange{}
+
+		//shutdown all active ListenAndServe functions
+		BackendPkg.ShutdownServers()
+		
 	}
+}
+
+func runProgram(cookieChange *bool) {
+
+	// wait for user to login and return a cookie
+	go BackendPkg.ListenLogin(&sessionCookie, cookieChange)
+	for sessionCookie == "" {}
+
+	// determine session user based on cookies
+	sessionUser = programDatabase.UserFromCookie(sessionCookie)
+
+	// routs all data
+	go BackendPkg.RoutAllData(programDatabase, sessionUser)
+
+	// listens for data from frontend
+	BackendPkg.ListenForAllPosts(sessionUser, sessionCookie)
 }
 
 func CheckIfScrapeNewDeals(d BackendPkg.Database){
@@ -86,4 +105,3 @@ func CheckIfScrapeNewDeals(d BackendPkg.Database){
 		d.StoreDealsScrapedTime(programScraper.TimeLastDealsScraped)
 	}
 }
-
