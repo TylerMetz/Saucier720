@@ -1,0 +1,38 @@
+.card {
+    display: flex;
+	align-items: center;
+    flex-direction: column;
+}
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 10px;
+  }
+
+.button {
+    display: flex;
+    position: center;
+}
+
+.recipe {
+    display: flex;
+    align-items: center;
+
+    &-title {
+        text-align: center;
+        font-size: x-large;
+    }
+
+    &-content {
+        text-align: center;
+    }
+
+    &-ingredients {
+        margin-top: 20px;
+    }
+
+    &-picture {
+
+    }
+}
