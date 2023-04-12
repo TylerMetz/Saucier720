@@ -10,6 +10,8 @@
         <tr *ngFor="let ingredient of pantry">
           <td>{{ ingredient.Name }}</td>
           <td>{{ ingredient.Quantity }}</td>
+          <button (click)="ingredient.Quantity = ingredient.Quantity + 1">+</button>
+          <button (click)="ingredient.Quantity = ingredient.Quantity - 1">-</button>
         </tr>
       </tbody>
     </table>
