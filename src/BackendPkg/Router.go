@@ -4,10 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+
 	//"time"
-	"io/ioutil"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
+	"io/ioutil"
 	"log"
 	"sync"
 	"context"
@@ -30,7 +31,7 @@ var recipesFoodInterface []interface{}
 var Servers []*http.Server
 
 type Router struct {
-	Name             string
+	Name string
 }
 
 func (t *Router) RoutPantry(endLink string, port string, ctx context.Context) {
@@ -238,9 +239,9 @@ func ListenPantry(currUser User, ctx context.Context) {
 func PantryItemPostResponse(w http.ResponseWriter, r *http.Request, currUser User) {
 
 	if r.Method != "POST" {
-        http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-        return
-    }
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
 
 	body, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
@@ -249,26 +250,26 @@ func PantryItemPostResponse(w http.ResponseWriter, r *http.Request, currUser Use
 		FoodItem FoodItem `json:"ingredient"`
 	}
 
-    var newItem Ingredient;
-	
-    err = json.Unmarshal(body, &newItem)
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusBadRequest)
-        return
-    }
+	var newItem Ingredient
+
+	err = json.Unmarshal(body, &newItem)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
 	funcDatabase := Database{
 		Name: "func db",
 	}
-    funcDatabase.InsertPantryItemPost(currUser, newItem.FoodItem)
+	funcDatabase.InsertPantryItemPost(currUser, newItem.FoodItem)
 
 	w.WriteHeader(http.StatusOK)
 
-	if http.StatusOK == 200{
+	if http.StatusOK == 200 {
 		d := Database{
 			Name: "func db",
-		} 
-		
+		}
+
 		var testFoodInterfaceRefresh []interface{}
 		testFoodInterface = testFoodInterfaceRefresh
 		UpdateData(d, currUser)
@@ -284,7 +285,7 @@ func ListenNewUser(ctx context.Context) {
 
 	// Listens and Serves New User
 	route := mux.NewRouter()
-    route.HandleFunc("/api/Signup", NewUserResponse).Methods("POST")
+	route.HandleFunc("/api/Signup", NewUserResponse).Methods("POST")
 
 	// enables alternate hosts for CORS
 	c := cors.New(cors.Options{
@@ -318,30 +319,30 @@ func ListenNewUser(ctx context.Context) {
 func NewUserResponse(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != "POST" {
-        http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-        return
-    }
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
 
-    body, err := ioutil.ReadAll(r.Body)
+	body, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 
-    type UserResponse struct {
+	type UserResponse struct {
 		User User `json:"user"`
 	}
 
 	var newUser UserResponse
-	
-    err = json.Unmarshal(body, &newUser)
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusBadRequest)
-        return
-    }
+
+	err = json.Unmarshal(body, &newUser)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
 	funcDatabase := Database{
 		Name: "func db",
 	}
 
-    funcDatabase.StoreUserDatabase(newUser.User)
+	funcDatabase.StoreUserDatabase(newUser.User)
 
 }
 
@@ -388,25 +389,25 @@ func ListenLogin(sessionCookie* string, cookieChanged* bool, ctx context.Context
 func NewLoginResponse(w http.ResponseWriter, r *http.Request, sessionCookie *string, cookieChanged *bool) {
 
 	if r.Method != "POST" {
-        http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-        return
-    }
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
 
-    body, err := ioutil.ReadAll(r.Body)
+	body, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 
-	type LoginUser struct{
+	type LoginUser struct {
 		UserName string `json:"username"`
-    	Password string `json:"password"`
+		Password string `json:"password"`
 	}
 
 	var currUser LoginUser
-	
-    err = json.Unmarshal(body, &currUser)
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusBadRequest)
-        return
-    }
+
+	err = json.Unmarshal(body, &currUser)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
 	activeUser := User{
 		Password: currUser.Password,
@@ -414,17 +415,17 @@ func NewLoginResponse(w http.ResponseWriter, r *http.Request, sessionCookie *str
 	}
 
 	// checks if validate user function returned an empty cookie, if not then setts the cookies
-	if ValidateUser(activeUser) == ""{
+	if ValidateUser(activeUser) == "" {
 		http.Error(w, "Invalid login credentials", http.StatusUnauthorized)
-        return
-	} else{
+		return
+	} else {
 		// Set the cookie
 		cookie := &http.Cookie{
 			Name:     "sessionID",
 			Value:    ValidateUser(activeUser),
 			Path:     "/",
 			HttpOnly: true,
-    		Secure:   false,
+			Secure:   false,
 			SameSite: http.SameSiteLaxMode,
 		}
 		http.SetCookie(w, cookie)
@@ -444,6 +445,8 @@ func NewLoginResponse(w http.ResponseWriter, r *http.Request, sessionCookie *str
 		*sessionCookie = cookie.Value
 
 	}
+
+	// fmt.Println(*sessionCookie) // print for testing
 
 }
 
@@ -498,20 +501,13 @@ func RoutWeeklyDeals(d Database, ctx context.Context){
 func RoutRecommendedRecipes(d Database, currUser User, ctx context.Context){
 
 	userRecList := BestRecipes(d.GetUserPantry(currUser.UserName), d.ReadRecipes(), d.ReadPublixDatabase())
-	for i := 0; i < len(userRecList); i++{
-		recipesFoodInterface = append(recipesFoodInterface, userRecList[i].R)
-		recipesFoodInterface = append(recipesFoodInterface, "Pantry Data:")
-		for j := 0; j < len(userRecList[i].ItemsInPantry); j++{
-			recipesFoodInterface = append(recipesFoodInterface, userRecList[i].ItemsInPantry[j].Name)
-		}
-		recipesFoodInterface = append(recipesFoodInterface, "Publix Data:")
-		for k := 0; k < len(userRecList[i].ItemsOnSale); k++{
-			recipesFoodInterface = append(recipesFoodInterface, userRecList[i].ItemsOnSale[k].Name)
-		}
+	for i := 0; i < len(userRecList); i++ {
+		// sends recipes, items in recipe, and deals related 
+		recipesFoodInterface = append(recipesFoodInterface, userRecList[i])
 	}
 
 	programRouter := Router{
-		Name:             "testRouter",
+		Name: "testRouter",
 	}
 	programRouter.RoutRecipes("/api/Recipes", ":8082", ctx)
 }
@@ -530,22 +526,22 @@ func RoutAllData(d Database, currUser User, ctx context.Context){
 
 func UpdateData(d Database, u User) {
 
-    // Lock the mutex to update the data
-    dataMutex.Lock()
-    // Update the global variable with the updated data
-	for i := 0; i < len(d.GetUserPantry(u.UserName).FoodInPantry); i++{
+	// Lock the mutex to update the data
+	dataMutex.Lock()
+	// Update the global variable with the updated data
+	for i := 0; i < len(d.GetUserPantry(u.UserName).FoodInPantry); i++ {
 		testFoodInterface = append(testFoodInterface, d.GetUserPantry(u.UserName).FoodInPantry[i])
 	}
-    // Unlock the mutex
-    dataMutex.Unlock()
+	// Unlock the mutex
+	dataMutex.Unlock()
 }
 
 func deleteAllCookies(w http.ResponseWriter, r *http.Request) {
-    cookies := r.Cookies()
-    for _, cookie := range cookies {
-        cookie.MaxAge = -1
-        http.SetCookie(w, cookie)
-    }
+	cookies := r.Cookies()
+	for _, cookie := range cookies {
+		cookie.MaxAge = -1
+		http.SetCookie(w, cookie)
+	}
 }
 
 func ShutdownServers() {
