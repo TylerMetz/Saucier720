@@ -501,6 +501,8 @@ func RoutWeeklyDeals(d Database, ctx context.Context){
 func RoutRecommendedRecipes(d Database, currUser User, ctx context.Context){
 
 	userRecList := BestRecipes(d.GetUserPantry(currUser.UserName), d.ReadRecipes(), d.ReadPublixDatabase())
+	var recipesFoodInterfaceRefresh []interface{}
+	recipesFoodInterface = recipesFoodInterfaceRefresh
 	for i := 0; i < len(userRecList); i++ {
 		// sends recipes, items in recipe, and deals related 
 		recipesFoodInterface = append(recipesFoodInterface, userRecList[i])
