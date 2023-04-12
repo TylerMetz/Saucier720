@@ -33,7 +33,10 @@ type Router struct {
 	Name             string
 }
 
-func (t *Router) RoutPantry(endLink string, port string) {
+func (t *Router) RoutPantry(endLink string, port string, ctx context.Context) {
+	// create a new context with cancel function
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
 
 	// creates new router
 	route := mux.NewRouter()
@@ -58,11 +61,22 @@ func (t *Router) RoutPantry(endLink string, port string) {
 
 	// increment the WaitGroup counter
     wg.Add(1)
-	defer wg.Done()
-	server.ListenAndServe()
+	// listen and serve until context is cancelled
+	func() {
+		fmt.Println("routing pantry...")
+		defer wg.Done()
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("listen: %s\n", err)
+		}
+	}()
+
+	<-ctx.Done()
 }
 
-func (t *Router) RoutDeals(endLink string, port string) {
+func (t *Router) RoutDeals(endLink string, port string, ctx context.Context) {
+	// create a new context with cancel function
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
 
 	// creates new router
 	route := mux.NewRouter()
@@ -85,13 +99,23 @@ func (t *Router) RoutDeals(endLink string, port string) {
 	// append the server to the global list
 	Servers = append(Servers, server)
 
-	// increment the WaitGroup counter
+    // increment the WaitGroup counter
     wg.Add(1)
-	defer wg.Done()
-	server.ListenAndServe()
+	// listen and serve until context is cancelled
+	go func() {
+		defer wg.Done()
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("listen: %s\n", err)
+		}
+	}()
+
+	<-ctx.Done()
 }
 
-func (t *Router) RoutRecipes(endLink string, port string) {
+func (t *Router) RoutRecipes(endLink string, port string, ctx context.Context) {
+	// create a new context with cancel function
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
 
 	// creates new router
 	route := mux.NewRouter()
@@ -116,8 +140,15 @@ func (t *Router) RoutRecipes(endLink string, port string) {
 
 	// increment the WaitGroup counter
     wg.Add(1)
-	defer wg.Done()
-	server.ListenAndServe()
+	// listen and serve until context is cancelled
+	go func() {
+		defer wg.Done()
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("listen: %s\n", err)
+		}
+	}()
+
+	<-ctx.Done()
 }
 
 func (t *Router) sendResponsePantry(response http.ResponseWriter, request *http.Request) {
@@ -193,7 +224,7 @@ func ListenPantry(currUser User, ctx context.Context) {
 	wg.Add(1)
 
 	// listens and serves in a new goroutine
-	go func() {
+	func() {
 		defer wg.Done() // decrement the counter when this goroutine is done
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("listen: %s\n", err)
@@ -273,7 +304,7 @@ func ListenNewUser(ctx context.Context) {
 	wg.Add(1)
 
 	// listens and serves in a new goroutine
-	go func() {
+	func() {
 		defer wg.Done() // decrement the counter when this goroutine is done
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("listen: %s\n", err)
@@ -343,7 +374,7 @@ func ListenLogin(sessionCookie* string, cookieChanged* bool, ctx context.Context
 	wg.Add(1)
 
 	// listens and serves in a new goroutine
-	go func() {
+	func() {
 		defer wg.Done() // decrement the counter when this goroutine is done
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("listen: %s\n", err)
@@ -428,7 +459,7 @@ func ListenForAllPosts(currUser User, cookie string, ctx context.Context){
 
 }
 
-func RoutUserPantry(d Database, u User){
+func RoutUserPantry(d Database, u User, ctx context.Context){
 	
 	// read from .db file and output test user's pantry to frontend
 	for{
@@ -448,11 +479,11 @@ func RoutUserPantry(d Database, u User){
 		programRouter := Router{
 			Name:             "testRouter",
 		}
-		programRouter.RoutPantry("/api/Pantry", ":8080")
+		programRouter.RoutPantry("/api/Pantry", ":8080", ctx)
 	}
 }
 
-func RoutWeeklyDeals(d Database){
+func RoutWeeklyDeals(d Database, ctx context.Context){
 
 		// read from .db file and output test user's pantry to frontend
 		for i := 0; i < len(d.ReadPublixDatabase()); i++{
@@ -462,11 +493,11 @@ func RoutWeeklyDeals(d Database){
 		programRouter := Router{
 			Name:             "testRouter",
 		}
-		programRouter.RoutDeals("/api/Deals", ":8081")
+		programRouter.RoutDeals("/api/Deals", ":8081", ctx)
 
 }
 
-func RoutRecommendedRecipes(d Database, currUser User){
+func RoutRecommendedRecipes(d Database, currUser User, ctx context.Context){
 
 	userRecList := BestRecipes(d.GetUserPantry(currUser.UserName), d.ReadRecipes(), d.ReadPublixDatabase())
 	for i := 0; i < len(userRecList); i++{
@@ -484,19 +515,19 @@ func RoutRecommendedRecipes(d Database, currUser User){
 	programRouter := Router{
 		Name:             "testRouter",
 	}
-	programRouter.RoutRecipes("/api/Recipes", ":8082")
+	programRouter.RoutRecipes("/api/Recipes", ":8082", ctx)
 }
 
-func RoutAllData(d Database, currUser User){
+func RoutAllData(d Database, currUser User, ctx context.Context){
 
 	// routs Eddie's pantry, lol
-	go RoutUserPantry(d, currUser)
+	RoutUserPantry(d, currUser, ctx)
 
 	// routs reccommended recipes to recipes page
-	go RoutRecommendedRecipes(d, currUser)
+	RoutRecommendedRecipes(d, currUser, ctx)
 
 	// routs deals to deals page
-	RoutWeeklyDeals(d)
+	RoutWeeklyDeals(d, ctx)
 }
 
 func UpdateData(d Database, u User) {
