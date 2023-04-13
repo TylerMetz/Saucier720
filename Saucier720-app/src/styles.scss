@@ -3,8 +3,17 @@
    }
    
    body {
-    margin: 0;
-   }
+	--primary: #E05D26;
+	--grey: #454545;
+	--lightgrey: #666;
+	
+	color: var(--grey);
+	line-height: 1.55;
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+	font-family: "Roboto", Helvetica, Arial, sans-serif;
+}
    
    a, a:hover, a:focus, a:active {
     text-decoration: none;
