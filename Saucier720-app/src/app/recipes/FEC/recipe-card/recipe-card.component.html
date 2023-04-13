@@ -1,7 +1,9 @@
 <div class="card-container">
   <div class="card">
-    <div *ngIf="recipes && recipes.length > 0" class="recipe-title">
-      {{ recipes[currentRecipeIndex].R.title }}
+    <div class="recipe-title">
+      <div *ngIf="recipes && recipes.length > 0" class="recipe-title">
+        {{ recipes[currentRecipeIndex].R.title }}
+      </div>
     </div>
     <div class="recipe-content">
       <div *ngIf="recipes && recipes.length > 0" class="recipe-ingredients">
