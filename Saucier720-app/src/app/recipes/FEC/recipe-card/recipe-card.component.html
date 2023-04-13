@@ -1,15 +1,16 @@
-<div class="table-responsive">
-    <table class="table w-100 table-striped table-bordered">
-      <thead>
-        <tr>
-          <th>Recipe Title</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let recipe of recipes">
-          <td>{{ recipe.R.title }}</td>
-        </tr>
-      </tbody>
-    </table>
+<div class="card-container">
+  <div class="card">
+    <div *ngIf="recipes && recipes.length > 0" class="recipe-title">
+      {{ recipes[currentRecipeIndex].R.title }}
+    </div>
+    <div class="recipe-content">
+      <div *ngIf="recipes && recipes.length > 0" class="recipe-ingredients">
+      {{ recipes[currentRecipeIndex].R.ingredients }}
+      </div>
+      <div *ngIf="recipes && recipes.length > 0" class="recipe-picture">
+        {{ recipes[currentRecipeIndex].R.pictureLink }}
+      </div>
+    </div>
   </div>
-  
+  <button (click)="goToNextRecipe()">Next Recipe</button>
+</div>
