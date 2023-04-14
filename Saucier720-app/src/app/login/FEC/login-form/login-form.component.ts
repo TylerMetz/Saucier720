@@ -29,6 +29,16 @@ export class LoginFormComponent {
     private cookieService: CookieService
     ) { }
 
+    async setSessionIDAndNavigateToPantry(sessionID: string): Promise<void> {
+      await new Promise<void>((resolve) => {
+        this.cookieService.set('sessionID', sessionID, 7, '/', 'localhost', false, 'Lax');
+        resolve();
+      });
+      setTimeout(() => {
+        this.router.navigate(['/Pantry']);
+      }, 2000);
+    }
+
     async login() {
       const user: User = {
         FirstName: "",
@@ -41,19 +51,12 @@ export class LoginFormComponent {
       console.log(user.Password);
       const body = { username: user.UserName, password: user.Password };
       const options = { withCredentials: true };
-      const cookieOptions = {
-        expires: 7,
-        path: '/',
-        domain: 'localhost',
-        secure: false,
-        sameSite: 'Lax',
-      };
       try {
         const response = await lastValueFrom(this.authService.login(this.username, this.password));
         console.log('response', response)
         const sessionID = response.body.value;
         console.log("cookie set ", sessionID);
-        this.cookieService.set('sessionID', sessionID, 7, '/', 'localhost', false, 'Lax');
+        this.setSessionIDAndNavigateToPantry(sessionID);
       } catch (error: any) {
         this.errorMessage = error.message;
       }
