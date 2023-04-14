@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { HttpClient } from '@angular/common/http';
 import { User } from 'src/app/core/interfaces/user';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-login-form',
@@ -28,34 +29,37 @@ export class LoginFormComponent {
     private cookieService: CookieService
     ) { }
 
-    login() {
+    async login() {
       const user: User = {
         FirstName: "",
         LastName: "",
         Email: "",
         UserName: this.username,
         Password: this.password,
-      }
+      };
       console.log(user.UserName);
       console.log(user.Password);
       const body = { username: user.UserName, password: user.Password };
       const options = { withCredentials: true };
-      this.authService.login(this.username, this.password)
-    .subscribe({
-      next: (response) => {
-        const sessionID = response.headers.get('Set-Cookie');
-        if (sessionID) {
-          this.cookieService.set('sessionID', sessionID);
-          this.router.navigate(['/']);
-        } else {
-          console.log(response.body); // Log the plain text response
-        }
-      },
-      error: (error) => {
+      const cookieOptions = {
+        expires: 7,
+        path: '/',
+        domain: 'localhost',
+        secure: false,
+        sameSite: 'Lax',
+      };
+      try {
+        const response = await lastValueFrom(this.authService.login(this.username, this.password));
+        console.log('response', response)
+        const sessionID = response.body.value;
+        console.log("cookie set ", sessionID);
+        this.cookieService.set('sessionID', sessionID, 7, '/', 'localhost', false, 'Lax');
+      } catch (error: any) {
         this.errorMessage = error.message;
-      },
-    });
+      }
     }
+
+
 
     hideShowPass(){
       this.isText = !this.isText;
@@ -63,4 +67,4 @@ export class LoginFormComponent {
       this.isText ? this.type = "text" : this.type = "password";
     }
 
-}
+  }
