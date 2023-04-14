@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	//"time"
+	"time"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 	"io/ioutil"
@@ -424,21 +424,35 @@ func NewLoginResponse(w http.ResponseWriter, r *http.Request, sessionCookie *str
 			Name:     "sessionID",
 			Value:    ValidateUser(activeUser),
 			Path:     "/",
+			Expires: time.Now().Add(7 * 24 * time.Hour), 
 			HttpOnly: true,
 			Secure:   false,
 			SameSite: http.SameSiteLaxMode,
+			Domain: "localhost",
 		}
-		http.SetCookie(w, cookie)
+		//http.SetCookie(w, cookie)
 
 		// sets cookie changed to true
 		*cookieChanged = true
 
+		// write a response to the client
+		type response struct {
+			Message string `json:"message"`
+			Value   string `json:"value"`
+		}
+		returnResponse := response {
+			Message: "Cookie set successfully",
+			Value: cookie.Value,
+		}
+	
+
 		// Allow the 'Set-Cookie' header to be exposed to the frontend
-		w.Header().Set("Access-Control-Expose-Headers", "Set-Cookie")
+		w.Header().Set("Content-Type","application/json",)
 
 		// Return a response to the frontend
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("Login successful"))
+		w.Header().Set("Content-Type", "application/json")
+    	json.NewEncoder(w).Encode(returnResponse)
 
 		// Get the new "sessionID" cookie value
 		// readInCookie, _ := r.Cookie("sessionID")
