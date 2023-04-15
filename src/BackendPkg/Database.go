@@ -123,6 +123,22 @@ func (d *Database) InsertPantryItemPost (currUser User, f FoodItem){
 	statementTwo.Exec(currUser.UserName, time.Now().Format("2006-01-02 15:04:05"), f.Name, f.StoreCost, f.OnSale, f.SalePrice, f.SaleDetails, f.Quantity)
 }
 
+func (d *Database) UpdatePantry(currUser User, f []FoodItem){
+	
+	// calls function to open the database
+	database := d.OpenDatabase()
+
+	// clear all of user's current pantry
+	statementOne, _ := database.Prepare("DELETE FROM UserPantries WHERE UserName = ?")
+	statementOne.Exec(currUser.UserName)
+
+	// insert all items in recieved pantry to user's pantry
+	statementTwo, _ := database.Prepare("INSERT OR IGNORE INTO UserPantries (UserName, PantryLastUpdated, Name, StoreCost, OnSale, SalePrice, SaleDetails, Quantity) VALUES (?, datetime(?), ?, ?, ?, ?, ?, ?)")
+	for _, item := range f {
+		statementTwo.Exec(currUser.UserName, time.Now().Format("2006-01-02 15:04:05"), item.Name, item.StoreCost, item.OnSale, item.SalePrice, item.SaleDetails, item.Quantity)
+	}
+}
+
 func (d *Database) GetUserPantry(userName string) Pantry {
 	// calls function to open the database
 	database := d.OpenDatabase()

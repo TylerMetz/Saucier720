@@ -23,7 +23,7 @@ var dataMutex sync.Mutex
 var wg sync.WaitGroup
 
 // global var to be routed
-var testFoodInterface []interface{}
+var pantryFoodInterface []interface{}
 var dealsFoodInterface []interface{}
 var recipesFoodInterface []interface{}
 
@@ -153,7 +153,7 @@ func (t *Router) RoutRecipes(endLink string, port string, ctx context.Context) {
 
 func (t *Router) sendResponsePantry(response http.ResponseWriter, request *http.Request) {
 
-	jsonResponse, jsonError := json.Marshal(testFoodInterface)
+	jsonResponse, jsonError := json.Marshal(pantryFoodInterface)
 
 	if jsonError != nil {
 		fmt.Println("Unable to encode JSON")
@@ -270,8 +270,88 @@ func PantryItemPostResponse(w http.ResponseWriter, r *http.Request, currUser Use
 			Name: "func db",
 		}
 
-		var testFoodInterfaceRefresh []interface{}
-		testFoodInterface = testFoodInterfaceRefresh
+		var pantryFoodInterfaceRefresh []interface{}
+		pantryFoodInterface = pantryFoodInterfaceRefresh
+		UpdateData(d, currUser)
+	}
+
+}
+
+func ListenUpdatedPantry(currUser User, ctx context.Context) {
+	// create a new context with cancel function
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	// Listens and Serves pantry
+	route := mux.NewRouter()
+	route.HandleFunc("/api/UpdatePantry", func(w http.ResponseWriter, r *http.Request) {
+        UpdatedPantryResponse(w, r, currUser)
+    })
+
+	// enables alternate hosts for CORS
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:4200"},
+		AllowCredentials: true,
+	})
+
+	// creates handler
+	handler := c.Handler(route)
+
+	// creates server to be appended to global list
+	server := &http.Server{Addr: ":8086", Handler: handler}
+	Servers = append(Servers, server)
+
+	// increment the WaitGroup counter
+	wg.Add(1)
+
+	// listens and serves in a new goroutine
+	func() {
+		defer wg.Done() // decrement the counter when this goroutine is done
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("listen: %s\n", err)
+		}
+	}()
+
+	// wait for cancellation signal
+	<-ctx.Done()
+
+}
+func UpdatedPantryResponse(w http.ResponseWriter, r *http.Request, currUser User) {
+
+	if r.Method != "POST" {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	body, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+
+	type Ingredient struct {
+		FoodItem []FoodItem `json:"pantry"`
+	}
+
+	var updatedPantry Ingredient
+
+	err = json.Unmarshal(body, &updatedPantry)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	funcDatabase := Database{
+		Name: "func db",
+	}
+	funcDatabase.UpdatePantry(currUser, updatedPantry.FoodItem)
+
+	w.WriteHeader(http.StatusOK)
+
+	if http.StatusOK == 200 {
+		d := Database{
+			Name: "func db",
+		}
+
+		var pantryFoodInterfaceRefresh []interface{}
+		pantryFoodInterface = pantryFoodInterfaceRefresh
 		UpdateData(d, currUser)
 	}
 
@@ -470,6 +550,9 @@ func ListenForAllPosts(currUser User, cookie string, ctx context.Context){
 	// listens for new user
 	go ListenNewUser(ctx)
 
+	// listens for pantry updates (quantity and deletes)
+	go ListenUpdatedPantry(currUser, ctx)
+
 	// listens for new pantry item
 	ListenPantry(currUser, ctx)
 
@@ -482,10 +565,10 @@ func RoutUserPantry(d Database, u User, ctx context.Context){
 	// lock the data
 	dataMutex.Lock()
 
-	var testFoodInterfaceRefresh []interface{}
-	testFoodInterface = testFoodInterfaceRefresh
+	var pantryFoodInterfaceRefresh []interface{}
+	pantryFoodInterface = pantryFoodInterfaceRefresh
 	for i := 0; i < len(d.GetUserPantry(u.UserName).FoodInPantry); i++{
-		testFoodInterface = append(testFoodInterface, d.GetUserPantry(u.UserName).FoodInPantry[i])
+		pantryFoodInterface = append(pantryFoodInterface, d.GetUserPantry(u.UserName).FoodInPantry[i])
 	}
 
 	// unlock the data
@@ -546,7 +629,7 @@ func UpdateData(d Database, u User) {
 	dataMutex.Lock()
 	// Update the global variable with the updated data
 	for i := 0; i < len(d.GetUserPantry(u.UserName).FoodInPantry); i++ {
-		testFoodInterface = append(testFoodInterface, d.GetUserPantry(u.UserName).FoodInPantry[i])
+		pantryFoodInterface = append(pantryFoodInterface, d.GetUserPantry(u.UserName).FoodInPantry[i])
 	}
 	// Unlock the mutex
 	dataMutex.Unlock()
