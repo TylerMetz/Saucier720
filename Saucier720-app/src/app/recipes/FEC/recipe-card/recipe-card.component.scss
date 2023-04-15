@@ -24,18 +24,29 @@
 
     &-title {
         text-align: center;
-        font-size: x-large;
+        
     }
 
     &-content {
         text-align: center;
-    }
+        display: flex;
+        flex-direction: row;
 
-    &-ingredients {
-        margin-top: 20px;
-    }
+        &-ingredients {
+            &-header {
+                
+            }
+            
+        }
 
-    &-picture {
+        &-instructions {
+            &-header {
+                font-size: large;
+            }
+        }
 
+        &-picture {
+    
+        }
     }
 }

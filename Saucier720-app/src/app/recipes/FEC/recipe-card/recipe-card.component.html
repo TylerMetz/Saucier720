@@ -1,18 +1,41 @@
 <div class="card-container">
   <div class="card">
     <div class="recipe-title">
-      <div *ngIf="recipes && recipes.length > 0" class="recipe-title">
+      <h1 *ngIf="recipes && recipes.length > 0" class="recipe-title">
         {{ recipes[currentRecipeIndex].R.title }}
-      </div>
+      </h1>
     </div>
-    <div class="recipe-content">
-      <div *ngIf="recipes && recipes.length > 0" class="recipe-ingredients">
-      {{ recipes[currentRecipeIndex].R.ingredients }}
-      </div>
-      <div *ngIf="recipes && recipes.length > 0" class="recipe-picture">
-        {{ recipes[currentRecipeIndex].R.pictureLink }}
-      </div>
+    <div class="recipe-body">
+      <div class="recipe-content">
+        <div class="recipe-ingredients">
+          <div class="ingredients-header">
+            <h2>Ingredients</h2>
+          </div>
+          <div *ngIf="recipes && recipes.length > 0" class="recipe-ingredients">
+            <ul>
+              <li *ngFor="let ingredient of recipes[currentRecipeIndex].R.ingredients">{{ ingredient }}</li>
+            </ul>
+          </div>
+        </div>
+        <div class="recipe-instructions">
+          <div class="instructions-header">
+            <h2>Instructions</h2>
+          </div>
+          <div *ngIf="recipes && recipes.length > 0" class="recipe-instructions">
+            <div *ngIf="recipes[currentRecipeIndex].R.instructions" class="recipe-instructions">
+              <ul>
+                <li *ngFor="let sentence of recipes[currentRecipeIndex].R.instructions.split('.')">{{ sentence.trim() }}.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="recipe-picture">
+          <div *ngIf="recipes && recipes.length > 0" class="recipe-picture">
+            {{ recipes[currentRecipeIndex].R.pictureLink }}
+          </div>
+        </div>
     </div>
+  </div>
   </div>
   <button (click)="goToNextRecipe()">Next Recipe</button>
 </div>
