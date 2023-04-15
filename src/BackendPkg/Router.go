@@ -23,7 +23,7 @@ var dataMutex sync.Mutex
 var wg sync.WaitGroup
 
 // global var to be routed
-var testFoodInterface []interface{}
+var pantryFoodInterface []interface{}
 var dealsFoodInterface []interface{}
 var recipesFoodInterface []interface{}
 
@@ -153,7 +153,7 @@ func (t *Router) RoutRecipes(endLink string, port string, ctx context.Context) {
 
 func (t *Router) sendResponsePantry(response http.ResponseWriter, request *http.Request) {
 
-	jsonResponse, jsonError := json.Marshal(testFoodInterface)
+	jsonResponse, jsonError := json.Marshal(pantryFoodInterface)
 
 	if jsonError != nil {
 		fmt.Println("Unable to encode JSON")
@@ -270,8 +270,8 @@ func PantryItemPostResponse(w http.ResponseWriter, r *http.Request, currUser Use
 			Name: "func db",
 		}
 
-		var testFoodInterfaceRefresh []interface{}
-		testFoodInterface = testFoodInterfaceRefresh
+		var pantryFoodInterfaceRefresh []interface{}
+		pantryFoodInterface = pantryFoodInterfaceRefresh
 		UpdateData(d, currUser)
 	}
 
@@ -327,12 +327,12 @@ func UpdatedPantryResponse(w http.ResponseWriter, r *http.Request, currUser User
 	defer r.Body.Close()
 
 	type Ingredient struct {
-		FoodItem FoodItem `json:"ingredient"`
+		FoodItem []FoodItem `json:"ingredient"`
 	}
 
-	var newItem Ingredient
+	var updatedPantry Ingredient
 
-	err = json.Unmarshal(body, &newItem)
+	err = json.Unmarshal(body, &updatedPantry)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -341,7 +341,7 @@ func UpdatedPantryResponse(w http.ResponseWriter, r *http.Request, currUser User
 	funcDatabase := Database{
 		Name: "func db",
 	}
-	funcDatabase.UpdatePantry(currUser, /*slice of food items*/)
+	funcDatabase.UpdatePantry(currUser, updatedPantry.FoodItem)
 
 	w.WriteHeader(http.StatusOK)
 
@@ -350,8 +350,8 @@ func UpdatedPantryResponse(w http.ResponseWriter, r *http.Request, currUser User
 			Name: "func db",
 		}
 
-		var testFoodInterfaceRefresh []interface{}
-		testFoodInterface = testFoodInterfaceRefresh
+		var pantryFoodInterfaceRefresh []interface{}
+		pantryFoodInterface = pantryFoodInterfaceRefresh
 		UpdateData(d, currUser)
 	}
 
@@ -550,6 +550,9 @@ func ListenForAllPosts(currUser User, cookie string, ctx context.Context){
 	// listens for new user
 	go ListenNewUser(ctx)
 
+	// listens for pantry updates (quantity and deletes)
+	go ListenUpdatedPantry(currUser, ctx)
+
 	// listens for new pantry item
 	ListenPantry(currUser, ctx)
 
@@ -562,10 +565,10 @@ func RoutUserPantry(d Database, u User, ctx context.Context){
 	// lock the data
 	dataMutex.Lock()
 
-	var testFoodInterfaceRefresh []interface{}
-	testFoodInterface = testFoodInterfaceRefresh
+	var pantryFoodInterfaceRefresh []interface{}
+	pantryFoodInterface = pantryFoodInterfaceRefresh
 	for i := 0; i < len(d.GetUserPantry(u.UserName).FoodInPantry); i++{
-		testFoodInterface = append(testFoodInterface, d.GetUserPantry(u.UserName).FoodInPantry[i])
+		pantryFoodInterface = append(pantryFoodInterface, d.GetUserPantry(u.UserName).FoodInPantry[i])
 	}
 
 	// unlock the data
@@ -626,7 +629,7 @@ func UpdateData(d Database, u User) {
 	dataMutex.Lock()
 	// Update the global variable with the updated data
 	for i := 0; i < len(d.GetUserPantry(u.UserName).FoodInPantry); i++ {
-		testFoodInterface = append(testFoodInterface, d.GetUserPantry(u.UserName).FoodInPantry[i])
+		pantryFoodInterface = append(pantryFoodInterface, d.GetUserPantry(u.UserName).FoodInPantry[i])
 	}
 	// Unlock the mutex
 	dataMutex.Unlock()
