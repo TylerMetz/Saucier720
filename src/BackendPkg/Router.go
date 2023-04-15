@@ -327,7 +327,7 @@ func UpdatedPantryResponse(w http.ResponseWriter, r *http.Request, currUser User
 	defer r.Body.Close()
 
 	type Ingredient struct {
-		FoodItem []FoodItem `json:"ingredient"`
+		FoodItem []FoodItem `json:"pantry"`
 	}
 
 	var updatedPantry Ingredient
