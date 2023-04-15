@@ -10,7 +10,7 @@ export class PantryService {
   private pantryUrl = 'http://localhost:8080/api/Pantry';
   private pantryPostUrl = 'http://localhost:8083/api/NewPantryItem';
   private cookiesPostUrl = 'http://localhost:8083/api/cookies'
-  private pantryUpdateUrl = 'http://localhost:8086/UpdatePantry'
+  private pantryUpdateUrl = 'http://localhost:8086/api/UpdatePantry'
 
   constructor(private http: HttpClient) { }
 

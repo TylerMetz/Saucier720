@@ -43,7 +43,7 @@ export class PantryTableComponent implements OnInit {
   }
 
   public updatePantry() {
-    console.log(this.pantry)
+    // console.log(this.pantry)
     this.pantryService.updatePantry(this.pantry);
   }
 }
