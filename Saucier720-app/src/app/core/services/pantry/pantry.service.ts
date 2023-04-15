@@ -30,7 +30,7 @@ export class PantryService {
   
     const body = { pantry };
     console.log(body)
-    return this.http.post<any>(this.pantryPostUrl, body, { headers, withCredentials: true });
+    return this.http.post<any>(this.pantryUpdateUrl, body, { headers, withCredentials: true });
   }
 
   postPantryItem(ingredient: Ingredient) {
@@ -41,7 +41,7 @@ export class PantryService {
   
     const body = { ingredient };
     console.log(body)
-    return this.http.post<any>(this.pantryUpdateUrl, body, { headers, withCredentials: true });
+    return this.http.post<any>(this.pantryPostUrl, body, { headers, withCredentials: true });
   }
 
 
