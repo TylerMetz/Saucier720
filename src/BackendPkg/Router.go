@@ -286,7 +286,7 @@ func ListenUpdatedPantry(currUser User, ctx context.Context) {
 	route := mux.NewRouter()
 	route.HandleFunc("/api/UpdatePantry", func(w http.ResponseWriter, r *http.Request) {
         UpdatedPantryResponse(w, r, currUser)
-    })
+    }).Methods("POST")
 
 	// enables alternate hosts for CORS
 	c := cors.New(cors.Options{
@@ -296,6 +296,7 @@ func ListenUpdatedPantry(currUser User, ctx context.Context) {
 
 	// creates handler
 	handler := c.Handler(route)
+	fmt.Println("Handler created")
 
 	// creates server to be appended to global list
 	server := &http.Server{Addr: ":8086", Handler: handler}
@@ -305,18 +306,22 @@ func ListenUpdatedPantry(currUser User, ctx context.Context) {
 	wg.Add(1)
 
 	// listens and serves in a new goroutine
-	func() {
+	go func() {
 		defer wg.Done() // decrement the counter when this goroutine is done
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("listen: %s\n", err)
 		}
+		
 	}()
 
 	// wait for cancellation signal
 	<-ctx.Done()
 
 }
+
 func UpdatedPantryResponse(w http.ResponseWriter, r *http.Request, currUser User) {
+
+	fmt.Println("Request method:", r.Method)
 
 	if r.Method != "POST" {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -341,7 +346,9 @@ func UpdatedPantryResponse(w http.ResponseWriter, r *http.Request, currUser User
 	funcDatabase := Database{
 		Name: "func db",
 	}
+
 	funcDatabase.UpdatePantry(currUser, updatedPantry.FoodItem)
+
 
 	w.WriteHeader(http.StatusOK)
 
