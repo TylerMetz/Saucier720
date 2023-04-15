@@ -277,6 +277,86 @@ func PantryItemPostResponse(w http.ResponseWriter, r *http.Request, currUser Use
 
 }
 
+func ListenUpdatedPantry(currUser User, ctx context.Context) {
+	// create a new context with cancel function
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	// Listens and Serves pantry
+	route := mux.NewRouter()
+	route.HandleFunc("/api/UpdatePantry", func(w http.ResponseWriter, r *http.Request) {
+        UpdatedPantryResponse(w, r, currUser)
+    })
+
+	// enables alternate hosts for CORS
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:4200"},
+		AllowCredentials: true,
+	})
+
+	// creates handler
+	handler := c.Handler(route)
+
+	// creates server to be appended to global list
+	server := &http.Server{Addr: ":8086", Handler: handler}
+	Servers = append(Servers, server)
+
+	// increment the WaitGroup counter
+	wg.Add(1)
+
+	// listens and serves in a new goroutine
+	func() {
+		defer wg.Done() // decrement the counter when this goroutine is done
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("listen: %s\n", err)
+		}
+	}()
+
+	// wait for cancellation signal
+	<-ctx.Done()
+
+}
+func UpdatedPantryResponse(w http.ResponseWriter, r *http.Request, currUser User) {
+
+	if r.Method != "POST" {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	body, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+
+	type Ingredient struct {
+		FoodItem FoodItem `json:"ingredient"`
+	}
+
+	var newItem Ingredient
+
+	err = json.Unmarshal(body, &newItem)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	funcDatabase := Database{
+		Name: "func db",
+	}
+	funcDatabase.UpdatePantry(currUser, /*slice of food items*/)
+
+	w.WriteHeader(http.StatusOK)
+
+	if http.StatusOK == 200 {
+		d := Database{
+			Name: "func db",
+		}
+
+		var testFoodInterfaceRefresh []interface{}
+		testFoodInterface = testFoodInterfaceRefresh
+		UpdateData(d, currUser)
+	}
+
+}
+
 func ListenNewUser(ctx context.Context) {
 
 	// create a new context with cancel function
