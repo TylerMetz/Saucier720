@@ -10,6 +10,7 @@ export class PantryService {
   private pantryUrl = 'http://localhost:8080/api/Pantry';
   private pantryPostUrl = 'http://localhost:8083/api/NewPantryItem';
   private cookiesPostUrl = 'http://localhost:8083/api/cookies'
+  private pantryUpdateUrl = 'http://localhost:8086/UpdatePantry'
 
   constructor(private http: HttpClient) { }
 
@@ -40,7 +41,7 @@ export class PantryService {
   
     const body = { ingredient };
     console.log(body)
-    return this.http.post<any>(this.pantryPostUrl, body, { headers, withCredentials: true });
+    return this.http.post<any>(this.pantryUpdateUrl, body, { headers, withCredentials: true });
   }
 
 
