@@ -42,8 +42,14 @@ export class PantryTableComponent implements OnInit {
     }
   }
 
-  public updatePantry() {
-    console.log(this.pantry)
-    this.pantryService.updatePantry(this.pantry);
+  async updatePantry()
+  {
+    try {
+      const response = await lastValueFrom(this.pantryService.updatePantry(this.pantry));
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
+    // console.log(this.pantry)
   }
 }

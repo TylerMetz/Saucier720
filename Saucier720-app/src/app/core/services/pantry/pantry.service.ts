@@ -10,7 +10,7 @@ export class PantryService {
   private pantryUrl = 'http://localhost:8080/api/Pantry';
   private pantryPostUrl = 'http://localhost:8083/api/NewPantryItem';
   private cookiesPostUrl = 'http://localhost:8083/api/cookies'
-  private pantryUpdateUrl = 'http://localhost:8086/UpdatePantry'
+  private pantryUpdateUrl = 'http://localhost:8086/api/UpdatePantry'
 
   constructor(private http: HttpClient) { }
 
@@ -25,7 +25,6 @@ export class PantryService {
   updatePantry(pantry: Ingredient[]) {
     const headers = new HttpHeaders({ 
       'Content-Type': 'application/json', 
-      'Cookie': document.cookie // Set the cookie value in the header
     });
   
     const body = { pantry };
