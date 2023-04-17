@@ -25,7 +25,6 @@ export class PantryService {
   updatePantry(pantry: Ingredient[]) {
     const headers = new HttpHeaders({ 
       'Content-Type': 'application/json', 
-      'Cookie': document.cookie // Set the cookie value in the header
     });
   
     const body = { pantry };
