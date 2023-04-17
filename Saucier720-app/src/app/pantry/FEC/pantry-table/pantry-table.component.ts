@@ -2,6 +2,7 @@ import { HttpEvent, HttpEventType } from "@angular/common/http"
 import { Component, OnInit } from '@angular/core';
 import { PantryService } from 'src/app/core/services/pantry/pantry.service';
 import { lastValueFrom } from 'rxjs';
+import { Ingredient } from "src/app/core/interfaces/ingredient";
 
 @Component({
   selector: 'app-pantry-table',
@@ -42,14 +43,17 @@ export class PantryTableComponent implements OnInit {
     }
   }
 
-  async updatePantry()
-  {
+  async updatePantry() {
     try {
+      // Check and remove items with quantity 0
+      this.pantry = this.pantry.filter((item: Ingredient) => item.Quantity !== 0);
+  
+      // Call pantryService to update pantry
       const response = await lastValueFrom(this.pantryService.updatePantry(this.pantry));
       console.log(response);
     } catch (error) {
       console.error(error);
     }
-    // console.log(this.pantry)
   }
+  
 }
