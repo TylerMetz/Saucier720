@@ -224,7 +224,7 @@ func ListenPantry(currUser User, ctx context.Context) {
 	wg.Add(1)
 
 	// listens and serves in a new goroutine
-	func() {
+	go func() {
 		defer wg.Done() // decrement the counter when this goroutine is done
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("listen: %s\n", err)
@@ -296,7 +296,6 @@ func ListenUpdatedPantry(currUser User, ctx context.Context) {
 
 	// creates handler
 	handler := c.Handler(route)
-	fmt.Println("Handler created")
 
 	// creates server to be appended to global list
 	server := &http.Server{Addr: ":8086", Handler: handler}
@@ -320,8 +319,6 @@ func ListenUpdatedPantry(currUser User, ctx context.Context) {
 }
 
 func UpdatedPantryResponse(w http.ResponseWriter, r *http.Request, currUser User) {
-
-	fmt.Println("Request method:", r.Method)
 
 	if r.Method != "POST" {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -561,7 +558,7 @@ func ListenForAllPosts(currUser User, cookie string, ctx context.Context){
 	go ListenUpdatedPantry(currUser, ctx)
 
 	// listens for new pantry item
-	ListenPantry(currUser, ctx)
+	go ListenPantry(currUser, ctx)
 
 }
 

@@ -5,9 +5,6 @@ import (
 	"fmt"
 	"time"
 	"context"
-	//"os"
-	//"os/signal"
-    //"syscall"
 )
 
 // global vars
@@ -44,6 +41,7 @@ func main() {
 
 			//shutdown all active ListenAndServe functions
 			BackendPkg.ShutdownServers()
+			
 		}
 		
 	}
@@ -62,7 +60,7 @@ func runProgram(cookieChange *bool, ctx context.Context) {
 	go BackendPkg.RoutAllData(programDatabase, sessionUser, ctx)
 
 	// listens for data from frontend
-	BackendPkg.ListenForAllPosts(sessionUser, sessionCookie, ctx)
+	go BackendPkg.ListenForAllPosts(sessionUser, sessionCookie, ctx)
 }
 
 
@@ -95,15 +93,8 @@ func CheckIfScrapeNewDeals(d BackendPkg.Database){
 		// scrape all data
 		programScraper.Scrape()
 
-		// print unparsed data
-		//fmt.Println(programScraper.DealsHTML)
-
-		// Takes 48634 'Words' to get to the first items name...
 		// Testing to see if we can grab the name and deal from the function 
 		fmt.Println("Finished Scraping")
-
-		//Print the scraper data
-		//fmt.Println(programScraper.DealsHTML)
 
 		testFoodSlice := programScraper.Store.OrganizeDeals(programScraper.DealsHTML)
 		
