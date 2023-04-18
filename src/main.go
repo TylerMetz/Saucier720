@@ -41,6 +41,7 @@ func main() {
 
 			//shutdown all active ListenAndServe functions
 			BackendPkg.ShutdownServers()
+			
 		}
 		
 	}
@@ -59,7 +60,7 @@ func runProgram(cookieChange *bool, ctx context.Context) {
 	go BackendPkg.RoutAllData(programDatabase, sessionUser, ctx)
 
 	// listens for data from frontend
-	BackendPkg.ListenForAllPosts(sessionUser, sessionCookie, ctx)
+	go BackendPkg.ListenForAllPosts(sessionUser, sessionCookie, ctx)
 }
 
 
