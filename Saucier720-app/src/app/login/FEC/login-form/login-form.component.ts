@@ -36,7 +36,7 @@ export class LoginFormComponent {
       });
       setTimeout(() => {
         this.router.navigate(['/Pantry']);
-      }, 2000);
+      }, 4000);
     }
 
     async login() {
