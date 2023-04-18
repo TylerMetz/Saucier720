@@ -5,9 +5,6 @@ import (
 	"fmt"
 	"time"
 	"context"
-	//"os"
-	//"os/signal"
-    //"syscall"
 )
 
 // global vars
@@ -95,15 +92,8 @@ func CheckIfScrapeNewDeals(d BackendPkg.Database){
 		// scrape all data
 		programScraper.Scrape()
 
-		// print unparsed data
-		//fmt.Println(programScraper.DealsHTML)
-
-		// Takes 48634 'Words' to get to the first items name...
 		// Testing to see if we can grab the name and deal from the function 
 		fmt.Println("Finished Scraping")
-
-		//Print the scraper data
-		//fmt.Println(programScraper.DealsHTML)
 
 		testFoodSlice := programScraper.Store.OrganizeDeals(programScraper.DealsHTML)
 		
