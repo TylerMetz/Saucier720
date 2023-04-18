@@ -296,7 +296,6 @@ func ListenUpdatedPantry(currUser User, ctx context.Context) {
 
 	// creates handler
 	handler := c.Handler(route)
-	fmt.Println("Handler created")
 
 	// creates server to be appended to global list
 	server := &http.Server{Addr: ":8086", Handler: handler}
@@ -320,8 +319,6 @@ func ListenUpdatedPantry(currUser User, ctx context.Context) {
 }
 
 func UpdatedPantryResponse(w http.ResponseWriter, r *http.Request, currUser User) {
-
-	fmt.Println("Request method:", r.Method)
 
 	if r.Method != "POST" {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
