@@ -9,7 +9,7 @@ context('Network Requests', () => {
   beforeEach(() => {
     // cy.visit(pantryPageUrl)
     cy.login();
-    cy.visit(pantryPageUrl);
+    //cy.visit(pantryPageUrl);
   })
 
   // Manage HTTP requests in your app
@@ -36,6 +36,12 @@ context('Network Requests', () => {
   it('cy.click - pushing the POST button on the Pantry Page', () => {
     
     cy.get('app-new-pantry-item-button')
+    const name = 'Pear';
+    const quantity = '1';
+
+    cy.get('#name').type(name);
+    cy.get('#quantity').type(quantity);
+    cy.contains('Post').click();
     
     
   })
