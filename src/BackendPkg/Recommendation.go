@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sort"
 	"strings"
+
 	"golang.org/x/exp/slices"
 )
 
@@ -72,7 +73,7 @@ func BestRecipes(userPantry Pantry, allRecipes []Recipe, deals []FoodItem) []Rec
 				for i := 0; i < len(userPantry.FoodInPantry); i++ {
 					for j := 0; j < len(allRecipes[m].Ingredients); j++ {
 						if strings.Contains(allRecipes[m].Ingredients[j], userPantry.FoodInPantry[i].Name) {
-							if !slices.Contains(pantryItemsInRecipe, userPantry.FoodInPantry[i]){
+							if !slices.Contains(pantryItemsInRecipe, userPantry.FoodInPantry[i]) {
 								pantryItemsInRecipe = append(pantryItemsInRecipe, userPantry.FoodInPantry[i])
 							}
 						}
@@ -80,16 +81,16 @@ func BestRecipes(userPantry Pantry, allRecipes []Recipe, deals []FoodItem) []Rec
 				}
 
 				// check which deals can be recommended
-				for i:= 0; i < len(deals); i++{
-					dealWords:= strings.Split((deals[i].Name), " ")
-					if len(dealWords) > 3{
+				for i := 0; i < len(deals); i++ {
+					dealWords := strings.Split((deals[i].Name), " ")
+					if len(dealWords) > 3 {
 						dealWords = dealWords[len(dealWords)-3:]
 					}
-					for j:= 0; j < len(allRecipes[m].Ingredients); j++{
-						for k:= 0; k < len(dealWords); k++{
+					for j := 0; j < len(allRecipes[m].Ingredients); j++ {
+						for k := 0; k < len(dealWords); k++ {
 							if strings.Contains(allRecipes[m].Ingredients[j], (" " + dealWords[k] + " ")) {
-								if (" " + dealWords[k] + " ") != " or "  && (" " + dealWords[k] + " ") != " and " && (" " + dealWords[k] + " ") != " the " && (" " + dealWords[k] + " ") != " 1 " && (" " + dealWords[k] + " ") != " 2 " && (" " + dealWords[k] + " ") != " 3 " && (" " + dealWords[k] + " ") != " ground " && (" " + dealWords[k] + " ") != " AND " && (" " + dealWords[k] + " ") != " Any " && (" " + dealWords[k] + " ") != " ANY " && (" " + dealWords[k] + " ") != " Sauce " && (" " + dealWords[k] + " ") != " gallon " && (" " + dealWords[k] + " ") != " mix " && (" " + dealWords[k] + " ") != " organic " && (" " + dealWords[k] + " ") != " size " && (" " + dealWords[k] + " ") != " own " && (" " + dealWords[k] + " ") != " alternative "{
-									if !slices.Contains(dealsItemsInRecipe, deals[i].Name){
+								if (" "+dealWords[k]+" ") != " or " && (" "+dealWords[k]+" ") != " and " && (" "+dealWords[k]+" ") != " the " && (" "+dealWords[k]+" ") != " 1 " && (" "+dealWords[k]+" ") != " 2 " && (" "+dealWords[k]+" ") != " 3 " && (" "+dealWords[k]+" ") != " ground " && (" "+dealWords[k]+" ") != " AND " && (" "+dealWords[k]+" ") != " Any " && (" "+dealWords[k]+" ") != " ANY " && (" "+dealWords[k]+" ") != " Sauce " && (" "+dealWords[k]+" ") != " gallon " && (" "+dealWords[k]+" ") != " mix " && (" "+dealWords[k]+" ") != " organic " && (" "+dealWords[k]+" ") != " size " && (" "+dealWords[k]+" ") != " own " && (" "+dealWords[k]+" ") != " alternative " {
+									if !slices.Contains(dealsItemsInRecipe, deals[i].Name) {
 										dealsItemsInRecipe = append(dealsItemsInRecipe, deals[i].Name)
 									}
 								}
@@ -97,9 +98,9 @@ func BestRecipes(userPantry Pantry, allRecipes []Recipe, deals []FoodItem) []Rec
 						}
 					}
 				}
-				
+
 				var realDealz []FoodItem
-				for i:= 0; i < len(dealsItemsInRecipe); i++{
+				for i := 0; i < len(dealsItemsInRecipe); i++ {
 					tempItem := FoodItem{
 						Name: dealsItemsInRecipe[i],
 					}
@@ -116,6 +117,8 @@ func BestRecipes(userPantry Pantry, allRecipes []Recipe, deals []FoodItem) []Rec
 		}
 	}
 
+	invertSlice(returnReccomendations)
+
 	return returnReccomendations
 
 }
@@ -127,6 +130,14 @@ func min(a, b int) int {
 	return b
 }
 
+// flip the slice
+func invertSlice(s []Reccomendation) {
+	for i := 0; i < len(s)/2; i++ {
+		j := len(s) - i - 1
+		s[i], s[j] = s[j], s[i]
+	}
+}
+
 func OutputRecommendations(r []Reccomendation) {
 	for i := 0; i < len(r); i++ {
 		fmt.Println(r[i].R.Title)
@@ -135,7 +146,7 @@ func OutputRecommendations(r []Reccomendation) {
 			fmt.Println(r[i].ItemsInPantry[j].Name)
 		}
 		fmt.Println("From Publix:")
-		for k := 0; k < len(r[i].ItemsOnSale); k++{
+		for k := 0; k < len(r[i].ItemsOnSale); k++ {
 			fmt.Println(r[i].ItemsOnSale[k].Name)
 		}
 	}
