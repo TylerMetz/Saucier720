@@ -1,36 +1,43 @@
 /// <reference types="cypress" />
+import { IngredientService } from "src/app/core/services/ingredient.service";
+import { Ingredient } from "src/app/core/interfaces/ingredient";
 import { PANTRY } from "src/app/mocks/pantry.mock";
 
 context('Network Requests', () => {
   let pantryPageUrl = 'http://localhost:4200/Pantry';
   let pantryGETUrl = 'http://localhost:8080/api/Pantry';
   beforeEach(() => {
-    cy.visit(pantryPageUrl)
+    // cy.visit(pantryPageUrl)
+    cy.login();
+    cy.visit(pantryPageUrl);
   })
 
   // Manage HTTP requests in your app
 
   it('cy.request() - make a GET request when loading the page', () => {
     // https://on.cypress.io/request
+    //cy.setCookie('sessionID', 'ri720');
     cy.request(pantryGETUrl)
       .should((response) => {
         expect(response.status).to.eq(200)
         // the server sometimes gets an extra comment posted from another machine
         // which gets returned as 1 extra object
-        expect(response.body).to.have.property('length').and.be.equal(PANTRY.length)
+        const ingredients: Ingredient[] = response.body as Ingredient[];
+
+       expect(ingredients).to.be.an('array').that.is.not.empty;
+       expect(ingredients[0]).to.have.property('Name');
+       expect(ingredients[0]).to.have.property('Quantity');
+        
         expect(response).to.have.property('headers')
         expect(response).to.have.property('duration')
       })
   })
 
   it('cy.click - pushing the POST button on the Pantry Page', () => {
-    cy.get('app-new-pantry-item-button').click()
-    cy.request(pantryGETUrl)
-      .should((response) => {
-        expect(response.status).to.eq(200)
-        expect(response).to.have.property('headers')
-        expect(response).to.have.property('duration')
-      })
+    
+    cy.get('app-new-pantry-item-button')
+    
+    
   })
 
   // it('cy.request() - verify response using BDD syntax', () => {

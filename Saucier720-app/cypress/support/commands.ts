@@ -35,3 +35,16 @@
 //     }
 //   }
 // }
+declare namespace Cypress {
+    interface Chainable{
+        login(): Chainable<Element>;
+    }
+}
+
+Cypress.Commands.add('login', () => {
+    cy.visit('http://localhost:4200/Login');
+    cy.get('#username').type('ri');
+    cy.get('#password').type('ri');
+    cy.get('button[type="submit"]').click();
+    cy.setCookie('sessionID', 'ri720');
+  });
