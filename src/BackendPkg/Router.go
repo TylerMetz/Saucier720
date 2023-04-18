@@ -224,7 +224,7 @@ func ListenPantry(currUser User, ctx context.Context) {
 	wg.Add(1)
 
 	// listens and serves in a new goroutine
-	func() {
+	go func() {
 		defer wg.Done() // decrement the counter when this goroutine is done
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("listen: %s\n", err)
@@ -273,6 +273,14 @@ func PantryItemPostResponse(w http.ResponseWriter, r *http.Request, currUser Use
 		var pantryFoodInterfaceRefresh []interface{}
 		pantryFoodInterface = pantryFoodInterfaceRefresh
 		UpdateData(d, currUser)
+
+		userRecList := BestRecipes(d.GetUserPantry(currUser.UserName), d.ReadRecipes(), d.ReadPublixDatabase())
+		var recipesFoodInterfaceRefresh []interface{}
+		recipesFoodInterface = recipesFoodInterfaceRefresh
+		for i := 0; i < len(userRecList); i++ {
+			// sends recipes, items in recipe, and deals related 
+			recipesFoodInterface = append(recipesFoodInterface, userRecList[i])
+		}
 	}
 
 }
@@ -296,7 +304,6 @@ func ListenUpdatedPantry(currUser User, ctx context.Context) {
 
 	// creates handler
 	handler := c.Handler(route)
-	fmt.Println("Handler created")
 
 	// creates server to be appended to global list
 	server := &http.Server{Addr: ":8086", Handler: handler}
@@ -320,8 +327,6 @@ func ListenUpdatedPantry(currUser User, ctx context.Context) {
 }
 
 func UpdatedPantryResponse(w http.ResponseWriter, r *http.Request, currUser User) {
-
-	fmt.Println("Request method:", r.Method)
 
 	if r.Method != "POST" {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -360,6 +365,14 @@ func UpdatedPantryResponse(w http.ResponseWriter, r *http.Request, currUser User
 		var pantryFoodInterfaceRefresh []interface{}
 		pantryFoodInterface = pantryFoodInterfaceRefresh
 		UpdateData(d, currUser)
+
+		userRecList := BestRecipes(d.GetUserPantry(currUser.UserName), d.ReadRecipes(), d.ReadPublixDatabase())
+		var recipesFoodInterfaceRefresh []interface{}
+		recipesFoodInterface = recipesFoodInterfaceRefresh
+		for i := 0; i < len(userRecList); i++ {
+			// sends recipes, items in recipe, and deals related 
+			recipesFoodInterface = append(recipesFoodInterface, userRecList[i])
+		}
 	}
 
 }
@@ -561,7 +574,7 @@ func ListenForAllPosts(currUser User, cookie string, ctx context.Context){
 	go ListenUpdatedPantry(currUser, ctx)
 
 	// listens for new pantry item
-	ListenPantry(currUser, ctx)
+	go ListenPantry(currUser, ctx)
 
 }
 
@@ -627,7 +640,7 @@ func RoutAllData(d Database, currUser User, ctx context.Context){
 	go RoutRecommendedRecipes(d, currUser, ctx)
 
 	// routs deals to deals page
-	RoutWeeklyDeals(d, ctx)
+	go RoutWeeklyDeals(d, ctx)
 }
 
 func UpdateData(d Database, u User) {
