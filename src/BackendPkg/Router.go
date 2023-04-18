@@ -624,7 +624,7 @@ func RoutAllData(d Database, currUser User, ctx context.Context){
 	go RoutRecommendedRecipes(d, currUser, ctx)
 
 	// routs deals to deals page
-	RoutWeeklyDeals(d, ctx)
+	go RoutWeeklyDeals(d, ctx)
 }
 
 func UpdateData(d Database, u User) {
