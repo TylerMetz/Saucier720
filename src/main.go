@@ -16,7 +16,7 @@ var cookieChange bool
 func main() {
 
 	// Reads recipes dataset in not read in yet and stores in DB
-	// programDatabase.DeleteRecipes()
+	//programDatabase.DeleteRecipes()
 	programDatabase.WriteRecipes()
 
 	// runs scraper if new deals at publix
