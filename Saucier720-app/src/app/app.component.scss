@@ -1,8 +1,5 @@
-.page {
-  margin-top: 60px;
-}
 .topnav {
-    background-color: #323232;
+    background-color: var(--primary-color);
     position: fixed;
     top: 0;
     right: 0;
@@ -14,7 +11,7 @@
   /* Style the links inside the navigation bar */
   .topnav a {
     float: left;
-    color: #f2f2f2;
+    color: var(--text-color);
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
@@ -22,79 +19,31 @@
   }
   .topnav u {
     float: right;
-    color: #f2f2f2;
+    color: var(--text-color);
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
     font-size: 17px;
-  }
-  
-  /* Change the color of links on hover */
-  .topnav a:hover {
-    background-color: #ddd;
-    color: black;
-  }
-  
-  /* Add a color to the active/current link */
-  .topnav a.active {
-    background-color: #04AA6D;
-    color: white;
   }
 
   .topnav b {
     float: right;
-    color: #f2f2f2;
+    color: var(--text-color);
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
     font-size: 17px;
   }
 
-  .topnav b:hover {
-    background-color: #ddd;
-    color: black;
-  }
-  
-  /* Add a color to the active/current link */
-  .topnav b.active {
-    background-color: #04AA6D;
-    color: white;
-  }
-  
-  .list-header {
-    display: flex;
-    width: 100%;
-    padding: 20px;
-    margin: 0;
-    justify-content: flex-start;
-    align-items: center;
-    font-size: 36px;
-    font-weight: 400;
-    color: #20b338;
-    border-bottom: 1px solid #e0dddd;
-  
-  }
   
   .page {
+    margin-top: 60px;
     width: 100%;
     height: 100%;
     padding: 20px;
    
-    &-header {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-      max-width: 1140px;
-      height: 80px;
-      margin: 0 auto;
-      border-bottom: 2px solid #007fff;
-      font-size: 36px;
-      font-weight: 700;
-      color: #20b338;
-    }
-   
     &-body {
+      color: var(--text-color);
       display: flex;
    
       width: 100%;
@@ -102,13 +51,5 @@
       min-height: calc(100vh - 120px);
       margin: 0 auto;
    
-      &__sidebar {
-        width: 300px;
-        border-right: 2px solid #007fff;
-      }
-  
-      &__details {
-        width: 100%;
-      }
     }
    }
