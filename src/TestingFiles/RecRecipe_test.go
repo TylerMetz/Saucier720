@@ -36,7 +36,7 @@ func TestBestRecipes(t *testing.T) {
 
     // Call the BestRecipes function with the test data
     recommendations :=  BackendPkg.BestRecipes(testPantry, testRecipes, testDeals)
-	//recommendations = recommendations[:2]
+
 
 	fmt.Print(recommendations)
 
