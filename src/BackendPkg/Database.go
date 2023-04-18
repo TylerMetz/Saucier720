@@ -243,6 +243,16 @@ func (d* Database) WriteRecipes(){
 
 }
 
+func (d* Database) DeleteRecipes(){
+	// calls function to open the database
+	database := d.OpenDatabase()
+
+	// Create a new table for the recipes
+	statement, _ := database.Prepare("DROP TABLE RecipeData")
+	statement.Exec()
+
+}
+
 func (d* Database) ReadRecipes() []Recipe{
 	// calls function to open the database
 	database := d.OpenDatabase()
