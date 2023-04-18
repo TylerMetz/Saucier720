@@ -5,6 +5,9 @@
     <a routerLink="Deals">Deals</a>
     <a routerLink="Recipes">Recipes</a>
     <b routerLink="Login">Login</b>
+    <ng-container *ngIf="username">
+      <u>Welcome, {{ username }}</u>
+    </ng-container>
   </div>
   <router-outlet></router-outlet>
 </div>
