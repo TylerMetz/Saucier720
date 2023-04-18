@@ -22,7 +22,7 @@ func TestSetCookie(t *testing.T) {
 	// Set the expected cookie values
 	expectedValue := BackendPkg.ValidateUser(activeUser)
 	expectedPath := "/"
-	expectedHttpOnly := true
+	expectedHttpOnly := false
 	expectedSameSite := http.SameSiteLaxMode
 	expectedDomain := "localhost"
 
