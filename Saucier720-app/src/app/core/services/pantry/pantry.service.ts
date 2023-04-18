@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpRequest, HttpHeaders } from '@angular/common/http';
 import { Ingredient } from '../../interfaces/ingredient';
 import { PANTRY } from 'src/app/mocks/pantry.mock';
+import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class PantryService {
   private cookiesPostUrl = 'http://localhost:8083/api/cookies'
   private pantryUpdateUrl = 'http://localhost:8086/api/UpdatePantry'
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private cookieService: CookieService) { }
 
   getPantry() {
     const req = new HttpRequest('GET', this.pantryUrl, { 
@@ -35,7 +36,7 @@ export class PantryService {
   postPantryItem(ingredient: Ingredient) {
     const headers = new HttpHeaders({ 
       'Content-Type': 'application/json', 
-      'Cookie': document.cookie // Set the cookie value in the header
+      'Cookie': this.cookieService.get('sessionID') // Set the cookie value in the header
     });
   
     const body = { ingredient };
