@@ -3,6 +3,7 @@ export interface Recipe {
     ingredients: string[];
     title: string;
     pictureLink: string;
+    [key: string]: any; // index signature
 }
 
 export interface RecipePost {
