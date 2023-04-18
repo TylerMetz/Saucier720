@@ -4,6 +4,8 @@ import (
     "encoding/json"
     //"fmt"
     "io/ioutil"
+    "strings"
+    //"regexp"
 )
 
 type Recipe struct {
@@ -24,6 +26,12 @@ func GetRecipes() ([]Recipe, error) {
         return nil, err
     }
 
+    for _, recipe := range recipes {
+        for i, ingredient := range recipe.Ingredients {
+            recipe.Ingredients[i] = strings.ReplaceAll(ingredient, ",", ";")
+        }
+    }
+
     result := make([]Recipe, 0, len(recipes))
     for _, recipe := range recipes {
         result = append(result, recipe)
@@ -31,5 +39,6 @@ func GetRecipes() ([]Recipe, error) {
 
     return result, nil
 }
+
 
 
