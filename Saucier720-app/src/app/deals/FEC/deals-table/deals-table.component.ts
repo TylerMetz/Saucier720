@@ -6,7 +6,8 @@ import { lastValueFrom } from "rxjs";
 @Component({
   selector: 'app-deals-table',
   providers: [DealsService],
-  templateUrl: 'deals-table.component.html'
+  templateUrl: 'deals-table.component.html',
+  styleUrls: ['deals-table.component.scss']
 })
 export class DealsTableComponent implements OnInit {
 
