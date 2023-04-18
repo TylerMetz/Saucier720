@@ -7,6 +7,7 @@ import { Ingredient } from 'src/app/core/interfaces/ingredient';
 @Component({
   selector: 'app-new-pantry-item-button',
   templateUrl: './new-pantry-item-button.component.html',
+  styleUrls:[ './new-pantry-item-button.component.scss'],
   providers: [PantryService]
 })
 

@@ -1,52 +1,30 @@
 .card {
     display: flex;
-	align-items: center;
+	  align-items: center;
     padding: 10px;
     margin-bottom: 10px;
+    background-color: var(--secondary-color);
 }
 .card-container {
     display: flex;
-    flex-wrap: wrap;
     flex-direction: column;
     align-items: center;
-    padding: 10px;
+    margin: 20px;
+    flex-wrap: wrap;
   }
 
-.button {
+  .recipe-body {
     display: flex;
-    position: center;
-   
-}
+    flex-direction: row;
+  }
 
-.recipe {
-    display: flex;
-    align-items: center;
-
-    &-title {
-        text-align: center;
-        
-    }
-
-    &-content {
-        text-align: center;
-        display: flex;
-        flex-direction: row;
-
-        &-ingredients {
-            &-header {
-                
-            }
-            
-        }
-
-        &-instructions {
-            &-header {
-                font-size: large;
-            }
-        }
-
-        &-picture {
-    
-        }
-    }
-}
+  .recipe-ingredients-header {
+    text-align: center;
+    /* styles for the recipe ingredients header */
+  }
+  
+  .recipe-instructions-header {
+    text-align: center;
+    /* styles for the recipe instructions section */
+  }
+  
