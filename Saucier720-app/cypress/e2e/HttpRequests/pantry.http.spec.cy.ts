@@ -17,6 +17,7 @@ context('Network Requests', () => {
   it('cy.request() - make a GET request when loading the page', () => {
     // https://on.cypress.io/request
     //cy.setCookie('sessionID', 'ri720');
+   
     cy.request(pantryGETUrl)
       .should((response) => {
         expect(response.status).to.eq(200)
@@ -34,15 +35,18 @@ context('Network Requests', () => {
   })
 
   it('cy.click - pushing the POST button on the Pantry Page', () => {
-    
-    cy.get('app-new-pantry-item-button')
+    cy.visit(pantryPageUrl);
+    cy.get('app-new-pantry-item-button');
     const name = 'Pear';
     const quantity = '1';
 
     cy.get('#name').type(name);
     cy.get('#quantity').type(quantity);
     cy.contains('Post').click();
-    
+    cy.visit(pantryPageUrl);
+    cy.get('app-pantry-table').contains('Pear');
+
+
     
   })
 
