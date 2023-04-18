@@ -1,0 +1,10 @@
+.sub-recipe {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    &-header {
+        align-items: center;
+    }
+
+}
