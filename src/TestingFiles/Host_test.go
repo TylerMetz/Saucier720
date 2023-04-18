@@ -1,66 +1,42 @@
 package main
 
 import (
-	"BackendPkg"
-	"encoding/json"
+    "net/http"
+    "net/http/httptest"
+    "testing"
 	"fmt"
-	"io/ioutil"
-	"net/http"
-	"testing"
+    "github.com/gorilla/mux"
 )
 
-func TestOne(t *testing.T) {
+func TestGetHandler(t *testing.T) {
+    // Create a new router
+    router := mux.NewRouter()
 
-	testFoodItem := BackendPkg.FoodItem{
-		Name:        "peanut butter",
-		StoreCost:   369.99,
-		OnSale:      true,
-		SaleDetails: "BOGO",
-		Quantity:    10,
-	}
-	testFoodItem2 := BackendPkg.FoodItem{
-		Name:        "jelly",
-		StoreCost:   1.0,
-		OnSale:      false,
-		SaleDetails: "N/A",
-		Quantity:    30,
-	}
-	testFoodItem3 := BackendPkg.FoodItem{
-		Name:        "bread",
-		StoreCost:   10.69,
-		OnSale:      true,
-		SaleDetails: "$2 for 2",
-		Quantity:    2,
-	}
+    // Define a handler for GET requests to the root path
+    router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        fmt.Fprint(w, "Hello, World!")
+    }).Methods("GET")
 
-	testItems := []interface{}{testFoodItem3, testFoodItem2, testFoodItem}
+    // Create a new test request to the root path
+    req, err := http.NewRequest("GET", "/", nil)
+    if err != nil {
+        t.Fatal(err)
+    }
 
-	// convert items to be translated into json
-	itemsInJson, _ := json.Marshal(testItems)
+    // Create a new mock HTTP server
+    rr := httptest.NewRecorder()
 
-	// create a router to output items to the port
-	testRouter := BackendPkg.Router{
-		Name:             "test1",
-		ItemsToBeEncoded: testItems,
-	}
+    // Call the router's ServeHTTP method to process the request
+    router.ServeHTTP(rr, req)
 
-	// display item on port in background
-	go testRouter.Rout("/api/Pantry","8080")
+    // Check the status code returned by the server
+    if status := rr.Code; status != http.StatusOK {
+        t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+    }
 
-	//pull data from local host port
-	resp, err := http.Get("http://localhost:8080/api/Pantry")
-	if err != nil {
-		fmt.Println("Error!")
-	}
-	defer resp.Body.Close()
-
-	// make website data a string
-	body, err := ioutil.ReadAll(resp.Body)
-	portValue := string(body)
-
-	// if the test doesn't pass
-	if portValue != string(itemsInJson) {
-		t.Errorf("Result was incorrect, got: %s, want: %s.", string(itemsInJson), portValue)
-	}
-
+    // Check the body of the response
+    expected := "Hello, World!"
+    if rr.Body.String() != expected {
+        t.Errorf("handler returned unexpected body: got %v want %v", rr.Body.String(), expected)
+    }
 }
