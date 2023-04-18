@@ -1,21 +1,23 @@
-<div class="table-responsive">
-  <button type="button" (click)="updatePantry()">UpdatePantry</button>
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Ingredients</th>
-          <th>Quantity</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let ingredient of pantry">
-          <td>{{ ingredient.Name }}</td>
-          <td>{{ ingredient.Quantity }}</td>
-          <button (click)="ingredient.Quantity = ingredient.Quantity + 1">+</button>
-          <button (click)="ingredient.Quantity = ingredient.Quantity - 1">-</button>
-          <button (click)="ingredient.Quantity = 0"><i class="fa fa-trash" aria-hidden="true"></i></button>
-        </tr>
-      </tbody>
-    </table>
+<div class="table-container">
+  <div class="table-header">
+    <h2>Pantry</h2>
   </div>
-  
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Ingredients</th>
+        <th>Quantity</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let ingredient of pantry">
+        <td>{{ ingredient.Name }}</td>
+        <td>{{ ingredient.Quantity }}</td>
+        <button (click)="ingredient.Quantity = ingredient.Quantity + 1">+</button>
+        <button (click)="ingredient.Quantity = ingredient.Quantity - 1">-</button>
+        <button (click)="ingredient.Quantity = 0"><i class="fa fa-trash" aria-hidden="true"></i></button>
+      </tr>
+    </tbody>
+  </table>
+  <button type="button" (click)="updatePantry()">UpdatePantry</button>
+</div>
