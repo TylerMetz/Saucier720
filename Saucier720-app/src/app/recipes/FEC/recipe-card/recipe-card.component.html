@@ -11,11 +11,28 @@
           <div class="ingredients-header">
             <h2>Ingredients</h2>
           </div>
+          
           <div *ngIf="recipes && recipes.length > 0" class="recipe-ingredients">
             <ul>
-              <li *ngFor="let ingredient of recipes[currentRecipeIndex].R.ingredients">{{ ingredient }}</li>
+              <ng-container *ngFor="let ingredient of currentIngredients; let i = index">
+                <ng-container *ngIf="!checkForRecipeFollows(ingredient)">
+                  <li *ngIf="!printedSubRecipeLines.includes(ingredient)">{{ ingredient }}</li>
+                </ng-container>
+                <ng-container *ngIf="checkForRecipeFollows(ingredient)">
+                  <app-sub-recipe [recipe]="ingredient" [ingredients]="currentIngredients.slice(i + 1)" [headerText]="ingredient"></app-sub-recipe>
+                  <ng-container *ngFor="let subIngredient of currentIngredients.slice(i + 1)">
+                    <ng-container *ngIf="!checkForRecipeFollows(subIngredient)">
+                      <ng-container *ngIf="printedSubRecipeLines.push(subIngredient)"></ng-container>
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
+              </ng-container>
             </ul>
           </div>
+          
+          
+                   
+                       
         </div>
         <div class="recipe-instructions">
           <div class="instructions-header">
