@@ -13,13 +13,7 @@
           </div>
           <div *ngIf="recipes && recipes.length > 0" class="recipe-ingredients">
             <ul>
-              <div *ngIf="recipes[currentRecipeIndex].R.instructions" class="recipe-instructions">
-                <ul>
-                  <li *ngFor="let sentence of recipes[currentRecipeIndex].R.instructions.split('.')">
-                    <span *ngIf="sentence.trim().length > 3"> {{ sentence.trim() }}</span>
-                  </li>
-                </ul>
-              </div>
+              <li *ngFor="let ingredient of recipes[currentRecipeIndex].R.ingredients">{{ ingredient }}</li>
             </ul>
           </div>
         </div>
