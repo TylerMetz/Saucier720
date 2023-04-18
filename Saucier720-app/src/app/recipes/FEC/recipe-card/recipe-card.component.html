@@ -54,6 +54,10 @@
         </div>
     </div>
   </div>
-  <button (click)="goToNextRecipe()">Next Recipe</button>
-  <button (click)="goToPrevRecipe()">Previous Recipe</button>
+  <div class="button-container">
+    <button class="button"(click)="goToPrevRecipe()">Previous Recipe</button>
+    <button class="button" (click)="goToNextRecipe()">Next Recipe</button> 
+  </div>
+  
+  <div class="page-number">Page {{currentRecipeIndex + 1}} / {{recipes.length}}</div>
 </div>
