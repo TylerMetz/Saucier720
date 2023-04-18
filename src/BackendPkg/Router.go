@@ -224,7 +224,7 @@ func ListenPantry(currUser User, ctx context.Context) {
 	wg.Add(1)
 
 	// listens and serves in a new goroutine
-	func() {
+	go func() {
 		defer wg.Done() // decrement the counter when this goroutine is done
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("listen: %s\n", err)
@@ -558,7 +558,7 @@ func ListenForAllPosts(currUser User, cookie string, ctx context.Context){
 	go ListenUpdatedPantry(currUser, ctx)
 
 	// listens for new pantry item
-	ListenPantry(currUser, ctx)
+	go ListenPantry(currUser, ctx)
 
 }
 
