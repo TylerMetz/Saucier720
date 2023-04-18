@@ -273,6 +273,14 @@ func PantryItemPostResponse(w http.ResponseWriter, r *http.Request, currUser Use
 		var pantryFoodInterfaceRefresh []interface{}
 		pantryFoodInterface = pantryFoodInterfaceRefresh
 		UpdateData(d, currUser)
+
+		userRecList := BestRecipes(d.GetUserPantry(currUser.UserName), d.ReadRecipes(), d.ReadPublixDatabase())
+		var recipesFoodInterfaceRefresh []interface{}
+		recipesFoodInterface = recipesFoodInterfaceRefresh
+		for i := 0; i < len(userRecList); i++ {
+			// sends recipes, items in recipe, and deals related 
+			recipesFoodInterface = append(recipesFoodInterface, userRecList[i])
+		}
 	}
 
 }
@@ -357,6 +365,14 @@ func UpdatedPantryResponse(w http.ResponseWriter, r *http.Request, currUser User
 		var pantryFoodInterfaceRefresh []interface{}
 		pantryFoodInterface = pantryFoodInterfaceRefresh
 		UpdateData(d, currUser)
+
+		userRecList := BestRecipes(d.GetUserPantry(currUser.UserName), d.ReadRecipes(), d.ReadPublixDatabase())
+		var recipesFoodInterfaceRefresh []interface{}
+		recipesFoodInterface = recipesFoodInterfaceRefresh
+		for i := 0; i < len(userRecList); i++ {
+			// sends recipes, items in recipe, and deals related 
+			recipesFoodInterface = append(recipesFoodInterface, userRecList[i])
+		}
 	}
 
 }
@@ -624,7 +640,7 @@ func RoutAllData(d Database, currUser User, ctx context.Context){
 	go RoutRecommendedRecipes(d, currUser, ctx)
 
 	// routs deals to deals page
-	RoutWeeklyDeals(d, ctx)
+	go RoutWeeklyDeals(d, ctx)
 }
 
 func UpdateData(d Database, u User) {
