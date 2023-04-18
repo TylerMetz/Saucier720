@@ -29,9 +29,17 @@
   }
   .page-number{
     display: flex;
+    border-radius: 10px;
     flex-wrap: wrap;
     padding: 10px;
     margin: 10px;
     background-color: var(--secondary-color);
     color: var(--header-color);
+  }
+  .button{
+    display: inline-block;
+    
+  }
+  .button-container{
+    text-align: center;
   }
