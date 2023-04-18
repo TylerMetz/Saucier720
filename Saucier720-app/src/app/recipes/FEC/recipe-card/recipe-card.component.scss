@@ -28,5 +28,10 @@
     /* styles for the recipe instructions section */
   }
   .page-number{
-    
+    display: flex;
+    flex-wrap: wrap;
+    padding: 10px;
+    margin: 10px;
+    background-color: var(--secondary-color);
+    color: var(--header-color);
   }
