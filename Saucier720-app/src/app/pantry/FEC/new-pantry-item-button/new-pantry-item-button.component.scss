@@ -1,0 +1,40 @@
+.form {
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: var(--secondary-color);
+    border-radius: 10px;
+  }
+  
+  .form-container {
+    display: flex;
+    align-items: center;
+    margin: 20px;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    }
+  
+  
+    .form-header {
+      text-align: center;
+    }
+  
+  .input {
+    padding-right: 40px;
+  
+    &-wrapper {
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+  
+    &-field {
+      position: relative;
+      border-radius: 5px;
+      padding: 5px;
+      align-items: center;
+    }
+  
+    }
+
+  

@@ -8,6 +8,7 @@ import { Ingredient } from "src/app/core/interfaces/ingredient";
   selector: 'app-pantry-table',
   providers: [PantryService],
   templateUrl: './pantry-table.component.html',
+  styleUrls: ['./pantry-table.component.scss']
 })
 export class PantryTableComponent implements OnInit {
 
