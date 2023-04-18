@@ -59,9 +59,9 @@ export class RecipeCardComponent implements OnInit {
     }
 
     goToPrevRecipe() {
-      this.currentRecipeIndex++;
-      if (this.currentRecipeIndex >= this.recipes.length) {
-        this.currentRecipeIndex = 0;
+      this.currentRecipeIndex--;
+      if (this.currentRecipeIndex < 0) {
+        this.currentRecipeIndex = this.recipes.length - 1;
       }
     }
 
