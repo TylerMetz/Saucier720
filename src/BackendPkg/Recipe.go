@@ -5,7 +5,7 @@ import (
     //"fmt"
     "io/ioutil"
     //"strings"
-    "regexp"
+    //"regexp"
 )
 
 type Recipe struct {
@@ -21,8 +21,8 @@ func GetRecipes() ([]Recipe, error) {
         return nil, err
     }
 
-    re := regexp.MustCompile(`("[^"]+"),([^"]+")`)
-    file = re.ReplaceAll(file, []byte("$1;$2"))
+    //re := regexp.MustCompile(`("[^"]+"),([^"]+")`)
+    //file = re.ReplaceAll(file, []byte("$1;$2"))
 
     var recipes map[string]Recipe
     if err := json.Unmarshal(file, &recipes); err != nil {
