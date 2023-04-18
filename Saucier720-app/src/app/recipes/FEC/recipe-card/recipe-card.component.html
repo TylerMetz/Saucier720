@@ -13,9 +13,22 @@
           </div>
           <div *ngIf="recipes && recipes.length > 0" class="recipe-ingredients">
             <ul>
-              <li *ngFor="let ingredient of recipes[currentRecipeIndex].R.ingredients">{{ ingredient }}</li>
+              <!-- <li *ngFor="let instruction of recipes[currentRecipeIndex].R.instructions.split('\n')">
+                <ng-container *ngIf="!instruction.endsWith('recipe follows')">
+                  {{ instruction }}
+                </ng-container>
+                <ng-container *ngIf="instruction.endsWith('recipe follows')">
+                  <div class="sub-recipe-ingredients">
+                    <h3>{{ instruction.split(',')[0] }}</h3>
+                    <ul>
+                      <li *ngFor="let ingredient of recipes[currentRecipeIndex].R[instruction.split(',')[1]].ingredients">{{ ingredient }}</li>
+                    </ul>
+                  </div>
+                </ng-container>
+              </li> -->
             </ul>
           </div>
+          
         </div>
         <div class="recipe-instructions">
           <div class="instructions-header">
@@ -40,4 +53,5 @@
   </div>
   </div>
   <button (click)="goToNextRecipe()">Next Recipe</button>
+  <button (click)="goToPrevRecipe()">Next Recipe</button>
 </div>
