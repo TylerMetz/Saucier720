@@ -10,10 +10,10 @@
   display: flex;
   align-items: center;
   margin: 20px;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   flex-direction: column;
-  background-color: var(--secondary-color);
-  }
+}
+
 
 
   .form-header {
