@@ -19,17 +19,22 @@
 	color: var(--header-color);
   }
 
-  th {
+  tr, td {
+	border-color: var(--primary-color);
+  }
+  
+
+  	h {
     color: var(--header-color)
-}
+	}
 
-tr {
-		color: var(--text-color)
-}
+	tr {
+			color: var(--text-color)
+	}
 
-button {
-	transition: all 0.2s ease-in-out;
-}
+	button {
+		transition: all 0.2s ease-in-out;
+	}
   
   
   /* add more styles as needed */
