@@ -147,8 +147,6 @@ context('Network Requests', () => {
     cy.reload();
     cy.get('tr')
     .should('contain', 'starfruit', '2')
-    // cy.get('tr')
-    // .should('contain', '2')
 
   })
 
