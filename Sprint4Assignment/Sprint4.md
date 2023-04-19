@@ -186,7 +186,7 @@
 
 ## Backend API Documentation 
 #### Recommendation.go
-- **Purpose:** This file holds a `Reccomendation` struct which contains a `R` Recipe, `ItemsInPantry` slice of Fooditems, and `ItemsOnSale` slice of FoodItems. It also contains the functions its basic function `BestRecipes()` which is an algroithm that matches the user pantry to recipes from our dataset. 
+- **Purpose:** This file holds a `Recommendation` struct which contains a `R` Recipe, `ItemsInPantry` slice of Fooditems, and `ItemsOnSale` slice of FoodItems. It also contains the functions its basic function `BestRecipes()` which is an algroithm that matches the user pantry to recipes from our dataset. 
   
 ### Functioning API Flowchart
 ![Flowchart Image](../Other/Images/Saucier720Api.png)
