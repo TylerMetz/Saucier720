@@ -13,9 +13,11 @@
       <tr *ngFor="let ingredient of pantry">
         <td>{{ ingredient.Name }}</td>
         <td>{{ ingredient.Quantity }}</td>
-        <button (click)="ingredient.Quantity = ingredient.Quantity + 1">+</button>
-        <button (click)="ingredient.Quantity = ingredient.Quantity - 1">-</button>
-        <button (click)="ingredient.Quantity = 0"><i class="fa fa-trash" aria-hidden="true"></i></button>
+        <td>
+          <button (click)="ingredient.Quantity = ingredient.Quantity + 1">+</button>
+          <button (click)="ingredient.Quantity = ingredient.Quantity - 1">-</button>
+          <button (click)="ingredient.Quantity = 0"><i class="fa fa-trash" aria-hidden="true"></i>Delete</button>
+        </td>
       </tr>
     </tbody>
   </table>
