@@ -13,13 +13,35 @@
 - [#244](https://github.com/TylerMetz/Saucier720/issues/244) - Backend Reorganization 
 - [#279](https://github.com/TylerMetz/Saucier720/issues/279) - Fix Scraper Time Function
 - [#301](https://github.com/TylerMetz/Saucier720/issues/301) - Unnecessary data in recipes
+
 ## Frontend Successes
+- [#84](https://github.com/TylerMetz/Saucier720/issues/84) - Create Recipes Page
+- [#98](https://github.com/TylerMetz/Saucier720/issues/98) - Create wireframe for recipes page 
+- [#230](https://github.com/TylerMetz/Saucier720/issues/230) - Further HTML Component Testing
+- [#232](https://github.com/TylerMetz/Saucier720/issues/232) - Deprecation
+- [#234](https://github.com/TylerMetz/Saucier720/issues/234) - Use Logins an STAYS Logged in
+- [#235](https://github.com/TylerMetz/Saucier720/issues/235) - Cookie Generation
+- [#287](https://github.com/TylerMetz/Saucier720/issues/287) - Stay on same page after reset
+- [#289](https://github.com/TylerMetz/Saucier720/issues/289) - Recipe cards
+- [#300](https://github.com/TylerMetz/Saucier720/issues/300) - Backend update database
+- [#314](https://github.com/TylerMetz/Saucier720/issues/314) - Create sub recipe cards on recipe cards
+- [#324](https://github.com/TylerMetz/Saucier720/issues/324) - Delete last empty bullet point on recipe card
+- [#341](https://github.com/TylerMetz/Saucier720/issues/341) - Highlight / invert wehn hovering over a button
+- [#342](https://github.com/TylerMetz/Saucier720/issues/342) - Add box behind the deals on the deals page
+- [#343](https://github.com/TylerMetz/Saucier720/issues/343) - Buttons on Pantry design
+- [#345](https://github.com/TylerMetz/Saucier720/issues/345) - Adding an index to the recommended recipe page
+- [#346](https://github.com/TylerMetz/Saucier720/issues/346) - Number the steps of the recipes
 
 ## Backend Failures 
 - [#65](https://github.com/TylerMetz/Saucier720/issues/65) - Have BackendPkg import from GitHub
 - [#129](https://github.com/TylerMetz/Saucier720/issues/129) - Develop function to calculate price of sale items
 - [#130](https://github.com/TylerMetz/Saucier720/issues/130) - Develop function to Calculate the Cost of a Recipe
-## Frontend Failures 
+
+## Frontend Failures (Pushed to Sprint 5)
+- [#82](https://github.com/TylerMetz/Saucier720/issues/82) - Create list page 
+- [#96](https://github.com/TylerMetz/Saucier720/issues/96) - Create wireframe for list page
+- [#101](https://github.com/TylerMetz/Saucier720/issues/101) - Learn github autodeployment and workflows
+- [#347](https://github.com/TylerMetz/Saucier720/issues/347) - Information about how each pagworks
 
 ## Backend Unit Testing (For new Sprint 4 functionalities)
 ### GET Request Testing
@@ -179,10 +201,25 @@
 
 ### Component Testing
 - Our component tests in cypress are
+  - Pantry service should get Pantry in [pantry.service.spec.cy.ts](../Saucier720-app/src/app/testing/pantry/pantry.service.spec.cy.ts)
+  - Pantry component displays table, post button, and gets pantry in [pantry.component.spec.cy.ts](../Saucier720-app/src/app/testing/pantry/pantry.component.spec.cy.ts)
+  - Deals component displays table in [deals.component.spec.cy.ts](../Saucier720-app/src/app/testing/deals/deals.component.spec.cy.ts)
 
 ### End to End Testing
 - Our end to end tests in cypress are
+  - Requests deals from backend database and receives status code `200` if properly received and responsed to in [deals.http.spec.cy.ts](../Saucier720-app/cypress/e2e/HttpRequests/deals.http.spec.cy.ts)
 
+  - Requests user pantry from backend database and recevies status code 200 if properly received [pantry.http.spec.cy.ts](../Saucier720-app/cypress/e2e/HttpRequests/pantry.http.spec.cy.ts)
+
+  - Cypress simulates user login then navigates to the Pantry page, then posts a new pantry item, reloads the page, and then checks that the posted item is in the pantry table [pantry.http.spec.cy.ts](../Saucier720-app/cypress/e2e/HttpRequests/pantry.http.spec.cy.ts)
+
+  - Cypress simulates user login then navigates to the Pantry page, then posts a new pantry item, reloads the page, checks the new pantry item exists then deletes it, clicks the update pantry button, reloads the page, and then checks that the deleted pantry item is now longer in the table [pantry.http.spec.cy.ts](../Saucier720-app/cypress/e2e/HttpRequests/pantry.http.spec.cy.ts)
+
+   - Cypress simulates user login then navigates to the Pantry page, then posts a new pantry item, reloads the page, checks the new pantry item exists then clicks the + button, clicks the update pantry button, reloads the page, checks that the incremented pantry item is of quantity 2 [pantry.http.spec.cy.ts](../Saucier720-app/cypress/e2e/HttpRequests/pantry.http.spec.cy.ts)
+
+  - Cypress simulates user login then navigates to the recipes page, checks that the recipe items are received properly and that the recipe card is displayed [recipes.http.spec.cy.ts](../Saucier720-app/cypress/e2e/HttpRequests/recipes.http.spec.cy.ts)
+
+  - Cypress simulates user signup then navigates to the login page, and checks that the user logins and receives a proper status code from the backend [signup.http.spec.cy.ts](../Saucier720-app/cypress/e2e/HttpRequests/signup.http.spec.cy.ts)
 
 ## Backend API Documentation 
 #### Recommendation.go
