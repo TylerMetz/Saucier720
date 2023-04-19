@@ -8,7 +8,6 @@ context('Deals Requests', () => {
   beforeEach(() => {
     cy.login();
     cy.wait(3000);
-    cy.visit(dealsPageUrl)
   })
 
   it('cy.request() - make a GET request when loading the page', () => {
