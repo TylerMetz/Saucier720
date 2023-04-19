@@ -18,15 +18,27 @@
     flex-direction: row;
   }
 
+  .recipe-title {
+    text-align: center;
+  }
+
   .recipe-ingredients-header {
     text-align: center;
     /* styles for the recipe ingredients header */
+  }
+
+  .recipe-deals-header {
+    text-align: center;
   }
   
   .recipe-instructions-header {
     text-align: center;
     /* styles for the recipe instructions section */
   }
+  .recipe-pantry-header {
+    text-align: center;
+  }
+
   .page-number{
     display: flex;
     border-radius: 10px;
