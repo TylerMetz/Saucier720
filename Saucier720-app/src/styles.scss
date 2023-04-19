@@ -4,6 +4,8 @@
 	--secondary-color: #f8f0ca;
 	--background-color: #0e3c2c;
 	--text-color: #ec8091;
+	--button-hover-color: var(--text-color);
+	--button-hover-text-color: var(--primary-color);
 	// DDEA90
 	//717F6B
   }
@@ -17,13 +19,22 @@
 	color: var(--header-color);
   }
 
-  th {
-    color: var(--header-color)
-}
+  tr, td {
+	border-color: var(--primary-color);
+  }
+  
 
-tr {
+  	h {
+    	color: var(--header-color)
+	}
+
+	tr {
 		color: var(--text-color)
-}
+	}
+
+	button {
+		transition: all 0.2s ease-in-out;
+	}
   
   
   /* add more styles as needed */

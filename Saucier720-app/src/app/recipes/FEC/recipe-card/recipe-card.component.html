@@ -32,19 +32,20 @@
         </div>
         <div class="recipe-instructions">
           <div class="recipe-instructions-content">
-
           <div class="recipe-instructions-header">
             <h2>Instructions</h2>
           </div>
           <div *ngIf="recipes && recipes.length > 0" class="recipe-instructions">
             <div *ngIf="recipes[currentRecipeIndex].R.instructions" class="recipe-instructions">
-              <ul>
-                <li *ngFor="let sentence of recipes[currentRecipeIndex].R.instructions.split('.')">
-                  <span *ngIf="sentence.trim().length > 3"> {{ sentence.trim() }}</span>
-                </li>
-              </ul>
+              <ol>
+                <ng-container *ngFor="let sentence of recipes[currentRecipeIndex].R.instructions.split('.'); let i = index">
+                  <li *ngIf="sentence.trim().length >= 2">
+                    <span>{{ sentence.trim() }}</span>
+                  </li>
+                </ng-container>
+              </ol>
             </div>
-          </div>
+          </div>          
           </div>
         </div>
         <div class="recipe-picture">
