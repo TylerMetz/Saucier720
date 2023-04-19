@@ -9,6 +9,7 @@
 - [#207](https://github.com/TylerMetz/Saucier720/issues/207) - Fixed the minor issues of scraping into the database
 - [#228](https://github.com/TylerMetz/Saucier720/issues/228) - Current deals sorting 
 - [#241](https://github.com/TylerMetz/Saucier720/issues/241) - Backend authentification service
+- [#242](https://github.com/TylerMetz/Saucier720/issues/242) - Backend Http Helper Class
 - [#244](https://github.com/TylerMetz/Saucier720/issues/244) - Backend Reorganization 
 - [#279](https://github.com/TylerMetz/Saucier720/issues/279) - Fix Scraper Time Function
 - [#301](https://github.com/TylerMetz/Saucier720/issues/301) - Unnecessary data in recipes
@@ -16,6 +17,8 @@
 
 ## Backend Failures 
 - [#65](https://github.com/TylerMetz/Saucier720/issues/65) - Have BackendPkg import from GitHub
+- [#129](https://github.com/TylerMetz/Saucier720/issues/129) - Develop function to calculate price of sale items
+- [#130](https://github.com/TylerMetz/Saucier720/issues/130) - Develop function to Calculate the Cost of a Recipe
 ## Frontend Failures 
 
 ## Backend Unit Testing (For new Sprint 4 functionalities)
@@ -182,7 +185,8 @@
 
 
 ## Backend API Documentation 
-
+#### Recommendation.go
+- **Purpose:** This file holds a `Reccomendation` struct which contains a `R` Recipe, `ItemsInPantry` slice of Fooditems, and `ItemsOnSale` slice of FoodItems. It also contains the functions its basic function `BestRecipes()` which is an algroithm that matches the user pantry to recipes from our dataset. 
   
-## Functioning API Flowchart
+### Functioning API Flowchart
 ![Flowchart Image](../Other/Images/Saucier720Api.png)
