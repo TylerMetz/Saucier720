@@ -42,6 +42,9 @@
     ```
     $ go get -u github.com/tebeka/selenium
     ```
+    ```
+    $ go get -u golang.org/x/exp/slices
+    ```
     <br>
 
 4. Install Internal Package
@@ -65,4 +68,13 @@
    ```
    ```
    $ npm install
+   ```
+   <br>
+
+7. Run the program:
+   ```
+   $ cd Saucier720
+   ```
+   ```
+   $ ./build.sh
    ```
