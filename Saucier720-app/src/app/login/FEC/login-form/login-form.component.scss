@@ -42,10 +42,19 @@
   position: absolute;
   right: 0;
   padding-right: 3px;
-  padding-top: 2px;
   }
 
-.submit-button {
-  align-self: center;
-  padding: 10px;
+  button {
+    background-color: var(--button-hover-text-color);
+    border: none;
+    color: var(--button-text-color);
+    padding: 4px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: medium;
+}
+
+button:hover {
+    background-color: var(--button-hover-color);
+    color: var(--button-hover-text-color);
 }
