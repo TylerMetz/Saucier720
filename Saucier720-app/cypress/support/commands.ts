@@ -43,8 +43,10 @@ declare namespace Cypress {
 
 Cypress.Commands.add('login', () => {
     cy.visit('http://localhost:4200/Login');
-    cy.get('#username').type('ri');
-    cy.get('#password').type('ri');
-    cy.get('button[type="submit"]').click();
+    
+    cy.get('#username').should('be.visible').clear().type('ri', {delay: 150});
+    cy.get('#password').should('be.visible').clear().type('ri', {delay: 150});
+    
     cy.setCookie('sessionID', 'ri720');
+    cy.get('button[type="submit"]').click();
   });

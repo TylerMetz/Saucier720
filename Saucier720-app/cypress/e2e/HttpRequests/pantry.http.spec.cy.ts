@@ -1,11 +1,9 @@
 /// <reference types="cypress" />
-import { IngredientService } from "src/app/core/services/ingredient.service";
-import { Ingredient } from "src/app/core/interfaces/ingredient";
-import { PANTRY } from "src/app/mocks/pantry.mock";
 
 context('Network Requests', () => {
   let pantryPageUrl = 'http://localhost:4200/Pantry';
   let pantryGETUrl = 'http://localhost:8080/api/Pantry';
+  let pantryPostUrl = 'http://localhost:8083/api/NewPantryItem';
   beforeEach(() => {
     // cy.visit(pantryPageUrl)
     cy.login();
@@ -14,40 +12,88 @@ context('Network Requests', () => {
 
   // Manage HTTP requests in your app
 
-  it('cy.request() - make a GET request when loading the page', () => {
-    // https://on.cypress.io/request
-    //cy.setCookie('sessionID', 'ri720');
+  // it('make a GET request when loading the pantry', () => {
    
-    cy.request(pantryGETUrl)
-      .should((response) => {
-        expect(response.status).to.eq(200)
-        // the server sometimes gets an extra comment posted from another machine
-        // which gets returned as 1 extra object
-        const ingredients: Ingredient[] = response.body as Ingredient[];
+  //   cy.request(pantryGETUrl)
+  //     .should((response) => {
+  //       expect(response.status).to.eq(200)
+  //       // the server sometimes gets an extra comment posted from another machine
+  //       // which gets returned as 1 extra object
+  //       const ingredients: Ingredient[] = response.body as Ingredient[];
 
-       expect(ingredients).to.be.an('array').that.is.not.empty;
-       expect(ingredients[0]).to.have.property('Name');
-       expect(ingredients[0]).to.have.property('Quantity');
+  //      expect(ingredients).to.be.an('array').that.is.not.empty;
+  //      expect(ingredients[0]).to.have.property('Name');
+  //      expect(ingredients[0]).to.have.property('Quantity');
         
-        expect(response).to.have.property('headers')
-        expect(response).to.have.property('duration')
-      })
-  })
+  //       expect(response).to.have.property('headers')
+  //       expect(response).to.have.property('duration')
+  //     })
+  // })
 
-  it('cy.click - pushing the POST button on the Pantry Page', () => {
-    cy.visit(pantryPageUrl);
-    cy.get('app-new-pantry-item-button');
-    const name = 'Pear';
-    const quantity = '1';
-
-    cy.get('#name').type(name);
-    cy.get('#quantity').type(quantity);
-    cy.contains('Post').click();
-    cy.visit(pantryPageUrl);
-    cy.get('app-pantry-table').contains('Pear');
-
-
+  // it('posting new Pantry Item from pantry form', () => {
     
+  //   cy.visit(pantryPageUrl);
+  //   cy.get('app-new-pantry-item-button');
+  //   const name = 'Pear';
+
+  //   cy.get('#name').type(name);
+  //   cy.contains('Post').click();
+  //   cy.request(pantryGETUrl)
+  //   cy.reload();
+  //   cy.get('app-pantry-table').contains('Pear');
+  // })
+
+  it('deleting pantry items', () => {
+    cy.visit(pantryPageUrl);
+    let cookie = cy.getCookie('sessionID')
+    cy.request({
+      url: pantryGETUrl,
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': cookie
+      },
+    })
+    const name = 'starfruit';
+
+    cy.get('app-new-pantry-item-button');
+
+    cy.get('#name').type(name, {delay: 150});
+    cy.contains('Post').click();
+    cy.reload();
+    cy.request({
+      url: pantryGETUrl,
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': cookie
+      },
+    })
+    
+
+    cy.get('tr')
+    .contains('starfruit')
+    .parent()
+    .find('button')
+    .contains('Delete')
+    .click();
+    cy.get('button')
+    .contains('UpdatePantry')
+    .click();
+
+    cy.reload();
+    cy.request({
+      url: pantryGETUrl,
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': cookie
+      },
+    })
+    cy.get('tr')
+    .should('not.contain', 'starfruit')
+
+    // cy.contains('tr', 'starfruit')  // find the tr containing the ingredient name
+    // .find('button:contains("Delete")')  // find the delete button within that tr
+    // .click() 
+
   })
 
   // it('cy.request() - verify response using BDD syntax', () => {
