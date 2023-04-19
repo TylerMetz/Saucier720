@@ -1,12 +1,11 @@
 /// <reference types="cypress" />
 import { Ingredient } from "src/app/core/interfaces/ingredient";
 
-context('Network Requests', () => {
+context('Pantry Requests', () => {
   let pantryPageUrl = 'http://localhost:4200/Pantry';
   let pantryGETUrl = 'http://localhost:8080/api/Pantry';
   let pantryPostUrl = 'http://localhost:8083/api/NewPantryItem';
   beforeEach(() => {
-    // cy.visit(pantryPageUrl)
     cy.login();
     cy.wait(3000);
   })

@@ -1,11 +1,13 @@
 /// <reference types="cypress" />
 
-context('Network Requests', () => {
+context('Deals Requests', () => {
   let dealsPageUrl: string = 'http://localhost:4200/Deals';
   let dealsGETUrl: string = 'http://localhost:8081/api/Deals';
 
   // Manage HTTP requests in your app
   beforeEach(() => {
+    cy.login();
+    cy.wait(3000);
     cy.visit(dealsPageUrl)
   })
 
