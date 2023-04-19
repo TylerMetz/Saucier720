@@ -1,3 +1,5 @@
+import { Ingredient } from "./ingredient";
+
 export interface Recipe {
     instructions: string;
     ingredients: string[];
@@ -8,6 +10,6 @@ export interface Recipe {
 
 export interface RecipePost {
     R: Recipe;
-    ItemsInPantry: string[];
-    ItemsOnSale: string[];
+    ItemsInPantry: Ingredient[];
+    ItemsOnSale: Ingredient[];
 }
