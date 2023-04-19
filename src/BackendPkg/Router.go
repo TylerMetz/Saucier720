@@ -636,7 +636,7 @@ func RoutAllData(d Database, currUser User, ctx context.Context){
 	// routs Eddie's pantry, lol
 	go RoutUserPantry(d, currUser, ctx) 
 
-	// routs reccommended recipes to recipes page
+	// routs recommended recipes to recipes page
 	go RoutRecommendedRecipes(d, currUser, ctx)
 
 	// routs deals to deals page
