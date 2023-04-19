@@ -9,8 +9,65 @@ table.table {
     background-color: var(--secondary-color);
     border-radius: 15px;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 th {
     font-size: large;
+    background-color: var(--secondary-color);
+    padding: 10px;
+    text-align: left;
+  }
+  
+  tr {
+    border-bottom: 1px solid var(--primary-color);
+    border-color: var(--primary-color);
+    vertical-align: middle;
+  }
+
+  td {
+    align-items: center;
+    vertical-align: middle;
+  }
+  
+  
+  tr:last-child {
+    border-bottom: none;
+  }
+
+  tr:last-child {
+    border-bottom: none;
+  }
+  
+
+button {
+    background-color: var(--button-color);
+    border: none;
+    color: var(--button-text-color);
+    padding: 5px 10px;
+    margin: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: medium;
 }
+
+button:hover {
+    background-color: var(--button-hover-color);
+    color: var(--button-hover-text-color);
+}
+
+#update-pantry-button {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: var(--button-hover-text-color);
+    color: var(--button-hover-color);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  #update-pantry-button:hover {
+    background-color: var(--button-hover-color);
+    color: var(--button-hover-text-color);
+  }
