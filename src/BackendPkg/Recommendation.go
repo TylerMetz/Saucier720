@@ -8,14 +8,14 @@ import (
 	"golang.org/x/exp/slices"
 )
 
-type Reccomendation struct {
+type Recommendation struct {
 	R             Recipe
 	ItemsInPantry []FoodItem
 	ItemsOnSale   []FoodItem
 }
 
-func BestRecipes(userPantry Pantry, allRecipes []Recipe, deals []FoodItem) []Reccomendation {
-	var returnReccomendations []Reccomendation
+func BestRecipes(userPantry Pantry, allRecipes []Recipe, deals []FoodItem) []Recommendation {
+	var returnRecommendations []Recommendation
 
 	var scoreList []int
 	// ranks recipes based off of what is in pantry
@@ -107,19 +107,19 @@ func BestRecipes(userPantry Pantry, allRecipes []Recipe, deals []FoodItem) []Rec
 					realDealz = append(realDealz, tempItem)
 				}
 
-				newRecc := Reccomendation{
+				newRecc := Recommendation{
 					R:             allRecipes[m],
 					ItemsInPantry: pantryItemsInRecipe,
 					ItemsOnSale:   realDealz,
 				}
-				returnReccomendations = append(returnReccomendations, newRecc)
+				returnRecommendations = append(returnRecommendations, newRecc)
 			}
 		}
 	}
 
-	invertSlice(returnReccomendations)
+	invertSlice(returnRecommendations)
 
-	return returnReccomendations
+	return returnRecommendations
 
 }
 
@@ -131,14 +131,14 @@ func min(a, b int) int {
 }
 
 // flip the slice
-func invertSlice(s []Reccomendation) {
+func invertSlice(s []Recommendation) {
 	for i := 0; i < len(s)/2; i++ {
 		j := len(s) - i - 1
 		s[i], s[j] = s[j], s[i]
 	}
 }
 
-func OutputRecommendations(r []Reccomendation) {
+func OutputRecommendations(r []Recommendation) {
 	for i := 0; i < len(r); i++ {
 		fmt.Println(r[i].R.Title)
 		fmt.Println("From Pantry:")
