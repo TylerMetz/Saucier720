@@ -208,9 +208,18 @@
 ### End to End Testing
 - Our end to end tests in cypress are
   - Requests deals from backend database and receives status code `200` if properly received and responsed to in [deals.http.spec.cy.ts](../Saucier720-app/cypress/e2e/HttpRequests/deals.http.spec.cy.ts)
-  - Requests user pantry from backend database and recevies status code 200 if properly received[pantry.http.spec.cy.ts](../Saucier720-app/cypress/e2e/HttpRequests/pantry.http.spec.cy.ts)
-  - Posts new FoodItem from the frontend to the backend database and receives status code 200 if properly received and posted to database[pantry.http.spec.cy.ts](../Saucier720-app/cypress/e2e/HttpRequests/pantry.http.spec.cy.ts)
 
+  - Requests user pantry from backend database and recevies status code 200 if properly received [pantry.http.spec.cy.ts](../Saucier720-app/cypress/e2e/HttpRequests/pantry.http.spec.cy.ts)
+
+  - Cypress simulates user login then navigates to the Pantry page, then posts a new pantry item, reloads the page, and then checks that the posted item is in the pantry table [pantry.http.spec.cy.ts](../Saucier720-app/cypress/e2e/HttpRequests/pantry.http.spec.cy.ts)
+
+  - Cypress simulates user login then navigates to the Pantry page, then posts a new pantry item, reloads the page, checks the new pantry item exists then deletes it, clicks the update pantry button, reloads the page, and then checks that the deleted pantry item is now longer in the table [pantry.http.spec.cy.ts](../Saucier720-app/cypress/e2e/HttpRequests/pantry.http.spec.cy.ts)
+
+   - Cypress simulates user login then navigates to the Pantry page, then posts a new pantry item, reloads the page, checks the new pantry item exists then clicks the + button, clicks the update pantry button, reloads the page, checks that the incremented pantry item is of quantity 2 [pantry.http.spec.cy.ts](../Saucier720-app/cypress/e2e/HttpRequests/pantry.http.spec.cy.ts)
+
+  - Cypress simulates user login then navigates to the recipes page, checks that the recipe items are received properly and that the recipe card is displayed [recipes.http.spec.cy.ts](../Saucier720-app/cypress/e2e/HttpRequests/recipes.http.spec.cy.ts)
+
+  - Cypress simulates user signup then navigates to the login page, and checks that the user logins and receives a proper status code from the backend [signup.http.spec.cy.ts](../Saucier720-app/cypress/e2e/HttpRequests/signup.http.spec.cy.ts)
 
 ## Backend API Documentation 
 #### Recommendation.go
