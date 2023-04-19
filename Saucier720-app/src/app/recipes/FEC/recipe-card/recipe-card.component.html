@@ -48,6 +48,36 @@
           </div>          
           </div>
         </div>
+        
+        <div class="recipe-pantry">
+          <div class="recipe-pantry-content">
+            <div class="recipe-pantry-header">
+              <h2>Related Ingredients in your Pantry:</h2>
+            </div>
+            <div *ngIf="recipes && recipes.length > 0" class="recipe-pantry">
+              <ul>
+                <ng-container *ngFor="let ingredient of recipes[currentRecipeIndex].ItemsInPantry">
+                  <li> {{ ingredient.Name }}</li>
+                </ng-container>
+              </ul>
+            </div> 
+          </div>
+        </div>
+
+        <div class="recipe-deals">
+          <div class="recipe-deals-content">
+            <div class="recipe-deals-header">
+              <h2>Related deals:</h2>
+            </div>
+            <div *ngIf="recipes && recipes.length > 0" class="recipe-deals">
+              <ul>
+                <ng-container *ngFor="let ingredient of recipes[currentRecipeIndex].ItemsOnSale">
+                  <li> {{ ingredient.Name }}</li>
+                </ng-container>
+              </ul>
+            </div> 
+          </div>
+        </div>
         <div class="recipe-picture">
           <div *ngIf="recipes && recipes.length > 0" class="recipe-picture">
             {{ recipes[currentRecipeIndex].R.pictureLink }}
