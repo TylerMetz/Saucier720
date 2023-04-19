@@ -3,17 +3,23 @@
     align-items: center;
     flex-direction: column;
     overflow: hidden;
-}
-
-table.table {
     background-color: var(--secondary-color);
     border-radius: 15px;
-    overflow: hidden;
+}
+
+.table {
+    border-radius: 15px;
     display: flex;
     flex-direction: column;
 }
 
+thead {
+  display: flex;
+  align-items: center;
+}
+
 th {
+    flex: 1;
     font-size: large;
     background-color: var(--secondary-color);
     padding: 10px;
@@ -32,10 +38,6 @@ th {
   }
   
   
-  tr:last-child {
-    border-bottom: none;
-  }
-
   tr:last-child {
     border-bottom: none;
   }
