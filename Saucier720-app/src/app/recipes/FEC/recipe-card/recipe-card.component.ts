@@ -52,8 +52,6 @@ export class RecipeCardComponent implements OnInit {
             let recipeStr = JSON.stringify(event.body);
             let parsedRecipes = JSON.parse(recipeStr);
             this.recipes = parsedRecipes;
-            console.log('Parse', parsedRecipes)
-            console.log('Recipes',this.recipes);
             this.currentRecipe = this.recipes[this.currentRecipeIndex];
             this.currentIngredients = this.removeQuotesAndBrackets(this.currentRecipe.R.ingredients);
             console.log(this.currentIngredients)
