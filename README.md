@@ -8,12 +8,24 @@
 2. Riley Cleavenger
 
 ## Project Description
-This web app scrapes weekly deals from groccery store websites, and gives users the most cost-effecient recipes based on filters such as serving size, dietary restrictions, and what ingredients you already have. Users can manage their "pantry" by adding items/ingredients they already own. Prices is calculated based on the needed ingredients, taking into account what the user already has. 
+This web app scrapes weekly deals from groccery store websites, and gives users the most cost-effecient recipes based on filters such as what ingredients you already have. Users can manage their `pantry` by adding ingredients they already own.
 
 # How to Use
-
+1. User first must signup if they do not have an existing account.(for testing use username: ri, password: ri)
+   1. To signup click the signup link on the login page and fill all associated forms with proper inputs
+2. User logs in
+3. Can then navigate to pantry/deals/recipes pages
+4. `Pantry Page Usage`
+   1. The pantry table on the right displays users Ingredients in their pantry
+   2. The form on the left lets users add new ingredients into their pantry
+5. `Deals Page Usage`
+   1. Deals table shows current Ingredients on sale at publix and the deals associated with them
+6. `Recipes Page Usage`
+   1. Recipe card displays the highest scored recipe with the users current pantry and the current deals at Publix
+   2. Can navigate to 29 other recipes with buttons underneath the card
 
 # How to Run
+
 1. Initialize the submodules:
 
     ```
