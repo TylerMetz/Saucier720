@@ -12,6 +12,7 @@ var sessionCookie string
 var cookieChanged bool
 var sessionUser BackendPkg.User
 var programDatabase BackendPkg.Database
+var prevUser BackendPkg.User
 
 func main() {
 
@@ -22,63 +23,38 @@ func main() {
 	CheckIfScrapeNewDeals(programDatabase)
 
 	// create a new context object
-    ctx, _ := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(context.Background())
 
-	// listen for user in a separate goroutine
-    go BackendPkg.ListenForUser(ctx, &sessionCookie, &cookieChanged)
-
-	// determine session user based on cookies
-	sessionUser = programDatabase.UserFromCookie(sessionCookie)
-
-    // call RoutData function with context
-    go BackendPkg.RoutData(ctx, sessionUser)
-
-	select {}
-
-	/*
-	for {
-		if(BackendPkg.Servers == nil){
-			// create a new context with a cancel function
-			ctx, cancel := context.WithCancel(context.Background())
-
-			// reset sessionCookie and cookieChanged bool
-			sessionCookie = ""
-			cookieChange = false
-
-			// run program again
-			go runProgram(&cookieChange, ctx)
-
-			// do nothing while waiting for cookie to be changed
-			for !cookieChange{}
-
-			// cancel all go routines
-			cancel()
-
-			//shutdown all active ListenAndServe functions
-			BackendPkg.ShutdownServers()
-			
-		}
-	*/
-		
-	}
-
-
-func runProgram(cookieChange *bool, ctx context.Context) {
-
-	// wait for user to login and return a cookie
-	go BackendPkg.ListenLogin(&sessionCookie, cookieChange, ctx)
+	// listen for user in a separate goroutine, and wait for session cookie to be defined
+	go BackendPkg.ListenForUser(ctx, &sessionCookie, &cookieChanged)
 	for sessionCookie == "" {}
 
-	// determine session user based on cookies
-	sessionUser = programDatabase.UserFromCookie(sessionCookie)
+	// always check if cookie is changed
+	go func(){
+		for{
+			if(cookieChanged){
+				// determine session user based on cookies
+				for(BackendPkg.CurrentUser.UserName == prevUser.UserName){
+					BackendPkg.CurrentUser = programDatabase.UserFromCookie(sessionCookie)
+				}
+				// store prev user 
+				prevUser = BackendPkg.CurrentUser
 
-	// routs all data
-	go BackendPkg.RoutAllData(programDatabase, sessionUser, ctx)
+				// reset cookie change
+				cookieChanged = false
+			}
+		}
+	}()
+	// rout and listen for all data actively with the defined session user
+	go BackendPkg.RoutData(ctx)
+	go BackendPkg.ListenForData(ctx)
 
-	// listens for data from frontend
-	go BackendPkg.ListenForAllPosts(sessionUser, sessionCookie, ctx)
+	// run infinitely
+	select{}
+
+	cancel()
+	
 }
-
 
 func CheckIfScrapeNewDeals(d BackendPkg.Database){
 
