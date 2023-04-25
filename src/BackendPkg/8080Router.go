@@ -2,7 +2,7 @@ package BackendPkg
 
 import (
 	"encoding/json"
-	"fmt"
+	_"fmt"
 	"net/http"
 
 	_"time"
@@ -25,48 +25,27 @@ var backendDatabase Database
 // ALL ROUTING FUNCTIONS
 
 func handlePantry(response http.ResponseWriter, request *http.Request) {
-
-	jsonResponse, jsonError := json.Marshal(pantryInterface)
-
-	if jsonError != nil {
-		fmt.Println("Unable to encode JSON")
-	}
-
-	// fmt.Println(string(jsonResponse)) // used to test
-
+	// set header and encode items
 	response.Header().Set("Content-Type", "application/json")
-	response.WriteHeader(http.StatusOK)
-	response.Write(jsonResponse)
+	response.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+	response.Header().Set("Access-Control-Allow-Methods", "GET")
+    json.NewEncoder(response).Encode(pantryInterface)
 }
 
 func handleDeals(response http.ResponseWriter, request *http.Request) {
-
-	jsonResponse, jsonError := json.Marshal(dealsInterface)
-
-	if jsonError != nil {
-		fmt.Println("Unable to encode JSON")
-	}
-
-	// fmt.Println(string(jsonResponse)) // used to test
-
+	// set header and encode items
 	response.Header().Set("Content-Type", "application/json")
-	response.WriteHeader(http.StatusOK)
-	response.Write(jsonResponse)
+	response.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+	response.Header().Set("Access-Control-Allow-Methods", "GET")
+    json.NewEncoder(response).Encode(dealsInterface)
 }
 
 func handleRecipes(response http.ResponseWriter, request *http.Request) {
-
-	jsonResponse, jsonError := json.Marshal(recipesInterface)
-
-	if jsonError != nil {
-		fmt.Println("Unable to encode JSON")
-	}
-
-	// fmt.Println(string(jsonResponse)) // used to test
-
+	// set header and encode items
 	response.Header().Set("Content-Type", "application/json")
-	response.WriteHeader(http.StatusOK)
-	response.Write(jsonResponse)
+	response.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+	response.Header().Set("Access-Control-Allow-Methods", "GET")
+	json.NewEncoder(response).Encode(recipesInterface)
 }
 
 func formatData(currUser User){
@@ -100,7 +79,7 @@ func formatData(currUser User){
 	}
 }
 
-func routData(currUser User){
+func RoutData(currUser User){
 
 	// setup all global variables to be routed
 	formatData(currUser)
@@ -121,5 +100,7 @@ func routData(currUser User){
             log.Fatal(err)
         }
     }()
+
+	select {}
 
 }

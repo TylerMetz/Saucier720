@@ -22,6 +22,13 @@ func main() {
 	// runs scraper if new deals at publix
 	CheckIfScrapeNewDeals(programDatabase)
 
+	// for testing
+	sessionUser = programDatabase.UserFromCookie("ri720")
+
+	// new routing fucntion
+	BackendPkg.RoutData(sessionUser)
+	
+	/*
 	for {
 		if(BackendPkg.Servers == nil){
 			// create a new context with a cancel function
@@ -44,9 +51,10 @@ func main() {
 			BackendPkg.ShutdownServers()
 			
 		}
+	*/
 		
 	}
-}
+
 
 func runProgram(cookieChange *bool, ctx context.Context) {
 
