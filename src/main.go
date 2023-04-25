@@ -9,25 +9,32 @@ import (
 
 // global vars
 var sessionCookie string
+var cookieChanged bool
 var sessionUser BackendPkg.User
 var programDatabase BackendPkg.Database
-var cookieChange bool
 
 func main() {
 
 	// Reads recipes dataset in not read in yet and stores in DB
-	//programDatabase.DeleteRecipes()
 	programDatabase.WriteRecipes()
 
 	// runs scraper if new deals at publix
 	CheckIfScrapeNewDeals(programDatabase)
 
-	// for testing
-	sessionUser = programDatabase.UserFromCookie("ri720")
+	// create a new context object
+    ctx, _ := context.WithCancel(context.Background())
 
-	// new routing fucntion
-	BackendPkg.RoutData(sessionUser)
-	
+	// listen for user in a separate goroutine
+    go BackendPkg.ListenForUser(ctx, &sessionCookie, &cookieChanged)
+
+	// determine session user based on cookies
+	sessionUser = programDatabase.UserFromCookie(sessionCookie)
+
+    // call RoutData function with context
+    go BackendPkg.RoutData(ctx, sessionUser)
+
+	select {}
+
 	/*
 	for {
 		if(BackendPkg.Servers == nil){
