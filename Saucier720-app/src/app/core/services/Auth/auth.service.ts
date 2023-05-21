@@ -10,7 +10,7 @@ export class AuthService {
   private validCookie: boolean = false;
 
 
-  private loginUrl: string = 'http://localhost:8084/api/Login';
+  private loginUrl: string = 'http://localhost:8081/api/Login';
   private logoutUrl: string = 'api/Logout'; // we don't have one yet
 
   constructor(private http: HttpClient, private cookieService: CookieService) {
