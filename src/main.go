@@ -4,13 +4,12 @@ import (
 	"BackendPkg"
 	"fmt"
 	"time"
-	"context"
 )
 
 // global vars
 var sessionCookie string
+var prevCookie string
 var cookieChanged bool
-var sessionUser BackendPkg.User
 var programDatabase BackendPkg.Database
 var prevUser BackendPkg.User
 
@@ -22,12 +21,11 @@ func main() {
 	// runs scraper if new deals at publix
 	CheckIfScrapeNewDeals(programDatabase)
 
-	// create a new context object
-	ctx, cancel := context.WithCancel(context.Background())
-
 	// listen for user in a separate goroutine, and wait for session cookie to be defined
-	go BackendPkg.ListenForUser(ctx, &sessionCookie, &cookieChanged)
-	for sessionCookie == "" {}
+	go BackendPkg.ListenForUser(&sessionCookie, &cookieChanged)
+	for sessionCookie == "" && !cookieChanged {}
+
+	
 
 	// always check if cookie is changed
 	go func(){
@@ -36,6 +34,10 @@ func main() {
 				// determine session user based on cookies
 				for(BackendPkg.CurrentUser.UserName == prevUser.UserName){
 					BackendPkg.CurrentUser = programDatabase.UserFromCookie(sessionCookie)
+					if(prevCookie == sessionCookie){
+						BackendPkg.CurrentUser = programDatabase.UserFromCookie(sessionCookie)
+						break;
+					}
 				}
 				// store prev user 
 				prevUser = BackendPkg.CurrentUser
@@ -45,14 +47,23 @@ func main() {
 			}
 		}
 	}()
+
+	
 	// rout and listen for all data actively with the defined session user
-	go BackendPkg.RoutData(ctx)
-	go BackendPkg.ListenForData(ctx)
+	go BackendPkg.RoutData()
+	go BackendPkg.ListenForData()
+
+	// goroutine to set the previous cookie to the session cookie while the session cookie isn't being changed
+	go func(){
+		for{
+			if(!cookieChanged){
+				prevCookie = sessionCookie
+			}
+		}
+	}()
 
 	// run infinitely
-	select{}
-
-	cancel()
+	for{}
 	
 }
 

@@ -4,16 +4,11 @@ import (
 	"encoding/json"
 	_"fmt"
 	"net/http"
-
 	"time"
-	_"github.com/gorilla/mux"
-	_"github.com/rs/cors"
 	"io/ioutil"
 	"log"
 	"sync"
 	"context"
-	//"strings"
-	//"bytes"
 )
 
 // GLOBAL VARIABLES
@@ -79,7 +74,7 @@ func FormatData(){
 	}
 }
 
-func RoutData(ctx context.Context){
+func RoutData(){
 
     // setup all global variables to be routed
 	go func(){
@@ -116,8 +111,6 @@ func RoutData(ctx context.Context){
 			log.Fatalf("listen: %s\n", err)
 		}
 	}()
-
-	<-ctx.Done()
 }
 
 // LISTEN FUNCTIONS
@@ -250,7 +243,7 @@ func handleLogin(w http.ResponseWriter, r *http.Request, sessionCookie *string, 
 
 }
 
-func ListenForUser(ctx context.Context, sessionCookie* string, cookieChanged* bool){
+func ListenForUser(sessionCookie* string, cookieChanged* bool){
 	
 	// handle the listening functions
 	http.HandleFunc("/api/Signup", handleSignup)
@@ -274,8 +267,6 @@ func ListenForUser(ctx context.Context, sessionCookie* string, cookieChanged* bo
 			log.Fatalf("listen: %s\n", err)
 		}
 	}()
-
-	<-ctx.Done()
 
 }
 
@@ -381,7 +372,7 @@ func handleNewPantryItem(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func ListenForData(ctx context.Context){
+func ListenForData(){
 	
 	// handle the listening functions
 	http.HandleFunc("/api/UpdatePantry", func(response http.ResponseWriter, request *http.Request) {
@@ -407,9 +398,9 @@ func ListenForData(ctx context.Context){
 			log.Fatalf("listen: %s\n", err)
 		}
 	}()
-
-	<-ctx.Done()
 }
+
+// SHUTDOWN FUNCTIONS
 
 func ShutdownNewServers() {
     for _, server := range NewServers {
