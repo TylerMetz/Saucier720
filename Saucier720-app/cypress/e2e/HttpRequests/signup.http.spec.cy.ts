@@ -2,7 +2,7 @@
 import faker from 'faker';
 
 context('Pantry Requests', () => {
-  let signupApiUrl = 'http://localhost:8085/api/Signup';
+  let signupApiUrl = 'http://localhost:8081/api/Signup';
   let signupPageUrl = 'http://localhost:4200/Signup';
 
   beforeEach(() => {
