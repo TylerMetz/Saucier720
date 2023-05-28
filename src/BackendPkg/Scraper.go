@@ -5,8 +5,12 @@ import (
 	"runtime"
 	"time"
 	"strings"
+	"io/ioutil"
+	"strconv"
+	"net/http"
 	"github.com/tebeka/selenium"
 	"github.com/tebeka/selenium/chrome"
+	"github.com/PuerkitoBio/goquery"
 )
 
 var UserZipCodePlaceholder string = "32601"
@@ -21,7 +25,7 @@ func (s *Scraper) Scrape() {
 	// scrapes data for all stores
 
 	// scrapes walmart deals
-	s.WalmartScrapeDeals()
+	s.WalmartScrapeDeals2()
 	fmt.Println("Walmart Deals Scraped!")
 
 	// scrapes publix deals
@@ -378,4 +382,47 @@ func (s *Scraper) OrganizePublixDeals(deals string) []FoodItem {
 	// Cleaning up edge case
 	dealSlice = dealSlice[1:]
 	return dealSlice
+}
+
+func (s *Scraper) WalmartScrapeDeals2(){
+	var foodItems []FoodItem
+
+	res, err := http.Get("https://www.walmart.com/browse/grocery-deals/c2hlbGZfaWQ6MjQ1NTI0NQieie?affinityOverride=default")
+	if err != nil {
+		panic(err)
+	}
+	defer res.Body.Close()
+	if res.StatusCode != 200 {
+		panic(fmt.Sprintf("status code error: %d %s", res.StatusCode, res.Status))
+	}
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(string(body))
+
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(body)))
+	if err != nil {
+		panic(err)
+	}
+
+	doc.Find("fmb0 ph1 pa0-xl bb b--near-white w-25").Each(func(i int, s *goquery.Selection) {
+		fmt.Println("found item")
+		title := s.Find("w_iUH7").Text()
+		priceText := s.Find("f2").Text() // gets before decimal point
+		priceText += "."
+		priceText += s.Find("f6 f5-l").Text()
+		priceText = strings.TrimPrefix(priceText, "$") // gets after decimal point
+		price, err := strconv.ParseFloat(priceText, 64)
+		if err != nil {
+			panic(err)
+		}
+		
+		item := FoodItem{Name: title, StoreCost: price}
+		foodItems = append(foodItems, item)
+	})
+
+	fmt.Println(foodItems)
 }
