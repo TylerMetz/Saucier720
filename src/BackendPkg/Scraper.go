@@ -12,18 +12,16 @@ import (
 type Scraper struct {
 	Store                GroceryStore
 	TimeLastDealsScraped time.Time
-	DealsHTML            string
-	InventoryHTML        string
+	PublixHTML            string
+	PublixDeals
+	WalmartDeals 		[]FoodItem
 }
 
 func (s *Scraper) Scrape() {
 
-	// calls function based on store
-	if s.Store.Name == "Publix" {
-		s.PublixScrapeDeals()
-	} else if s.Store.Name == "Walmart" {
-		s.WalmartScrapeDeals()
-	}
+	// scrapes data for all stores
+	s.PublixScrapeDeals()
+	s.WalmartScrapeDeals()
 
 	// saves current time to ref later
 	s.TimeLastDealsScraped = time.Now()
@@ -199,7 +197,7 @@ func (s *Scraper) PublixScrapeDeals() {
 	}
 
 	// saves html from page
-	s.DealsHTML = html
+	s.PublixHTML = html
 	//fmt.Println("Deals Scraped Successfully!")
 
 }
@@ -316,6 +314,37 @@ func (s *Scraper) PublixScrapeInventory() {
 
 func (s *Scraper) WalmartScrapeDeals() {
 	// will scrape entire Walmart inventory
+	url := "https://www.walmart.com/browse/grocery-deals/c2hlbGZfaWQ6MjQ1NTI0NQieie"
+
+	res, _ := http.Get(url)
+	defer res.Body.Close()
+
+	doc, _ := goquery.NewDocumentFromReader(res.Body)
+
+	items := make([]FoodItem, 0)
+
+	doc.Find(".search-result-product-title").Each(func(i int, s *goquery.Selection) {
+		name := strings.TrimSpace(s.Text())
+
+		priceSelection := s.NextFiltered("span.price-group")
+		price := strings.TrimSpace(priceSelection.Find(".price-characteristic").Text())
+		cents := strings.TrimSpace(priceSelection.Find(".price-mantissa").Text())
+		price = price + "." + cents
+
+		saleDetails := strings.TrimSpace(s.NextFiltered(".search-result-product-shelf-tag")).Text()
+
+		salePrice, _ := strconv.ParseFloat(price, 64)
+
+		item := FoodItem{
+			Name:        name,
+			SalePrice:   salePrice,
+			SaleDetails: saleDetails,
+		}
+		items = append(items, item)
+	})
+
+	// store deals to this scraper
+	s.WalmartDeals = items
 }
 
 func (s *Scraper) WalmartScrapeInventory() {
