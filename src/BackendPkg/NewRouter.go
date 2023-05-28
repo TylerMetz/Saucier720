@@ -16,7 +16,7 @@ var pantryInterface []interface{}
 var dealsInterface []interface{}
 var recipesInterface []interface{}
 var backendDatabase Database
-var dataMut sync.Mutex
+var dataMutex sync.Mutex
 var NewServers []*http.Server
 var wait sync.WaitGroup
 var UpdatingPantry bool
