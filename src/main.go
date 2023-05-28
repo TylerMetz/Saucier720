@@ -26,8 +26,6 @@ func main() {
 	go BackendPkg.ListenForUser(&sessionCookie, &cookieChanged)
 	for sessionCookie == "" && !cookieChanged {}
 
-	
-
 	// always check if cookie is changed
 	go func(){
 		for{
@@ -70,6 +68,9 @@ func main() {
 
 func CheckIfScrapeNewDeals(d BackendPkg.Database){
 
+	// for testing
+	d.ClearWalmartDeals()
+
 	// Set the location to Eastern Standard Time (EST)
 	est, _ := time.LoadLocation("America/New_York")
 
@@ -86,13 +87,6 @@ func CheckIfScrapeNewDeals(d BackendPkg.Database){
 		// deletes old weekly deals from .db file
 		d.ClearPublixDeals()
 		d.ClearWalmartDeals()
-
-		// setup user groccery store
-		userStore := BackendPkg.GroceryStore{
-			Name:    "Sample Store",
-			ZipCode: "32601",
-		}
-		programScraper.Store = userStore
 
 		// scrape all data
 		programScraper.Scrape()
