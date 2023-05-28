@@ -387,7 +387,16 @@ func (s *Scraper) OrganizePublixDeals(deals string) []FoodItem {
 func (s *Scraper) WalmartScrapeDeals2(){
 	var foodItems []FoodItem
 
-	res, err := http.Get("https://www.walmart.com/browse/grocery-deals/c2hlbGZfaWQ6MjQ1NTI0NQieie?affinityOverride=default")
+	client := &http.Client{}
+
+	req, err := http.NewRequest("GET", "https://www.walmart.com/blocked?url=L2Jyb3dzZS9ncm9jZXJ5LWRlYWxzL2MyaGxiR1pmYVdRNk1qUTFOVEkwTlFpZWllP2FmZmluaXR5T3ZlcnJpZGU9ZGVmYXVsdA==&uuid=eb4e3a31-fd9d-11ed-9a8c-49434672434c&vid=&g=b", nil)
+	if err != nil {
+		panic(err)
+	}
+
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36")
+
+	res, err := client.Do(req)
 	if err != nil {
 		panic(err)
 	}
@@ -396,20 +405,21 @@ func (s *Scraper) WalmartScrapeDeals2(){
 		panic(fmt.Sprintf("status code error: %d %s", res.StatusCode, res.Status))
 	}
 
+	time.Sleep(10 * time.Second)
+
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		panic(err)
 	}
-
 	fmt.Println(string(body))
 
-	doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(body)))
+	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
 		panic(err)
 	}
 
 	doc.Find("fmb0 ph1 pa0-xl bb b--near-white w-25").Each(func(i int, s *goquery.Selection) {
-		fmt.Println("found item")
+		//fmt.Println("found item")
 		title := s.Find("w_iUH7").Text()
 		priceText := s.Find("f2").Text() // gets before decimal point
 		priceText += "."
