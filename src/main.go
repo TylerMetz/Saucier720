@@ -99,7 +99,7 @@ func CheckIfScrapeNewDeals(d BackendPkg.Database){
 		// Testing to see if we can grab the name and deal from the function 
 		fmt.Println("Finished Scraping")
 
-		testFoodSlice := programScraper.Store.OrganizeDeals(programScraper.DealsHTML)
+		testFoodSlice := programScraper.Store.OrganizeDeals(programScraper.PublixHTML)
 		
 		// store publix data to .db file
 		d.StorePublixDatabase(testFoodSlice)
