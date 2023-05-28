@@ -55,6 +55,63 @@ func (d *Database) ReadPublixDatabase() []FoodItem {
 	return items
 }
 
+func (d *Database) ClearPublixDeals() {
+	// open the database
+	database := d.OpenDatabase()
+
+	// delete the deals table if it exists
+	database.Exec("DROP TABLE IF EXISTS PublixData")
+
+	// delete the deals scraped time if it exists
+	database.Exec("DROP TABLE IF EXISTS DealsScrapedTime")
+}
+
+func (d *Database) StoreWalmartDatabase(f []FoodItem) {
+
+	// calls function to open the database
+	database := d.OpenDatabase()
+
+	// make table for food item data
+	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS WalmartData (Name TEXT PRIMARY KEY, StoreCost REAL, OnSale INTEGER, SalePrice REAL, SaleDetails TEXT, Quantity INTEGER)")
+	statement.Exec()
+
+	// insert into food item table
+	statementTwo, _ := database.Prepare("INSERT OR IGNORE INTO WalmartData (Name, StoreCost, OnSale, SalePrice, SaleDetails, Quantity) VALUES (?, ?, ?, ?, ?, ?)")
+
+	for _, item := range f {
+		statementTwo.Exec(item.Name, item.StoreCost, item.OnSale, item.SalePrice, item.SaleDetails, item.Quantity)
+	}
+}
+
+func (d *Database) ReadWalmartDatabase() []FoodItem {
+	// calls function to open the database
+	database := d.OpenDatabase()
+
+	statement, _ := database.Prepare("SELECT Name, StoreCost, OnSale, SalePrice, SaleDetails, Quantity FROM WalmartData")
+
+	rows, _ := statement.Query()
+
+	var items []FoodItem
+	for rows.Next() {
+		var item FoodItem
+		rows.Scan(&item.Name, &item.StoreCost, &item.OnSale, &item.SalePrice, &item.SaleDetails, &item.Quantity)
+		items = append(items, item)
+	}
+
+	return items
+}
+
+func (d *Database) ClearWalmartDeals() {
+	// open the database
+	database := d.OpenDatabase()
+
+	// delete the deals table if it exists
+	database.Exec("DROP TABLE IF EXISTS WalmartData")
+
+	// delete the deals scraped time if it exists
+	database.Exec("DROP TABLE IF EXISTS DealsScrapedTime")
+}
+
 func (d *Database) ReadUserDatabase(userName string) User {
 	// return user data from a unique username
 	// used to validate password
@@ -177,17 +234,6 @@ func (d *Database) GetUserPantry(userName string) Pantry {
 	}
 
 	return pantry
-}
-
-func (d *Database) ClearPublixDeals() {
-	// open the database
-	database := d.OpenDatabase()
-
-	// delete the deals table if it exists
-	database.Exec("DROP TABLE IF EXISTS PublixData")
-
-	// delete the deals scraped time if it exists
-	database.Exec("DROP TABLE IF EXISTS DealsScrapedTime")
 }
 
 func (d *Database) StoreDealsScrapedTime(t time.Time) {

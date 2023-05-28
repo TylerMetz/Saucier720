@@ -2,7 +2,7 @@ package main
 
 import (
 	"BackendPkg"
-	"fmt"
+	//"fmt"
 	"time"
 )
 
@@ -11,6 +11,7 @@ var sessionCookie string
 var prevCookie string
 var cookieChanged bool
 var programDatabase BackendPkg.Database
+var programScraper BackendPkg.Scraper
 var prevUser BackendPkg.User
 
 func main() {
@@ -84,25 +85,21 @@ func CheckIfScrapeNewDeals(d BackendPkg.Database){
 
 		// deletes old weekly deals from .db file
 		d.ClearPublixDeals()
+		d.ClearWalmartDeals()
 
-		userPublix := BackendPkg.GroceryStore{
-			Name:    "Publix",
+		// setup user groccery store
+		userStore := BackendPkg.GroceryStore{
+			Name:    "Sample Store",
 			ZipCode: "32601",
 		}
-		// setup user groccery store
-		programScraper := BackendPkg.Scraper{
-			Store: userPublix,
-		}
+		programScraper.Store = userStore
+
 		// scrape all data
 		programScraper.Scrape()
-
-		// Testing to see if we can grab the name and deal from the function 
-		fmt.Println("Finished Scraping")
-
-		testFoodSlice := programScraper.Store.OrganizeDeals(programScraper.PublixHTML)
 		
 		// store publix data to .db file
-		d.StorePublixDatabase(testFoodSlice)
+		d.StorePublixDatabase(programScraper.PublixDeals)
+		d.StoreWalmartDatabase(programScraper.WalmartDeals)
 		d.StoreDealsScrapedTime(programScraper.TimeLastDealsScraped)
 	}
 }

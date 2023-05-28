@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"runtime"
 	"time"
-
+	"strconv"
 	"github.com/tebeka/selenium"
 	"github.com/tebeka/selenium/chrome"
 )
@@ -12,16 +12,20 @@ import (
 type Scraper struct {
 	Store                GroceryStore
 	TimeLastDealsScraped time.Time
-	PublixHTML            string
-	PublixDeals
+	PublixDeals			[]FoodItem
 	WalmartDeals 		[]FoodItem
 }
 
 func (s *Scraper) Scrape() {
-
 	// scrapes data for all stores
-	s.PublixScrapeDeals()
+
+	// scraped publix deals
+	//s.PublixScrapeDeals()
+	fmt.Println("Publix Deals Scraped!")
+
+	// scraped walmart deals
 	s.WalmartScrapeDeals()
+	fmt.Println("Walmart Deals Scraped!")
 
 	// saves current time to ref later
 	s.TimeLastDealsScraped = time.Now()
@@ -191,27 +195,33 @@ func (s *Scraper) PublixScrapeDeals() {
 		}
 	}
 
+	// stores expanded deals page html
 	html, err := wd.PageSource()
 	if err != nil {
 		panic(err)
 	}
 
-	// saves html from page
-	s.PublixHTML = html
-	//fmt.Println("Deals Scraped Successfully!")
+	// organize and store publix deals as a slice of FoodItems
+	s.PublixDeals = s.Store.OrganizeDeals(html)
 
 }
 
-// will scrape entire publix inventory
-func (s *Scraper) PublixScrapeInventory() {
-
+func (s *Scraper) WalmartScrapeDeals() {
 	// init chrome driver
 	opts := []selenium.ServiceOption{}
-	service, err := selenium.NewChromeDriverService("src/SeleniumDrivers/chromedriver_mac64/chromedriver", 9515, opts...)
-	if err != nil {
-		panic(err)
+	if runtime.GOOS == "windows" {
+		service, err := selenium.NewChromeDriverService("SeleniumDrivers/chromedriver_win32/chromedriver.exe", 9515, opts...)
+		if err != nil {
+			panic(err)
+		}
+		defer service.Stop()
+	} else {
+		service, err := selenium.NewChromeDriverService("SeleniumDrivers/chromedriver_mac64/chromedriver", 9515, opts...)
+		if err != nil {
+			panic(err)
+		}
+		defer service.Stop()
 	}
-	defer service.Stop()
 
 	// init headless browser
 	caps := selenium.Capabilities{
@@ -225,7 +235,7 @@ func (s *Scraper) PublixScrapeInventory() {
 		},
 	}
 	caps.AddChrome(chromeCaps)
-
+	
 	// run headless chrome browser
 	wd, err := selenium.NewRemote(caps, fmt.Sprintf("http://localhost:%d/wd/hub", 9515))
 	if err != nil {
@@ -233,120 +243,47 @@ func (s *Scraper) PublixScrapeInventory() {
 	}
 	defer wd.Quit()
 
-	// open desired page
-	err = wd.Get("https://www.publix.com/d/all-categories")
+	// Open the Walmart webpage
+	if err := wd.Get("https://www.walmart.com/browse/grocery-deals/c2hlbGZfaWQ6MjQ1NTI0NQieie"); err != nil {
+		panic(err)
+	}
+
+	// Wait for the page to load
+	time.Sleep(5 * time.Second)
+
+	// Find the wrapper containing all the items
+	wrapper, err := wd.FindElement(selenium.ByCSSSelector, "#maincontent > main > div > div > div > div > div.w-100.relative-m.pl4.pr4.flex.pt2 > div.relative.w-80 > div > section > div")
 	if err != nil {
 		panic(err)
 	}
-	time.Sleep(3 * time.Second)
-	fmt.Println("opened inventory page")
 
-	// input desired zipcode
-	inputBoxNewPage, err := wd.FindElement(selenium.ByCSSSelector, "#main > div:nth-child(5) > div > div > div.content.no-padding > div.p-store-locator > div > div > div > form > input[type=search]")
+	// Find all the items within the wrapper
+	items, err := wrapper.FindElements(selenium.ByCSSSelector, ".search-result-gridview-item-wrapper")
 	if err != nil {
 		panic(err)
 	}
-	err = inputBoxNewPage.SendKeys(s.Store.ZipCode)
-	if err != nil {
-		panic(err)
-	} else {
-		fmt.Println("zip inputed")
-	}
 
-	// search for stores
-	searchStoreButtonNewPage, err := wd.FindElement(selenium.ByCSSSelector, "#main > div:nth-child(5) > div > div > div.content.no-padding > div.p-store-locator > div > div > div.search-container > form > button")
-	if err != nil {
-		panic(err)
-	}
-	err = searchStoreButtonNewPage.Click()
-	if err != nil {
-		panic(err)
-	} else {
-		fmt.Println("search button pressed")
-	}
-	time.Sleep(20 * time.Second) // wait for page to load
+	// Iterate over the items and extract the information
+	var foodItems []FoodItem
+	for _, item := range items {
+		nameElem, _ := item.FindElement(selenium.ByCSSSelector, "span span")
+		name, _ := nameElem.Text()
 
-	// select the first store from the results list
-	chooseStoreResultNewPage, err := wd.FindElement(selenium.ByCSSSelector, "#\\31 560 > div > div > div.buttons-links > div.p-button-group__wrapper.buttons-wrapper > div > button")
-	if err != nil {
-		panic(err)
-	}
-	err = chooseStoreResultNewPage.Click()
-	if err != nil {
-		panic(err)
-	} else {
-		fmt.Println("store selected")
-	}
-	time.Sleep(10 * time.Second) // wait for page to load
-
-	// sets InventoryHTML as first page's html
-	html, err := wd.PageSource()
-	if err != nil {
-		panic(err)
-	}
-	// adds this page inventory to the html
-	s.InventoryHTML = html
-
-	fmt.Println(s.InventoryHTML) //used to check if correct page
-
-	morePages := true
-	// loop until all pages are taken in
-	for morePages {
-		nextPageButton, err := wd.FindElement(selenium.ByCSSSelector, "#main > div.search-results-super-container.v4.mar-top-md.search-page-content > div > div.search-content-column > div.card-loader.search-results-section > div:nth-child(2) > nav.pagination.mobile-only.condensed > button:nth-child(3)")
-		err = nextPageButton.Click()
-		if err != nil {
-			// no more pages to load
-			morePages = false
-		} else {
-			// takes in html from page
-			html, err = wd.PageSource()
-			if err != nil {
-				panic(err)
-			}
-			// adds this page inventory to the html
-			s.InventoryHTML += html
-			fmt.Println("Page Done!")
-			time.Sleep(1 * time.Second)
-		}
-	}
-
-}
-
-func (s *Scraper) WalmartScrapeDeals() {
-	// will scrape entire Walmart inventory
-	url := "https://www.walmart.com/browse/grocery-deals/c2hlbGZfaWQ6MjQ1NTI0NQieie"
-
-	res, _ := http.Get(url)
-	defer res.Body.Close()
-
-	doc, _ := goquery.NewDocumentFromReader(res.Body)
-
-	items := make([]FoodItem, 0)
-
-	doc.Find(".search-result-product-title").Each(func(i int, s *goquery.Selection) {
-		name := strings.TrimSpace(s.Text())
-
-		priceSelection := s.NextFiltered("span.price-group")
-		price := strings.TrimSpace(priceSelection.Find(".price-characteristic").Text())
-		cents := strings.TrimSpace(priceSelection.Find(".price-mantissa").Text())
-		price = price + "." + cents
-
-		saleDetails := strings.TrimSpace(s.NextFiltered(".search-result-product-shelf-tag")).Text()
-
+		priceElem, _ := item.FindElement(selenium.ByCSSSelector, "div.flex.flex-wrap.justify-start.items-center.lh-title.mb1.mb0 > div.b.black.lh-copy.f5.f4-l")
+		price, _ := priceElem.Text()
 		salePrice, _ := strconv.ParseFloat(price, 64)
 
-		item := FoodItem{
+		detailsElem, _ := item.FindElement(selenium.ByCSSSelector, "div.gray.mr1.f7.f6-l")
+		details, _ := detailsElem.Text()
+
+		foodItem := FoodItem{
 			Name:        name,
 			SalePrice:   salePrice,
-			SaleDetails: saleDetails,
+			SaleDetails: details,
 		}
-		items = append(items, item)
-	})
+		foodItems = append(foodItems, foodItem)
+	}
 
-	// store deals to this scraper
-	s.WalmartDeals = items
-}
-
-func (s *Scraper) WalmartScrapeInventory() {
-	// will scrape entire Walmart inventory
+	// store deals in scraper class
+	s.WalmartDeals = foodItems
 }
