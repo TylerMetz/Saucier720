@@ -4,13 +4,14 @@ import (
 	"fmt"
 	"runtime"
 	"time"
-	"strconv"
+	"strings"
 	"github.com/tebeka/selenium"
 	"github.com/tebeka/selenium/chrome"
 )
 
+var UserZipCodePlaceholder string = "32601"
+
 type Scraper struct {
-	Store                GroceryStore
 	TimeLastDealsScraped time.Time
 	PublixDeals			[]FoodItem
 	WalmartDeals 		[]FoodItem
@@ -19,13 +20,13 @@ type Scraper struct {
 func (s *Scraper) Scrape() {
 	// scrapes data for all stores
 
-	// scraped publix deals
-	//s.PublixScrapeDeals()
-	fmt.Println("Publix Deals Scraped!")
-
-	// scraped walmart deals
+	// scrapes walmart deals
 	s.WalmartScrapeDeals()
 	fmt.Println("Walmart Deals Scraped!")
+
+	// scrapes publix deals
+	s.PublixScrapeDeals()
+	fmt.Println("Publix Deals Scraped!")
 
 	// saves current time to ref later
 	s.TimeLastDealsScraped = time.Now()
@@ -94,7 +95,7 @@ func (s *Scraper) PublixScrapeDeals() {
 	}
 	if alternateLayout == false {
 		time.Sleep(10 * time.Second)
-		err = inputBox.SendKeys(s.Store.ZipCode)
+		err = inputBox.SendKeys(UserZipCodePlaceholder)
 		if err != nil {
 			panic(err)
 		} else {
@@ -121,7 +122,7 @@ func (s *Scraper) PublixScrapeDeals() {
 		}
 		if !alternateLayoutThree {
 			time.Sleep(10 * time.Second)
-			err = inputBoxTwo.SendKeys(s.Store.ZipCode)
+			err = inputBoxTwo.SendKeys(UserZipCodePlaceholder)
 			// search for stores
 			searchStoreButton, err := wd.FindElement(selenium.ByCSSSelector, "#navBar > div > div.navigation-bar-main > div > div > div.navigation-section.top > div.user-navigation > div > div > div.navigation-sidebar-container > div.navigation-sidebar-body > div > div > div > div > form > button")
 			if err != nil {
@@ -136,7 +137,7 @@ func (s *Scraper) PublixScrapeDeals() {
 		} else {
 			inputBoxThree, err := wd.FindElement(selenium.ByCSSSelector, "#navBar > div > div.navigation-bar-main > div > div > div.navigation-section.top > div.user-navigation > div > div > div.navigation-sidebar-container > div.navigation-sidebar-body > div > div > div > div.search-container > form > input[type=search]")
 			time.Sleep(10 * time.Second)
-			err = inputBoxThree.SendKeys("32601")
+			err = inputBoxThree.SendKeys(UserZipCodePlaceholder)
 			if err != nil {
 				fmt.Println("not third layout")
 			}
@@ -202,7 +203,7 @@ func (s *Scraper) PublixScrapeDeals() {
 	}
 
 	// organize and store publix deals as a slice of FoodItems
-	s.PublixDeals = s.Store.OrganizeDeals(html)
+	s.PublixDeals = s.OrganizePublixDeals(html)
 
 }
 
@@ -235,7 +236,7 @@ func (s *Scraper) WalmartScrapeDeals() {
 		},
 	}
 	caps.AddChrome(chromeCaps)
-	
+
 	// run headless chrome browser
 	wd, err := selenium.NewRemote(caps, fmt.Sprintf("http://localhost:%d/wd/hub", 9515))
 	if err != nil {
@@ -244,46 +245,137 @@ func (s *Scraper) WalmartScrapeDeals() {
 	defer wd.Quit()
 
 	// Open the Walmart webpage
-	if err := wd.Get("https://www.walmart.com/browse/grocery-deals/c2hlbGZfaWQ6MjQ1NTI0NQieie"); err != nil {
+	if err := wd.Get("https://www.walmart.com/browse/grocery-deals/c2hlbGZfaWQ6MjQ1NTI0NQieie?affinityOverride=default"); err != nil {
 		panic(err)
 	}
 
 	// Wait for the page to load
 	time.Sleep(5 * time.Second)
 
-	// Find the wrapper containing all the items
-	wrapper, err := wd.FindElement(selenium.ByCSSSelector, "#maincontent > main > div > div > div > div > div.w-100.relative-m.pl4.pr4.flex.pt2 > div.relative.w-80 > div > section > div")
+	// make pages array
+	pages := make([]string, 0)
+
+	// stores first deals page html
+	
+	html, err := wd.PageSource()
 	if err != nil {
 		panic(err)
 	}
+	pages = append(pages, html)
 
-	// Find all the items within the wrapper
-	items, err := wrapper.FindElements(selenium.ByCSSSelector, ".search-result-gridview-item-wrapper")
-	if err != nil {
-		panic(err)
-	}
-
-	// Iterate over the items and extract the information
-	var foodItems []FoodItem
-	for _, item := range items {
-		nameElem, _ := item.FindElement(selenium.ByCSSSelector, "span span")
-		name, _ := nameElem.Text()
-
-		priceElem, _ := item.FindElement(selenium.ByCSSSelector, "div.flex.flex-wrap.justify-start.items-center.lh-title.mb1.mb0 > div.b.black.lh-copy.f5.f4-l")
-		price, _ := priceElem.Text()
-		salePrice, _ := strconv.ParseFloat(price, 64)
-
-		detailsElem, _ := item.FindElement(selenium.ByCSSSelector, "div.gray.mr1.f7.f6-l")
-		details, _ := detailsElem.Text()
-
-		foodItem := FoodItem{
-			Name:        name,
-			SalePrice:   salePrice,
-			SaleDetails: details,
+	// Keeps hitting next page button until all of the data is loaded
+	moreLoadingNeeded := true
+	// triggers page to load more
+	for moreLoadingNeeded {
+		loadMoreButton, err := wd.FindElement(selenium.ByCSSSelector, "#maincontent > main > div > div > div > div > div:nth-child(8) > nav > ul > li:nth-child(4) > a")
+		if err != nil {
+			moreLoadingNeeded = false
+		} else {
+			_ = loadMoreButton.Click()
+			time.Sleep(3 * time.Second)
+			// stores next deals page html
+			html2, err := wd.PageSource()
+			if err != nil {
+				panic(err)
+			}
+			pages = append(pages, html2)
 		}
-		foodItems = append(foodItems, foodItem)
 	}
 
-	// store deals in scraper class
-	s.WalmartDeals = foodItems
+	fmt.Println(pages)
+
+	//s.WalmartDeals = ???
+}
+
+func FindStart(phrase, s string) (string) {
+    i := strings.Index(s, phrase)
+    if i == -1 {
+        return ""
+    }
+    return s[i:]
+}
+
+func (s *Scraper) OrganizePublixDeals(deals string) []FoodItem {
+	// testing to see what the string reads as 'words'
+	words := strings.Fields(deals)
+	newRange := words[0 : len(words)-1]
+	//count := 0
+	var name string
+	var deal string
+	newStart := 0
+	var countHelp int
+	dealSlice := make([]FoodItem, 0)
+
+	for {
+	
+		var nextStep int = 0
+		// Find item name
+		// Most of the names end after we find the loadinglazy string
+		for i := 0; i < len(newRange); i++ {
+			if newRange[i] == "loading=\"lazy\"" {
+				name = strings.Join(newRange[0:i], " ")
+				newStart = newStart + i
+				break
+			}
+		}
+		// Find item deal
+		// the deal is usually between color--null and span 
+		newRange = words[newStart : len(words)-1]
+		for i := 0; i < len(newRange); i++ {
+			if newRange[i] == "color--null\">" {
+				for j := 0; j < len(newRange); j++ {
+					if newRange[i+j] == "</span>" {
+						countHelp = j
+						break
+					}
+				}
+				deal = strings.Join(newRange[i:i+countHelp], " ")
+				newStart = newStart + i + countHelp
+				newRange = words[newStart : len(words)-1]
+				break
+			}
+		}
+	
+		// clean up
+		deal = deal[14:]
+		name = name[5:]
+		name = name[:len(name)-1]
+
+		if(name == "Paper Coupon"){
+			break
+		}
+		// need to check for interesting deals and clean them into their own spot 
+		//bigDeal := strings.Fields(name)
+		// find next starting point
+		for i:= 0; i < len(newRange); i++ {
+			if newRange[i] == "data-v-cfc9b7ee=\"\""{
+				nextStep++
+			}
+			if(nextStep == 4){
+				newStart = newStart + i
+				newRange = words[newStart + 1: len(words)-1]
+				break
+			}
+			
+		}
+		/*fmt.Println(name)
+		fmt.Println(deal)
+		count++*/
+		
+		item := FoodItem{
+				Name:        name,
+				StoreCost:   100,
+				OnSale:      true,
+				SaleDetails: deal,
+				Quantity:    0,
+		}
+
+		dealSlice = append(dealSlice, item)
+	}
+	//fmt.Print(count)
+	// Once it consistently works, must add each item into the inventory 
+	// Push to database after 
+	// Cleaning up edge case
+	dealSlice = dealSlice[1:]
+	return dealSlice
 }
