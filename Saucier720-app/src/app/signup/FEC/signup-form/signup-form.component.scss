@@ -42,7 +42,7 @@
     padding-right: 3px;
 }
 
-.button {
+button {
     background-color: var(--button-hover-text-color);
     border: none;
     color: var(--button-text-color);
@@ -52,7 +52,7 @@
     font-size: medium;
 }
 
-.button:hover {
+button:hover {
     background-color: var(--button-hover-color);
     color: var(--button-hover-text-color);
 }
