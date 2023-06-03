@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"strconv"
 	"net/http"
+	"os/exec"
 	"github.com/tebeka/selenium"
 	"github.com/tebeka/selenium/chrome"
 	"github.com/PuerkitoBio/goquery"
@@ -25,11 +26,11 @@ func (s *Scraper) Scrape() {
 	// scrapes data for all stores
 
 	// scrapes walmart deals
-	s.WalmartScrapeDeals2()
+	s.WalmartScrapeDealsPy();
 	fmt.Println("Walmart Deals Scraped!")
 
 	// scrapes publix deals
-	s.PublixScrapeDeals()
+	//s.PublixScrapeDeals()
 	fmt.Println("Publix Deals Scraped!")
 
 	// saves current time to ref later
@@ -389,7 +390,7 @@ func (s *Scraper) WalmartScrapeDeals2(){
 
 	client := &http.Client{}
 
-	req, err := http.NewRequest("GET", "https://www.walmart.com/blocked?url=L2Jyb3dzZS9ncm9jZXJ5LWRlYWxzL2MyaGxiR1pmYVdRNk1qUTFOVEkwTlFpZWllP2FmZmluaXR5T3ZlcnJpZGU9ZGVmYXVsdA==&uuid=eb4e3a31-fd9d-11ed-9a8c-49434672434c&vid=&g=b", nil)
+	req, err := http.NewRequest("GET", "https://www.walmart.com/browse/grocery-deals/c2hlbGZfaWQ6MjQ1NTI0NQieie", nil)
 	if err != nil {
 		panic(err)
 	}
@@ -435,4 +436,11 @@ func (s *Scraper) WalmartScrapeDeals2(){
 	})
 
 	fmt.Println(foodItems)
+}
+
+func (s *Scraper) WalmartScrapeDealsPy(){
+	cmd := exec.Command("python3", "WalmartScraper.py")
+	data, _ := cmd.Output()
+	
+	fmt.Printf("Python script output: %s\n", data)
 }
