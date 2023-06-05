@@ -1,0 +1,55 @@
+<div class="form-container">
+    <div class="form">
+        <div class="form-header">
+            <h1>Signup</h1>
+        </div>
+        <div class="form-body">
+            <div class="form-group">
+                <div class="input-field">
+                    <label for="firstName">First Name:</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="firstName" name="firstName" [(ngModel)]="firstName">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="input-field">
+                    <label for="lastName">Last Name:</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="lastName" name="lastName" [(ngModel)]="lastName">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="input-field">
+                    <label for="email">Email:</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="email" name="email" [(ngModel)]="email">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="input-field">
+                    <label for="username">Username:</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="username" name="username" [(ngModel)]="userName">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="input-field">
+                    <label for="password">Password:</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="password" name="password" [(ngModel)]="password">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="signup-button">
+        <button type="button" (click)="signup()">Signup</button>
+    </div>
+    <div class="login-link">
+        Already have an account? <a href="/Login">Log in</a>
+      </div>
+</div>

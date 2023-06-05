@@ -1,11 +1,39 @@
-* {
-    box-sizing: border-box;
-   }
-   
-   body {
-    margin: 0;
-   }
-   
-   a, a:hover, a:focus, a:active {
-    text-decoration: none;
-   }
+:root {
+	--primary-color: #141451;
+	--header-color: #549464;
+	--secondary-color: #f8f0ca;
+	--background-color: #0e3c2c;
+	--text-color: #ec8091;
+	--button-hover-color: var(--text-color);
+	--button-hover-text-color: var(--primary-color);
+  }
+  
+  body {
+	background-color: var(--background-color);
+	color: var(--text-color);
+  }
+  
+  h1, h2, h3 {
+	color: var(--header-color);
+  }
+
+  tr, td {
+	border-color: var(--primary-color);
+  }
+  
+
+  	h {
+    	color: var(--header-color)
+	}
+
+	tr {
+		color: var(--text-color)
+	}
+
+	button {
+		transition: all 0.2s ease-in-out;
+	}
+  
+  
+  /* add more styles as needed */
+  

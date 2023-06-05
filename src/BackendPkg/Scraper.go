@@ -134,7 +134,7 @@ func (s *Scraper) PublixScrapeDeals() {
 		} else {
 			inputBoxThree, err := wd.FindElement(selenium.ByCSSSelector, "#navBar > div > div.navigation-bar-main > div > div > div.navigation-section.top > div.user-navigation > div > div > div.navigation-sidebar-container > div.navigation-sidebar-body > div > div > div > div.search-container > form > input[type=search]")
 			time.Sleep(10 * time.Second)
-			err = inputBoxThree.SendKeys(s.Store.ZipCode)
+			err = inputBoxThree.SendKeys("32601")
 			if err != nil {
 				fmt.Println("not third layout")
 			}

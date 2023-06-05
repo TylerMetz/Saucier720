@@ -1,0 +1,63 @@
+.form {
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: var(--secondary-color);
+    border-radius: 10px;
+}
+
+.form-container {
+    display: flex;
+    align-items: center;
+    margin: 20px;
+    flex-wrap: wrap;
+    flex-direction: column;
+}
+
+.form-header {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.input {
+    padding-right: 40px;
+
+    &-wrapper {
+        display: flex;
+        align-items: center;
+        position: relative;
+    }
+
+    &-field {
+        position: relative;
+        border-radius: 5px;
+        padding: 5px;
+        align-items: center;
+    }
+}
+
+.password-button {
+    position: absolute;
+    right: 0;
+    padding-right: 3px;
+}
+
+button {
+    background-color: var(--button-hover-text-color);
+    border: none;
+    color: var(--button-text-color);
+    padding: 4px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: medium;
+}
+
+button:hover {
+    background-color: var(--button-hover-color);
+    color: var(--button-hover-text-color);
+}
+
+.signup-link {
+    align-self: center;
+    padding: 10px;
+}

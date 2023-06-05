@@ -3,7 +3,8 @@ package BackendPkg
 import (
 	"database/sql"
 	"time"
-
+	"encoding/json"
+	"strings"
 	_ "github.com/mattn/go-sqlite3"
 	//"fmt"
 )
@@ -108,7 +109,7 @@ func (d *Database) StoreUserPantry(u User) {
 	}
 }
 
-func (d *Database) InsertPantryItemPost (u FoodItem){
+func (d *Database) InsertPantryItemPost (currUser User, f FoodItem){
 
 	// calls function to open the database
 	database := d.OpenDatabase()
@@ -117,12 +118,25 @@ func (d *Database) InsertPantryItemPost (u FoodItem){
 	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS UserPantries (UserName TEXT, PantryLastUpdated DATETIME, Name TEXT, StoreCost REAL, OnSale INTEGER, SalePrice REAL, SaleDetails TEXT, Quantity INTEGER, PRIMARY KEY (UserName, Name))")
 	statement.Exec();
 
-	var exampleUser = "RileySmellsLol"
-	var exampleTime = "2023-03-24 22:56:28"
-
 	// insert into food item table
 	statementTwo, _ := database.Prepare("INSERT OR IGNORE INTO UserPantries (UserName, PantryLastUpdated, Name, StoreCost, OnSale, SalePrice, SaleDetails, Quantity) VALUES (?, datetime(?), ?, ?, ?, ?, ?, ?)")
-	statementTwo.Exec(exampleUser, exampleTime, u.Name, u.StoreCost, u.OnSale, u.SalePrice, u.SaleDetails, u.Quantity)
+	statementTwo.Exec(currUser.UserName, time.Now().Format("2006-01-02 15:04:05"), f.Name, f.StoreCost, f.OnSale, f.SalePrice, f.SaleDetails, f.Quantity)
+}
+
+func (d *Database) UpdatePantry(currUser User, f []FoodItem){
+	
+	// calls function to open the database
+	database := d.OpenDatabase()
+
+	// clear all of user's current pantry
+	statementOne, _ := database.Prepare("DELETE FROM UserPantries WHERE UserName = ?")
+	statementOne.Exec(currUser.UserName)
+
+	// insert all items in recieved pantry to user's pantry
+	statementTwo, _ := database.Prepare("INSERT OR IGNORE INTO UserPantries (UserName, PantryLastUpdated, Name, StoreCost, OnSale, SalePrice, SaleDetails, Quantity) VALUES (?, datetime(?), ?, ?, ?, ?, ?, ?)")
+	for _, item := range f {
+		statementTwo.Exec(currUser.UserName, time.Now().Format("2006-01-02 15:04:05"), item.Name, item.StoreCost, item.OnSale, item.SalePrice, item.SaleDetails, item.Quantity)
+	}
 }
 
 func (d *Database) GetUserPantry(userName string) Pantry {
@@ -205,3 +219,136 @@ func (d *Database) ReadDealsScrapedTime() time.Time {
 
 	return dealsLastScraped
 }
+
+func (d* Database) WriteRecipes(){
+	// Read the recipes from the file
+	recipes, _ := GetRecipes()
+
+	// calls function to open the database
+	database := d.OpenDatabase()
+
+	// Create a new table for the recipes
+	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS RecipeData (title TEXT PRIMARY KEY, ingredients TEXT, instructions TEXT)")
+	statement.Exec()
+
+	// Insert each recipe into the table
+	statementTwo, _ := database.Prepare("INSERT OR IGNORE INTO RecipeData (title, ingredients, instructions) values (?, ?, ?)")
+
+	for _, recipe := range recipes {
+		ingredients, _ := json.Marshal(recipe.Ingredients)
+		statementTwo.Exec(recipe.Title, string(ingredients), recipe.Instructions)
+	}
+
+	database.Exec("DELETE FROM RecipeData WHERE ingredients = '[]'")
+
+}
+
+func (d* Database) DeleteRecipes(){
+	// calls function to open the database
+	database := d.OpenDatabase()
+
+	// Create a new table for the recipes
+	statement, _ := database.Prepare("DROP TABLE RecipeData")
+	statement.Exec()
+
+}
+
+func (d* Database) ReadRecipes() []Recipe{
+	// calls function to open the database
+	database := d.OpenDatabase()
+
+	// Execute a SELECT statement to retrieve all rows from the RecipeData table
+	rows, _ := database.Query("SELECT * FROM RecipeData")
+
+	// Iterate through the rows and create a slice of Recipe structs
+	var recipes []Recipe
+	for rows.Next() {
+		var title, ingredientsStr, instructions string
+		rows.Scan(&title, &ingredientsStr, &instructions)
+
+		// Convert the comma-separated list of ingredients to a slice
+		ingredients := strings.Split(ingredientsStr, ",")
+
+		// Create a new Recipe struct and append it to the slice
+		recipe := Recipe{
+			Title:        title,
+			Ingredients:  ingredients,
+			Instructions: instructions,
+		}
+		recipes = append(recipes, recipe)
+	}
+
+	return recipes;
+}
+
+func (d* Database) GetUserPassword(username string) string{
+	database := d.OpenDatabase()
+	var password string 
+
+	stmt, err := database.Prepare("SELECT Password FROM UserData WHERE UserName=?")
+	if err != nil {
+		// handle error
+	}
+	defer stmt.Close()
+
+	row := stmt.QueryRow(username)
+	row.Scan(&password)
+
+	return password
+}
+
+func (d *Database) StoreCookie(username string, cookie string) {
+
+	// calls function to open the database
+	database := d.OpenDatabase()
+
+	// make table for user data
+	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS Cookies (UserName TEXT PRIMARY KEY, Cookie TEXT)")
+	statement.Exec()
+
+	// insert into UserData table
+	statementTwo, _ := database.Prepare("INSERT OR IGNORE INTO Cookies (UserName, Cookie) VALUES (?, ?)")
+
+	// store data from this user into table
+	statementTwo.Exec(username, cookie)
+
+}
+
+func (d *Database) ReadCookie(username string) string {
+	// return user data from a unique username
+	database := d.OpenDatabase()
+
+	var returnCookie string
+	stmt, err := database.Prepare("SELECT Cookie FROM Cookies WHERE UserName=?")
+	if err != nil {
+		// handle error
+	}
+	defer stmt.Close()
+
+	row := stmt.QueryRow(username)
+	row.Scan(&returnCookie)
+
+	return returnCookie
+}
+
+func (d *Database) UserFromCookie(cookie string) User {
+	// return user based off of the cookie
+	database := d.OpenDatabase()
+	var returnUser User
+	var userName string
+	stmt, err := database.Prepare("SELECT UserName FROM Cookies WHERE Cookie=?")
+	if err != nil {
+		// handle error
+	}
+	defer stmt.Close()
+
+	row := stmt.QueryRow(cookie)
+	row.Scan(&userName)
+
+	// grabs the user based of the username
+	returnUser = d.ReadUserDatabase(userName)
+
+	return returnUser
+}
+
+

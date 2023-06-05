@@ -1,0 +1,74 @@
+.card {
+    display: flex;
+	  align-items: center;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: var(--secondary-color);
+}
+.card-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
+    flex-wrap: wrap;
+  }
+
+  .recipe-body {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .recipe-title {
+    text-align: center;
+  }
+
+  .recipe-ingredients-header {
+    text-align: center;
+    /* styles for the recipe ingredients header */
+  }
+
+  .recipe-deals-header {
+    text-align: center;
+  }
+  
+  .recipe-instructions-header {
+    text-align: center;
+    /* styles for the recipe instructions section */
+  }
+  .recipe-pantry-header {
+    text-align: center;
+  }
+
+  .page-number{
+    display: flex;
+    border-radius: 10px;
+    flex-wrap: wrap;
+    padding: 10px;
+    margin: 10px;
+    background-color: var(--secondary-color);
+    color: var(--header-color);
+  }
+
+  .button{
+  display: inline-block;
+  padding: 10px;
+  margin: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--primary-color);
+  color: var(--text--color);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: var(--text-color);
+  color: var(--primary-color);
+}
+
+.button-container{
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-items: auto;
+}

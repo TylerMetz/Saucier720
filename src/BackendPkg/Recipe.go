@@ -1,20 +1,44 @@
 package BackendPkg
 
+import (
+    "encoding/json"
+    //"fmt"
+    "io/ioutil"
+    "strings"
+    //"regexp"
+)
+
 type Recipe struct {
-	// List of steps
-	// List of inegredients
-	Name        string
-	Servings    int
-	Time        int
-	Cost        float64
-	ServingSize int
+    Instructions   string   `json:"instructions"`
+    Ingredients    []string `json:"ingredients"`
+    Title          string   `json:"title"`
+    PictureLink    *string  `json:"picture_link"`
 }
 
-func CalcTotalPrice( /*Need to decide data structure*/ ) float64 {
-	// Calculates total price of a recipe
-	panic("placeholder")
+func GetRecipes() ([]Recipe, error) {
+    file, err := ioutil.ReadFile("recipes.json")
+    if err != nil {
+        return nil, err
+    }
+
+    var recipes map[string]Recipe
+    if err := json.Unmarshal(file, &recipes); err != nil {
+        return nil, err
+    }
+
+    for _, recipe := range recipes {
+        for i, ingredient := range recipe.Ingredients {
+            recipe.Ingredients[i] = strings.ReplaceAll(ingredient, ",", ";")
+        }
+    }
+
+    result := make([]Recipe, 0, len(recipes))
+    for _, recipe := range recipes {
+        result = append(result, recipe)
+    }
+
+    return result, nil
 }
-func CalcServing( /*Need to decide data structure*/ ) float64 {
-	// Calculates total price of a recipe given accounting for size
-	panic("placeholder")
-}
+
+
+

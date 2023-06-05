@@ -1,0 +1,34 @@
+<div class="form-container">
+    <div class="form">
+        <div class="form-header">
+            <h1>Login</h1>
+        </div>
+        <div class="form-body">
+            <div class="form-group">
+                <div class="input-field">
+                    <label for="Username">Username:</label>
+                    <div class="input-wrapper">
+                        <input type="text" placeholder="Username" id="username" name="username"[(ngModel)]="username">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="input-field">
+                    <label for ="Password">Password:</label>
+                    <div class="input-wrapper">
+                        <input [type]="type" placeholder="Password" id="password" name="password"[(ngModel)]="password">
+                        <div class="password-button">
+                            <button type="button" (click)="hideShowPass()" class="fa {{eyeIcon}}"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="submit-button">
+        <button type="submit" (click)="login()">Login</button>
+    </div>
+    <div class="signup-link">
+        Don't have an account? <a href="/Signup">Sign up</a>
+    </div>
+</div>

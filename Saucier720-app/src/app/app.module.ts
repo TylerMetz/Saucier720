@@ -8,6 +8,11 @@ import { SignupComponent } from './signup/signup.component';
 import { DealsTableComponent } from './deals/FEC/deals-table/deals-table.component';
 import { PantryTableComponent } from './pantry/FEC/pantry-table/pantry-table.component';
 import { NewPantryItemButtonComponent } from './pantry/FEC/new-pantry-item-button/new-pantry-item-button.component';
+import { SignupFormComponent } from './signup/FEC/signup-form/signup-form.component';
+import { FormsModule } from '@angular/forms';
+import { RecipeCardComponent } from './recipes/FEC/recipe-card/recipe-card.component';
+import { LoginFormComponent } from './login/FEC/login-form/login-form.component';
+import { SubRecipeComponent } from './recipes/FEC/sub-recipe/sub-recipe.component';
 
 @NgModule({
   declarations: [
@@ -17,12 +22,17 @@ import { NewPantryItemButtonComponent } from './pantry/FEC/new-pantry-item-butto
     SignupComponent,
     DealsTableComponent,
     PantryTableComponent,
-    NewPantryItemButtonComponent
+    NewPantryItemButtonComponent,
+    SignupFormComponent,
+    RecipeCardComponent,
+    LoginFormComponent,
+    SubRecipeComponent
   ],
   imports: [
     AppRoutingModule,
     BrowserModule,
-    HttpClientModule
+    HttpClientModule,
+    FormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

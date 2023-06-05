@@ -6,96 +6,65 @@ import (
 	"time"
 )
 
-func main(){
-	
-	// test food items to test user fxns
-	testFoodItem := BackendPkg.FoodItem{
-		Name:        "peanut butter",
-		StoreCost:   369.99,
-		OnSale:      true,
-		SaleDetails: "BOGO",
-		Quantity:    10,
-	}
-	testFoodItem2 := BackendPkg.FoodItem{
-		Name:        "jelly",
-		StoreCost:   1.0,
-		OnSale:      false,
-		SaleDetails: "N/A",
-		Quantity:    30,
-	}
-	testFoodItem3 := BackendPkg.FoodItem{
-		Name:        "bread",
-		StoreCost:   10.69,
-		OnSale:      true,
-		SaleDetails: "$2 for 2",
-		Quantity:    2,
-	}
-	testUserFoodSlice := []BackendPkg.FoodItem{testFoodItem, testFoodItem2, testFoodItem3}
+// global vars
+var sessionCookie string
+var prevCookie string
+var cookieChanged bool
+var programDatabase BackendPkg.Database
+var prevUser BackendPkg.User
 
-	// test database
-	testDatabase := BackendPkg.Database{
-		Name: "MealDealz Database",
-	}
+func main() {
 
-	// create a test user and store their pantry
-	testUser := BackendPkg.User{
-		FirstName: "Eddie",
-		LastName: "Menello",
-		Email: "Edward@gmail.com",
-		UserName: "Eddiefye69",
-		Password: "ILoveGraham420",
-		UserPantry: BackendPkg.Pantry{
-			FoodInPantry: testUserFoodSlice,
-			TimeLastUpdated: time.Now(),
-		},
-	}
-
-	testUserTwo := BackendPkg.User{
-		FirstName: "Sam",
-		LastName: "Forsnot",
-		Email: "samuel@gmail.com",
-		UserName: "SameHatesBigWordsXXX",
-		Password: "ILoveJess420",
-		UserPantry: BackendPkg.Pantry{
-			FoodInPantry: testUserFoodSlice,
-			TimeLastUpdated: time.Now(),
-		},
-	}
-
-	// store Eddie
-	testDatabase.StoreUserDatabase(testUser)
-	testDatabase.StoreUserPantry(testUser)
-
-	// store Eddie version of Sam
-	testDatabase.StoreUserDatabase(testUserTwo)
-	testDatabase.StoreUserPantry(testUserTwo)
+	// Reads recipes dataset in not read in yet and stores in DB
+	programDatabase.WriteRecipes()
 
 	// runs scraper if new deals at publix
-	CheckIfScrapeNewDeals(testDatabase)
-	
-	// routs deals to deals page
-	go RoutWeeklyDeals(testDatabase)
+	CheckIfScrapeNewDeals(programDatabase)
 
-	// routs Eddie's pantry
-	go RoutUserPantry(testDatabase, testUser)
+	// listen for user in a separate goroutine, and wait for session cookie to be defined
+	go BackendPkg.ListenForUser(&sessionCookie, &cookieChanged)
+	for sessionCookie == "" && !cookieChanged {}
 
 	
-	ListenForPost(testDatabase);
-}
 
-func RoutUserPantry(d BackendPkg.Database, u BackendPkg.User){
+	// always check if cookie is changed
+	go func(){
+		for{
+			if(cookieChanged){
+				// determine session user based on cookies
+				for(BackendPkg.CurrentUser.UserName == prevUser.UserName){
+					BackendPkg.CurrentUser = programDatabase.UserFromCookie(sessionCookie)
+					if(prevCookie == sessionCookie){
+						BackendPkg.CurrentUser = programDatabase.UserFromCookie(sessionCookie)
+						break;
+					}
+				}
+				// store prev user 
+				prevUser = BackendPkg.CurrentUser
+
+				// reset cookie change
+				cookieChanged = false
+			}
+		}
+	}()
+
 	
-	// read from .db file and output test user's pantry to frontend
-	var testFoodInterface []interface{}
-	for i := 0; i < len(d.GetUserPantry(u.UserName).FoodInPantry); i++{
-		testFoodInterface = append(testFoodInterface, d.GetUserPantry(u.UserName).FoodInPantry[i])
-	}
-	// test router
-	programRouter := BackendPkg.Router{
-		Name:             "testRouter",
-		ItemsToBeEncoded: testFoodInterface,
-	}
-	programRouter.Rout("/api/Pantry", ":8080")
+	// rout and listen for all data actively with the defined session user
+	go BackendPkg.RoutData()
+	go BackendPkg.ListenForData()
+
+	// goroutine to set the previous cookie to the session cookie while the session cookie isn't being changed
+	go func(){
+		for{
+			if(!cookieChanged){
+				prevCookie = sessionCookie
+			}
+		}
+	}()
+
+	// run infinitely
+	for{}
+	
 }
 
 func CheckIfScrapeNewDeals(d BackendPkg.Database){
@@ -127,15 +96,8 @@ func CheckIfScrapeNewDeals(d BackendPkg.Database){
 		// scrape all data
 		programScraper.Scrape()
 
-		// print unparsed data
-		//fmt.Println(programScraper.DealsHTML)
-
-		// Takes 48634 'Words' to get to the first items name...
 		// Testing to see if we can grab the name and deal from the function 
 		fmt.Println("Finished Scraping")
-
-		//Print the scraper data
-		//fmt.Println(programScraper.DealsHTML)
 
 		testFoodSlice := programScraper.Store.OrganizeDeals(programScraper.DealsHTML)
 		
@@ -143,31 +105,4 @@ func CheckIfScrapeNewDeals(d BackendPkg.Database){
 		d.StorePublixDatabase(testFoodSlice)
 		d.StoreDealsScrapedTime(programScraper.TimeLastDealsScraped)
 	}
-}
-
-func RoutWeeklyDeals(d BackendPkg.Database){
-	
-	// read from .db file and output test user's pantry to frontend
-	var testFoodInterface []interface{}
-	for i := 0; i < len(d.ReadPublixDatabase()); i++{
-		testFoodInterface = append(testFoodInterface, d.ReadPublixDatabase()[i])
-	}
-	// test router
-	programRouter := BackendPkg.Router{
-		Name:             "testRouter",
-		ItemsToBeEncoded: testFoodInterface,
-	}
-	programRouter.Rout("/api/Deals", ":8081")
-}
-
-func ListenForPost(d BackendPkg.Database){
-	var testFoodInterface2 []interface{}
-	for i := 0; i < len(d.ReadPublixDatabase()); i++{
-		testFoodInterface2 = append(testFoodInterface2, d.ReadPublixDatabase()[i])
-	}
-	programRouter2 := BackendPkg.Router{
-		Name:             "testRouter",
-		ItemsToBeEncoded: testFoodInterface2,
-	}
-	programRouter2.Listen("/api/NewPantryItem", ":8082") //should pass in database here
 }

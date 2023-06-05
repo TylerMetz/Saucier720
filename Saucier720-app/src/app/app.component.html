@@ -1,16 +1,12 @@
-<div class="topnav">
-  <a routerLink="Pantry">Pantry</a>
-  <a routerLink="List">List</a>
-  <a routerLink="Deals">Deals</a>
-  <a routerLink="Recipes">Recipes</a>
-  <b routerLink="Login">Login</b>
-</div>
-<router-outlet></router-outlet>
-<div>
-  <li *ngFor="let post of posts">
-       <a  href="{{post.path}}">  
-           <span  style="font-size: 20px;text-align: center;">{{post.title}}                 
-            </span>
-      </a>
-  </li>
+<div class="page">
+  <div class="topnav">
+    <a routerLink="Pantry" class="nav-link">Pantry</a>
+    <a routerLink="Deals" class="nav-link">Deals</a>
+    <a routerLink="Recipes" class="nav-link">Recipes</a>
+    <b routerLink="Login" class="nav-link">Login</b>
+    <ng-container *ngIf="username">
+      <u>Welcome, {{ username }}</u>
+    </ng-container>
   </div>
+  <router-outlet></router-outlet>
+</div>
