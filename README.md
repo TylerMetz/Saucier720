@@ -72,6 +72,12 @@ This web app scrapes weekly deals from groccery store websites, and gives users 
     ```
     $ go get -u golang.org/x/exp/slices
     ```
+    ```
+    $ pip install bs4
+    ```
+    ```
+    $ pip install selenium
+    ```
     <br>
 
 4. Install Internal Package
