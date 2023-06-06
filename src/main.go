@@ -25,7 +25,7 @@ func main() {
 	// listen for user in a separate goroutine, and wait for session cookie to be defined
 	go BackendPkg.ListenForUser(&sessionCookie, &cookieChanged)
 	for sessionCookie == "" && !cookieChanged {}
-
+	
 	// always check if cookie is changed
 	go func(){
 		for{
