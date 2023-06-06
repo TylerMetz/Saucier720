@@ -5,13 +5,10 @@ import (
 	"runtime"
 	"time"
 	"strings"
-	"io/ioutil"
-	"strconv"
-	"net/http"
 	"os/exec"
+	"strconv"
 	"github.com/tebeka/selenium"
 	"github.com/tebeka/selenium/chrome"
-	"github.com/PuerkitoBio/goquery"
 )
 
 var UserZipCodePlaceholder string = "32601"
@@ -142,7 +139,7 @@ func (s *Scraper) PublixScrapeDeals() {
 		} else {
 			inputBoxThree, err := wd.FindElement(selenium.ByCSSSelector, "#navBar > div > div.navigation-bar-main > div > div > div.navigation-section.top > div.user-navigation > div > div > div.navigation-sidebar-container > div.navigation-sidebar-body > div > div > div > div.search-container > form > input[type=search]")
 			time.Sleep(10 * time.Second)
-			err = inputBoxThree.SendKeys(UserZipCodePlaceholder)
+			err = inputBoxThree.SendKeys("32601")
 			if err != nil {
 				fmt.Println("not third layout")
 			}
@@ -210,86 +207,6 @@ func (s *Scraper) PublixScrapeDeals() {
 	// organize and store publix deals as a slice of FoodItems
 	s.PublixDeals = s.OrganizePublixDeals(html)
 
-}
-
-func (s *Scraper) WalmartScrapeDeals() {
-	// init chrome driver
-	opts := []selenium.ServiceOption{}
-	if runtime.GOOS == "windows" {
-		service, err := selenium.NewChromeDriverService("SeleniumDrivers/chromedriver_win32/chromedriver.exe", 9515, opts...)
-		if err != nil {
-			panic(err)
-		}
-		defer service.Stop()
-	} else {
-		service, err := selenium.NewChromeDriverService("SeleniumDrivers/chromedriver_mac64/chromedriver", 9515, opts...)
-		if err != nil {
-			panic(err)
-		}
-		defer service.Stop()
-	}
-
-	// init headless browser
-	caps := selenium.Capabilities{
-		"browserName": "chrome",
-	}
-	chromeCaps := chrome.Capabilities{
-		Args: []string{
-			"--headless",
-			"--disable-gpu",
-			"--no-sandbox",
-		},
-	}
-	caps.AddChrome(chromeCaps)
-
-	// run headless chrome browser
-	wd, err := selenium.NewRemote(caps, fmt.Sprintf("http://localhost:%d/wd/hub", 9515))
-	if err != nil {
-		panic(err)
-	}
-	defer wd.Quit()
-
-	// Open the Walmart webpage
-	if err := wd.Get("https://www.walmart.com/browse/grocery-deals/c2hlbGZfaWQ6MjQ1NTI0NQieie?affinityOverride=default"); err != nil {
-		panic(err)
-	}
-
-	// Wait for the page to load
-	time.Sleep(5 * time.Second)
-
-	// make pages array
-	pages := make([]string, 0)
-
-	// stores first deals page html
-	
-	html, err := wd.PageSource()
-	if err != nil {
-		panic(err)
-	}
-	pages = append(pages, html)
-
-	// Keeps hitting next page button until all of the data is loaded
-	moreLoadingNeeded := true
-	// triggers page to load more
-	for moreLoadingNeeded {
-		loadMoreButton, err := wd.FindElement(selenium.ByCSSSelector, "#maincontent > main > div > div > div > div > div:nth-child(8) > nav > ul > li:nth-child(4) > a")
-		if err != nil {
-			moreLoadingNeeded = false
-		} else {
-			_ = loadMoreButton.Click()
-			time.Sleep(3 * time.Second)
-			// stores next deals page html
-			html2, err := wd.PageSource()
-			if err != nil {
-				panic(err)
-			}
-			pages = append(pages, html2)
-		}
-	}
-
-	fmt.Println(pages)
-
-	//s.WalmartDeals = ???
 }
 
 func FindStart(phrase, s string) (string) {
@@ -385,62 +302,33 @@ func (s *Scraper) OrganizePublixDeals(deals string) []FoodItem {
 	return dealSlice
 }
 
-func (s *Scraper) WalmartScrapeDeals2(){
-	var foodItems []FoodItem
-
-	client := &http.Client{}
-
-	req, err := http.NewRequest("GET", "https://www.walmart.com/browse/grocery-deals/c2hlbGZfaWQ6MjQ1NTI0NQieie", nil)
-	if err != nil {
-		panic(err)
-	}
-
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36")
-
-	res, err := client.Do(req)
-	if err != nil {
-		panic(err)
-	}
-	defer res.Body.Close()
-	if res.StatusCode != 200 {
-		panic(fmt.Sprintf("status code error: %d %s", res.StatusCode, res.Status))
-	}
-
-	time.Sleep(10 * time.Second)
-
-	body, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(string(body))
-
-	doc, err := goquery.NewDocumentFromReader(res.Body)
-	if err != nil {
-		panic(err)
-	}
-
-	doc.Find("fmb0 ph1 pa0-xl bb b--near-white w-25").Each(func(i int, s *goquery.Selection) {
-		//fmt.Println("found item")
-		title := s.Find("w_iUH7").Text()
-		priceText := s.Find("f2").Text() // gets before decimal point
-		priceText += "."
-		priceText += s.Find("f6 f5-l").Text()
-		priceText = strings.TrimPrefix(priceText, "$") // gets after decimal point
-		price, err := strconv.ParseFloat(priceText, 64)
-		if err != nil {
-			panic(err)
-		}
-		
-		item := FoodItem{Name: title, StoreCost: price}
-		foodItems = append(foodItems, item)
-	})
-
-	fmt.Println(foodItems)
-}
-
 func (s *Scraper) WalmartScrapeDealsPy(){
+	// run Python script to scrape Walmart deals
 	cmd := exec.Command("python3", "WalmartScraper.py")
-	data, _ := cmd.Output()
+	output, _ := cmd.Output()
 	
-	fmt.Printf("Python script output: %s\n", data)
+	// parse output into FoodItems
+	lines := strings.Split(string(output), "\n")
+	products := make([]FoodItem, 0)
+
+	for i := 0; i < len(lines)-1; i += 3 {
+		// if statement to filter out items that are incorrectly scraped without a decimal
+		price, _ := strconv.Atoi(strings.TrimPrefix(lines[i+1], "Price: $"))
+		if (price < 100) && (strings.TrimPrefix(lines[i+1], "Price: $")[0] != '0'){
+			product := FoodItem{
+				Name:  strings.TrimPrefix(lines[i], "Product: "),
+				SaleDetails: strings.TrimPrefix(lines[i+1], "Price: "),
+			}
+			products = append(products, product)
+		} else if strings.TrimPrefix(lines[i+1], "Price: $")[0:3] == "0.0"{
+			product := FoodItem{
+				Name:  strings.TrimPrefix(lines[i], "Product: "),
+				SaleDetails: strings.TrimPrefix(lines[i+1], "Price: "),
+			}
+			products = append(products, product)
+		}
+	}
+
+	// store products in Scraper struct
+	s.WalmartDeals = products
 }
