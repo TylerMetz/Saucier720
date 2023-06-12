@@ -77,6 +77,8 @@ func CheckIfScrapeNewDeals(d BackendPkg.Database){
 	// Get the current time in EST
 	now := time.Now().In(est)
 
+	// need to add walmart reset time
+	
 	// Get the previous Thursday at 8am EST
 	previousThursday := now.AddDate(0, 0, -int(now.Weekday()+3)%7)
 	previousThursday8am := time.Date(previousThursday.Year(), previousThursday.Month(), previousThursday.Day(), 8, 0, 0, 0, est)
