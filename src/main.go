@@ -2,7 +2,7 @@ package main
 
 import (
 	"BackendPkg"
-	//"fmt"
+	"fmt"
 	"time"
 )
 
@@ -20,7 +20,7 @@ func main() {
 	programDatabase.WriteRecipes()
 
 	// runs scraper if new deals at publix
-	CheckIfScrapeNewDeals(programDatabase)
+	programScraper.CheckIfScrapeNewDeals(programDatabase)
 
 	// listen for user in a separate goroutine, and wait for session cookie to be defined
 	go BackendPkg.ListenForUser(&sessionCookie, &cookieChanged)
@@ -64,38 +64,4 @@ func main() {
 	// run infinitely
 	for{}
 	
-}
-
-func CheckIfScrapeNewDeals(d BackendPkg.Database){
-
-	// for testing
-	d.ClearWalmartDeals()
-
-	// Set the location to Eastern Standard Time (EST)
-	est, _ := time.LoadLocation("America/New_York")
-
-	// Get the current time in EST
-	now := time.Now().In(est)
-
-	// need to add walmart reset time
-	
-	// Get the previous Thursday at 8am EST
-	previousThursday := now.AddDate(0, 0, -int(now.Weekday()+3)%7)
-	previousThursday8am := time.Date(previousThursday.Year(), previousThursday.Month(), previousThursday.Day(), 8, 0, 0, 0, est)
-
-	// Check if scrapeTime occurred before the previous Thursday at 8am EST
-	if d.ReadDealsScrapedTime().In(est).Before(previousThursday8am) {
-
-		// deletes old weekly deals from .db file
-		d.ClearPublixDeals()
-		d.ClearWalmartDeals()
-
-		// scrape all data
-		programScraper.Scrape()
-		
-		// store publix data to .db file
-		d.StorePublixDatabase(programScraper.PublixDeals)
-		d.StoreWalmartDatabase(programScraper.WalmartDeals)
-		d.StoreDealsScrapedTime(programScraper.TimeLastDealsScraped)
-	}
 }
