@@ -19,19 +19,52 @@ type Scraper struct {
 	WalmartDeals 		[]FoodItem
 }
 
-func (s *Scraper) Scrape() {
-	// scrapes data for all stores
+func (s *Scraper)CheckIfScrapeNewDeals(d Database){
 
-	// scrapes walmart deals
-	s.WalmartScrapeDealsPy();
-	fmt.Println("Walmart Deals Scraped!")
+	// EST
+	location, _ := time.LoadLocation("America/New_York")
 
-	// scrapes publix deals
-	//s.PublixScrapeDeals()
-	fmt.Println("Publix Deals Scraped!")
+	// create a time object for last Thurday at 8am
+	daysToSubtract := (int(time.Now().Weekday()) - 4 + 7) % 7
+	previousThursday := time.Now().AddDate(0, 0, -daysToSubtract)
+	previousThursday8am := time.Date(previousThursday.Year(), previousThursday.Month(), previousThursday.Day(), 8, 0, 0, 0, location)
 
-	// saves current time to ref later
-	s.TimeLastDealsScraped = time.Now()
+	// Check if last Publix scrape occurred before the previous Thursday at 8am EST
+	if d.ReadPublixScrapedTime().In(location).Before(previousThursday8am) {
+
+		// deletes old weekly deals from .db file
+		d.ClearPublixDeals()
+		d.ClearWalmartDeals()
+
+		// scrape publix data
+		s.PublixScrapeDeals()
+		fmt.Println("Publix Deals Scraped!")
+		
+		// store publix data to .db file
+		d.StorePublixDatabase(s.PublixDeals)
+		d.StorePubixScrapedTime(time.Now())
+		
+	}
+
+	// create a time object for the first of the current month
+	year, month, _ := time.Now().Date()
+	firstDayOfMonth := time.Date(year, month, 1, 0, 0, 0, 0, location)
+
+	// check if last Walmart scrape occured over a month ago
+	if d.ReadWalmartScrapedTime().In(location).Before(firstDayOfMonth) {
+		
+		// deletes old weekly deals from .db file
+		d.ClearWalmartDeals()
+
+		// scrape walmart data
+		s.WalmartScrapeDealsPy();
+		fmt.Println("Walmart Deals Scraped!")
+
+		// store walmart data to .db file
+		d.StoreWalmartDatabase(s.WalmartDeals)
+		d.StoreWalmartScrapedTime(time.Now())
+
+	}
 }
 
 func (s *Scraper) PublixScrapeDeals() {
