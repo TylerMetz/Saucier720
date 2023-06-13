@@ -56,9 +56,9 @@ func RoutData(){
 		for{
 			if (!UpdatingData) {UpdateAllData()}
 		}
+		
 	}()
-	
-    
+	 
     // create server
     server := &http.Server{
         Addr: ":8080",
@@ -379,21 +379,7 @@ func handleNewDealsStore(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	UpdatingData = true
-	// determine which store to take deals from
-	if StoreSelection == "Publix"{
-		StoreDeals = backendDatabase.ReadPublixDatabase() 
-	} else if StoreSelection == "Walmart"{
-		StoreDeals = backendDatabase.ReadWalmartDatabase()
-	}
-	UpdatingData = false
-
-	// set all deals to global variable
-	var dealsInterfaceRefresh []interface{}
-	dealsInterface = dealsInterfaceRefresh
-	for i := 0; i < len(StoreDeals); i++{
-		dealsInterface = append(dealsInterface, StoreDeals[i])
-	}
+	StoreSelection = storeChange.Store.Name
 
 	// write a successful header
 	w.WriteHeader(http.StatusOK)
@@ -440,14 +426,15 @@ func ListenForData(){
 // DATA UPDATE FUNCTIONS
 
 func UpdateDealsData(){
-
 	// determine which store to take deals from
 	if StoreSelection == "Publix"{
 		StoreDeals = backendDatabase.ReadPublixDatabase() 
 	} else if StoreSelection == "Walmart"{
 		StoreDeals = backendDatabase.ReadWalmartDatabase()
 	}
-	UpdatingData = false
+
+	// lock the deals data
+	dataMutex.Lock()
 
 	// set all deals to global variable
 	var dealsInterfaceRefresh []interface{}
@@ -456,6 +443,8 @@ func UpdateDealsData(){
 		dealsInterface = append(dealsInterface, StoreDeals[i])
 	}
 
+	// unlock the data
+	dataMutex.Unlock()
 }
 
 func UpdatePantryData(){
@@ -476,15 +465,25 @@ func UpdatePantryData(){
 func UpdateRecipeData(){
 	// save all recipes data to global variable
 	userRecList := BestRecipes(backendDatabase.GetUserPantry(CurrentUser.UserName), backendDatabase.ReadRecipes(), StoreDeals)
+
+	// lock the recipe data
+	dataMutex.Lock()
+
 	var recipesInterfaceRefresh []interface{}
 	recipesInterface = recipesInterfaceRefresh
 	for i := 0; i < len(userRecList); i++ {
 		// sends recipes, items in recipe, and deals related 
 		recipesInterface = append(recipesInterface, userRecList[i])
 	}
+
+	// unlock the data
+	dataMutex.Unlock()
 }
 
 func UpdateAllData(){
+	// wait if any data is being altered
+	for UpdatingData {}
+
 	// updates all data that's being routed
 	UpdatePantryData()
 	UpdateRecipeData()

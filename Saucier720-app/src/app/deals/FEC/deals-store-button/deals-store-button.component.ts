@@ -25,6 +25,7 @@ export class DealsStoreButtonComponent {
     try {
       const response = await lastValueFrom(this.dealsService.postStore(newStore));
       console.log(response);
+      window.location.reload();
     } catch (error) {
       console.error(error);
     }
