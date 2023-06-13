@@ -37,7 +37,7 @@ func (s *Scraper)CheckIfScrapeNewDeals(d Database){
 		d.ClearWalmartDeals()
 
 		// scrape publix data
-		s.PublixScrapeDeals()
+		// s.PublixScrapeDeals()
 		fmt.Println("Publix Deals Scraped!")
 		
 		// store publix data to .db file
@@ -292,9 +292,13 @@ func (s *Scraper) OrganizePublixDeals(deals string) []FoodItem {
 		}
 	
 		// clean up
-		deal = deal[14:]
-		name = name[5:]
-		name = name[:len(name)-1]
+		if len(deal) > 14{
+			deal = deal[14:]
+		}
+		if len(name) > 5{
+			name = name[5:]
+			name = name[:len(name)-1]
+		}
 
 		if(name == "Paper Coupon"){
 			break
