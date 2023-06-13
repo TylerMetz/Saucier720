@@ -2,7 +2,6 @@ package BackendPkg
 
 import (
 	"encoding/json"
-	_"fmt"
 	"net/http"
 	"time"
 	"io/ioutil"
@@ -22,8 +21,9 @@ var wait sync.WaitGroup
 var UpdatingData bool
 var CurrentUser User
 var StoreSelection string = "Walmart" // set to Walmart by default (temp)
+var StoreDeals []FoodItem
 
-// ALL ROUTING FUNCTIONS
+// ROUTING FUNCTIONS
 
 func handlePantry(response http.ResponseWriter, request *http.Request) {
 	// set header and encode items
@@ -49,55 +49,15 @@ func handleRecipes(response http.ResponseWriter, request *http.Request) {
 	json.NewEncoder(response).Encode(recipesInterface)
 }
 
-func FormatData(){
-
-	// lock the user pantry data
-	dataMutex.Lock()
-
-	// save all user pantry data to global variable
-	var pantryInterfaceRefresh []interface{}
-	pantryInterface = pantryInterfaceRefresh
-	for i := 0; i < len(backendDatabase.GetUserPantry(CurrentUser.UserName).FoodInPantry); i++{
-		pantryInterface = append(pantryInterface, backendDatabase.GetUserPantry(CurrentUser.UserName).FoodInPantry[i])
-	}
-
-	// unlock the data
-	dataMutex.Unlock()
-
-	// determine which store to take deals from
-	var storeDeals []FoodItem
-	if StoreSelection == "Publix"{
-		storeDeals = backendDatabase.ReadPublixDatabase() 
-	} else if StoreSelection == "Walmart"{
-		storeDeals = backendDatabase.ReadWalmartDatabase()
-	}
-
-	// save all recipes data to global variable
-	userRecList := BestRecipes(backendDatabase.GetUserPantry(CurrentUser.UserName), backendDatabase.ReadRecipes(), storeDeals)
-	var recipesInterfaceRefresh []interface{}
-	recipesInterface = recipesInterfaceRefresh
-	for i := 0; i < len(userRecList); i++ {
-		// sends recipes, items in recipe, and deals related 
-		recipesInterface = append(recipesInterface, userRecList[i])
-	}
-
-	// set all deals to global variable
-	var dealsInterfaceRefresh []interface{}
-	dealsInterface = dealsInterfaceRefresh
-	for i := 0; i < len(storeDeals); i++{
-		dealsInterface = append(dealsInterface, storeDeals[i])
-	}
-}
-
 func RoutData(){
 
     // setup all global variables to be routed
 	go func(){
-		// infinitely write pantry and recipe data
 		for{
-			if(!UpdatingData){FormatData()}
+			if (!UpdatingData) {UpdateAllData()}
 		}
 	}()
+	
     
     // create server
     server := &http.Server{
@@ -326,7 +286,7 @@ func handlePantryUpdate(w http.ResponseWriter, r *http.Request) {
 	// if the header was successful, change the recipe data
 	if http.StatusOK == 200 {
 		// get new data for routing
-		FormatData()
+		UpdateAllData()
 	}
 
 }
@@ -377,7 +337,7 @@ func handleNewPantryItem(w http.ResponseWriter, r *http.Request) {
 	// if the header was successful, change the recipe data
 	if http.StatusOK == 200 {
 		// get new data for routing
-		FormatData()
+		UpdateAllData()
 	}
 
 }
@@ -404,10 +364,13 @@ func handleNewDealsStore(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
 	// define type to match JSON data from frontend
-	type Store struct {
-		Name string `json:"store"`
+	type Store struct{
+		Name string `json:"Name"`
 	}
-	var storeChange Store
+	type DealsStore struct {
+		Store Store `json:"store"`
+	}
+	var storeChange DealsStore
 
 	// unmarshal JSON data
 	err = json.Unmarshal(body, &storeChange)
@@ -416,10 +379,21 @@ func handleNewDealsStore(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// update the current user's pantry
 	UpdatingData = true
-	StoreSelection = storeChange.Name
+	// determine which store to take deals from
+	if StoreSelection == "Publix"{
+		StoreDeals = backendDatabase.ReadPublixDatabase() 
+	} else if StoreSelection == "Walmart"{
+		StoreDeals = backendDatabase.ReadWalmartDatabase()
+	}
 	UpdatingData = false
+
+	// set all deals to global variable
+	var dealsInterfaceRefresh []interface{}
+	dealsInterface = dealsInterfaceRefresh
+	for i := 0; i < len(StoreDeals); i++{
+		dealsInterface = append(dealsInterface, StoreDeals[i])
+	}
 
 	// write a successful header
 	w.WriteHeader(http.StatusOK)
@@ -427,7 +401,7 @@ func handleNewDealsStore(w http.ResponseWriter, r *http.Request) {
 	// if the header was successful, change the recipe data
 	if http.StatusOK == 200 {
 		// get new data for routing
-		FormatData()
+		UpdateAllData()
 	}
 
 }
@@ -461,6 +435,60 @@ func ListenForData(){
 			log.Fatalf("listen: %s\n", err)
 		}
 	}()
+}
+
+// DATA UPDATE FUNCTIONS
+
+func UpdateDealsData(){
+
+	// determine which store to take deals from
+	if StoreSelection == "Publix"{
+		StoreDeals = backendDatabase.ReadPublixDatabase() 
+	} else if StoreSelection == "Walmart"{
+		StoreDeals = backendDatabase.ReadWalmartDatabase()
+	}
+	UpdatingData = false
+
+	// set all deals to global variable
+	var dealsInterfaceRefresh []interface{}
+	dealsInterface = dealsInterfaceRefresh
+	for i := 0; i < len(StoreDeals); i++{
+		dealsInterface = append(dealsInterface, StoreDeals[i])
+	}
+
+}
+
+func UpdatePantryData(){
+	// lock the user pantry data
+	dataMutex.Lock()
+
+	// save all user pantry data to global variable
+	var pantryInterfaceRefresh []interface{}
+	pantryInterface = pantryInterfaceRefresh
+	for i := 0; i < len(backendDatabase.GetUserPantry(CurrentUser.UserName).FoodInPantry); i++{
+		pantryInterface = append(pantryInterface, backendDatabase.GetUserPantry(CurrentUser.UserName).FoodInPantry[i])
+	}
+
+	// unlock the data
+	dataMutex.Unlock()
+}
+
+func UpdateRecipeData(){
+	// save all recipes data to global variable
+	userRecList := BestRecipes(backendDatabase.GetUserPantry(CurrentUser.UserName), backendDatabase.ReadRecipes(), StoreDeals)
+	var recipesInterfaceRefresh []interface{}
+	recipesInterface = recipesInterfaceRefresh
+	for i := 0; i < len(userRecList); i++ {
+		// sends recipes, items in recipe, and deals related 
+		recipesInterface = append(recipesInterface, userRecList[i])
+	}
+}
+
+func UpdateAllData(){
+	// updates all data that's being routed
+	UpdatePantryData()
+	UpdateRecipeData()
+	UpdateDealsData()
 }
 
 // SHUTDOWN FUNCTIONS

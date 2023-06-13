@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"strings"
 	_ "github.com/mattn/go-sqlite3"
-	//"fmt"
+	"log"
 )
 
 type Database struct {
@@ -63,7 +63,7 @@ func (d *Database) ClearPublixDeals() {
 	database.Exec("DROP TABLE IF EXISTS PublixData")
 
 	// delete the deals scraped time if it exists
-	database.Exec("DROP TABLE IF EXISTS DealsScrapedTime")
+	database.Exec("DROP TABLE IF EXISTS PublixDealsScrapedTime")
 }
 
 func (d *Database) StoreWalmartDatabase(f []FoodItem) {
@@ -87,14 +87,29 @@ func (d *Database) ReadWalmartDatabase() []FoodItem {
 	// calls function to open the database
 	database := d.OpenDatabase()
 
-	statement, _ := database.Prepare("SELECT Name, StoreCost, OnSale, SalePrice, SaleDetails, Quantity FROM WalmartData")
+	statement, err := database.Prepare("SELECT Name, StoreCost, OnSale, SalePrice, SaleDetails, Quantity FROM WalmartData")
+	if err != nil {
+		// handle the error, e.g., log or return an empty list
+		log.Println("Failed to prepare statement:", err)
+		return []FoodItem{}
+	}
 
-	rows, _ := statement.Query()
+	rows, err := statement.Query()
+	if err != nil {
+		// handle the error, e.g., log or return an empty list
+		log.Println("Failed to execute query:", err)
+		return []FoodItem{}
+	}
 
 	var items []FoodItem
 	for rows.Next() {
 		var item FoodItem
-		rows.Scan(&item.Name, &item.StoreCost, &item.OnSale, &item.SalePrice, &item.SaleDetails, &item.Quantity)
+		err := rows.Scan(&item.Name, &item.StoreCost, &item.OnSale, &item.SalePrice, &item.SaleDetails, &item.Quantity)
+		if err != nil {
+			// handle the error, e.g., log or skip this row
+			log.Println("Failed to scan row:", err)
+			continue
+		}
 		items = append(items, item)
 	}
 
@@ -109,7 +124,7 @@ func (d *Database) ClearWalmartDeals() {
 	database.Exec("DROP TABLE IF EXISTS WalmartData")
 
 	// delete the deals scraped time if it exists
-	database.Exec("DROP TABLE IF EXISTS DealsScrapedTime")
+	database.Exec("DROP TABLE IF EXISTS WalmartDealsScrapedTime")
 }
 
 func (d *Database) ReadUserDatabase(userName string) User {
@@ -241,11 +256,11 @@ func (d *Database) StorePubixScrapedTime(t time.Time) {
 	database := d.OpenDatabase()
 
 	// make table for user data
-	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS DealsScrapedTime (DealsLastScraped DATETIME PRIMARY KEY)")
+	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS PublixDealsScrapedTime (DealsLastScraped DATETIME PRIMARY KEY)")
 	statement.Exec()
 
 	// insert into UserData table
-	statementTwo, _ := database.Prepare("INSERT INTO DealsScrapedTime (DealsLastScraped) VALUES (?)")
+	statementTwo, _ := database.Prepare("INSERT INTO PublixDealsScrapedTime (DealsLastScraped) VALUES (?)")
 
 	// store data from this user into table
 	statementTwo.Exec(t.Format("2006-01-02 15:04:05"))
@@ -256,7 +271,7 @@ func (d *Database) ReadPublixScrapedTime() time.Time {
 	database := d.OpenDatabase()
 
 	// make a query to return the last scrape time value
-	row := database.QueryRow("SELECT DealsLastScraped FROM DealsScrapedTime")
+	row := database.QueryRow("SELECT DealsLastScraped FROM PublixDealsScrapedTime")
 	var dealsLastScrapedStr string
 	row.Scan(&dealsLastScrapedStr)
 

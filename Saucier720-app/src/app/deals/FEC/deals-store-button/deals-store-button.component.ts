@@ -4,6 +4,7 @@ import { PANTRY } from 'src/app/mocks/pantry.mock';
 import { lastValueFrom } from 'rxjs';
 import { Store } from 'src/app/core/interfaces/store';
 
+
 @Component({
   selector: 'app-deals-store-button',
   templateUrl: './deals-store-button.component.html',
@@ -16,9 +17,9 @@ export class DealsStoreButtonComponent {
 
   constructor(private dealsService: DealsService) { }
 
-  async postStore() {
+  async postStore(storeName: string) {
     const newStore: Store = {
-      Name: this.name,
+      Name: storeName,
     };
     console.log(newStore)
     try {
