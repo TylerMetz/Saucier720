@@ -22,6 +22,9 @@ export class NewPantryItemButtonComponent {
   constructor(private pantryService: PantryService) { }
 
   async postPantryItem() {
+    if(!this.name){
+      return; // Won't post if empty 
+    }
     const newPantryItem: Ingredient = {
       Name: this.name,
       StoreCost: this.storeCost,
