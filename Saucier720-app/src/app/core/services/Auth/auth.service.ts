@@ -11,7 +11,7 @@ export class AuthService {
 
 
   private loginUrl: string = 'http://localhost:8081/api/Login';
-  private logoutUrl: string = 'api/Logout'; // we don't have one yet
+  private logoutUrl: string = 'http://localhost:8081/api/Logout';
 
   constructor(private http: HttpClient, private cookieService: CookieService) {
     this.validCookie = this.cookieService.check('sessionID');
@@ -31,7 +31,9 @@ export class AuthService {
 
   public logout(): Observable<any> {
     this.loggedIn = false;
-    return this.http.post(this.logoutUrl, {});
+    this.cookieService.delete('sessionID');
+    console.log("post req sending");
+    return this.http.post(this.logoutUrl, { });
   }
 
   public isLoggedIn(): boolean {

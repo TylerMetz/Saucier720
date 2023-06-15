@@ -25,7 +25,6 @@ export class DealsService {
   postStore(store: Store) {
     const headers = new HttpHeaders({ 
       'Content-Type': 'application/json', 
-      'Cookie': this.cookieService.get('sessionID') // Set the cookie value in the header
     });
   
     const body = { store };
