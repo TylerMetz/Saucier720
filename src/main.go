@@ -17,11 +17,11 @@ func main() {
 	// Reads recipes dataset in not read in yet and stores in DB
 	programDatabase.WriteRecipes()
 
-	// runs scraper if new deals at publix
+	// runs scraper if new deals at publix or walmart
 	programScraper.CheckIfScrapeNewDeals(programDatabase)
 
 	// listen for user in a separate goroutine, and wait for session cookie to be defined
-	go BackendPkg.ListenForUser(&sessionCookie, &cookieChanged)
+	go BackendPkg.ListenUserInfo(&sessionCookie, &cookieChanged)
 	for sessionCookie == "" && !cookieChanged {}
 	
 	// always check if cookie is changed
@@ -30,10 +30,12 @@ func main() {
 			if(cookieChanged){
 				// determine session user based on cookies
 				for(BackendPkg.CurrentUser.UserName == prevUser.UserName){
-					BackendPkg.CurrentUser = programDatabase.UserFromCookie(sessionCookie)
-					if(prevCookie == sessionCookie){
+					if sessionCookie != "" {
 						BackendPkg.CurrentUser = programDatabase.UserFromCookie(sessionCookie)
-						break;
+						if(prevCookie == sessionCookie){
+							BackendPkg.CurrentUser = programDatabase.UserFromCookie(sessionCookie)
+							break;
+						}
 					}
 				}
 				// store prev user 
@@ -45,7 +47,6 @@ func main() {
 		}
 	}()
 
-	
 	// rout and listen for all data actively with the defined session user
 	go BackendPkg.RoutData()
 	go BackendPkg.ListenForData()
