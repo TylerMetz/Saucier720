@@ -56,7 +56,6 @@ func RoutData(){
 		for{
 			if (!UpdatingData) {UpdateAllData()}
 		}
-		
 	}()
 	 
     // create server
@@ -120,7 +119,9 @@ func handleSignup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// store the new user
+	UpdatingData = true;
 	backendDatabase.StoreUserDatabase(newUser.User)
+	UpdatingData = false;
 
 }
 
@@ -182,7 +183,6 @@ func handleLogin(w http.ResponseWriter, r *http.Request, sessionCookie *string, 
 			SameSite: http.SameSiteLaxMode,
 			Domain: "localhost",
 		}
-		//http.SetCookie(w, cookie)
 
 		// sets cookie changed to true
 		*cookieChanged = true
@@ -197,7 +197,6 @@ func handleLogin(w http.ResponseWriter, r *http.Request, sessionCookie *string, 
 			Value: cookie.Value,
 		}
 	
-
 		// Allow the 'Set-Cookie' header to be exposed to the frontend
 		w.Header().Set("Content-Type","application/json",)
 
@@ -209,19 +208,64 @@ func handleLogin(w http.ResponseWriter, r *http.Request, sessionCookie *string, 
 		// Get the new "sessionID" cookie value
 		*sessionCookie = cookie.Value
 
+		// allow data to be routed again
+		UpdatingData = false;
+
 	}
 
 }
 
-func ListenForUser(sessionCookie* string, cookieChanged* bool){
+func handleLogout(w http.ResponseWriter, r *http.Request, sessionCookie *string) {
+
+	// verify POST request from frontend
+    if r.Method == "OPTIONS" {
+        w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+        w.Header().Set("Access-Control-Allow-Methods", "POST")
+        w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+        w.Header().Set("Access-Control-Allow-Credentials", "true")
+        w.WriteHeader(http.StatusOK)
+        return
+    }
+
+	// set correct headers
+    w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+    w.Header().Set("Access-Control-Allow-Methods", "POST")
+    w.Header().Set("Access-Control-Allow-Credentials", "true")
+
+	// write a successful header
+	w.WriteHeader(http.StatusOK)
+
+	// if the header was successful, change the recipe data
+	if http.StatusOK == 200 {
+
+		// set cookie to be null
+		*sessionCookie = ""
+
+		// set UpdatingData to false so that data stops being acitvely updated
+		UpdatingData = true;
+
+		// set all routing data to be empty
+		var interfaceRefresh []interface{}
+		pantryInterface = interfaceRefresh
+		dealsInterface = interfaceRefresh
+		recipesInterface = interfaceRefresh
+		
+	}
+
+}
+
+func ListenUserInfo(sessionCookie* string, cookieChanged* bool){
 	
 	// handle the listening functions
 	http.HandleFunc("/api/Signup", handleSignup)
     http.HandleFunc("/api/Login", func(response http.ResponseWriter, request *http.Request) {
         handleLogin(response, request, sessionCookie, cookieChanged)
     })
+	http.HandleFunc("/api/Logout", func(response http.ResponseWriter, request *http.Request) {
+        handleLogout(response, request, sessionCookie)
+    })
 
-	// creare server
+	// create server
 	server := &http.Server{Addr: ":8081"}
 
     // append the server to the global list
@@ -379,7 +423,10 @@ func handleNewDealsStore(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// change store selection global var
+	UpdatingData = true;
 	StoreSelection = storeChange.Store.Name
+	UpdatingData = false;
 
 	// write a successful header
 	w.WriteHeader(http.StatusOK)
