@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"strings"
 	_ "github.com/mattn/go-sqlite3"
-	//"fmt"
+	"log"
 )
 
 type Database struct {
@@ -53,6 +53,78 @@ func (d *Database) ReadPublixDatabase() []FoodItem {
 	}
 
 	return items
+}
+
+func (d *Database) ClearPublixDeals() {
+	// open the database
+	database := d.OpenDatabase()
+
+	// delete the deals table if it exists
+	database.Exec("DROP TABLE IF EXISTS PublixData")
+
+	// delete the deals scraped time if it exists
+	database.Exec("DROP TABLE IF EXISTS PublixDealsScrapedTime")
+}
+
+func (d *Database) StoreWalmartDatabase(f []FoodItem) {
+
+	// calls function to open the database
+	database := d.OpenDatabase()
+
+	// make table for food item data
+	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS WalmartData (Name TEXT PRIMARY KEY, StoreCost REAL, OnSale INTEGER, SalePrice REAL, SaleDetails TEXT, Quantity INTEGER)")
+	statement.Exec()
+
+	// insert into food item table
+	statementTwo, _ := database.Prepare("INSERT OR IGNORE INTO WalmartData (Name, StoreCost, OnSale, SalePrice, SaleDetails, Quantity) VALUES (?, ?, ?, ?, ?, ?)")
+
+	for _, item := range f {
+		statementTwo.Exec(item.Name, item.StoreCost, item.OnSale, item.SalePrice, item.SaleDetails, item.Quantity)
+	}
+}
+
+func (d *Database) ReadWalmartDatabase() []FoodItem {
+	// calls function to open the database
+	database := d.OpenDatabase()
+
+	statement, err := database.Prepare("SELECT Name, StoreCost, OnSale, SalePrice, SaleDetails, Quantity FROM WalmartData")
+	if err != nil {
+		// handle the error, e.g., log or return an empty list
+		log.Println("Failed to prepare statement:", err)
+		return []FoodItem{}
+	}
+
+	rows, err := statement.Query()
+	if err != nil {
+		// handle the error, e.g., log or return an empty list
+		log.Println("Failed to execute query:", err)
+		return []FoodItem{}
+	}
+
+	var items []FoodItem
+	for rows.Next() {
+		var item FoodItem
+		err := rows.Scan(&item.Name, &item.StoreCost, &item.OnSale, &item.SalePrice, &item.SaleDetails, &item.Quantity)
+		if err != nil {
+			// handle the error, e.g., log or skip this row
+			log.Println("Failed to scan row:", err)
+			continue
+		}
+		items = append(items, item)
+	}
+
+	return items
+}
+
+func (d *Database) ClearWalmartDeals() {
+	// open the database
+	database := d.OpenDatabase()
+
+	// delete the deals table if it exists
+	database.Exec("DROP TABLE IF EXISTS WalmartData")
+
+	// delete the deals scraped time if it exists
+	database.Exec("DROP TABLE IF EXISTS WalmartDealsScrapedTime")
 }
 
 func (d *Database) ReadUserDatabase(userName string) User {
@@ -179,38 +251,57 @@ func (d *Database) GetUserPantry(userName string) Pantry {
 	return pantry
 }
 
-func (d *Database) ClearPublixDeals() {
-	// open the database
-	database := d.OpenDatabase()
-
-	// delete the deals table if it exists
-	database.Exec("DROP TABLE IF EXISTS PublixData")
-
-	// delete the deals scraped time if it exists
-	database.Exec("DROP TABLE IF EXISTS DealsScrapedTime")
-}
-
-func (d *Database) StoreDealsScrapedTime(t time.Time) {
+func (d *Database) StorePubixScrapedTime(t time.Time) {
 	// calls function to open the database
 	database := d.OpenDatabase()
 
 	// make table for user data
-	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS DealsScrapedTime (DealsLastScraped DATETIME PRIMARY KEY)")
+	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS PublixDealsScrapedTime (DealsLastScraped DATETIME PRIMARY KEY)")
 	statement.Exec()
 
 	// insert into UserData table
-	statementTwo, _ := database.Prepare("INSERT INTO DealsScrapedTime (DealsLastScraped) VALUES (?)")
+	statementTwo, _ := database.Prepare("INSERT INTO PublixDealsScrapedTime (DealsLastScraped) VALUES (?)")
 
 	// store data from this user into table
 	statementTwo.Exec(t.Format("2006-01-02 15:04:05"))
 }
 
-func (d *Database) ReadDealsScrapedTime() time.Time {
+func (d *Database) ReadPublixScrapedTime() time.Time {
 	// calls function to open the database
 	database := d.OpenDatabase()
 
 	// make a query to return the last scrape time value
-	row := database.QueryRow("SELECT DealsLastScraped FROM DealsScrapedTime")
+	row := database.QueryRow("SELECT DealsLastScraped FROM PublixDealsScrapedTime")
+	var dealsLastScrapedStr string
+	row.Scan(&dealsLastScrapedStr)
+
+	// Parse the datetime string into a time.Time object
+	dealsLastScraped, _ := time.Parse(time.RFC3339, dealsLastScrapedStr)
+
+	return dealsLastScraped
+}
+
+func (d *Database) StoreWalmartScrapedTime(t time.Time) {
+	// calls function to open the database
+	database := d.OpenDatabase()
+
+	// make table for user data
+	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS WalmartDealsScrapedTime (DealsLastScraped DATETIME PRIMARY KEY)")
+	statement.Exec()
+
+	// insert into UserData table
+	statementTwo, _ := database.Prepare("INSERT INTO WalmartDealsScrapedTime (DealsLastScraped) VALUES (?)")
+
+	// store data from this user into table
+	statementTwo.Exec(t.Format("2006-01-02 15:04:05"))
+}
+
+func (d *Database) ReadWalmartScrapedTime() time.Time {
+	// calls function to open the database
+	database := d.OpenDatabase()
+
+	// make a query to return the last scrape time value
+	row := database.QueryRow("SELECT DealsLastScraped FROM WalmartDealsScrapedTime")
 	var dealsLastScrapedStr string
 	row.Scan(&dealsLastScrapedStr)
 

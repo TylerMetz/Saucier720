@@ -27,7 +27,7 @@ func TestFour(t *testing.T){
 	// scrape all data
 	testScraper.Scrape()
 
-	newString := testScraper.Store.FindStart("view all results",(testScraper.DealsHTML))
+	newString := testScraper.Store.FindStart("view all results",(testScraper.PublixHTML))
 
 	// organize scraped data
 	testFoodSlice := testScraper.Store.OrganizeDeals(newString)
