@@ -446,7 +446,7 @@ func (d *Database) UserFromCookie(cookie string) User {
 
 func (d *Database) ReadList(currUser User) List{
 	// FUNC OVERVIEW: returns a user's list based on User (User.Username)
-	
+
 }
 
 func (d *Database) WriteList(newItem FoodItem, currUser User){
@@ -458,4 +458,3 @@ func (d *Database) UpdateListItem(newItem FoodItem, currUser User){
 	// FUNC OVERVIEW: updates the quantity of an item in the list, if it == 0, delete it from user's list
 
 }
-
