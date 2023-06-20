@@ -442,4 +442,20 @@ func (d *Database) UserFromCookie(cookie string) User {
 	return returnUser
 }
 
+// TO-DO: Create Backend Functions for the List functionality, create a table in MealDealz.db called UserLists where each entry has username (primary key), FoodItem.Name, FoodItem.Quantity, and List.TimeAdded
+
+func (d *Database) ReadList(currUser User) List{
+	// FUNC OVERVIEW: returns a user's list based on User (User.Username)
+
+}
+
+func (d *Database) WriteList(newItem FoodItem, currUser User){
+	// FUNC OVERVIEW: adds a new item to the user's list
+
+}
+
+func (d *Database) UpdateListItem(newItem FoodItem, currUser User){
+	// FUNC OVERVIEW: updates the quantity of an item in the list, if it == 0, delete it from user's list
+
+}
 
