@@ -5,7 +5,7 @@ import (
 )
 
 type List struct{
-	listOwner User 
-	TimeAdded time.Time 
+	ListOwner User 
+	TimeUpdated time.Time 
 	ShoppingList []FoodItem
 }

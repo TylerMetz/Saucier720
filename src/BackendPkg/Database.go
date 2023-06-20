@@ -442,11 +442,11 @@ func (d *Database) UserFromCookie(cookie string) User {
 	return returnUser
 }
 
-// TO-DO: Create Backend Functions for the List functionality, create a table in MealDealz.db called UserLists where each entry has username (primary key), FoodItem.Name, FoodItem.Quantity, and List.TimeAdded
+// TO-DO: Create Backend Functions for the List functionality, create a table in MealDealz.db called UserLists where each entry has username (primary key), FoodItem.Name, FoodItem.Quantity, and List.TimeUpdated
 
 func (d *Database) ReadList(currUser User) List{
 	// FUNC OVERVIEW: returns a user's list based on User (User.Username)
-
+	
 }
 
 func (d *Database) WriteList(newItem FoodItem, currUser User){
