@@ -6,10 +6,16 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
+import sys
 
 def scrape_walmart():
     url = "https://walmart.com/shop/deals/food/foodrollbacks"
-    driverPath = "SeleniumDrivers/chromedriver_mac64/chromedriver"
+    
+    if sys.platform.startswith('win'):
+        driverPath = "SeleniumDrivers/chromedriver_win32/chromedriver.exe"
+    else:
+        driverPath = "SeleniumDrivers/chromedriver_mac64/chromedriver"
+        
     
     while True:
         # Set up Selenium options
