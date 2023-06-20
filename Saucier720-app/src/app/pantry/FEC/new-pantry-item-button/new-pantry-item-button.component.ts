@@ -22,6 +22,9 @@ export class NewPantryItemButtonComponent {
   constructor(private pantryService: PantryService) { }
 
   async postPantryItem() {
+    if(!this.name){
+      return; // Won't post if empty 
+    }
     const newPantryItem: Ingredient = {
       Name: this.name,
       StoreCost: this.storeCost,
@@ -34,6 +37,7 @@ export class NewPantryItemButtonComponent {
     try {
       const response = await lastValueFrom(this.pantryService.postPantryItem(newPantryItem));
       console.log(response);
+      window.location.reload();
     } catch (error) {
       console.error(error);
     }

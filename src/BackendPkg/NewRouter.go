@@ -2,7 +2,6 @@ package BackendPkg
 
 import (
 	"encoding/json"
-	_"fmt"
 	"net/http"
 	"time"
 	"io/ioutil"
@@ -16,13 +15,15 @@ var pantryInterface []interface{}
 var dealsInterface []interface{}
 var recipesInterface []interface{}
 var backendDatabase Database
-var dataMut sync.Mutex
+var dataMutex sync.Mutex
 var NewServers []*http.Server
 var wait sync.WaitGroup
-var UpdatingPantry bool
+var UpdatingData bool
 var CurrentUser User
+var StoreSelection string = "Walmart" // set to Walmart by default (temp)
+var StoreDeals []FoodItem
 
-// ALL ROUTING FUNCTIONS
+// ROUTING FUNCTIONS
 
 func handlePantry(response http.ResponseWriter, request *http.Request) {
 	// set header and encode items
@@ -48,47 +49,15 @@ func handleRecipes(response http.ResponseWriter, request *http.Request) {
 	json.NewEncoder(response).Encode(recipesInterface)
 }
 
-func FormatData(){
-	// read from .db file and prepare all data to be routed
-
-	// lock the user pantry data
-	dataMutex.Lock()
-
-	// save all user pantry data to global variable
-	var pantryInterfaceRefresh []interface{}
-	pantryInterface = pantryInterfaceRefresh
-	for i := 0; i < len(backendDatabase.GetUserPantry(CurrentUser.UserName).FoodInPantry); i++{
-		pantryInterface = append(pantryInterface, backendDatabase.GetUserPantry(CurrentUser.UserName).FoodInPantry[i])
-	}
-
-	// unlock the data
-	dataMutex.Unlock()
-
-	// save all recipes data to global variable
-	userRecList := BestRecipes(backendDatabase.GetUserPantry(CurrentUser.UserName), backendDatabase.ReadRecipes(), backendDatabase.ReadPublixDatabase())
-	var recipesInterfaceRefresh []interface{}
-	recipesInterface = recipesInterfaceRefresh
-	for i := 0; i < len(userRecList); i++ {
-		// sends recipes, items in recipe, and deals related 
-		recipesInterface = append(recipesInterface, userRecList[i])
-	}
-}
-
 func RoutData(){
 
     // setup all global variables to be routed
 	go func(){
-		// save all deals data to global variable
-		for i := 0; i < len(backendDatabase.ReadPublixDatabase()); i++{
-			dealsInterface = append(dealsInterface, backendDatabase.ReadPublixDatabase()[i])
-		}
-		// infinitely write pantry and recipe data
 		for{
-			if(!UpdatingPantry){FormatData()}
+			if (!UpdatingData) {UpdateAllData()}
 		}
 	}()
-    
-
+	 
     // create server
     server := &http.Server{
         Addr: ":8080",
@@ -150,7 +119,9 @@ func handleSignup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// store the new user
+	UpdatingData = true;
 	backendDatabase.StoreUserDatabase(newUser.User)
+	UpdatingData = false;
 
 }
 
@@ -212,7 +183,6 @@ func handleLogin(w http.ResponseWriter, r *http.Request, sessionCookie *string, 
 			SameSite: http.SameSiteLaxMode,
 			Domain: "localhost",
 		}
-		//http.SetCookie(w, cookie)
 
 		// sets cookie changed to true
 		*cookieChanged = true
@@ -227,7 +197,6 @@ func handleLogin(w http.ResponseWriter, r *http.Request, sessionCookie *string, 
 			Value: cookie.Value,
 		}
 	
-
 		// Allow the 'Set-Cookie' header to be exposed to the frontend
 		w.Header().Set("Content-Type","application/json",)
 
@@ -239,19 +208,64 @@ func handleLogin(w http.ResponseWriter, r *http.Request, sessionCookie *string, 
 		// Get the new "sessionID" cookie value
 		*sessionCookie = cookie.Value
 
+		// allow data to be routed again
+		UpdatingData = false;
+
 	}
 
 }
 
-func ListenForUser(sessionCookie* string, cookieChanged* bool){
+func handleLogout(w http.ResponseWriter, r *http.Request, sessionCookie *string) {
+
+	// verify POST request from frontend
+    if r.Method == "OPTIONS" {
+        w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+        w.Header().Set("Access-Control-Allow-Methods", "POST")
+        w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+        w.Header().Set("Access-Control-Allow-Credentials", "true")
+        w.WriteHeader(http.StatusOK)
+        return
+    }
+
+	// set correct headers
+    w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+    w.Header().Set("Access-Control-Allow-Methods", "POST")
+    w.Header().Set("Access-Control-Allow-Credentials", "true")
+
+	// write a successful header
+	w.WriteHeader(http.StatusOK)
+
+	// if the header was successful, change the recipe data
+	if http.StatusOK == 200 {
+
+		// set cookie to be null
+		*sessionCookie = ""
+
+		// set UpdatingData to false so that data stops being acitvely updated
+		UpdatingData = true;
+
+		// set all routing data to be empty
+		var interfaceRefresh []interface{}
+		pantryInterface = interfaceRefresh
+		dealsInterface = interfaceRefresh
+		recipesInterface = interfaceRefresh
+		
+	}
+
+}
+
+func ListenUserInfo(sessionCookie* string, cookieChanged* bool){
 	
 	// handle the listening functions
 	http.HandleFunc("/api/Signup", handleSignup)
     http.HandleFunc("/api/Login", func(response http.ResponseWriter, request *http.Request) {
         handleLogin(response, request, sessionCookie, cookieChanged)
     })
+	http.HandleFunc("/api/Logout", func(response http.ResponseWriter, request *http.Request) {
+        handleLogout(response, request, sessionCookie)
+    })
 
-	// creare server
+	// create server
 	server := &http.Server{Addr: ":8081"}
 
     // append the server to the global list
@@ -306,9 +320,9 @@ func handlePantryUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// update the current user's pantry
-	UpdatingPantry = true
+	UpdatingData = true
 	backendDatabase.UpdatePantry(CurrentUser, updatedPantry.FoodItem)
-	UpdatingPantry = false
+	UpdatingData = false
 
 	// write a successful header
 	w.WriteHeader(http.StatusOK)
@@ -316,7 +330,7 @@ func handlePantryUpdate(w http.ResponseWriter, r *http.Request) {
 	// if the header was successful, change the recipe data
 	if http.StatusOK == 200 {
 		// get new data for routing
-		FormatData()
+		UpdateAllData()
 	}
 
 }
@@ -357,9 +371,9 @@ func handleNewPantryItem(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// update the current user's pantry
-	UpdatingPantry = true
+	UpdatingData = true
 	backendDatabase.InsertPantryItemPost(CurrentUser, newItem.FoodItem)
-	UpdatingPantry = false
+	UpdatingData = false
 
 	// write a successful header
 	w.WriteHeader(http.StatusOK)
@@ -367,7 +381,60 @@ func handleNewPantryItem(w http.ResponseWriter, r *http.Request) {
 	// if the header was successful, change the recipe data
 	if http.StatusOK == 200 {
 		// get new data for routing
-		FormatData()
+		UpdateAllData()
+	}
+
+}
+
+func handleNewDealsStore(w http.ResponseWriter, r *http.Request) {
+
+	// verify POST request from frontend
+    if r.Method == "OPTIONS" {
+        w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+        w.Header().Set("Access-Control-Allow-Methods", "POST")
+        w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+        w.Header().Set("Access-Control-Allow-Credentials", "true")
+        w.WriteHeader(http.StatusOK)
+        return
+    }
+
+	// set correct headers
+    w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+    w.Header().Set("Access-Control-Allow-Methods", "POST")
+    w.Header().Set("Access-Control-Allow-Credentials", "true")
+
+	// translate POST data to ASCII
+	body, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+
+	// define type to match JSON data from frontend
+	type Store struct{
+		Name string `json:"Name"`
+	}
+	type DealsStore struct {
+		Store Store `json:"store"`
+	}
+	var storeChange DealsStore
+
+	// unmarshal JSON data
+	err = json.Unmarshal(body, &storeChange)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// change store selection global var
+	UpdatingData = true;
+	StoreSelection = storeChange.Store.Name
+	UpdatingData = false;
+
+	// write a successful header
+	w.WriteHeader(http.StatusOK)
+
+	// if the header was successful, change the recipe data
+	if http.StatusOK == 200 {
+		// get new data for routing
+		UpdateAllData()
 	}
 
 }
@@ -381,8 +448,11 @@ func ListenForData(){
 	http.HandleFunc("/api/NewPantryItem", func(response http.ResponseWriter, request *http.Request) {
         handleNewPantryItem(response, request)
     })
+	http.HandleFunc("/api/DealsStore", func(response http.ResponseWriter, request *http.Request) {
+        handleNewDealsStore(response, request)
+    })
 
-	// creare server
+	// create server
 	server := &http.Server{Addr: ":8082"}
 
     // append the server to the global list
@@ -398,6 +468,73 @@ func ListenForData(){
 			log.Fatalf("listen: %s\n", err)
 		}
 	}()
+}
+
+// DATA UPDATE FUNCTIONS
+
+func UpdateDealsData(){
+	// determine which store to take deals from
+	if StoreSelection == "Publix"{
+		StoreDeals = backendDatabase.ReadPublixDatabase() 
+	} else if StoreSelection == "Walmart"{
+		StoreDeals = backendDatabase.ReadWalmartDatabase()
+	}
+
+	// lock the deals data
+	dataMutex.Lock()
+
+	// set all deals to global variable
+	var dealsInterfaceRefresh []interface{}
+	dealsInterface = dealsInterfaceRefresh
+	for i := 0; i < len(StoreDeals); i++{
+		dealsInterface = append(dealsInterface, StoreDeals[i])
+	}
+
+	// unlock the data
+	dataMutex.Unlock()
+}
+
+func UpdatePantryData(){
+	// lock the user pantry data
+	dataMutex.Lock()
+
+	// save all user pantry data to global variable
+	var pantryInterfaceRefresh []interface{}
+	pantryInterface = pantryInterfaceRefresh
+	for i := 0; i < len(backendDatabase.GetUserPantry(CurrentUser.UserName).FoodInPantry); i++{
+		pantryInterface = append(pantryInterface, backendDatabase.GetUserPantry(CurrentUser.UserName).FoodInPantry[i])
+	}
+
+	// unlock the data
+	dataMutex.Unlock()
+}
+
+func UpdateRecipeData(){
+	// save all recipes data to global variable
+	userRecList := BestRecipes(backendDatabase.GetUserPantry(CurrentUser.UserName), backendDatabase.ReadRecipes(), StoreDeals)
+
+	// lock the recipe data
+	dataMutex.Lock()
+
+	var recipesInterfaceRefresh []interface{}
+	recipesInterface = recipesInterfaceRefresh
+	for i := 0; i < len(userRecList); i++ {
+		// sends recipes, items in recipe, and deals related 
+		recipesInterface = append(recipesInterface, userRecList[i])
+	}
+
+	// unlock the data
+	dataMutex.Unlock()
+}
+
+func UpdateAllData(){
+	// wait if any data is being altered
+	for UpdatingData {}
+
+	// updates all data that's being routed
+	UpdatePantryData()
+	UpdateRecipeData()
+	UpdateDealsData()
 }
 
 // SHUTDOWN FUNCTIONS
