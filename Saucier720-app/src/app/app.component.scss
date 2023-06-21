@@ -9,13 +9,22 @@
     transition: all 0.2s ease-in-out;
   }
 
-  img {
-    float: left;
-    padding-top: 6px;
-    margin-left: 10px;
-    margin-right: 10px;
-   }
-  
+  .topnav img {
+    position: absolute;
+    left: 50%; 
+    transform: translate(-50%);
+    top: 1%;
+    bottom: 4%; 
+    padding: 6px 6px 4px 6px;
+
+    background-size: 150px;
+  }
+
+  img:hover{
+    background-color: var(--text-color);
+    content: url("/assets/images/hover.png");
+    transition: 0.2s ease-in-out;
+  }
   /* Style the links inside the navigation bar */
   .topnav a {
     float: left;
@@ -48,6 +57,7 @@
     background-color: var(--text-color);
     color: var(--primary-color);
   }
+
   .page {
     margin-top: 60px;
     width: 100%;
