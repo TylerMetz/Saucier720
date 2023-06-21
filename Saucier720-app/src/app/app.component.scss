@@ -8,6 +8,13 @@
     z-index: 20;
     transition: all 0.2s ease-in-out;
   }
+
+  img {
+    float: left;
+    padding-top: 6px;
+    margin-left: 10px;
+    margin-right: 10px;
+   }
   
   /* Style the links inside the navigation bar */
   .topnav a {
