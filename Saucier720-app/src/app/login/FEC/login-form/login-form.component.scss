@@ -1,6 +1,6 @@
 .form {
   align-items: center;
-  padding: 10px;
+  padding: 20px;
   margin-bottom: 10px;
   background-color: var(--secondary-color);
   border-radius: 10px;
@@ -9,15 +9,18 @@
 .form-container {
   display: flex;
   align-items: center;
-  margin: 20px;
+  margin: 10px;
   flex-wrap: wrap;
   flex-direction: column;
 }
 
-
-
-  .form-header {
+h1 {
+  color:#0e3c2c
+ }
+ 
+.form-header {
     text-align: center;
+    margin-top: 10px;
   }
 
 .input {
