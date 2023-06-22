@@ -14,6 +14,7 @@ import (
 var pantryInterface []interface{}
 var dealsInterface []interface{}
 var recipesInterface []interface{}
+var listInterface []interface{}
 var backendDatabase Database
 var dataMutex sync.Mutex
 var NewServers []*http.Server
@@ -48,7 +49,20 @@ func handleRecipes(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("Access-Control-Allow-Methods", "GET")
 	json.NewEncoder(response).Encode(recipesInterface)
 }
+func handleListPage(response http.ResponseWriter, request *http.Request) {
+	if request.Method != http.MethodGet {
+		http.Error(response, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
 
+	// Set headers
+	response.Header().Set("Content-Type", "application/json")
+	response.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+	response.Header().Set("Access-Control-Allow-Methods", "GET")
+
+	// Encode the items as JSON and send the response
+	json.NewEncoder(response).Encode(listInterface)
+}
 func RoutData(){
 
     // setup all global variables to be routed
@@ -67,6 +81,7 @@ func RoutData(){
     http.HandleFunc("/api/Pantry", handlePantry)
     http.HandleFunc("/api/Recipes", handleRecipes)
     http.HandleFunc("/api/Deals", handleDeals)
+	http.HandleFunc("/api/List", handleListPage)
 
     // append the server to the global list
 	NewServers = append(NewServers, server)

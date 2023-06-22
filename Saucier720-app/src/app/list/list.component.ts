@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Ingredient } from '../core/interfaces/ingredient';
 import { IngredientService } from '../core/services/ingredient.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-list',
@@ -12,7 +13,7 @@ export class ListComponent implements OnInit {
   newIngredientName: string = '';
   newIngredientQuantity: number = 0;
 
-  constructor(private ingredientService: IngredientService) { }
+  constructor(private ingredientService: IngredientService, private http: HttpClient) { }
 
   ngOnInit() {
     this.ingredients = this.ingredientService.getPantry();
@@ -48,6 +49,17 @@ export class ListComponent implements OnInit {
       // Clear input fields
       this.newIngredientName = '';
       this.newIngredientQuantity = 0;
+
+      // Send the new ingredient to the backend
+      this.http.post('http://localhost:4200/List', newIngredient)
+        .subscribe(
+          response => {
+            console.log('Ingredient added successfully:', response);
+          },
+          error => {
+            console.error('Error adding ingredient:', error);
+          }
+        );
     }
   }
 }
