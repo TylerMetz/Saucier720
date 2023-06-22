@@ -4,6 +4,7 @@
     <a routerLink="Deals" class="nav-link">Deals</a>
     <a routerLink="Recipes" class="nav-link">Recipes</a>
     <a routerLink="List" class="nav-link">List</a>
+    <a routerLink="Pantry" class="img-nav-link"><img src="/assets/images/taskbar.png" alt="MealDealz!" style="max-width: 54px;"></a>
     <b *ngIf="!this.getAuthService().isLoggedIn()" routerLink="Login" class="nav-link">Login</b>
     <b *ngIf="this.getAuthService().isLoggedIn()" (click)="logout()" class="nav-link">Logout</b>
     <ng-container *ngIf="this.getAuthService().isLoggedIn() && username">
