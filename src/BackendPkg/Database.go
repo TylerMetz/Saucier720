@@ -446,6 +446,7 @@ func (d *Database) UserFromCookie(cookie string) User {
 
 func (d *Database) ReadList(currUser User) List{
 	// FUNC OVERVIEW: returns a user's list based on User (User.Username)
+	
 
 }
 
