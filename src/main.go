@@ -22,8 +22,8 @@ func main() {
 	// runs scraper if new deals at publix or walmart
 	programScraper.CheckIfScrapeNewDeals(programDatabase)*/
 
-	
-	programScraper.PublixScrapePy()
+
+	programScraper.PublixScrapeDealsPy()
 
 
 	/* Turn off backend functionality for the moment. ENH-395

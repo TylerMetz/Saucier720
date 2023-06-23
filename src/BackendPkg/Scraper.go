@@ -338,17 +338,30 @@ func (s *Scraper) OrganizePublixDeals(deals string) []FoodItem {
 	return dealSlice
 }
 
-func (s *Scraper) PublixScrapePy(){
+func (s *Scraper) PublixScrapeDealsPy(){
 	// run Python script to scrape Publix deals 
-	cmd := exec.Command("python3","PublixScraper.py")
-	output, _ := cmd.Output()
+	name := "python3"
+	if runtime.GOOS == "windows"{
+		name = "python"
+	}
+	
+	cmd := exec.Command(name, "PublixScraper.py")
+	output, err := cmd.Output()
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
 	fmt.Print(output)
-	fmt.Print("hi")
 }
 
 func (s *Scraper) WalmartScrapeDealsPy(){
 	// run Python script to scrape Walmart deals
-	cmd := exec.Command("python3", "WalmartScraper.py")
+	name := "python3"
+	if runtime.GOOS == "windows"{
+		name = "python"
+	}
+	
+	cmd := exec.Command(name, "WalmartScraper.py")
 	output, _ := cmd.Output()
 	
 	// parse output into FoodItems
