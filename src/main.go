@@ -15,11 +15,18 @@ var prevUser BackendPkg.User
 func main() {
 
 	// Reads recipes dataset in not read in yet and stores in DB
-	programDatabase.WriteRecipes()
+
+	/* Comment out to test scraper ENH-395
+	programDatabase.WriteRecipes() 
 
 	// runs scraper if new deals at publix or walmart
-	programScraper.CheckIfScrapeNewDeals(programDatabase)
+	programScraper.CheckIfScrapeNewDeals(programDatabase)*/
 
+	
+	programScraper.PublixScrapePy()
+
+
+	/* Turn off backend functionality for the moment. ENH-395
 	// listen for user in a separate goroutine, and wait for session cookie to be defined
 	go BackendPkg.ListenUserInfo(&sessionCookie, &cookieChanged)
 	for sessionCookie == "" && !cookieChanged {}
@@ -61,6 +68,6 @@ func main() {
 	}()
 
 	// run infinitely
-	for{}
+	for{}*/
 	
 }

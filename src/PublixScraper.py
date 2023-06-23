@@ -19,11 +19,27 @@ def scrape_publix():
         driverPath = "SeleniumDrivers/chromedriver_mac64/chromedriver"
 
     while True:
+        # Set up Selenium options 
         options = Options()
         options.add_argument("--headless")
         options.add_argument("--disable-gpu")
         options.add_argument("--no-sandbox")
+        # User agent is like "who" is using the browse
+        options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36")
 
+        # Start Selenium webdriver
+        driver = webdriver.Chrome(executable_path = driverPath, options = options)
+
+        # Open page
+        driver.get(url)
+
+        # Wait for page to load 
+        wait = WebDriverWait(driver, 10)
+        
+        # Get page source
+        page_source = driver.page_source
+        print("hi")
+        
 
 def main():
     scrape_publix()

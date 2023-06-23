@@ -66,7 +66,7 @@ func (s *Scraper)CheckIfScrapeNewDeals(d Database){
 	}
 }
 
-func (s *Scraper) PublixScrapeDeals() {
+func (s *Scraper) OldPublixScrapeDeals() {
 	// init chrome driver
 	opts := []selenium.ServiceOption{}
 	if runtime.GOOS == "windows" {
@@ -336,6 +336,14 @@ func (s *Scraper) OrganizePublixDeals(deals string) []FoodItem {
 	// Cleaning up edge case
 	dealSlice = dealSlice[1:]
 	return dealSlice
+}
+
+func (s *Scraper) PublixScrapePy(){
+	// run Python script to scrape Publix deals 
+	cmd := exec.Command("python3","PublixScraper.py")
+	output, _ := cmd.Output()
+	fmt.Print(output)
+	fmt.Print("hi")
 }
 
 func (s *Scraper) WalmartScrapeDealsPy(){
