@@ -483,7 +483,7 @@ func (d* Database) FavoriteRecipe (currUser User, recipeID string){
 	statementTwo.Exec(currUser.UserName, recipeID)
 }
 
-func (d* Database) unfavoriteRecipe (currUser User, recipeID string){
+func (d* Database) UnfavoriteRecipe (currUser User, recipeID string){
 	// calls function to open the database
 	database := d.OpenDatabase()
 
