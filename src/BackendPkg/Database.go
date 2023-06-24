@@ -7,6 +7,7 @@ import (
 	"strings"
 	_ "github.com/mattn/go-sqlite3"
 	"log"
+	"strconv"
 )
 
 type Database struct {
@@ -215,13 +216,18 @@ func (d *Database) GetUserPantry(userName string) Pantry {
 	// calls function to open the database
 	database := d.OpenDatabase()
 
-	// query the database for the pantry data
-	rows, _ := database.Query("SELECT Name, StoreCost, OnSale, SalePrice, SaleDetails, Quantity, PantryLastUpdated FROM UserPantries WHERE UserName = ?", userName)
-
 	// create the pantry object
 	pantry := Pantry{
 		TimeLastUpdated: time.Now(),
 		FoodInPantry:    []FoodItem{},
+	}
+
+	// query the database for the pantry data
+	rows, err := database.Query("SELECT Name, StoreCost, OnSale, SalePrice, SaleDetails, Quantity, PantryLastUpdated FROM UserPantries WHERE UserName = ?", userName)
+
+	// handle case where user pantry doesn't exist
+	if err != nil{
+		return pantry
 	}
 
 	// loop through each row and add the food item to the pantry
@@ -311,51 +317,54 @@ func (d *Database) ReadWalmartScrapedTime() time.Time {
 	return dealsLastScraped
 }
 
-func (d* Database) WriteRecipes(){
+func (d* Database) WriteJSONRecipes(){
 	// Read the recipes from the file
-	recipes, _ := GetRecipes()
+	recipes, _ := GetJSONRecipes()
 
 	// calls function to open the database
 	database := d.OpenDatabase()
 
 	// Create a new table for the recipes
-	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS RecipeData (title TEXT PRIMARY KEY, ingredients TEXT, instructions TEXT)")
+	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS JSONRecipeData (title, ingredients TEXT, instructions TEXT, recipeID TEXT PRIMARY KEY)")
 	statement.Exec()
 
 	// Insert each recipe into the table
-	statementTwo, _ := database.Prepare("INSERT OR IGNORE INTO RecipeData (title, ingredients, instructions) values (?, ?, ?)")
+	statementTwo, _ := database.Prepare("INSERT OR IGNORE INTO JSONRecipeData (title, ingredients, instructions, recipeID) values (?, ?, ?, ?)")
+
+	idNum := 1
 
 	for _, recipe := range recipes {
 		ingredients, _ := json.Marshal(recipe.Ingredients)
-		statementTwo.Exec(recipe.Title, string(ingredients), recipe.Instructions)
+		statementTwo.Exec(recipe.Title, string(ingredients), recipe.Instructions, ("json" + strconv.Itoa(idNum)))
+		idNum++
 	}
 
-	database.Exec("DELETE FROM RecipeData WHERE ingredients = '[]'")
-
+	database.Exec("DELETE FROM JSONRecipeData WHERE ingredients = '[]'")
+	database.Exec("DELETE FROM JSONRecipeData WHERE instructions = ''")
 }
 
-func (d* Database) DeleteRecipes(){
+func (d* Database) DeleteJSONRecipes(){
 	// calls function to open the database
 	database := d.OpenDatabase()
 
 	// Create a new table for the recipes
-	statement, _ := database.Prepare("DROP TABLE RecipeData")
+	statement, _ := database.Prepare("DROP TABLE JSONRecipeData")
 	statement.Exec()
 
 }
 
-func (d* Database) ReadRecipes() []Recipe{
+func (d* Database) ReadJSONRecipes() []Recipe{
 	// calls function to open the database
 	database := d.OpenDatabase()
 
 	// Execute a SELECT statement to retrieve all rows from the RecipeData table
-	rows, _ := database.Query("SELECT * FROM RecipeData")
+	rows, _ := database.Query("SELECT * FROM JSONRecipeData")
 
 	// Iterate through the rows and create a slice of Recipe structs
 	var recipes []Recipe
 	for rows.Next() {
-		var title, ingredientsStr, instructions string
-		rows.Scan(&title, &ingredientsStr, &instructions)
+		var title, ingredientsStr, instructions, recipeID string
+		rows.Scan(&title, &ingredientsStr, &instructions, &recipeID)
 
 		// Convert the comma-separated list of ingredients to a slice
 		ingredients := strings.Split(ingredientsStr, ",")
@@ -365,6 +374,148 @@ func (d* Database) ReadRecipes() []Recipe{
 			Title:        title,
 			Ingredients:  ingredients,
 			Instructions: instructions,
+			RecipeID: 	  recipeID, 
+		}
+		recipes = append(recipes, recipe)
+	}
+
+	return recipes;
+}
+
+func (d *Database) WriteNewUserRecipe (currUser User, newRecipe Recipe){
+	// calls function to open the database
+	database := d.OpenDatabase()
+
+	// Create a new table for the recipes
+	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS UserRecipeData (title TEXT, ingredients TEXT, instructions TEXT, recipeID TEXT PRIMARY KEY, username TEXT)")
+	statement.Exec()
+
+	// find num of recipes made by user to generaate userID
+	idNum := 0
+	err := database.QueryRow("SELECT COUNT(*) FROM UserRecipeData WHERE username = ?", currUser.UserName).Scan(&idNum)
+	if err != nil {idNum = 1 } // if user has no recipes then idNum = 1
+
+	// Insert each recipe into the table
+	statementThree, _ := database.Prepare("INSERT OR IGNORE INTO JSONRecipeData (title, ingredients, instructions, recipeID, username) values (?, ?, ?, ?, ?)")
+	statementThree.Exec(newRecipe.Title, newRecipe.Ingredients, newRecipe.Instructions, (currUser.UserName + strconv.Itoa(idNum)), currUser.UserName)
+
+}
+
+func (d *Database) DeleteUserRecipe (recipeID string){
+	// Calls function to open the database
+	database := d.OpenDatabase()
+
+	// Delete based on recipeID
+	statement, _ := database.Prepare("DELETE FROM UserRecipeData WHERE recipeID = ?")
+	statement.Exec(recipeID)
+
+}
+
+func (d* Database) ReadAllUserRecipes() []Recipe{
+	// calls function to open the database
+	database := d.OpenDatabase()
+
+	// Execute a SELECT statement to retrieve all rows from the RecipeData table
+	rows, _ := database.Query("SELECT * FROM UserRecipeData")
+
+	// Iterate through the rows and create a slice of Recipe structs
+	var recipes []Recipe
+	for rows.Next() {
+		var title, ingredientsStr, instructions, recipeID, userName string
+		rows.Scan(&title, &ingredientsStr, &instructions, &recipeID, &userName)
+
+		// Convert the comma-separated list of ingredients to a slice
+		ingredients := strings.Split(ingredientsStr, ",")
+
+		// Create a new Recipe struct and append it to the slice
+		recipe := Recipe{
+			Title:        title,
+			Ingredients:  ingredients,
+			Instructions: instructions,
+			RecipeID: 	  recipeID, 
+		}
+		recipes = append(recipes, recipe)
+	}
+
+	return recipes;
+}
+
+func (d* Database) ReadCurrUserRecipes(currUser User) []Recipe{
+	// calls function to open the database
+	database := d.OpenDatabase()
+
+	// Execute a SELECT statement to retrieve all rows from the RecipeData table
+	statement, _ := database.Prepare("SELECT title, ingredients, instructions, recipeID FROM UserRecipeData WHERE username = ?")
+	rows, _ := statement.Query(currUser.UserName)
+
+	// Iterate through the rows and create a slice of Recipe structs
+	var recipes []Recipe
+	for rows.Next() {
+		var title, ingredientsStr, instructions, recipeID, userName string
+		rows.Scan(&title, &ingredientsStr, &instructions, &recipeID, &userName)
+
+		// Convert the comma-separated list of ingredients to a slice
+		ingredients := strings.Split(ingredientsStr, ",")
+
+		// Create a new Recipe struct and append it to the slice
+		recipe := Recipe{
+			Title:        title,
+			Ingredients:  ingredients,
+			Instructions: instructions,
+			RecipeID: 	  recipeID, 
+		}
+		recipes = append(recipes, recipe)
+	}
+
+	return recipes;
+}
+
+func (d* Database) FavoriteRecipe (currUser User, recipeID string){
+	// calls function to open the database
+	database := d.OpenDatabase()
+
+	// Create a new table for the recipes
+	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS UserFavoriteRecipes (recipeID TEXT PRIMARY KEY, username TEXT PRIMARY KEY)")
+	statement.Exec()
+
+	// save username and favorited recipe's recipe ID
+	statementTwo, _ := database.Prepare("INSERT OR IGNORE INTO UserFavoriteRecipes (recipeID, username) values (?, ?)")
+	statementTwo.Exec(currUser.UserName, recipeID)
+}
+
+func (d* Database) unfavoriteRecipe (currUser User, recipeID string){
+	// calls function to open the database
+	database := d.OpenDatabase()
+
+	// delete favorite recipe from table
+	statement, _ := database.Prepare("DELETE FROM UserFavoriteRecipes WHERE username = ? AND recipeID = ?")
+	statement.Exec(currUser.UserName, recipeID)
+
+}
+
+func (d* Database) GetFavoriteRecipes (currUser User) []Recipe{
+	// calls function to open the database
+	database := d.OpenDatabase()
+
+	// Execute a SELECT statement to retrieve all rows from the RecipeData table
+	statement, _ := database.Prepare("SELECT title, ingredients, instructions, recipeID FROM UserFavoriteRecipes WHERE username = ?")
+	rows, _ := statement.Query(currUser.UserName)
+
+	// Iterate through the rows and create a slice of Recipe structs
+	var recipes []Recipe
+	for rows.Next() {
+		var title, ingredientsStr, instructions, recipeID, userName string
+		rows.Scan(&title, &ingredientsStr, &instructions, &recipeID, &userName)
+
+		// Convert the comma-separated list of ingredients to a slice
+		ingredients := strings.Split(ingredientsStr, ",")
+
+		// Create a new Recipe struct and append it to the slice
+		recipe := Recipe{
+			Title:        title,
+			Ingredients:  ingredients,
+			Instructions: instructions,
+			RecipeID: 	  recipeID, 
 		}
 		recipes = append(recipes, recipe)
 	}

@@ -511,7 +511,7 @@ func UpdatePantryData(){
 
 func UpdateRecipeData(){
 	// save all recipes data to global variable
-	userRecList := BestRecipes(backendDatabase.GetUserPantry(CurrentUser.UserName), backendDatabase.ReadRecipes(), StoreDeals)
+	userRecList := BestRecipes(backendDatabase.GetUserPantry(CurrentUser.UserName), backendDatabase.ReadJSONRecipes(), StoreDeals)
 
 	// lock the recipe data
 	dataMutex.Lock()
