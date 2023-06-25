@@ -2,12 +2,14 @@ package BackendPkg
 
 import (
 	"fmt"
+	"html"
 	"os/exec"
 	"runtime"
 	"strconv"
 	"strings"
 	"time"
 	_"unicode/utf8"
+	
 
 	"github.com/tebeka/selenium"
 	"github.com/tebeka/selenium/chrome"
@@ -347,11 +349,13 @@ func (s *Scraper) PublixScrapeDealsPy(){
 		name = "python"
 	}
 	
-	cmd := exec.Command(name, "PublixScraper.py")
+	cmd := exec.Command(name, "-X", "utf8", "PublixScraper.py")
 	output, _:= cmd.Output()
 
+	outputClean := html.UnescapeString(string(output))
+
 	// parse output into FoodItems
-	lines := strings.Split(string(output), "\n")
+	lines := strings.Split(string(outputClean), "\n")
 	products := make([]FoodItem, 0)
 
 	for i := 0; i < len(lines)-1; i += 3{
@@ -372,7 +376,7 @@ func (s *Scraper) WalmartScrapeDealsPy(){
 		name = "python"
 	}
 	
-	cmd := exec.Command(name, "WalmartScraper.py")
+	cmd := exec.Command(name, "-X", "utf8", "WalmartScraper.py")
 	output, _ := cmd.Output()
 	
 	// parse output into FoodItems
