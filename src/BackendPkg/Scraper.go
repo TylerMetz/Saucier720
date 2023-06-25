@@ -2,11 +2,13 @@ package BackendPkg
 
 import (
 	"fmt"
-	"runtime"
-	"time"
-	"strings"
 	"os/exec"
+	"runtime"
 	"strconv"
+	"strings"
+	"time"
+	_"unicode/utf8"
+
 	"github.com/tebeka/selenium"
 	"github.com/tebeka/selenium/chrome"
 )
@@ -346,12 +348,21 @@ func (s *Scraper) PublixScrapeDealsPy(){
 	}
 	
 	cmd := exec.Command(name, "PublixScraper.py")
-	output, err := cmd.Output()
-	if err != nil {
-		fmt.Println("Error:", err)
-		return
+	output, _:= cmd.Output()
+
+	// parse output into FoodItems
+	lines := strings.Split(string(output), "\n")
+	products := make([]FoodItem, 0)
+
+	for i := 0; i < len(lines)-1; i += 3{
+		product := FoodItem{
+			Name: strings.TrimPrefix(lines[i], "Product: "),
+			SaleDetails: strings.TrimPrefix(lines[i], "Deal: "),
+		}
+		products = append(products, product)
 	}
-	fmt.Print(output)
+
+	s.PublixDeals = products
 }
 
 func (s *Scraper) WalmartScrapeDealsPy(){

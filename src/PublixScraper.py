@@ -92,6 +92,8 @@ def scrape_publix():
         print("Deal: ", deal.text.strip())
         print()
 
+    driver.quit()
+
     
 
 def main():
