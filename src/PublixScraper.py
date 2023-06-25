@@ -55,7 +55,7 @@ def scrape_publix():
     # Click first store
     store_button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR,"#\\31 560 > div > div > div.buttons-links > div.p-button-group__wrapper.buttons-wrapper > div > button")))
     store_button.click()
-    time.sleep(20)
+    time.sleep(10)
     
     # Click load more
     while True:
@@ -84,16 +84,13 @@ def scrape_publix():
         if deal.find_parents("li"):
             deals.remove(deal)
 
-    #deal_stripped = [deal.text for deal in deals]
-
-    #for deal in deal_stripped:
-        #print(deal.strip())
-    
-    #pattern = r'alt="(.*?)"'
-    #product_names = [re.search(pattern, str(product)).group(1) for product in products]
-    #for name in product_names:
-        #print(name)
-
+    # Print product and deals 
+    pattern = r'alt="(.*?)"'
+    for product, deal in zip(products, deals):
+        product_clean = re.search(pattern, str(product)).group(1)
+        print("Product: ", product_clean)
+        print("Deal: ", deal.text.strip())
+        print()
 
     
 
