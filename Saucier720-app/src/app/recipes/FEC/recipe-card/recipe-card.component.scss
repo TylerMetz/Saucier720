@@ -77,26 +77,43 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #ffdddd;
+  background-color: var(--secondary-color);
   padding: 20px;
-  border: 1px solid #ff0000;
-  border-radius: 4px;
-  color: #ff0000;
+  border-radius: 10px;
+  color: var(--text-color);
+  margin-top: 20px;
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--secondary-color);
+  padding: 20px;
+  border-radius: 10px;
+  color: var(--text-color);
+  margin-top: 20px;
 }
 
 .error-icon {
-  font-size: 24px;
-  margin-right: 10px;
+  font-size: 36px;
+  margin-right: 20px;
+}
+
+.error-text {
+  text-align: center;
 }
 
 .error-text h3 {
   margin: 0;
-  font-size: 18px;
+  font-size: 24px;
   font-weight: bold;
+  margin-bottom: 10px;
 }
 
 .error-text p {
-  margin: 5px 0;
-  font-size: 14px;
+  margin: 0;
+  font-size: 16px;
 }
+
 
