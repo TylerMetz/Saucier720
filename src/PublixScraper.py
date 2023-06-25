@@ -63,14 +63,36 @@ def scrape_publix():
             load_more = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR,"#main > div.savings-content-wrapper > div > div.savings-container > div.card-loader.savings-content.search-results-section.-coupons > div.button-container > button > span")))
             load_more.click()
         except:
-            print("cannot click anymore")
+            print("Publix deals page has been scraped!")
             break
 
-    time.sleep(10)
+    time.sleep(5)
+    
+    # Now we have the entire page as a string 
     page_source = driver.page_source
-    print(driver.page_source)
+    #print(page_source)
 
+    # Create Beautifulsoup obj to parse page source
     soup = BeautifulSoup(page_source, "html.parser")
+
+    # Extract desired data from soup object 
+    products = soup.find_all("div", class_="aspect-ratio-content")
+    deals = soup.find_all("span", class_="p-text paragraph-sm strong context--default color--null")
+
+    # Removes <li> tags because they share the same class
+    for deal in deals[:]:
+        if deal.find_parents("li"):
+            deals.remove(deal)
+
+    #deal_stripped = [deal.text for deal in deals]
+
+    #for deal in deal_stripped:
+        #print(deal.strip())
+    
+    #pattern = r'alt="(.*?)"'
+    #product_names = [re.search(pattern, str(product)).group(1) for product in products]
+    #for name in product_names:
+        #print(name)
 
 
     
