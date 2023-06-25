@@ -1,6 +1,7 @@
 <ng-container *ngIf="!hasError; else errorMessage">
   <div class="card-container">
     <div class="card">
+      <img class="favorite-icon" src="assets/images/favoriteIcon.png" alt="Favorite Icon" [class.active]="isFavorite" (click)="toggleFavorite()">
       <div class="recipe-title">
         <h1 *ngIf="recipes && recipes.length > 0" class="recipe-title">
           {{ recipes[currentRecipeIndex].R.title }}

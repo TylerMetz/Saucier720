@@ -595,6 +595,94 @@ func handleNewUserRecipe(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func handleAddFavorite(w http.ResponseWriter, r *http.Request) {
+
+	// verify POST request from frontend
+    if r.Method == "OPTIONS" {
+        w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+        w.Header().Set("Access-Control-Allow-Methods", "POST")
+        w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+        w.Header().Set("Access-Control-Allow-Credentials", "true")
+        w.WriteHeader(http.StatusOK)
+        return
+    }
+
+	// set correct headers
+    w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+    w.Header().Set("Access-Control-Allow-Methods", "POST")
+    w.Header().Set("Access-Control-Allow-Credentials", "true")
+
+	// translate POST data to ASCII
+	body, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// save ASCII as string
+	recipeID := string(body)
+
+	// change store selection global var
+	UpdatingData = true;
+	backendDatabase.FavoriteRecipe(CurrentUser, recipeID)
+	UpdatingData = false;
+
+	// write a successful header
+	w.WriteHeader(http.StatusOK)
+
+	// if the header was successful, change the recipe data
+	if http.StatusOK == 200 {
+		// get new data for routing
+		UpdateAllData()
+	}
+
+}
+
+func handleRemoveFavorite(w http.ResponseWriter, r *http.Request) {
+
+	// verify POST request from frontend
+    if r.Method == "OPTIONS" {
+        w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+        w.Header().Set("Access-Control-Allow-Methods", "POST")
+        w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+        w.Header().Set("Access-Control-Allow-Credentials", "true")
+        w.WriteHeader(http.StatusOK)
+        return
+    }
+
+	// set correct headers
+    w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+    w.Header().Set("Access-Control-Allow-Methods", "POST")
+    w.Header().Set("Access-Control-Allow-Credentials", "true")
+
+	// translate POST data to ASCII
+	body, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// save ASCII as string
+	recipeID := string(body)
+
+	// change store selection global var
+	UpdatingData = true;
+	backendDatabase.UnfavoriteRecipe(CurrentUser, recipeID)
+	UpdatingData = false;
+
+	// write a successful header
+	w.WriteHeader(http.StatusOK)
+
+	// if the header was successful, change the recipe data
+	if http.StatusOK == 200 {
+		// get new data for routing
+		UpdateAllData()
+	}
+
+}
+
 func ListenForData(){
 	
 	// handle the listening functions
@@ -618,6 +706,12 @@ func ListenForData(){
     })
 	http.HandleFunc("/api/NewUserRecipe", func(response http.ResponseWriter, request *http.Request) {
         handleNewUserRecipe(response, request)
+    })
+	http.HandleFunc("/api/AddFavoriteRecipe", func(response http.ResponseWriter, request *http.Request) {
+        handleAddFavorite(response, request)
+    })
+	http.HandleFunc("/api/RemoveFavoriteRecipe", func(response http.ResponseWriter, request *http.Request) {
+        handleRemoveFavorite(response, request)
     })
 
 	// create server

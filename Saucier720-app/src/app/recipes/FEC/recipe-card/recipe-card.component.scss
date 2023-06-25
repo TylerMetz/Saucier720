@@ -119,4 +119,23 @@
   font-size: 16px;
 }
 
+.favorite-icon {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 20px; /* Adjust the width as needed */
+  height: 20px; /* Adjust the height as needed */
+  opacity: 0.5; /* Set the initial opacity for the transparent effect */
+  cursor: pointer;
+  transition: opacity 0.3s ease-in-out; /* Add a smooth transition effect */
+}
+
+.favorite-icon:hover {
+  opacity: 1; /* Increase the opacity on hover to make it more visible */
+}
+
+.favorite-icon.active {
+  filter: brightness(0%) saturate(500%) hue-rotate(-30deg); /* Apply a red color effect */
+}
+
 

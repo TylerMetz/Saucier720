@@ -19,6 +19,7 @@ export class RecipeCardComponent implements OnInit {
   nextRecipeFollows: any;
   printedSubRecipeLines: string[] = [];
   hasError: boolean = false;
+  isFavorite: boolean = false;
 
   constructor(
     private recipeService: RecipeService,
@@ -141,4 +142,29 @@ export class RecipeCardComponent implements OnInit {
     const regex = /["\[\]]/g; // Matches any occurrence of ", [, or ] globally
     return arr.map(str => str.replace(regex, '')); // Replace all matches in each string in the array
   }
+
+  // for favorite button
+  async toggleFavorite() {
+
+    // switch favorite val
+    this.isFavorite = !this.isFavorite;
+
+    if(this.isFavorite) {
+      try {
+        const response = await lastValueFrom(this.recipeService.postFavoriteRecipe(this.currentRecipe.R.recipeID));
+        console.log(response);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    else if (!this.isFavorite){
+      try {
+        const response = await lastValueFrom(this.recipeService.postRemoveFavoriteRecipe(this.currentRecipe.R.recipeID));
+        console.log(response);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }
+
 }

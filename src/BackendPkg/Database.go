@@ -455,7 +455,7 @@ func (d *Database) WriteNewUserRecipe (currUser User, newRecipe Recipe){
 	ingredients, _ := json.Marshal(newRecipe.Ingredients)
 	statementThree, _ := database.Prepare("INSERT OR IGNORE INTO UserRecipeData (title, ingredients, instructions, recipeID, username) values (?, ?, ?, ?, ?)")
 	statementThree.Exec(newRecipe.Title, string(ingredients), newRecipe.Instructions, (currUser.UserName + strconv.Itoa(idNum)), currUser.UserName)
-	
+
 	// close db
 	database.Close()
 }
@@ -565,7 +565,7 @@ func (d* Database) FavoriteRecipe (currUser User, recipeID string){
 	database := d.OpenDatabase()
 
 	// Create a new table for the recipes
-	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS UserFavoriteRecipes (recipeID TEXT PRIMARY KEY, username TEXT PRIMARY KEY)")
+	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS UserFavoriteRecipes (recipeID TEXT PRIMARY KEY, username TEXT)")
 	statement.Exec()
 
 	// save username and favorited recipe's recipe ID
@@ -598,7 +598,7 @@ func (d* Database) ReadFavoriteRecipes (currUser User) []Recipe{
 	var recipes []Recipe
 
 	// Execute a SELECT statement to retrieve all rows from the RecipeData table
-	statement, err := database.Prepare("SELECT title, ingredients, instructions, recipeID FROM UserFavoriteRecipes WHERE username = ?")
+	_, err := database.Prepare("SELECT recipeID FROM UserFavoriteRecipes WHERE username = ?")
 	// handle case where user has no favorite recipes
 	if err != nil{
 		// close db
@@ -606,31 +606,7 @@ func (d* Database) ReadFavoriteRecipes (currUser User) []Recipe{
 		return recipes
 	}
 	
-	rows, err := statement.Query(currUser.UserName)
-	// handle case where user has no favorite recipes
-	if err != nil{
-		// close db
-		database.Close()
-		return recipes
-	}
-
-	// Iterate through the rows and create a slice of Recipe structs
-	for rows.Next() {
-		var title, ingredientsStr, instructions, recipeID, userName string
-		rows.Scan(&title, &ingredientsStr, &instructions, &recipeID, &userName)
-
-		// Convert the comma-separated list of ingredients to a slice
-		ingredients := strings.Split(ingredientsStr, ",")
-
-		// Create a new Recipe struct and append it to the slice
-		recipe := Recipe{
-			Title:        title,
-			Ingredients:  ingredients,
-			Instructions: instructions,
-			RecipeID: 	  recipeID, 
-		}
-		recipes = append(recipes, recipe)
-	}
+	// NEED TO UPDATE
 
 	// close db
 	database.Close()
