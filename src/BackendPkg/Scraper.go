@@ -38,7 +38,7 @@ func (s *Scraper)CheckIfScrapeNewDeals(d Database){
 		d.ClearPublixDeals()
 
 		// scrape publix data
-		// s.PublixScrapeDeals() // put py func here
+		s.PublixScrapeDealsPy() // put py func here
 		fmt.Println("Publix Deals Scraped!")
 		
 		// store publix data to .db file
@@ -357,7 +357,7 @@ func (s *Scraper) PublixScrapeDealsPy(){
 	for i := 0; i < len(lines)-1; i += 3{
 		product := FoodItem{
 			Name: strings.TrimPrefix(lines[i], "Product: "),
-			SaleDetails: strings.TrimPrefix(lines[i], "Deal: "),
+			SaleDetails: strings.TrimPrefix(lines[i+1], "Deal: "),
 		}
 		products = append(products, product)
 	}

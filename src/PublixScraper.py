@@ -16,15 +16,10 @@ import sys
 def scrape_publix():
     # Get to publix website 
     url = "https://www.publix.com/savings/weekly-ad/view-all"
-    # Driver options
-    if sys.platform.startswith('win'):
-        driverPath = "SeleniumDrivers/chromedriver_win32/chromedriver.exe"
-    else:
-        driverPath = "SeleniumDrivers/chromedriver_mac64/chromedriver"
-
+    
     # Set up Selenium options 
     options = Options()
-    #options.add_argument("--headless")
+    options.add_argument("--headless")
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
     options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36")
@@ -63,7 +58,6 @@ def scrape_publix():
             load_more = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR,"#main > div.savings-content-wrapper > div > div.savings-container > div.card-loader.savings-content.search-results-section.-coupons > div.button-container > button > span")))
             load_more.click()
         except:
-            print("Publix deals page has been scraped!")
             break
 
     time.sleep(5)

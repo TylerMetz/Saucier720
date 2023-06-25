@@ -16,17 +16,14 @@ func main() {
 
 	// Reads recipes dataset in not read in yet and stores in DB
 
-	/* Comment out to test scraper ENH-395
 	programDatabase.WriteRecipes() 
 
+	// ENH-395: For the sake of resetting the publix scrape 
+	programDatabase.ClearPublixDeals()
+
 	// runs scraper if new deals at publix or walmart
-	programScraper.CheckIfScrapeNewDeals(programDatabase)*/
+	programScraper.CheckIfScrapeNewDeals(programDatabase)
 
-
-	programScraper.PublixScrapeDealsPy()
-
-
-	/* Turn off backend functionality for the moment. ENH-395
 	// listen for user in a separate goroutine, and wait for session cookie to be defined
 	go BackendPkg.ListenUserInfo(&sessionCookie, &cookieChanged)
 	for sessionCookie == "" && !cookieChanged {}
@@ -68,6 +65,6 @@ func main() {
 	}()
 
 	// run infinitely
-	for{}*/
+	for{}
 	
 }
