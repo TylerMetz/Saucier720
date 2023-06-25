@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { PANTRY } from 'src/app/mocks/pantry.mock';
+import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
 import { lastValueFrom } from 'rxjs';
 import { RecipeService } from 'src/app/core/services/recipes/recipe.service';
 
@@ -34,8 +33,16 @@ export class RecipeNavBarComponent implements OnInit {
       this.showFavoriteRecipesButton = true;
       this.showRecommendedRecipesButton = false;
     }
-
     this.saveButtonState();
+  }
+
+  // For enabling the new recipe box
+  @Input() isNewRecipeEnabled: boolean = false;
+  @Output() toggleNewRecipe: EventEmitter<boolean> = new EventEmitter<boolean>();
+  
+  toggleNewRecipeComponent() {
+    this.isNewRecipeEnabled = !this.isNewRecipeEnabled;
+    this.toggleNewRecipe.emit(this.isNewRecipeEnabled);
   }
 
   async postFavoriteRecipesSelect() {

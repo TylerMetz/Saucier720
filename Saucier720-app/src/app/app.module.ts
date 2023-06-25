@@ -15,6 +15,8 @@ import { RecipeCardComponent } from './recipes/FEC/recipe-card/recipe-card.compo
 import { LoginFormComponent } from './login/FEC/login-form/login-form.component';
 import { SubRecipeComponent } from './recipes/FEC/sub-recipe/sub-recipe.component';
 import { RecipeNavBarComponent } from './recipes/FEC/recipe-nav-bar/recipe-nav-bar.component';
+import { RecipesComponent } from './recipes/recipes.component'; 
+import { NewRecipeComponent } from './recipes/FEC/new-recipe/new-recipe.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +32,9 @@ import { RecipeNavBarComponent } from './recipes/FEC/recipe-nav-bar/recipe-nav-b
     RecipeCardComponent,
     LoginFormComponent,
     SubRecipeComponent,
-    RecipeNavBarComponent
+    RecipesComponent,
+    RecipeNavBarComponent,
+    NewRecipeComponent
   ],
   imports: [
     AppRoutingModule,
