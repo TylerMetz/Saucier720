@@ -1,11 +1,12 @@
-.card {
+  .card {
     display: flex;
 	  align-items: center;
     padding: 10px;
     margin-bottom: 10px;
     background-color: var(--secondary-color);
-}
-.card-container {
+    width: 100%;
+  }
+  .card-container {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -24,19 +25,21 @@
 
   .recipe-ingredients-header {
     text-align: center;
-    /* styles for the recipe ingredients header */
+    margin-right: 40px;
   }
 
   .recipe-deals-header {
     text-align: center;
+    margin-right: 40px;
   }
   
   .recipe-instructions-header {
     text-align: center;
-    /* styles for the recipe instructions section */
+    margin-right: 40px;
   }
   .recipe-pantry-header {
     text-align: center;
+    margin-right: 40px;
   }
 
   .page-number{
