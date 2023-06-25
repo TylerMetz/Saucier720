@@ -55,12 +55,19 @@ def scrape_publix():
     # Click first store
     store_button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR,"#\\31 560 > div > div > div.buttons-links > div.p-button-group__wrapper.buttons-wrapper > div > button")))
     store_button.click()
+    time.sleep(20)
+    
+    # Click load more
+    while True:
+        try:
+            load_more = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR,"#main > div.savings-content-wrapper > div > div.savings-container > div.card-loader.savings-content.search-results-section.-coupons > div.button-container > button > span")))
+            load_more.click()
+        except:
+            print("cannot click anymore")
+            break
+
     time.sleep(10)
-
-
     page_source = driver.page_source
-
-    # Wait for page to load 
     print(driver.page_source)
 
     soup = BeautifulSoup(page_source, "html.parser")
