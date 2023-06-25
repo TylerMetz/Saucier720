@@ -778,9 +778,9 @@ func UpdateRecipeData(){
 	if RoutingRecipesType == RecommendedRecipes{
 		routingRecipes = BestRecipes(backendDatabase.GetUserPantry(CurrentUser.UserName), backendDatabase.ReadJSONRecipes(), StoreDeals)
 	} else if RoutingRecipesType == UserRecipes{
-		routingRecipes = UserRecipesWithRelatedItems(backendDatabase.GetUserPantry(CurrentUser.UserName), backendDatabase.ReadCurrUserRecipes(CurrentUser), StoreDeals)
+		routingRecipes = AllRecipesWithRelatedItems(backendDatabase.GetUserPantry(CurrentUser.UserName), backendDatabase.ReadCurrUserRecipes(CurrentUser), StoreDeals)
 	} else if RoutingRecipesType == FavoriteRecipes {
-		routingRecipes = FavoriteRecipesWithRelatedItems(backendDatabase.GetUserPantry(CurrentUser.UserName), backendDatabase.ReadFavoriteRecipes(CurrentUser), StoreDeals)
+		routingRecipes = AllRecipesWithRelatedItems(backendDatabase.GetUserPantry(CurrentUser.UserName), backendDatabase.ReadFavoriteRecipes(CurrentUser), StoreDeals)
 	}
 
 	// lock the recipe data

@@ -570,7 +570,7 @@ func (d* Database) FavoriteRecipe (currUser User, recipeID string){
 
 	// save username and favorited recipe's recipe ID
 	statementTwo, _ := database.Prepare("INSERT OR IGNORE INTO UserFavoriteRecipes (recipeID, username) values (?, ?)")
-	statementTwo.Exec(currUser.UserName, recipeID)
+	statementTwo.Exec(recipeID, currUser.UserName)
 
 	// close db
 	database.Close()
@@ -594,22 +594,66 @@ func (d* Database) ReadFavoriteRecipes (currUser User) []Recipe{
 	// calls function to open the database
 	database := d.OpenDatabase()
 
-	// create the recipes return slice
 	var recipes []Recipe
 
-	// Execute a SELECT statement to retrieve all rows from the RecipeData table
-	_, err := database.Prepare("SELECT recipeID FROM UserFavoriteRecipes WHERE username = ?")
-	// handle case where user has no favorite recipes
-	if err != nil{
-		// close db
-		database.Close()
+	// Retrieve recipeIDs from UserFavoriteRecipes table based on the given username
+	query := "SELECT recipeIDs FROM UserFavoriteRecipes WHERE username = ?"
+	rows, err := database.Query(query, currUser.UserName)
+	if err != nil {
 		return recipes
 	}
-	
-	// NEED TO UPDATE
+	defer rows.Close()
 
-	// close db
-	database.Close()
+	var recipeIDs []string
+
+	for rows.Next() {
+		var recipeID string
+		err := rows.Scan(&recipeID)
+		if err != nil {
+			return recipes
+		}
+		recipeIDs = append(recipeIDs, recipeID)
+	}
+
+	// Retrieve recipe data from UserRecipeData and JSONRecipeData tables based on the recipeIDs
+	for _, recipeID := range recipeIDs {
+		// Retrieve data from UserRecipeData table
+		query := "SELECT title, ingredients, instructions FROM UserRecipeData WHERE recipeID = ?"
+		row := database.QueryRow(query, recipeID)
+
+		var recipe Recipe
+		err := row.Scan(&recipe.Title, &recipe.Ingredients, &recipe.Instructions)
+		if err != nil {
+			return recipes
+		}
+
+		// Retrieve data from JSONRecipeData table
+		query = "SELECT title, ingredients, instructions FROM JSONRecipeData WHERE recipeID = ?"
+		row = database.QueryRow(query, recipeID)
+
+		var title, ingredients, instructions string
+		err = row.Scan(&title, &ingredients, &instructions)
+		if err != nil {
+			return recipes
+		}
+
+		// Update the recipe object with JSONRecipeData values if they exist
+		if title != "" {
+			recipe.Title = title
+		}
+		if ingredients != "" {
+			err = json.Unmarshal([]byte(ingredients), &recipe.Ingredients)
+			if err != nil {
+				return recipes
+			}
+		}
+		if instructions != "" {
+			recipe.Instructions = instructions
+		}
+
+		recipes = append(recipes, recipe)
+	}
+
 
 	return recipes;
 }

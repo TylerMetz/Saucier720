@@ -121,7 +121,7 @@ func BestRecipes(userPantry Pantry, allRecipes []Recipe, deals []FoodItem) []Rec
 
 }
 
-func UserRecipesWithRelatedItems(userPantry Pantry, allRecipes []Recipe, deals []FoodItem) []Recommendation {
+func AllRecipesWithRelatedItems(userPantry Pantry, allRecipes []Recipe, deals []FoodItem) []Recommendation {
 	
 	// return val
 	var returnRecommendations []Recommendation
@@ -180,64 +180,6 @@ func UserRecipesWithRelatedItems(userPantry Pantry, allRecipes []Recipe, deals [
 	return returnRecommendations
 }
 
-func FavoriteRecipesWithRelatedItems(userPantry Pantry, allRecipes []Recipe, deals []FoodItem) []Recommendation {
-	
-	// return val
-	var returnRecommendations []Recommendation
-
-	for m := 0; m < len(allRecipes); m++ {
-		// get items in pantry
-		var pantryItemsInRecipe []FoodItem
-		var dealsItemsInRecipe []string
-
-		// check which food items are actually contained in recipe
-		for i := 0; i < len(userPantry.FoodInPantry); i++ {
-			for j := 0; j < len(allRecipes[m].Ingredients); j++ {
-				if strings.Contains(allRecipes[m].Ingredients[j], userPantry.FoodInPantry[i].Name) {
-					if !slices.Contains(pantryItemsInRecipe, userPantry.FoodInPantry[i]) {
-						pantryItemsInRecipe = append(pantryItemsInRecipe, userPantry.FoodInPantry[i])
-					}
-				}
-			}
-		}
-
-		// check which deals can be recommended
-		for i := 0; i < len(deals); i++ {
-			dealWords := strings.Split((deals[i].Name), " ")
-			if len(dealWords) > 3 {
-				dealWords = dealWords[len(dealWords)-3:]
-			}
-			for j := 0; j < len(allRecipes[m].Ingredients); j++ {
-				for k := 0; k < len(dealWords); k++ {
-					if strings.Contains(allRecipes[m].Ingredients[j], (" " + dealWords[k] + " ")) {
-						if (" "+dealWords[k]+" ") != " or " && (" "+dealWords[k]+" ") != " and " && (" "+dealWords[k]+" ") != " the " && (" "+dealWords[k]+" ") != " 1 " && (" "+dealWords[k]+" ") != " 2 " && (" "+dealWords[k]+" ") != " 3 " && (" "+dealWords[k]+" ") != " ground " && (" "+dealWords[k]+" ") != " AND " && (" "+dealWords[k]+" ") != " Any " && (" "+dealWords[k]+" ") != " ANY " && (" "+dealWords[k]+" ") != " Sauce " && (" "+dealWords[k]+" ") != " gallon " && (" "+dealWords[k]+" ") != " mix " && (" "+dealWords[k]+" ") != " organic " && (" "+dealWords[k]+" ") != " size " && (" "+dealWords[k]+" ") != " own " && (" "+dealWords[k]+" ") != " alternative " {
-							if !slices.Contains(dealsItemsInRecipe, deals[i].Name) {
-								dealsItemsInRecipe = append(dealsItemsInRecipe, deals[i].Name)
-							}
-						}
-					}
-				}
-			}
-		}
-
-		var realDealz []FoodItem
-		for i := 0; i < len(dealsItemsInRecipe); i++ {
-			tempItem := FoodItem{
-				Name: dealsItemsInRecipe[i],
-			}
-			realDealz = append(realDealz, tempItem)
-		}
-
-		newRecc := Recommendation{
-			R:             allRecipes[m],
-			ItemsInPantry: pantryItemsInRecipe,
-			ItemsOnSale:   realDealz,
-		}
-		returnRecommendations = append(returnRecommendations, newRecc)
-	}
-
-	return returnRecommendations
-}
 
 func min(a, b int) int {
 	if a < b {
