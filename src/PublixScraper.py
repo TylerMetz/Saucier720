@@ -49,7 +49,14 @@ def scrape_publix():
     search_bar = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR,"#navBar > div > div.navigation-bar-main > div > div > div.navigation-section.top > div.user-navigation > div > div > div.navigation-sidebar-container > div.navigation-sidebar-body > div > div > div > div.search-container > form > input[type=search]")))
     search_bar.click()
     search_bar.send_keys("32601")
+    search_bar.send_keys(Keys.ENTER)
     time.sleep(5)
+
+    # Click first store
+    store_button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR,"#\\31 560 > div > div > div.buttons-links > div.p-button-group__wrapper.buttons-wrapper > div > button")))
+    store_button.click()
+    time.sleep(10)
+
 
     page_source = driver.page_source
 
