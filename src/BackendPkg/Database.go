@@ -415,11 +415,19 @@ func (d* Database) ReadAllUserRecipes() []Recipe{
 	// calls function to open the database
 	database := d.OpenDatabase()
 
+	// create the recipes return slice
+	var recipes []Recipe
+	emptyRecipe := Recipe{}
+	recipes = append(recipes, emptyRecipe)
+
 	// Execute a SELECT statement to retrieve all rows from the RecipeData table
-	rows, _ := database.Query("SELECT * FROM UserRecipeData")
+	rows, err := database.Query("SELECT * FROM UserRecipeData")
+	// handle case where user recipes don't exist
+	if err != nil{
+		return recipes
+	}
 
 	// Iterate through the rows and create a slice of Recipe structs
-	var recipes []Recipe
 	for rows.Next() {
 		var title, ingredientsStr, instructions, recipeID, userName string
 		rows.Scan(&title, &ingredientsStr, &instructions, &recipeID, &userName)
@@ -440,16 +448,32 @@ func (d* Database) ReadAllUserRecipes() []Recipe{
 	return recipes;
 }
 
-func (d* Database) ReadCurrUserRecipes(currUser User) []Recipe{
+func (d* Database) ReadCurrUserRecipes (currUser User) []Recipe{
+	
 	// calls function to open the database
 	database := d.OpenDatabase()
 
+	// create the recipes return slice
+	var recipes []Recipe
+	emptyRecipe := Recipe{}
+	recipes = append(recipes, emptyRecipe)
+
+	
+
 	// Execute a SELECT statement to retrieve all rows from the RecipeData table
-	statement, _ := database.Prepare("SELECT title, ingredients, instructions, recipeID FROM UserRecipeData WHERE username = ?")
-	rows, _ := statement.Query(currUser.UserName)
+	statement, err := database.Prepare("SELECT title, ingredients, instructions, recipeID FROM UserRecipeData WHERE username = ?")
+	// handle case where user recipes don't exist
+	if err != nil{
+		return recipes
+	}
+
+	rows, err := statement.Query(currUser.UserName)
+	// handle case where user recipes don't exist
+	if err != nil{
+		return recipes
+	}
 
 	// Iterate through the rows and create a slice of Recipe structs
-	var recipes []Recipe
 	for rows.Next() {
 		var title, ingredientsStr, instructions, recipeID, userName string
 		rows.Scan(&title, &ingredientsStr, &instructions, &recipeID, &userName)
@@ -493,16 +517,30 @@ func (d* Database) UnfavoriteRecipe (currUser User, recipeID string){
 
 }
 
-func (d* Database) GetFavoriteRecipes (currUser User) []Recipe{
+func (d* Database) ReadFavoriteRecipes (currUser User) []Recipe{
+	
 	// calls function to open the database
 	database := d.OpenDatabase()
 
+	// create the recipes return slice
+	var recipes []Recipe
+	emptyRecipe := Recipe{}
+	recipes = append(recipes, emptyRecipe)
+
 	// Execute a SELECT statement to retrieve all rows from the RecipeData table
-	statement, _ := database.Prepare("SELECT title, ingredients, instructions, recipeID FROM UserFavoriteRecipes WHERE username = ?")
-	rows, _ := statement.Query(currUser.UserName)
+	statement, err := database.Prepare("SELECT title, ingredients, instructions, recipeID FROM UserFavoriteRecipes WHERE username = ?")
+	// handle case where user has no favorite recipes
+	if err != nil{
+		return recipes
+	}
+	
+	rows, err := statement.Query(currUser.UserName)
+	// handle case where user has no favorite recipes
+	if err != nil{
+		return recipes
+	}
 
 	// Iterate through the rows and create a slice of Recipe structs
-	var recipes []Recipe
 	for rows.Next() {
 		var title, ingredientsStr, instructions, recipeID, userName string
 		rows.Scan(&title, &ingredientsStr, &instructions, &recipeID, &userName)

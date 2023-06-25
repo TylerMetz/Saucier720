@@ -22,6 +22,15 @@ var UpdatingData bool
 var CurrentUser User
 var StoreSelection string = "Walmart" // set to Walmart by default (temp)
 var StoreDeals []FoodItem
+var RoutingRecipesType RecipeType = RecommendedRecipes // recommended recipes display by default
+
+// RECIPE TYPE ENUM
+type RecipeType int
+const (
+	RecommendedRecipes RecipeType = iota
+	UserRecipes
+	FavoriteRecipes
+)
 
 // ROUTING FUNCTIONS
 
@@ -54,7 +63,7 @@ func RoutData(){
     // setup all global variables to be routed
 	go func(){
 		for{
-			if (!UpdatingData) {UpdateAllData()}
+			UpdateAllData()
 		}
 	}()
 	 
@@ -439,6 +448,107 @@ func handleNewDealsStore(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func handleRecommendedRecipesSelect(w http.ResponseWriter, r *http.Request) {
+
+	// verify POST request from frontend
+    if r.Method == "OPTIONS" {
+        w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+        w.Header().Set("Access-Control-Allow-Methods", "POST")
+        w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+        w.Header().Set("Access-Control-Allow-Credentials", "true")
+        w.WriteHeader(http.StatusOK)
+        return
+    }
+
+	// set correct headers
+    w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+    w.Header().Set("Access-Control-Allow-Methods", "POST")
+    w.Header().Set("Access-Control-Allow-Credentials", "true")
+
+	// change store selection global var
+	UpdatingData = true;
+	RoutingRecipesType = RecommendedRecipes
+	UpdatingData = false;
+
+	// write a successful header
+	w.WriteHeader(http.StatusOK)
+
+	// if the header was successful, change the recipe data
+	if http.StatusOK == 200 {
+		// get new data for routing
+		UpdateAllData()
+	}
+
+}
+
+func handleUserRecipesSelect(w http.ResponseWriter, r *http.Request) {
+
+	// verify POST request from frontend
+    if r.Method == "OPTIONS" {
+        w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+        w.Header().Set("Access-Control-Allow-Methods", "POST")
+        w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+        w.Header().Set("Access-Control-Allow-Credentials", "true")
+        w.WriteHeader(http.StatusOK)
+        return
+    }
+
+	// set correct headers
+    w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+    w.Header().Set("Access-Control-Allow-Methods", "POST")
+    w.Header().Set("Access-Control-Allow-Credentials", "true")
+
+	// change store selection global var
+	UpdatingData = true;
+	RoutingRecipesType = UserRecipes
+	UpdatingData = false;
+
+	// write a successful header
+	w.WriteHeader(http.StatusOK)
+
+	// if the header was successful, change the recipe data
+	if http.StatusOK == 200 {
+		// get new data for routing
+		UpdateAllData()
+	}
+
+}
+
+func handleFavoriteRecipesSelect(w http.ResponseWriter, r *http.Request) {
+
+	// verify POST request from frontend
+    if r.Method == "OPTIONS" {
+        w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+        w.Header().Set("Access-Control-Allow-Methods", "POST")
+        w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+        w.Header().Set("Access-Control-Allow-Credentials", "true")
+        w.WriteHeader(http.StatusOK)
+        return
+    }
+
+	// set correct headers
+    w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+    w.Header().Set("Access-Control-Allow-Methods", "POST")
+    w.Header().Set("Access-Control-Allow-Credentials", "true")
+
+	// change store selection global var
+	UpdatingData = true;
+	RoutingRecipesType = FavoriteRecipes
+	UpdatingData = false;
+
+	// write a successful header
+	w.WriteHeader(http.StatusOK)
+
+	// if the header was successful, change the recipe data
+	if http.StatusOK == 200 {
+		// get new data for routing
+		UpdateAllData()
+	}
+
+}
+
+
+
 func ListenForData(){
 	
 	// handle the listening functions
@@ -450,6 +560,15 @@ func ListenForData(){
     })
 	http.HandleFunc("/api/DealsStore", func(response http.ResponseWriter, request *http.Request) {
         handleNewDealsStore(response, request)
+    })
+	http.HandleFunc("/api/RecommendedRecipesSelect", func(response http.ResponseWriter, request *http.Request) {
+        handleRecommendedRecipesSelect(response, request)
+    })
+	http.HandleFunc("/api/UserRecipesSelect", func(response http.ResponseWriter, request *http.Request) {
+        handleUserRecipesSelect(response, request)
+    })
+	http.HandleFunc("/api/FavoriteRecipesSelect", func(response http.ResponseWriter, request *http.Request) {
+        handleFavoriteRecipesSelect(response, request)
     })
 
 	// create server
@@ -510,17 +629,25 @@ func UpdatePantryData(){
 }
 
 func UpdateRecipeData(){
+	var routingRecipes []Recommendation
+	
 	// save all recipes data to global variable
-	userRecList := BestRecipes(backendDatabase.GetUserPantry(CurrentUser.UserName), backendDatabase.ReadJSONRecipes(), StoreDeals)
+	if RoutingRecipesType == RecommendedRecipes{
+		routingRecipes = BestRecipes(backendDatabase.GetUserPantry(CurrentUser.UserName), backendDatabase.ReadJSONRecipes(), StoreDeals)
+	} else if RoutingRecipesType == UserRecipes{
+		routingRecipes = UserRecipesWithRelatedItems(backendDatabase.GetUserPantry(CurrentUser.UserName), backendDatabase.ReadCurrUserRecipes(CurrentUser), StoreDeals)
+	} else if RoutingRecipesType == FavoriteRecipes {
+		routingRecipes = FavoriteRecipesWithRelatedItems(backendDatabase.GetUserPantry(CurrentUser.UserName), backendDatabase.ReadFavoriteRecipes(CurrentUser), StoreDeals)
+	}
 
 	// lock the recipe data
 	dataMutex.Lock()
 
 	var recipesInterfaceRefresh []interface{}
 	recipesInterface = recipesInterfaceRefresh
-	for i := 0; i < len(userRecList); i++ {
+	for i := 0; i < len(routingRecipes); i++ {
 		// sends recipes, items in recipe, and deals related 
-		recipesInterface = append(recipesInterface, userRecList[i])
+		recipesInterface = append(recipesInterface, routingRecipes[i])
 	}
 
 	// unlock the data
