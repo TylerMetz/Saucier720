@@ -46,8 +46,9 @@ def scrape_publix():
     time.sleep(5)
 
     # Click search bar
-    search_bar = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR("#navBar > div > div.navigation-bar-main > div > div > div.navigation-section.top > div.user-navigation > div > div > div.navigation-sidebar-container > div.navigation-sidebar-body > div > div > div > div.search-container > form > input[type=search]"))))
+    search_bar = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR,"#navBar > div > div.navigation-bar-main > div > div > div.navigation-section.top > div.user-navigation > div > div > div.navigation-sidebar-container > div.navigation-sidebar-body > div > div > div > div.search-container > form > input[type=search]")))
     search_bar.click()
+    search_bar.send_keys("32601")
     time.sleep(5)
 
     page_source = driver.page_source
