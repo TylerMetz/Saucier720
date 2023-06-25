@@ -1,94 +1,110 @@
-<div class="card-container">
-  <div class="card">
-    <div class="recipe-title">
-      <h1 *ngIf="recipes && recipes.length > 0" class="recipe-title">
-        {{ recipes[currentRecipeIndex].R.title }}
-      </h1>
-    </div>
-    <div class="recipe-body">
-        <div class="recipe-ingredients">
-          <div class="recipe-ingredients-content">
-            <div class="recipe-ingredients-header">
-              <h2>Ingredients</h2>
-            </div>
-            <div *ngIf="recipes && recipes.length > 0" class="recipe-ingredients">
-              <ul>
-                <ng-container *ngFor="let ingredient of currentIngredients; let i = index">
-                  <ng-container *ngIf="!checkForRecipeFollows(ingredient)">
-                    <li *ngIf="!printedSubRecipeLines.includes(ingredient)">{{ ingredient }}</li>
-                  </ng-container>
-                  <ng-container *ngIf="checkForRecipeFollows(ingredient)">
-                      <app-sub-recipe [recipe]="ingredient" [ingredients]="currentIngredients.slice(i + 1)" [headerText]="ingredient"></app-sub-recipe>
-                    <ng-container *ngFor="let subIngredient of currentIngredients.slice(i + 1)">
-                      <ng-container *ngIf="!checkForRecipeFollows(subIngredient)">
-                        <ng-container *ngIf="printedSubRecipeLines.push(subIngredient)"></ng-container>
+<ng-container *ngIf="!hasError; else errorMessage">
+  <div class="card-container">
+    <div class="card">
+      <div class="recipe-title">
+        <h1 *ngIf="recipes && recipes.length > 0" class="recipe-title">
+          {{ recipes[currentRecipeIndex].R.title }}
+        </h1>
+      </div>
+      <div class="recipe-body">
+          <div class="recipe-ingredients">
+            <div class="recipe-ingredients-content">
+              <div class="recipe-ingredients-header">
+                <h2>Ingredients</h2>
+              </div>
+              <div *ngIf="recipes && recipes.length > 0" class="recipe-ingredients">
+                <ul>
+                  <ng-container *ngFor="let ingredient of currentIngredients; let i = index">
+                    <ng-container *ngIf="!checkForRecipeFollows(ingredient)">
+                      <li *ngIf="!printedSubRecipeLines.includes(ingredient)">{{ ingredient }}</li>
+                    </ng-container>
+                    <ng-container *ngIf="checkForRecipeFollows(ingredient)">
+                        <app-sub-recipe [recipe]="ingredient" [ingredients]="currentIngredients.slice(i + 1)" [headerText]="ingredient"></app-sub-recipe>
+                      <ng-container *ngFor="let subIngredient of currentIngredients.slice(i + 1)">
+                        <ng-container *ngIf="!checkForRecipeFollows(subIngredient)">
+                          <ng-container *ngIf="printedSubRecipeLines.push(subIngredient)"></ng-container>
+                        </ng-container>
                       </ng-container>
                     </ng-container>
                   </ng-container>
-                </ng-container>
-              </ul>
-            </div>
-          </div>       
-        </div>
-        <div class="recipe-instructions">
-          <div class="recipe-instructions-content">
-          <div class="recipe-instructions-header">
-            <h2>Instructions</h2>
+                </ul>
+              </div>
+            </div>       
           </div>
-          <div *ngIf="recipes && recipes.length > 0" class="recipe-instructions">
-            <div *ngIf="recipes[currentRecipeIndex].R.instructions" class="recipe-instructions">
-              <ol>
-                <ng-container *ngFor="let sentence of recipes[currentRecipeIndex].R.instructions.split('.'); let i = index">
-                  <li *ngIf="sentence.trim().length >= 2">
-                    <span>{{ sentence.trim() }}</span>
-                  </li>
-                </ng-container>
-              </ol>
+          <div class="recipe-instructions">
+            <div class="recipe-instructions-content">
+            <div class="recipe-instructions-header">
+              <h2>Instructions</h2>
             </div>
-          </div>          
-          </div>
-        </div>
-        
-        <div class="recipe-pantry">
-          <div class="recipe-pantry-content">
-            <div class="recipe-pantry-header">
-              <h2>Related Ingredients in your Pantry:</h2>
+            <div *ngIf="recipes && recipes.length > 0" class="recipe-instructions">
+              <div *ngIf="recipes[currentRecipeIndex].R.instructions" class="recipe-instructions">
+                <ol>
+                  <ng-container *ngFor="let sentence of recipes[currentRecipeIndex].R.instructions.split('.'); let i = index">
+                    <li *ngIf="sentence.trim().length >= 2">
+                      <span>{{ sentence.trim() }}</span>
+                    </li>
+                  </ng-container>
+                </ol>
+              </div>
+            </div>          
             </div>
-            <div *ngIf="recipes && recipes.length > 0" class="recipe-pantry">
-              <ul>
-                <ng-container *ngFor="let ingredient of recipes[currentRecipeIndex].ItemsInPantry">
-                  <li> {{ ingredient.Name }}</li>
-                </ng-container>
-              </ul>
-            </div> 
           </div>
-        </div>
+          
+          <div class="recipe-pantry">
+            <div class="recipe-pantry-content">
+              <div class="recipe-pantry-header">
+                <h2>Related Ingredients in your Pantry:</h2>
+              </div>
+              <div *ngIf="recipes && recipes.length > 0" class="recipe-pantry">
+                <ul>
+                  <ng-container *ngFor="let ingredient of recipes[currentRecipeIndex].ItemsInPantry">
+                    <li> {{ ingredient.Name }}</li>
+                  </ng-container>
+                </ul>
+              </div> 
+            </div>
+          </div>
 
-        <div class="recipe-deals">
-          <div class="recipe-deals-content">
-            <div class="recipe-deals-header">
-              <h2>Related deals:</h2>
+          <div class="recipe-deals">
+            <div class="recipe-deals-content">
+              <div class="recipe-deals-header">
+                <h2>Related deals:</h2>
+              </div>
+              <div *ngIf="recipes && recipes.length > 0" class="recipe-deals">
+                <ul>
+                  <ng-container *ngFor="let ingredient of recipes[currentRecipeIndex].ItemsOnSale">
+                    <li> {{ ingredient.Name }}</li>
+                  </ng-container>
+                </ul>
+              </div> 
             </div>
-            <div *ngIf="recipes && recipes.length > 0" class="recipe-deals">
-              <ul>
-                <ng-container *ngFor="let ingredient of recipes[currentRecipeIndex].ItemsOnSale">
-                  <li> {{ ingredient.Name }}</li>
-                </ng-container>
-              </ul>
-            </div> 
           </div>
-        </div>
-        <div class="recipe-picture">
-          <div *ngIf="recipes && recipes.length > 0" class="recipe-picture">
-            {{ recipes[currentRecipeIndex].R.pictureLink }}
+          <div class="recipe-picture">
+            <div *ngIf="recipes && recipes.length > 0" class="recipe-picture">
+              {{ recipes[currentRecipeIndex].R.pictureLink }}
+            </div>
           </div>
-        </div>
+      </div>
+    </div>
+    <div class="button-container">
+      <button class="button"(click)="goToPrevRecipe()">Previous Recipe</button>
+      <button class="button" (click)="goToNextRecipe()">Next Recipe</button> 
+    </div>
+    
+    <div class="page-number">Page {{currentRecipeIndex + 1}} / {{recipes.length}}</div>
+  </div>
+</ng-container>
+
+<ng-template #errorMessage>
+  <!-- Render the error message -->
+  <div class="error-message">
+    <div class="error-icon">
+      <i class="fa fa-exclamation-circle"></i>
+    </div>
+    <div class="error-text">
+      <h3>Error</h3>
+      <p>An error occurred while retrieving recipes. Please try again later.</p>
     </div>
   </div>
-  <div class="button-container">
-    <button class="button"(click)="goToPrevRecipe()">Previous Recipe</button>
-    <button class="button" (click)="goToNextRecipe()">Next Recipe</button> 
-  </div>
-  
-  <div class="page-number">Page {{currentRecipeIndex + 1}} / {{recipes.length}}</div>
-</div>
+</ng-template>
+

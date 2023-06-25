@@ -1,22 +1,24 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { PANTRY } from 'src/app/mocks/pantry.mock';
 import { lastValueFrom } from 'rxjs';
 import { RecipeService } from 'src/app/core/services/recipes/recipe.service';
 
-
 @Component({
   selector: 'app-recipe-nav-bar',
   templateUrl: './recipe-nav-bar.component.html',
-  styleUrls:[ './recipe-nav-bar.component.scss'],
+  styleUrls: ['./recipe-nav-bar.component.scss'],
   providers: [RecipeService]
 })
-
-export class RecipeNavBarComponent {
-  constructor(private recipeService: RecipeService) { }
-
+export class RecipeNavBarComponent implements OnInit {
   showMyRecipesButton = true;
   showFavoriteRecipesButton = true;
   showRecommendedRecipesButton = false;
+
+  constructor(private recipeService: RecipeService) {}
+
+  ngOnInit() {
+    this.loadButtonState();
+  }
 
   toggleButtons(buttonType: string) {
     if (buttonType === 'myRecipes') {
@@ -32,8 +34,10 @@ export class RecipeNavBarComponent {
       this.showFavoriteRecipesButton = true;
       this.showRecommendedRecipesButton = false;
     }
+
+    this.saveButtonState();
   }
-  
+
   async postFavoriteRecipesSelect() {
     try {
       const response = await lastValueFrom(this.recipeService.postFavoriteRecipesSelect());
@@ -62,5 +66,24 @@ export class RecipeNavBarComponent {
     } catch (error) {
       console.error(error);
     }
+  }
+
+  loadButtonState() {
+    const buttonState = localStorage.getItem('recipeNavBarButtonState');
+    if (buttonState) {
+      const state = JSON.parse(buttonState);
+      this.showMyRecipesButton = state.showMyRecipesButton;
+      this.showFavoriteRecipesButton = state.showFavoriteRecipesButton;
+      this.showRecommendedRecipesButton = state.showRecommendedRecipesButton;
+    }
+  }
+
+  saveButtonState() {
+    const buttonState = {
+      showMyRecipesButton: this.showMyRecipesButton,
+      showFavoriteRecipesButton: this.showFavoriteRecipesButton,
+      showRecommendedRecipesButton: this.showRecommendedRecipesButton
+    };
+    localStorage.setItem('recipeNavBarButtonState', JSON.stringify(buttonState));
   }
 }

@@ -63,7 +63,7 @@ func RoutData(){
     // setup all global variables to be routed
 	go func(){
 		for{
-			UpdateAllData()
+			if(!UpdatingData) { UpdateAllData() }
 		}
 	}()
 	 

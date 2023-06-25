@@ -72,3 +72,31 @@
   flex-direction: row;
   justify-items: auto;
 }
+
+.error-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffdddd;
+  padding: 20px;
+  border: 1px solid #ff0000;
+  border-radius: 4px;
+  color: #ff0000;
+}
+
+.error-icon {
+  font-size: 24px;
+  margin-right: 10px;
+}
+
+.error-text h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.error-text p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+

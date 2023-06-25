@@ -5,6 +5,7 @@ export interface Recipe {
     ingredients: string[];
     title: string;
     pictureLink: string;
+    recipeID: string;
     [key: string]: any; // index signature
 }
 
