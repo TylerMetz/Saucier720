@@ -20,6 +20,7 @@
   
   .title-textbox {
     flex: 1;
+    width: 238%;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -50,7 +51,8 @@
     border-radius: 5px;
     margin-bottom: 10px;
   }
-  
+
+  .remove-button,
   .add-button {
     padding: 10px;
     border: none;
@@ -59,11 +61,18 @@
     color: var(--text-color);
     font-size: 16px;
     cursor: pointer;
+    margin-right: 10px;
   }
   
+  .remove-button:hover,
   .add-button:hover {
     background-color: var(--text-color);
     color: var(--primary-color);
+  }
+
+  .add-button:last-child,
+  .remove-button:last-child {
+  margin-right: 0; /* Remove the margin for the last button in each section */
   }
   
   .button-container {

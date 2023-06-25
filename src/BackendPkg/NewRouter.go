@@ -66,6 +66,7 @@ func RoutData(){
 			if(!UpdatingData) { UpdateAllData() }
 		}
 	}()
+	
 	 
     // create server
     server := &http.Server{
@@ -547,7 +548,52 @@ func handleFavoriteRecipesSelect(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func handleNewUserRecipe(w http.ResponseWriter, r *http.Request) {
 
+	// verify POST request from frontend
+    if r.Method == "OPTIONS" {
+        w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+        w.Header().Set("Access-Control-Allow-Methods", "POST")
+        w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+        w.Header().Set("Access-Control-Allow-Credentials", "true")
+        w.WriteHeader(http.StatusOK)
+        return
+    }
+
+	// set correct headers
+    w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+    w.Header().Set("Access-Control-Allow-Methods", "POST")
+    w.Header().Set("Access-Control-Allow-Credentials", "true")
+
+	// translate POST data to ASCII
+	body, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+
+	// define type to match JSON data from frontend
+	var newItem Recipe
+
+	// unmarshal JSON data
+	err = json.Unmarshal(body, &newItem)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// change store selection global var
+	UpdatingData = true;
+	backendDatabase.WriteNewUserRecipe(CurrentUser, newItem)
+	UpdatingData = false;
+
+	// write a successful header
+	w.WriteHeader(http.StatusOK)
+
+	// if the header was successful, change the recipe data
+	if http.StatusOK == 200 {
+		// get new data for routing
+		UpdateAllData()
+	}
+
+}
 
 func ListenForData(){
 	
@@ -569,6 +615,9 @@ func ListenForData(){
     })
 	http.HandleFunc("/api/FavoriteRecipesSelect", func(response http.ResponseWriter, request *http.Request) {
         handleFavoriteRecipesSelect(response, request)
+    })
+	http.HandleFunc("/api/NewUserRecipe", func(response http.ResponseWriter, request *http.Request) {
+        handleNewUserRecipe(response, request)
     })
 
 	// create server

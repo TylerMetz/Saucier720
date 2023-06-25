@@ -396,9 +396,16 @@ func (d *Database) WriteNewUserRecipe (currUser User, newRecipe Recipe){
 	if err != nil {idNum = 1 } // if user has no recipes then idNum = 1
 
 	// Insert each recipe into the table
-	statementThree, _ := database.Prepare("INSERT OR IGNORE INTO JSONRecipeData (title, ingredients, instructions, recipeID, username) values (?, ?, ?, ?, ?)")
-	statementThree.Exec(newRecipe.Title, newRecipe.Ingredients, newRecipe.Instructions, (currUser.UserName + strconv.Itoa(idNum)), currUser.UserName)
+	ingredients, _ := json.Marshal(newRecipe.Ingredients)
+	statementThree, _ := database.Prepare("INSERT OR IGNORE INTO UserRecipeData (title, ingredients, instructions, recipeID, username) values (?, ?, ?, ?, ?)")
+	statementThree.Exec(newRecipe.Title, string(ingredients), newRecipe.Instructions, (currUser.UserName + strconv.Itoa(idNum)), currUser.UserName)
 
+	// delete an entry where there isn't any data, will cause frontend issues
+	database.Exec("DELETE FROM UserRecipeData WHERE ingredients = '[]'")
+	database.Exec("DELETE FROM UserRecipeData WHERE instructions = ''")
+
+	// close db
+	database.Close()
 }
 
 func (d *Database) DeleteUserRecipe (recipeID string){
@@ -417,8 +424,6 @@ func (d* Database) ReadAllUserRecipes() []Recipe{
 
 	// create the recipes return slice
 	var recipes []Recipe
-	emptyRecipe := Recipe{}
-	recipes = append(recipes, emptyRecipe)
 
 	// Execute a SELECT statement to retrieve all rows from the RecipeData table
 	rows, err := database.Query("SELECT * FROM UserRecipeData")
@@ -455,13 +460,9 @@ func (d* Database) ReadCurrUserRecipes (currUser User) []Recipe{
 
 	// create the recipes return slice
 	var recipes []Recipe
-	emptyRecipe := Recipe{}
-	recipes = append(recipes, emptyRecipe)
-
-	
 
 	// Execute a SELECT statement to retrieve all rows from the RecipeData table
-	statement, err := database.Prepare("SELECT title, ingredients, instructions, recipeID FROM UserRecipeData WHERE username = ?")
+	statement, err := database.Prepare("SELECT title, ingredients, instructions, recipeID, username FROM UserRecipeData WHERE username = ?")
 	// handle case where user recipes don't exist
 	if err != nil{
 		return recipes
@@ -524,8 +525,6 @@ func (d* Database) ReadFavoriteRecipes (currUser User) []Recipe{
 
 	// create the recipes return slice
 	var recipes []Recipe
-	emptyRecipe := Recipe{}
-	recipes = append(recipes, emptyRecipe)
 
 	// Execute a SELECT statement to retrieve all rows from the RecipeData table
 	statement, err := database.Prepare("SELECT title, ingredients, instructions, recipeID FROM UserFavoriteRecipes WHERE username = ?")

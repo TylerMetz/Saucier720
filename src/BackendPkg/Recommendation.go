@@ -16,8 +16,6 @@ type Recommendation struct {
 func BestRecipes(userPantry Pantry, allRecipes []Recipe, deals []FoodItem) []Recommendation {
 	// return val
 	var returnRecommendations []Recommendation
-	emptyRecc := Recommendation{}
-	returnRecommendations = append(returnRecommendations, emptyRecc)
 
 	var scoreList []int
 	// ranks recipes based off of what is in pantry
@@ -127,8 +125,6 @@ func UserRecipesWithRelatedItems(userPantry Pantry, allRecipes []Recipe, deals [
 	
 	// return val
 	var returnRecommendations []Recommendation
-	emptyRecc := Recommendation{}
-	returnRecommendations = append(returnRecommendations, emptyRecc)
 	
 	for m := 0; m < len(allRecipes); m++ {
 		// get items in pantry
@@ -188,8 +184,6 @@ func FavoriteRecipesWithRelatedItems(userPantry Pantry, allRecipes []Recipe, dea
 	
 	// return val
 	var returnRecommendations []Recommendation
-	emptyRecc := Recommendation{}
-	returnRecommendations = append(returnRecommendations, emptyRecc)
 
 	for m := 0; m < len(allRecipes); m++ {
 		// get items in pantry

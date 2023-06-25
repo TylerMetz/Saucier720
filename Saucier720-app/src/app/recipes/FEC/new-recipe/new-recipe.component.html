@@ -1,7 +1,9 @@
 <div class="new-recipe-component">
     <div class="header">
-      <h3>Title:</h3>
-      <input type="text" class="title-textbox" placeholder="Enter the recipe title">
+      <h3>Name:</h3>
+      <div class="title-container">
+        <input #titleTextbox type="text" id="titleTextbox" class="title-textbox" placeholder="Recipe Name">
+      </div>
     </div>
     <div class="content">
       <div class="ingredient-section">
@@ -12,6 +14,7 @@
           <input type="text" class="ingredient-textbox" placeholder="Ingredient 3">
         </div>
         <button class="add-button" (click)="addIngredientTextbox()">Add Ingredient</button>
+        <button class="remove-button" (click)="removeIngredientTextbox()">-</button>
       </div>
       <div class="instruction-section">
         <h3>Instructions</h3>
@@ -21,6 +24,7 @@
           <li><input type="text" class="instruction-textbox" placeholder="Step 3"></li>
         </ol>
         <button class="add-button" (click)="addInstructionTextbox()">Add Step</button>
+        <button class="remove-button" (click)="removeInstructionTextbox()">-</button>
       </div>
     </div>
     <div class="add-to-cookbook-section">

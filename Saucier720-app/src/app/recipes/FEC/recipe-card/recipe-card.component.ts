@@ -34,11 +34,6 @@ export class RecipeCardComponent implements OnInit {
     this.cdRef.detectChanges();
   }
 
-  reloadRecipes(): void {
-    this.populateRecipes();
-    this.updatePrintedSubRecipeLines();
-  }
-
   public async populateRecipes(): Promise<void> {
     try {
       const event: HttpEvent<any> = await lastValueFrom(this.recipeService.getRecipes());
@@ -60,7 +55,7 @@ export class RecipeCardComponent implements OnInit {
           let parsedRecipes = JSON.parse(recipeStr);
           this.recipes = parsedRecipes;
 
-          if (this.recipes[0].R.recipeID == "") {
+          if (!this.recipes) {
             this.hasError = true; // Set the error flag
           } else {
             this.hasError = false; // Clear the error flag
