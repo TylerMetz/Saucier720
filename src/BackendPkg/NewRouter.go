@@ -8,7 +8,6 @@ import (
 	"log"
 	"sync"
 	"context"
-	"fmt"
 )
 
 // GLOBAL VARIABLES
