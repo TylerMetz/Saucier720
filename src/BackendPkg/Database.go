@@ -446,15 +446,65 @@ func (d *Database) UserFromCookie(cookie string) User {
 
 func (d *Database) ReadList(currUser User) List{
 	// FUNC OVERVIEW: returns a user's list based on User (User.Username)
+	database := d.OpenDatabase()
 
+	list := List{
+		ListOwner:    currUser,
+		TimeUpdated:  time.Now(),
+		ShoppingList: make([]FoodItem, 0),
+	}
+
+	rows, err := database.Query("SELECT FoodItemName, Quantity FROM UserLists WHERE Username = ?", currUser.UserName)
+	if err != nil {
+		return list
+	}
+
+	for rows.Next() {
+		var foodItemName string
+		var quantity int
+		rows.Scan(&foodItemName, &quantity)
+
+		foodItem := FoodItem{
+			Name:     foodItemName,
+			Quantity: quantity,
+		}
+		list.ShoppingList = append(list.ShoppingList, foodItem)
+	}
+
+	return list
 }
+
 
 func (d *Database) WriteList(newItem FoodItem, currUser User){
 	// FUNC OVERVIEW: adds a new item to the user's list
+	database := d.OpenDatabase()
 
+	_, err := database.Exec(`
+		CREATE TABLE IF NOT EXISTS UserLists (
+			Username TEXT,
+			FoodItemName TEXT,
+			Quantity INT,
+			TimeUpdated TIMESTAMP,
+			PRIMARY KEY (Username, FoodItemName)
+		)
+	`)
+	if err != nil {
+		// Handle error
+	}
+
+	statement, _ := database.Prepare("INSERT INTO UserLists (Username, FoodItemName, Quantity, TimeUpdated) VALUES (?, ?, ?, ?)")
+	statement.Exec(currUser.UserName, newItem.Name, newItem.Quantity, time.Now())
 }
 
 func (d *Database) UpdateListItem(newItem FoodItem, currUser User){
 	// FUNC OVERVIEW: updates the quantity of an item in the list, if it == 0, delete it from user's list
+	database := d.OpenDatabase()
 
+	if newItem.Quantity == 0 {
+		statement, _ := database.Prepare("DELETE FROM UserLists WHERE Username = ? AND FoodItemName = ?")
+		statement.Exec(currUser.UserName, newItem.Name)
+	} else {
+		statement, _ := database.Prepare("UPDATE UserLists SET Quantity = ?, TimeUpdated = ? WHERE Username = ? AND FoodItemName = ?")
+		statement.Exec(newItem.Quantity, time.Now(), currUser.UserName, newItem.Name)
+	}
 }

@@ -34,10 +34,9 @@ func (s *Scraper)CheckIfScrapeNewDeals(d Database){
 
 		// deletes old weekly deals from .db file
 		d.ClearPublixDeals()
-		d.ClearWalmartDeals()
 
 		// scrape publix data
-		// s.PublixScrapeDeals()
+		// s.PublixScrapeDeals() // put py func here
 		fmt.Println("Publix Deals Scraped!")
 		
 		// store publix data to .db file
