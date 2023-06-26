@@ -2,7 +2,6 @@ import re
 import time
 from bs4 import BeautifulSoup
 from selenium import webdriver
-from selenium.webdriver import ActionChains
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -10,8 +9,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from webdriver_manager.chrome import ChromeDriverManager
-
-import sys
 
 def scrape_publix():
     # Get to publix website 
@@ -26,6 +23,7 @@ def scrape_publix():
     options.add_argument("--disable-geolocation")
     options.add_experimental_option("prefs", {"profile.default_content_setting_values.geolocation": 2})
 
+    # Installs driver depending on browser
     driver=webdriver.Chrome(service=Service(ChromeDriverManager().install()),options=options)
 
     # Open page
@@ -86,9 +84,7 @@ def scrape_publix():
         print("Deal: ", deal.text.strip())
         print()
 
-    driver.quit()
-
-    
+    driver.quit() 
 
 def main():
     scrape_publix()

@@ -15,11 +15,7 @@ var prevUser BackendPkg.User
 func main() {
 
 	// Reads recipes dataset in not read in yet and stores in DB
-
 	programDatabase.WriteRecipes() 
-
-	// ENH-395: For the sake of resetting the publix scrape 
-	programDatabase.ClearPublixDeals()
 
 	// runs scraper if new deals at publix or walmart
 	programScraper.CheckIfScrapeNewDeals(programDatabase)

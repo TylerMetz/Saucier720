@@ -78,6 +78,9 @@ This web app scrapes weekly deals from groccery store websites, and gives users 
     ```
     $ pip install selenium
     ```
+    ```
+    $ pip install webdriver-manager
+    ```
     <br>
 
 4. Install Internal Package
