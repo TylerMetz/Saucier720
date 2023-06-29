@@ -1,20 +1,18 @@
 import re
+import time
 from bs4 import BeautifulSoup
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
-import sys
+from webdriver_manager.chrome import ChromeDriverManager
 
 def scrape_walmart():
+    # Get to walmart website
     url = "https://walmart.com/shop/deals/food/foodrollbacks"
-    
-    if sys.platform.startswith('win'):
-        driverPath = "SeleniumDrivers/chromedriver_win32/chromedriver.exe"
-    else:
-        driverPath = "SeleniumDrivers/chromedriver_mac64/chromedriver"
     
     while True:
         # Set up Selenium options
@@ -25,7 +23,7 @@ def scrape_walmart():
         options.add_argument("--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36")
 
         # Start Selenium webdriver
-        driver = webdriver.Chrome(executable_path = driverPath, options=options)
+        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
         
         # Open the webpage
         driver.get(url)
