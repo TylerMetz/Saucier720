@@ -19,7 +19,6 @@ export class RecipeCardComponent implements OnInit {
   nextRecipeFollows: any;
   printedSubRecipeLines: string[] = [];
   hasError: boolean = false;
-  isFavorite: boolean = false;
 
   constructor(
     private recipeService: RecipeService,
@@ -86,7 +85,6 @@ export class RecipeCardComponent implements OnInit {
   }
 
   goToNextRecipe() {
-    this.isFavorite = false;
     this.currentRecipeIndex++;
     if (this.currentRecipeIndex >= this.recipes.length) {
       this.currentRecipeIndex = 0;
@@ -148,9 +146,9 @@ export class RecipeCardComponent implements OnInit {
   async toggleFavorite() {
 
     // switch favorite val
-    this.isFavorite = !this.isFavorite;
+    this.recipes[this.currentRecipeIndex].R.userFavorite = !this.recipes[this.currentRecipeIndex].R.userFavorite;
 
-    if(this.isFavorite) {
+    if(this.recipes[this.currentRecipeIndex].R.userFavorite) {
       try {
         const response = await lastValueFrom(this.recipeService.postFavoriteRecipe(this.currentRecipe.R.recipeID));
         console.log(response);
@@ -158,7 +156,7 @@ export class RecipeCardComponent implements OnInit {
         console.error(error);
       }
     }
-    else if (!this.isFavorite){
+    else if (!this.recipes[this.currentRecipeIndex].R.userFavorite){
       try {
         const response = await lastValueFrom(this.recipeService.postRemoveFavoriteRecipe(this.currentRecipe.R.recipeID));
         console.log(response);

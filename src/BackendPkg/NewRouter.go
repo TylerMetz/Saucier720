@@ -22,7 +22,7 @@ var UpdatingData bool
 var CurrentUser User
 var StoreSelection string = "Walmart" // set to Walmart by default (temp)
 var StoreDeals []FoodItem
-var RoutingRecipesType RecipeType = RecommendedRecipes // recommended recipes display by default
+var RoutingRecipesType RecipeType
 
 // RECIPE TYPE ENUM
 type RecipeType int
@@ -182,6 +182,9 @@ func handleLogin(w http.ResponseWriter, r *http.Request, sessionCookie *string, 
 		http.Error(w, "Invalid login credentials", http.StatusUnauthorized)
 		return
 	} else {
+		// set updating data to true
+		UpdatingData = true
+
 		// Set the cookie
 		cookie := &http.Cookie{
 			Name:     "sessionID",
@@ -217,6 +220,9 @@ func handleLogin(w http.ResponseWriter, r *http.Request, sessionCookie *string, 
 
 		// Get the new "sessionID" cookie value
 		*sessionCookie = cookie.Value
+
+		// set recipes that are routed to recommended by default
+		RoutingRecipesType = RecommendedRecipes
 
 		// allow data to be routed again
 		UpdatingData = false;
@@ -782,6 +788,9 @@ func UpdateRecipeData(){
 	} else if RoutingRecipesType == FavoriteRecipes {
 		routingRecipes = AllRecipesWithRelatedItems(backendDatabase.GetUserPantry(CurrentUser.UserName), backendDatabase.ReadFavoriteRecipes(CurrentUser), StoreDeals)
 	}
+	
+	// find which recipes are user favorites
+	routingRecipes = backendDatabase.FindFavoriteRecipes(CurrentUser, routingRecipes)
 
 	// lock the recipe data
 	dataMutex.Lock()

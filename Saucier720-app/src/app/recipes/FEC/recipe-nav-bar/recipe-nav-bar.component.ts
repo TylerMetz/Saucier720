@@ -1,6 +1,6 @@
 import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
 import { lastValueFrom } from 'rxjs';
-import { RecipeService } from 'src/app/core/services/recipes/recipe.service';
+import { RecipeService } from 'src/app/core/services/recipes/recipe.service'; 
 
 @Component({
   selector: 'app-recipe-nav-bar',
@@ -9,6 +9,8 @@ import { RecipeService } from 'src/app/core/services/recipes/recipe.service';
   providers: [RecipeService]
 })
 export class RecipeNavBarComponent implements OnInit {
+  
+  // booleans for recipe nav bar view buttons
   showMyRecipesButton = true;
   showFavoriteRecipesButton = true;
   showRecommendedRecipesButton = false;
@@ -43,6 +45,10 @@ export class RecipeNavBarComponent implements OnInit {
   toggleNewRecipeComponent() {
     this.isNewRecipeEnabled = !this.isNewRecipeEnabled;
     this.toggleNewRecipe.emit(this.isNewRecipeEnabled);
+  }
+
+  getService() {
+    return this.recipeService;
   }
 
   async postFavoriteRecipesSelect() {

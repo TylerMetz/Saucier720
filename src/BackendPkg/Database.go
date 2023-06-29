@@ -525,7 +525,6 @@ func (d* Database) ReadCurrUserRecipes (currUser User) []Recipe{
 	statement, err := database.Prepare("SELECT title, ingredients, instructions, recipeID, username FROM UserRecipeData WHERE username = ?")
 	// handle case where user recipes don't exist
 	if err != nil{
-		// close db
 		database.Close()
 		return recipes
 	}
@@ -533,6 +532,7 @@ func (d* Database) ReadCurrUserRecipes (currUser User) []Recipe{
 	rows, err := statement.Query(currUser.UserName)
 	// handle case where user recipes don't exist
 	if err != nil{
+		database.Close()
 		return recipes
 	}
 
@@ -597,12 +597,18 @@ func (d* Database) ReadFavoriteRecipes (currUser User) []Recipe{
 	var recipes []Recipe
 
 	// Retrieve recipeIDs from UserFavoriteRecipes table based on the given username
-	query := "SELECT recipeIDs FROM UserFavoriteRecipes WHERE username = ?"
-	rows, err := database.Query(query, currUser.UserName)
+	statement, err := database.Prepare("SELECT recipeID FROM UserFavoriteRecipes WHERE username = ?")
 	if err != nil {
+		database.Close()
 		return recipes
 	}
-	defer rows.Close()
+
+	// Execute the statement
+	rows, err := statement.Query(currUser.UserName)
+	if err != nil {
+		database.Close()
+		return recipes
+	}
 
 	var recipeIDs []string
 
@@ -610,52 +616,112 @@ func (d* Database) ReadFavoriteRecipes (currUser User) []Recipe{
 		var recipeID string
 		err := rows.Scan(&recipeID)
 		if err != nil {
+			database.Close()
 			return recipes
 		}
 		recipeIDs = append(recipeIDs, recipeID)
 	}
 
-	// Retrieve recipe data from UserRecipeData and JSONRecipeData tables based on the recipeIDs
 	for _, recipeID := range recipeIDs {
-		// Retrieve data from UserRecipeData table
-		query := "SELECT title, ingredients, instructions FROM UserRecipeData WHERE recipeID = ?"
-		row := database.QueryRow(query, recipeID)
-
-		var recipe Recipe
-		err := row.Scan(&recipe.Title, &recipe.Ingredients, &recipe.Instructions)
-		if err != nil {
-			return recipes
+		// loop through all recipeIDs from a user ravorites and retrieve the recipe
+		recipe, _ := getRecipeByID(database, recipeID)
+		if recipe != nil {
+			recipes = append(recipes, *recipe)
 		}
-
-		// Retrieve data from JSONRecipeData table
-		query = "SELECT title, ingredients, instructions FROM JSONRecipeData WHERE recipeID = ?"
-		row = database.QueryRow(query, recipeID)
-
-		var title, ingredients, instructions string
-		err = row.Scan(&title, &ingredients, &instructions)
-		if err != nil {
-			return recipes
-		}
-
-		// Update the recipe object with JSONRecipeData values if they exist
-		if title != "" {
-			recipe.Title = title
-		}
-		if ingredients != "" {
-			err = json.Unmarshal([]byte(ingredients), &recipe.Ingredients)
-			if err != nil {
-				return recipes
-			}
-		}
-		if instructions != "" {
-			recipe.Instructions = instructions
-		}
-
-		recipes = append(recipes, recipe)
 	}
 
+	// close db and return recipes
+	database.Close()
+	return recipes
 
-	return recipes;
+}
+func getRecipeByID(db *sql.DB, recipeID string) (*Recipe, error) {
+	recipe, err := getRecipeFromIdUserTable(db, recipeID)
+	if err != nil {
+		return nil, err
+	}
+
+	if recipe == nil {
+		recipe, err = getRecipeFromIdJSONTable(db, recipeID)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return recipe, nil
+}
+func getRecipeFromIdUserTable(db *sql.DB, recipeID string) (*Recipe, error) {
+	query := "SELECT title, ingredients, instructions FROM UserRecipeData WHERE recipeID = ?"
+	row := db.QueryRow(query, recipeID)
+
+	var title, ingredientsStr, instructions string
+	err := row.Scan(&title, &ingredientsStr, &instructions)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil // Recipe not found in UserRecipeData
+		}
+		return nil, err
+	}
+
+	// Convert the comma-separated list of ingredients to a slice
+	ingredients := strings.Split(ingredientsStr, ",")
+
+	// define recipe object based on returned values
+	recipe := Recipe{
+		Title:        title,
+		Ingredients:  ingredients,
+		Instructions: instructions,
+		RecipeID:     recipeID,
+	}
+
+	return &recipe, nil
+}
+func getRecipeFromIdJSONTable(db *sql.DB, recipeID string) (*Recipe, error) {
+	query := "SELECT title, ingredients, instructions FROM JSONRecipeData WHERE recipeID = ?"
+	row := db.QueryRow(query, recipeID)
+
+	var title, ingredientsStr, instructions string
+	err := row.Scan(&title, &ingredientsStr, &instructions)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil // Recipe not found in JSONRecipeData
+		}
+		return nil, err
+	}
+
+	// Convert the comma-separated list of ingredients to a slice
+	ingredients := strings.Split(ingredientsStr, ",")
+
+	// define recipe object based on returned values
+	recipe := Recipe{
+		Title:        title,
+		Ingredients:  ingredients,
+		Instructions: instructions,
+		RecipeID:     recipeID,
+	}
+
+	return &recipe, nil
+}
+
+func (d *Database) FindFavoriteRecipes(currUser User, routingRecipes []Recommendation) []Recommendation{
+	// open the database file
+	database := d.OpenDatabase()
+
+	var count int
+	for i := range routingRecipes {
+		
+		// Check if the recipe is a favorite for the user
+		err := database.QueryRow("SELECT COUNT(*) FROM UserFavoriteRecipes WHERE recipeID = ? AND username = ?", routingRecipes[i].R.RecipeID, currUser.UserName).Scan(&count)
+		if err != nil {
+			count = 0
+		}
+		// Set the UserFavorite field based on the query result
+		if count > 0 {
+			routingRecipes[i].R.UserFavorite = true
+		}
+
+	}
+	return routingRecipes
 }
 
 func (d* Database) GetUserPassword(username string) string{
@@ -739,5 +805,4 @@ func (d *Database) UserFromCookie(cookie string) User {
 
 	return returnUser
 }
-
 

@@ -6,6 +6,7 @@ export interface Recipe {
     title: string;
     pictureLink: string | null;
     recipeID: string;
+    userFavorite: boolean;
     [key: string]: any; // index signature
 }
 

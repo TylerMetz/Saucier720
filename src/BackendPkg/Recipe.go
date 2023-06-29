@@ -14,6 +14,7 @@ type Recipe struct {
     Title          string   `json:"title"`
     PictureLink    *string  `json:"pictureLink"`
     RecipeID        string   `json:"recipeID"`
+    UserFavorite   bool     `json:"userFavorite"`
 }
 
 func GetJSONRecipes() ([]Recipe, error) {

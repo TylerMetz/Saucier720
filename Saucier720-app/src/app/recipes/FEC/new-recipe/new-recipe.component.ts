@@ -65,7 +65,8 @@ export class NewRecipeComponent {
         ingredients,
         title: this.titleTextbox.nativeElement.value.trim(),
         pictureLink: null, // Provide the appropriate picture link here
-        recipeID: 'test' // Provide the appropriate recipe ID here
+        recipeID: 'test', // Provide the appropriate recipe ID here
+        userFavorite: false
       };
 
       try {

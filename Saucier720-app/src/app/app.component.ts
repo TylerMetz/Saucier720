@@ -29,6 +29,7 @@ export class AppComponent implements OnInit {
       const response = await lastValueFrom(this.authService.logout());
       this.router.navigate(['/Login']);
       console.log('response', response);
+      localStorage.removeItem('recipeNavBarButtonState');
       
     } catch (error: any) {
       console.log(error.message);

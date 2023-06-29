@@ -13,7 +13,7 @@ export class RecipeService {
   private newRecipeUrl = 'http://localhost:8082/api/NewUserRecipe';
   private addFavoriteRecipeUrl = 'http://localhost:8082/api/AddFavoriteRecipe';
   private removeFavoriteRecipeUrl = 'http://localhost:8082/api/RemoveFavoriteRecipe';
-  
+
   constructor(private http: HttpClient) { }
 
   getRecipes() {
