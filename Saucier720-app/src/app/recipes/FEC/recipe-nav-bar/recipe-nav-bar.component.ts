@@ -38,13 +38,20 @@ export class RecipeNavBarComponent implements OnInit {
     this.saveButtonState();
   }
 
-  // For enabling the new recipe box
+  // For enabling the new recipe box and filter menu
   @Input() isNewRecipeEnabled: boolean = false;
+  @Input() isFilterMenuEnabled: boolean = false;
   @Output() toggleNewRecipe: EventEmitter<boolean> = new EventEmitter<boolean>();
-  
+  @Output() toggleFilterMenu: EventEmitter<boolean> = new EventEmitter<boolean>();
+
   toggleNewRecipeComponent() {
     this.isNewRecipeEnabled = !this.isNewRecipeEnabled;
     this.toggleNewRecipe.emit(this.isNewRecipeEnabled);
+  }
+
+  toggleFilterMenuComponent() {
+    this.isFilterMenuEnabled = !this.isFilterMenuEnabled;
+    this.toggleFilterMenu.emit(this.isFilterMenuEnabled);
   }
 
   getService() {

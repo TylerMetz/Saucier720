@@ -1,1 +1,17 @@
-
+.filter-recipe-container {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .new-recipe-container {
+    width: 100%;
+    max-width: 600px;
+  }
+  
+  .filter-menu-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    
+  }
+  

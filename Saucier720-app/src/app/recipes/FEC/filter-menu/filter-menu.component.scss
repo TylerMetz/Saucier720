@@ -1,12 +1,11 @@
 .filter-menu-component {
   display: flex;
   justify-content: center;
-  margin-top: 5px;
+  margin-top: 10px;
 }
 
 .container {
-  width: 100%;
-  max-width: 400px; /* Adjust the maximum width as needed */
+  width: fit-content;
 }
 
 .menu-box {
@@ -17,18 +16,11 @@
 
 .navbar {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: flex-start;
   padding: 5px;
   border-radius: 10px;
 }
-
-.middle-buttons {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: flex-start;
-  width: 100%;
-}
-
 
 .menu-option {
   display: flex;
@@ -38,28 +30,6 @@
 
 input[type="checkbox"] {
   margin-right: 10px;
-}
-
-.button {
-  padding: 10px;
-  margin: 5px;
-  border: none;
-  border-radius: 5px;
-  background-color: var(--primary-color);
-  color: var(--text-color);
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.button:hover {
-  background-color: var(--text-color);
-  color: var(--primary-color);
-}
-
-.button-container {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px; 
 }
 
 .save-button {
@@ -77,3 +47,68 @@ input[type="checkbox"] {
   color: var(--primary-color);
 }
 
+.button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.title {
+  font-size: 22px;
+  margin-bottom: 20px;
+}
+
+.menu-option label {
+  font-size: 16px;
+}
+
+.menu-option .custom-checkbox {
+  position: relative;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+}
+
+.menu-option .custom-checkbox input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.menu-option .custom-checkbox .checkbox-icon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+  border: 2px solid var(--secondary-color);
+  background-color: transparent;
+  transition: background-color 0.3s ease;
+}
+
+.menu-option .custom-checkbox input[type="checkbox"]:checked + .checkbox-icon::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  background-color: var(--primary-color);
+}
+
+.menu-option .custom-checkbox input[type="checkbox"]:checked + .checkbox-icon::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(45deg);
+  width: 5px;
+  height: 10px;
+  border: 2px solid var(--primary-color);
+  border-top: none;
+  border-right: none;
+}
