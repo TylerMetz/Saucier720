@@ -14,6 +14,7 @@ import (
 var pantryInterface []interface{}
 var dealsInterface []interface{}
 var recipesInterface []interface{}
+var listInterface []interface{}
 var backendDatabase Database
 var dataMutex sync.Mutex
 var NewServers []*http.Server
@@ -30,6 +31,7 @@ func handlePantry(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("Content-Type", "application/json")
 	response.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
 	response.Header().Set("Access-Control-Allow-Methods", "GET")
+	// Encode the items as JSON and send the response
     json.NewEncoder(response).Encode(pantryInterface)
 }
 
@@ -38,6 +40,7 @@ func handleDeals(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("Content-Type", "application/json")
 	response.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
 	response.Header().Set("Access-Control-Allow-Methods", "GET")
+	// Encode the items as JSON and send the response
     json.NewEncoder(response).Encode(dealsInterface)
 }
 
@@ -46,9 +49,17 @@ func handleRecipes(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("Content-Type", "application/json")
 	response.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
 	response.Header().Set("Access-Control-Allow-Methods", "GET")
+	// Encode the items as JSON and send the response
 	json.NewEncoder(response).Encode(recipesInterface)
 }
-
+func handleListPage(response http.ResponseWriter, request *http.Request) {
+	// set header and encode items
+	response.Header().Set("Content-Type", "application/json")
+	response.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200") 
+	response.Header().Set("Access-Control-Allow-Methods", "GET")
+	// Encode the items as JSON and send the response
+	json.NewEncoder(response).Encode(listInterface)
+}
 func RoutData(){
 
     // setup all global variables to be routed
@@ -67,6 +78,7 @@ func RoutData(){
     http.HandleFunc("/api/Pantry", handlePantry)
     http.HandleFunc("/api/Recipes", handleRecipes)
     http.HandleFunc("/api/Deals", handleDeals)
+	http.HandleFunc("/api/List", handleListPage)
 
     // append the server to the global list
 	NewServers = append(NewServers, server)
@@ -439,6 +451,57 @@ func handleNewDealsStore(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func handleNewListItem(w http.ResponseWriter, r *http.Request) {
+
+	// verify POST request from frontend
+    if r.Method == "OPTIONS" {
+        w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+        w.Header().Set("Access-Control-Allow-Methods", "POST")
+        w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+        w.Header().Set("Access-Control-Allow-Credentials", "true")
+        w.WriteHeader(http.StatusOK)
+        return
+    }
+
+	// set correct headers
+    w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+    w.Header().Set("Access-Control-Allow-Methods", "POST")
+    w.Header().Set("Access-Control-Allow-Credentials", "true")
+
+
+	// translate POST data to ASCII
+	body, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+
+	// define type to match JSON data from frontend
+	type Ingredient struct {
+		FoodItem FoodItem `json:"ingredient"`
+	}
+	var newItem Ingredient
+
+	// unmarshal JSON data
+	err = json.Unmarshal(body, &newItem)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// update the current user's pantry
+	UpdatingData = true
+	backendDatabase.WriteList(newItem.FoodItem, CurrentUser)
+	UpdatingData = false
+
+	// write a successful header
+	w.WriteHeader(http.StatusOK)
+
+	// if the header was successful, change the recipe data
+	if http.StatusOK == 200 {
+		// get new data for routing
+		UpdateAllData()
+	}
+
+}
+
 func ListenForData(){
 	
 	// handle the listening functions
@@ -450,6 +513,9 @@ func ListenForData(){
     })
 	http.HandleFunc("/api/DealsStore", func(response http.ResponseWriter, request *http.Request) {
         handleNewDealsStore(response, request)
+    })
+	http.HandleFunc("/api/NewItem", func(response http.ResponseWriter, request *http.Request) {
+        handleNewListItem(response, request)
     })
 
 	// create server
@@ -526,6 +592,23 @@ func UpdateRecipeData(){
 	// unlock the data
 	dataMutex.Unlock()
 }
+ 
+func UpdateListData(){
+
+	// lock the recipe data
+	dataMutex.Lock()
+
+	var listInterfaceRefresh []interface{}
+	listInterface = listInterfaceRefresh
+	for i := 0; i < len(backendDatabase.ReadList(CurrentUser).ShoppingList); i++ {
+		// sends shopping list food item slice, time last updated, and user connected to list
+		listInterface = append(listInterface, backendDatabase.ReadList(CurrentUser).ShoppingList[i])
+	}
+
+	// unlock the data
+	dataMutex.Unlock()
+}
+
 
 func UpdateAllData(){
 	// wait if any data is being altered
@@ -535,6 +618,7 @@ func UpdateAllData(){
 	UpdatePantryData()
 	UpdateRecipeData()
 	UpdateDealsData()
+	UpdateListData()
 }
 
 // SHUTDOWN FUNCTIONS
