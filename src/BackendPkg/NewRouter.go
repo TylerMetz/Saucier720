@@ -22,8 +22,6 @@ var UpdatingData bool
 var CurrentUser User
 var StoreSelection string = "Walmart" // set to Walmart by default (temp)
 var StoreDeals []FoodItem
-<<<<<<< HEAD
-=======
 var RoutingRecipesType RecipeType
 
 // RECIPE TYPE ENUM
@@ -33,7 +31,6 @@ const (
 	UserRecipes
 	FavoriteRecipes
 )
->>>>>>> ENH-366/367-NewRecipeFeatures
 
 // ROUTING FUNCTIONS
 
@@ -66,16 +63,10 @@ func RoutData(){
     // setup all global variables to be routed
 	go func(){
 		for{
-<<<<<<< HEAD
-			if (!UpdatingData) {UpdateAllData()}
-		}
-	}()
-=======
 			if(!UpdatingData) { UpdateAllData() }
 		}
 	}()
 	
->>>>>>> ENH-366/367-NewRecipeFeatures
 	 
     // create server
     server := &http.Server{
@@ -191,12 +182,9 @@ func handleLogin(w http.ResponseWriter, r *http.Request, sessionCookie *string, 
 		http.Error(w, "Invalid login credentials", http.StatusUnauthorized)
 		return
 	} else {
-<<<<<<< HEAD
-=======
 		// set updating data to true
 		UpdatingData = true
 
->>>>>>> ENH-366/367-NewRecipeFeatures
 		// Set the cookie
 		cookie := &http.Cookie{
 			Name:     "sessionID",
@@ -233,12 +221,9 @@ func handleLogin(w http.ResponseWriter, r *http.Request, sessionCookie *string, 
 		// Get the new "sessionID" cookie value
 		*sessionCookie = cookie.Value
 
-<<<<<<< HEAD
-=======
 		// set recipes that are routed to recommended by default
 		RoutingRecipesType = RecommendedRecipes
 
->>>>>>> ENH-366/367-NewRecipeFeatures
 		// allow data to be routed again
 		UpdatingData = false;
 
@@ -470,8 +455,6 @@ func handleNewDealsStore(w http.ResponseWriter, r *http.Request) {
 
 }
 
-<<<<<<< HEAD
-=======
 func handleRecommendedRecipesSelect(w http.ResponseWriter, r *http.Request) {
 
 	// verify POST request from frontend
@@ -706,7 +689,6 @@ func handleRemoveFavorite(w http.ResponseWriter, r *http.Request) {
 
 }
 
->>>>>>> ENH-366/367-NewRecipeFeatures
 func ListenForData(){
 	
 	// handle the listening functions
@@ -719,8 +701,6 @@ func ListenForData(){
 	http.HandleFunc("/api/DealsStore", func(response http.ResponseWriter, request *http.Request) {
         handleNewDealsStore(response, request)
     })
-<<<<<<< HEAD
-=======
 	http.HandleFunc("/api/RecommendedRecipesSelect", func(response http.ResponseWriter, request *http.Request) {
         handleRecommendedRecipesSelect(response, request)
     })
@@ -739,7 +719,6 @@ func ListenForData(){
 	http.HandleFunc("/api/RemoveFavoriteRecipe", func(response http.ResponseWriter, request *http.Request) {
         handleRemoveFavorite(response, request)
     })
->>>>>>> ENH-366/367-NewRecipeFeatures
 
 	// create server
 	server := &http.Server{Addr: ":8082"}
@@ -799,10 +778,6 @@ func UpdatePantryData(){
 }
 
 func UpdateRecipeData(){
-<<<<<<< HEAD
-	// save all recipes data to global variable
-	userRecList := BestRecipes(backendDatabase.GetUserPantry(CurrentUser.UserName), backendDatabase.ReadRecipes(), StoreDeals)
-=======
 	var routingRecipes []Recommendation
 	
 	// save all recipes data to global variable
@@ -816,22 +791,15 @@ func UpdateRecipeData(){
 	
 	// find which recipes are user favorites
 	routingRecipes = backendDatabase.FindFavoriteRecipes(CurrentUser, routingRecipes)
->>>>>>> ENH-366/367-NewRecipeFeatures
 
 	// lock the recipe data
 	dataMutex.Lock()
 
 	var recipesInterfaceRefresh []interface{}
 	recipesInterface = recipesInterfaceRefresh
-<<<<<<< HEAD
-	for i := 0; i < len(userRecList); i++ {
-		// sends recipes, items in recipe, and deals related 
-		recipesInterface = append(recipesInterface, userRecList[i])
-=======
 	for i := 0; i < len(routingRecipes); i++ {
 		// sends recipes, items in recipe, and deals related 
 		recipesInterface = append(recipesInterface, routingRecipes[i])
->>>>>>> ENH-366/367-NewRecipeFeatures
 	}
 
 	// unlock the data

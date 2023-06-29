@@ -7,10 +7,7 @@ import (
 	"strings"
 	_ "github.com/mattn/go-sqlite3"
 	"log"
-<<<<<<< HEAD
-=======
 	"strconv"
->>>>>>> ENH-366/367-NewRecipeFeatures
 )
 
 type Database struct {
@@ -39,12 +36,9 @@ func (d *Database) StorePublixDatabase(f []FoodItem) {
 	for _, item := range f {
 		statementTwo.Exec(item.Name, item.StoreCost, item.OnSale, item.SalePrice, item.SaleDetails, item.Quantity)
 	}
-<<<<<<< HEAD
-=======
 
 	// close db
 	database.Close()
->>>>>>> ENH-366/367-NewRecipeFeatures
 }
 
 func (d *Database) ReadPublixDatabase() []FoodItem {
@@ -62,12 +56,9 @@ func (d *Database) ReadPublixDatabase() []FoodItem {
 		items = append(items, item)
 	}
 
-<<<<<<< HEAD
-=======
 	// close db
 	database.Close()
 
->>>>>>> ENH-366/367-NewRecipeFeatures
 	return items
 }
 
@@ -80,12 +71,9 @@ func (d *Database) ClearPublixDeals() {
 
 	// delete the deals scraped time if it exists
 	database.Exec("DROP TABLE IF EXISTS PublixDealsScrapedTime")
-<<<<<<< HEAD
-=======
 
 	// close db
 	database.Close()
->>>>>>> ENH-366/367-NewRecipeFeatures
 }
 
 func (d *Database) StoreWalmartDatabase(f []FoodItem) {
@@ -103,12 +91,9 @@ func (d *Database) StoreWalmartDatabase(f []FoodItem) {
 	for _, item := range f {
 		statementTwo.Exec(item.Name, item.StoreCost, item.OnSale, item.SalePrice, item.SaleDetails, item.Quantity)
 	}
-<<<<<<< HEAD
-=======
 
 	// close db
 	database.Close()
->>>>>>> ENH-366/367-NewRecipeFeatures
 }
 
 func (d *Database) ReadWalmartDatabase() []FoodItem {
@@ -141,12 +126,9 @@ func (d *Database) ReadWalmartDatabase() []FoodItem {
 		items = append(items, item)
 	}
 
-<<<<<<< HEAD
-=======
 	// close db
 	database.Close()
 
->>>>>>> ENH-366/367-NewRecipeFeatures
 	return items
 }
 
@@ -159,12 +141,9 @@ func (d *Database) ClearWalmartDeals() {
 
 	// delete the deals scraped time if it exists
 	database.Exec("DROP TABLE IF EXISTS WalmartDealsScrapedTime")
-<<<<<<< HEAD
-=======
 
 	// close db
 	database.Close()
->>>>>>> ENH-366/367-NewRecipeFeatures
 }
 
 func (d *Database) ReadUserDatabase(userName string) User {
@@ -183,12 +162,9 @@ func (d *Database) ReadUserDatabase(userName string) User {
 	row := stmt.QueryRow(userName)
 	row.Scan(&returnUser.FirstName, &returnUser.LastName, &returnUser.Email, &returnUser.UserName, &returnUser.Password)
 
-<<<<<<< HEAD
-=======
 	// close db
 	database.Close()
 
->>>>>>> ENH-366/367-NewRecipeFeatures
 	return returnUser
 
 }
@@ -208,11 +184,8 @@ func (d *Database) StoreUserDatabase(u User) {
 	// store data from this user into table
 	statementTwo.Exec(u.FirstName, u.LastName, u.Email, u.UserName, u.Password)
 
-<<<<<<< HEAD
-=======
 	// close db
 	database.Close()
->>>>>>> ENH-366/367-NewRecipeFeatures
 }
 
 func (d *Database) StoreUserPantry(u User) {
@@ -230,12 +203,9 @@ func (d *Database) StoreUserPantry(u User) {
 	for _, item := range u.UserPantry.FoodInPantry {
 		statementTwo.Exec(u.UserName, u.UserPantry.TimeLastUpdated.Format("2006-01-02 15:04:05"), item.Name, item.StoreCost, item.OnSale, item.SalePrice, item.SaleDetails, item.Quantity)
 	}
-<<<<<<< HEAD
-=======
 
 	// close db
 	database.Close()
->>>>>>> ENH-366/367-NewRecipeFeatures
 }
 
 func (d *Database) InsertPantryItemPost (currUser User, f FoodItem){
@@ -250,12 +220,9 @@ func (d *Database) InsertPantryItemPost (currUser User, f FoodItem){
 	// insert into food item table
 	statementTwo, _ := database.Prepare("INSERT OR IGNORE INTO UserPantries (UserName, PantryLastUpdated, Name, StoreCost, OnSale, SalePrice, SaleDetails, Quantity) VALUES (?, datetime(?), ?, ?, ?, ?, ?, ?)")
 	statementTwo.Exec(currUser.UserName, time.Now().Format("2006-01-02 15:04:05"), f.Name, f.StoreCost, f.OnSale, f.SalePrice, f.SaleDetails, f.Quantity)
-<<<<<<< HEAD
-=======
 
 	// close db
 	database.Close()
->>>>>>> ENH-366/367-NewRecipeFeatures
 }
 
 func (d *Database) UpdatePantry(currUser User, f []FoodItem){
@@ -272,32 +239,21 @@ func (d *Database) UpdatePantry(currUser User, f []FoodItem){
 	for _, item := range f {
 		statementTwo.Exec(currUser.UserName, time.Now().Format("2006-01-02 15:04:05"), item.Name, item.StoreCost, item.OnSale, item.SalePrice, item.SaleDetails, item.Quantity)
 	}
-<<<<<<< HEAD
-=======
 
 	// close db
 	database.Close()
->>>>>>> ENH-366/367-NewRecipeFeatures
 }
 
 func (d *Database) GetUserPantry(userName string) Pantry {
 	// calls function to open the database
 	database := d.OpenDatabase()
 
-<<<<<<< HEAD
-	// query the database for the pantry data
-	rows, _ := database.Query("SELECT Name, StoreCost, OnSale, SalePrice, SaleDetails, Quantity, PantryLastUpdated FROM UserPantries WHERE UserName = ?", userName)
-
-=======
->>>>>>> ENH-366/367-NewRecipeFeatures
 	// create the pantry object
 	pantry := Pantry{
 		TimeLastUpdated: time.Now(),
 		FoodInPantry:    []FoodItem{},
 	}
 
-<<<<<<< HEAD
-=======
 	// query the database for the pantry data
 	rows, err := database.Query("SELECT Name, StoreCost, OnSale, SalePrice, SaleDetails, Quantity, PantryLastUpdated FROM UserPantries WHERE UserName = ?", userName)
 
@@ -306,7 +262,6 @@ func (d *Database) GetUserPantry(userName string) Pantry {
 		return pantry
 	}
 
->>>>>>> ENH-366/367-NewRecipeFeatures
 	// loop through each row and add the food item to the pantry
 	for rows.Next() {
 		var name, saleDetails string
@@ -331,12 +286,9 @@ func (d *Database) GetUserPantry(userName string) Pantry {
 
 	}
 
-<<<<<<< HEAD
-=======
 	// close db
 	database.Close()
 
->>>>>>> ENH-366/367-NewRecipeFeatures
 	return pantry
 }
 
@@ -353,12 +305,9 @@ func (d *Database) StorePubixScrapedTime(t time.Time) {
 
 	// store data from this user into table
 	statementTwo.Exec(t.Format("2006-01-02 15:04:05"))
-<<<<<<< HEAD
-=======
 
 	// close db
 	database.Close()
->>>>>>> ENH-366/367-NewRecipeFeatures
 }
 
 func (d *Database) ReadPublixScrapedTime() time.Time {
@@ -373,12 +322,9 @@ func (d *Database) ReadPublixScrapedTime() time.Time {
 	// Parse the datetime string into a time.Time object
 	dealsLastScraped, _ := time.Parse(time.RFC3339, dealsLastScrapedStr)
 
-<<<<<<< HEAD
-=======
 	// close db
 	database.Close()
 
->>>>>>> ENH-366/367-NewRecipeFeatures
 	return dealsLastScraped
 }
 
@@ -395,12 +341,9 @@ func (d *Database) StoreWalmartScrapedTime(t time.Time) {
 
 	// store data from this user into table
 	statementTwo.Exec(t.Format("2006-01-02 15:04:05"))
-<<<<<<< HEAD
-=======
 
 	// close db
 	database.Close()
->>>>>>> ENH-366/367-NewRecipeFeatures
 }
 
 func (d *Database) ReadWalmartScrapedTime() time.Time {
@@ -415,14 +358,6 @@ func (d *Database) ReadWalmartScrapedTime() time.Time {
 	// Parse the datetime string into a time.Time object
 	dealsLastScraped, _ := time.Parse(time.RFC3339, dealsLastScrapedStr)
 
-<<<<<<< HEAD
-	return dealsLastScraped
-}
-
-func (d* Database) WriteRecipes(){
-	// Read the recipes from the file
-	recipes, _ := GetRecipes()
-=======
 	// close db
 	database.Close()
 
@@ -432,30 +367,11 @@ func (d* Database) WriteRecipes(){
 func (d* Database) WriteJSONRecipes(){
 	// Read the recipes from the file
 	recipes, _ := GetJSONRecipes()
->>>>>>> ENH-366/367-NewRecipeFeatures
 
 	// calls function to open the database
 	database := d.OpenDatabase()
 
 	// Create a new table for the recipes
-<<<<<<< HEAD
-	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS RecipeData (title TEXT PRIMARY KEY, ingredients TEXT, instructions TEXT)")
-	statement.Exec()
-
-	// Insert each recipe into the table
-	statementTwo, _ := database.Prepare("INSERT OR IGNORE INTO RecipeData (title, ingredients, instructions) values (?, ?, ?)")
-
-	for _, recipe := range recipes {
-		ingredients, _ := json.Marshal(recipe.Ingredients)
-		statementTwo.Exec(recipe.Title, string(ingredients), recipe.Instructions)
-	}
-
-	database.Exec("DELETE FROM RecipeData WHERE ingredients = '[]'")
-
-}
-
-func (d* Database) DeleteRecipes(){
-=======
 	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS JSONRecipeData (title, ingredients TEXT, instructions TEXT, recipeID TEXT PRIMARY KEY)")
 	statement.Exec()
 
@@ -478,19 +394,10 @@ func (d* Database) DeleteRecipes(){
 }
 
 func (d* Database) DeleteJSONRecipes(){
->>>>>>> ENH-366/367-NewRecipeFeatures
 	// calls function to open the database
 	database := d.OpenDatabase()
 
 	// Create a new table for the recipes
-<<<<<<< HEAD
-	statement, _ := database.Prepare("DROP TABLE RecipeData")
-	statement.Exec()
-
-}
-
-func (d* Database) ReadRecipes() []Recipe{
-=======
 	statement, _ := database.Prepare("DROP TABLE JSONRecipeData")
 	statement.Exec()
 
@@ -500,27 +407,17 @@ func (d* Database) ReadRecipes() []Recipe{
 }
 
 func (d* Database) ReadJSONRecipes() []Recipe{
->>>>>>> ENH-366/367-NewRecipeFeatures
 	// calls function to open the database
 	database := d.OpenDatabase()
 
 	// Execute a SELECT statement to retrieve all rows from the RecipeData table
-<<<<<<< HEAD
-	rows, _ := database.Query("SELECT * FROM RecipeData")
-=======
 	rows, _ := database.Query("SELECT * FROM JSONRecipeData")
->>>>>>> ENH-366/367-NewRecipeFeatures
 
 	// Iterate through the rows and create a slice of Recipe structs
 	var recipes []Recipe
 	for rows.Next() {
-<<<<<<< HEAD
-		var title, ingredientsStr, instructions string
-		rows.Scan(&title, &ingredientsStr, &instructions)
-=======
 		var title, ingredientsStr, instructions, recipeID string
 		rows.Scan(&title, &ingredientsStr, &instructions, &recipeID)
->>>>>>> ENH-366/367-NewRecipeFeatures
 
 		// Convert the comma-separated list of ingredients to a slice
 		ingredients := strings.Split(ingredientsStr, ",")
@@ -530,19 +427,11 @@ func (d* Database) ReadJSONRecipes() []Recipe{
 			Title:        title,
 			Ingredients:  ingredients,
 			Instructions: instructions,
-<<<<<<< HEAD
-=======
 			RecipeID: 	  recipeID, 
->>>>>>> ENH-366/367-NewRecipeFeatures
 		}
 		recipes = append(recipes, recipe)
 	}
 
-<<<<<<< HEAD
-	return recipes;
-}
-
-=======
 	// close db
 	database.Close()
 
@@ -835,7 +724,6 @@ func (d *Database) FindFavoriteRecipes(currUser User, routingRecipes []Recommend
 	return routingRecipes
 }
 
->>>>>>> ENH-366/367-NewRecipeFeatures
 func (d* Database) GetUserPassword(username string) string{
 	database := d.OpenDatabase()
 	var password string 
@@ -849,12 +737,9 @@ func (d* Database) GetUserPassword(username string) string{
 	row := stmt.QueryRow(username)
 	row.Scan(&password)
 
-<<<<<<< HEAD
-=======
 	// close db
 	database.Close()
 
->>>>>>> ENH-366/367-NewRecipeFeatures
 	return password
 }
 
@@ -873,12 +758,9 @@ func (d *Database) StoreCookie(username string, cookie string) {
 	// store data from this user into table
 	statementTwo.Exec(username, cookie)
 
-<<<<<<< HEAD
-=======
 	// close db
 	database.Close()
 
->>>>>>> ENH-366/367-NewRecipeFeatures
 }
 
 func (d *Database) ReadCookie(username string) string {
@@ -895,12 +777,9 @@ func (d *Database) ReadCookie(username string) string {
 	row := stmt.QueryRow(username)
 	row.Scan(&returnCookie)
 
-<<<<<<< HEAD
-=======
 	// close db
 	database.Close()
 
->>>>>>> ENH-366/367-NewRecipeFeatures
 	return returnCookie
 }
 
@@ -921,16 +800,9 @@ func (d *Database) UserFromCookie(cookie string) User {
 	// grabs the user based of the username
 	returnUser = d.ReadUserDatabase(userName)
 
-<<<<<<< HEAD
-	return returnUser
-}
-
-
-=======
 	// close db
 	database.Close()
 
 	return returnUser
 }
 
->>>>>>> ENH-366/367-NewRecipeFeatures

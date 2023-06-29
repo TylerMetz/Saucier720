@@ -14,10 +14,7 @@ type Recommendation struct {
 }
 
 func BestRecipes(userPantry Pantry, allRecipes []Recipe, deals []FoodItem) []Recommendation {
-<<<<<<< HEAD
-=======
 	// return val
->>>>>>> ENH-366/367-NewRecipeFeatures
 	var returnRecommendations []Recommendation
 
 	var scoreList []int
@@ -66,11 +63,6 @@ func BestRecipes(userPantry Pantry, allRecipes []Recipe, deals []FoodItem) []Rec
 		for n := 0; n < len(highestScoreIndices); n++ {
 			if m == highestScoreIndices[n] {
 
-<<<<<<< HEAD
-				//fmt.Println(highestScoreIndices[n])
-
-=======
->>>>>>> ENH-366/367-NewRecipeFeatures
 				// get items in pantry
 				var pantryItemsInRecipe []FoodItem
 				var dealsItemsInRecipe []string
@@ -129,8 +121,6 @@ func BestRecipes(userPantry Pantry, allRecipes []Recipe, deals []FoodItem) []Rec
 
 }
 
-<<<<<<< HEAD
-=======
 func AllRecipesWithRelatedItems(userPantry Pantry, allRecipes []Recipe, deals []FoodItem) []Recommendation {
 	
 	// return val
@@ -191,7 +181,6 @@ func AllRecipesWithRelatedItems(userPantry Pantry, allRecipes []Recipe, deals []
 }
 
 
->>>>>>> ENH-366/367-NewRecipeFeatures
 func min(a, b int) int {
 	if a < b {
 		return a
