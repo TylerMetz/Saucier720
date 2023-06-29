@@ -1,0 +1,79 @@
+.filter-menu-component {
+  display: flex;
+  justify-content: center;
+  margin-top: 5px;
+}
+
+.container {
+  width: 100%;
+  max-width: 400px; /* Adjust the maximum width as needed */
+}
+
+.menu-box {
+  background-color: var(--secondary-color);
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.navbar {
+  display: flex;
+  justify-content: center;
+  padding: 5px;
+  border-radius: 10px;
+}
+
+.middle-buttons {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+
+.menu-option {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+.button {
+  padding: 10px;
+  margin: 5px;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: var(--text-color);
+  color: var(--primary-color);
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px; 
+}
+
+.save-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.save-button:hover {
+  background-color: var(--text-color);
+  color: var(--primary-color);
+}
+
