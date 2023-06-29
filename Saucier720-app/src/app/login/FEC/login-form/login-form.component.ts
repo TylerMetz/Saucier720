@@ -57,6 +57,7 @@ export class LoginFormComponent {
         const sessionID = response.body.value;
         console.log("cookie set ", sessionID);
         this.setSessionIDAndNavigateToPantry(sessionID);
+        localStorage.removeItem('recipeNavBarButtonState');
       } catch (error: any) {
         this.errorMessage = error.message;
       }

@@ -14,6 +14,9 @@ import { FormsModule } from '@angular/forms';
 import { RecipeCardComponent } from './recipes/FEC/recipe-card/recipe-card.component';
 import { LoginFormComponent } from './login/FEC/login-form/login-form.component';
 import { SubRecipeComponent } from './recipes/FEC/sub-recipe/sub-recipe.component';
+import { RecipeNavBarComponent } from './recipes/FEC/recipe-nav-bar/recipe-nav-bar.component';
+import { RecipesComponent } from './recipes/recipes.component'; 
+import { NewRecipeComponent } from './recipes/FEC/new-recipe/new-recipe.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +31,10 @@ import { SubRecipeComponent } from './recipes/FEC/sub-recipe/sub-recipe.componen
     SignupFormComponent,
     RecipeCardComponent,
     LoginFormComponent,
-    SubRecipeComponent
+    SubRecipeComponent,
+    RecipesComponent,
+    RecipeNavBarComponent,
+    NewRecipeComponent
   ],
   imports: [
     AppRoutingModule,

@@ -1,21 +1,87 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpRequest, HttpHeaders } from '@angular/common/http';
+<<<<<<< HEAD
 
+=======
+import { Recipe } from 'src/app/core/interfaces/recipe';
+>>>>>>> ENH-366/367-NewRecipeFeatures
 
 @Injectable({
   providedIn: 'root'
 })
 export class RecipeService {
+<<<<<<< HEAD
   private recipeUrl = 'http://localhost:8082/api/Recipes';
+=======
+  private recipeUrl = 'http://localhost:8080/api/Recipes';
+  private userRecipeUrl = 'http://localhost:8082/api/UserRecipesSelect';
+  private favoriteRecipeUrl = 'http://localhost:8082/api/FavoriteRecipesSelect';
+  private recommendedRecipeUrl = 'http://localhost:8082/api/RecommendedRecipesSelect';
+  private newRecipeUrl = 'http://localhost:8082/api/NewUserRecipe';
+  private addFavoriteRecipeUrl = 'http://localhost:8082/api/AddFavoriteRecipe';
+  private removeFavoriteRecipeUrl = 'http://localhost:8082/api/RemoveFavoriteRecipe';
+>>>>>>> ENH-366/367-NewRecipeFeatures
 
   constructor(private http: HttpClient) { }
 
   getRecipes() {
+<<<<<<< HEAD
     const req = new HttpRequest('GET', this.recipeUrl, {
     reportProgress: true
   });
 
   return this.http.request(req);
   }
+=======
+    const req = new HttpRequest('GET', this.recipeUrl, { 
+      reportProgress: true
+    });
+    
+    return this.http.request(req);
+  }
+
+  postFavoriteRecipesSelect() {
+    const headers = new HttpHeaders({ 
+      'Content-Type': 'application/json', 
+    });
+    return this.http.post<any>(this.favoriteRecipeUrl, "", { headers, withCredentials: true });
+  }
+
+  postMyRecipesSelect() {
+    const headers = new HttpHeaders({ 
+      'Content-Type': 'application/json', 
+    });
+    return this.http.post<any>(this.userRecipeUrl, "", { headers, withCredentials: true });
+  }
+
+  postRecommendedRecipesSelect() {
+    const headers = new HttpHeaders({ 
+      'Content-Type': 'application/json', 
+    });
+    return this.http.post<any>(this.recommendedRecipeUrl, "", { headers, withCredentials: true });
+  }
+
+  postNewRecipe(recipe: Recipe){
+    const headers = new HttpHeaders({ 
+      'Content-Type': 'application/json', 
+    });
+    return this.http.post<any>(this.newRecipeUrl, recipe, { headers, withCredentials: true });
+  }
+
+  postFavoriteRecipe(recipeID: string){
+    const headers = new HttpHeaders({ 
+      'Content-Type': 'application/json', 
+    });
+    return this.http.post<any>(this.addFavoriteRecipeUrl, recipeID, { headers, withCredentials: true });
+  }
+
+  postRemoveFavoriteRecipe(recipeID: string){
+    const headers = new HttpHeaders({ 
+      'Content-Type': 'application/json', 
+    });
+    return this.http.post<any>(this.removeFavoriteRecipeUrl, recipeID, { headers, withCredentials: true });
+  }
+
+>>>>>>> ENH-366/367-NewRecipeFeatures
 }
 
