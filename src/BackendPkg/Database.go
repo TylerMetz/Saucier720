@@ -636,16 +636,14 @@ func (d* Database) ReadFavoriteRecipes (currUser User) []Recipe{
 
 }
 func getRecipeByID(db *sql.DB, recipeID string) (*Recipe, error) {
-	recipe, err := getRecipeFromIdUserTable(db, recipeID)
-	if err != nil {
-		return nil, err
-	}
+	recipe, _ := getRecipeFromIdUserTable(db, recipeID)
 
 	if recipe == nil {
-		recipe, err = getRecipeFromIdJSONTable(db, recipeID)
+		recipeJSON, err := getRecipeFromIdJSONTable(db, recipeID)
 		if err != nil {
 			return nil, err
 		}
+		recipe = recipeJSON
 	}
 
 	return recipe, nil
@@ -805,4 +803,3 @@ func (d *Database) UserFromCookie(cookie string) User {
 
 	return returnUser
 }
-
