@@ -15,7 +15,6 @@ def scrape_walmart():
         driverPath = "SeleniumDrivers/chromedriver_win32/chromedriver.exe"
     else:
         driverPath = "SeleniumDrivers/chromedriver_mac64/chromedriver"
-        
     
     while True:
         # Set up Selenium options
