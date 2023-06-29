@@ -14,6 +14,9 @@ import { FormsModule } from '@angular/forms';
 import { RecipeCardComponent } from './recipes/FEC/recipe-card/recipe-card.component';
 import { LoginFormComponent } from './login/FEC/login-form/login-form.component';
 import { SubRecipeComponent } from './recipes/FEC/sub-recipe/sub-recipe.component';
+import { RecipeNavBarComponent } from './recipes/FEC/recipe-nav-bar/recipe-nav-bar.component';
+import { RecipesComponent } from './recipes/recipes.component'; 
+import { NewRecipeComponent } from './recipes/FEC/new-recipe/new-recipe.component';
 import { ListComponent } from './list/list.component';
 
 @NgModule({
@@ -30,6 +33,9 @@ import { ListComponent } from './list/list.component';
     RecipeCardComponent,
     LoginFormComponent,
     SubRecipeComponent,
+    RecipesComponent,
+    RecipeNavBarComponent,
+    NewRecipeComponent,
     ListComponent
   ],
   imports: [

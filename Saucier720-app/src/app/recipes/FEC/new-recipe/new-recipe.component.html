@@ -1,0 +1,34 @@
+<div class="new-recipe-component">
+    <div class="header">
+      <h3>Name:</h3>
+      <div class="title-container">
+        <input #titleTextbox type="text" id="titleTextbox" class="title-textbox" placeholder="Recipe Name">
+      </div>
+    </div>
+    <div class="content">
+      <div class="ingredient-section">
+        <h3>Ingredients</h3>
+        <div class="ingredient-textboxes" #ingredientTextboxes>
+          <input type="text" class="ingredient-textbox" placeholder="Ingredient 1">
+          <input type="text" class="ingredient-textbox" placeholder="Ingredient 2">
+          <input type="text" class="ingredient-textbox" placeholder="Ingredient 3">
+        </div>
+        <button class="add-button" (click)="addIngredientTextbox()">Add Ingredient</button>
+        <button class="remove-button" (click)="removeIngredientTextbox()">-</button>
+      </div>
+      <div class="instruction-section">
+        <h3>Instructions</h3>
+        <ol class="instruction-textboxes" #instructionTextboxes>
+          <li><input type="text" class="instruction-textbox" placeholder="Step 1"></li>
+          <li><input type="text" class="instruction-textbox" placeholder="Step 2"></li>
+          <li><input type="text" class="instruction-textbox" placeholder="Step 3"></li>
+        </ol>
+        <button class="add-button" (click)="addInstructionTextbox()">Add Step</button>
+        <button class="remove-button" (click)="removeInstructionTextbox()">-</button>
+      </div>
+    </div>
+    <div class="add-to-cookbook-section">
+        <button class="add-to-cookbook-button" (click)="addToCookbook()">Add to my Cookbook</button>
+    </div>
+  </div>
+  

@@ -15,7 +15,7 @@ var prevUser BackendPkg.User
 func main() {
 
 	// Reads recipes dataset in not read in yet and stores in DB
-	programDatabase.WriteRecipes() 
+	programDatabase.WriteJSONRecipes()
 
 	// runs scraper if new deals at publix or walmart
 	programScraper.CheckIfScrapeNewDeals(programDatabase)

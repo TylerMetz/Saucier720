@@ -12,10 +12,12 @@ type Recipe struct {
     Instructions   string   `json:"instructions"`
     Ingredients    []string `json:"ingredients"`
     Title          string   `json:"title"`
-    PictureLink    *string  `json:"picture_link"`
+    PictureLink    *string  `json:"pictureLink"`
+    RecipeID        string   `json:"recipeID"`
+    UserFavorite   bool     `json:"userFavorite"`
 }
 
-func GetRecipes() ([]Recipe, error) {
+func GetJSONRecipes() ([]Recipe, error) {
     file, err := ioutil.ReadFile("recipes.json")
     if err != nil {
         return nil, err
@@ -39,6 +41,5 @@ func GetRecipes() ([]Recipe, error) {
 
     return result, nil
 }
-
 
 
