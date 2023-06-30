@@ -1,12 +1,15 @@
 .new-recipe-component {
-    background-color: var(--secondary-color);
-    padding: 20px;
-    border-radius: 10px;
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
-    margin-top: 20px;
-  }
+  background-color: var(--secondary-color);
+  padding: 20px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  margin-top: 10px;
+  margin-bottom: 40px;
+  margin-left: 0;
+  margin-right: auto;
+}
   
   .header {
     display: flex;

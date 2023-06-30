@@ -18,6 +18,7 @@ import { RecipeNavBarComponent } from './recipes/FEC/recipe-nav-bar/recipe-nav-b
 import { RecipesComponent } from './recipes/recipes.component'; 
 import { NewRecipeComponent } from './recipes/FEC/new-recipe/new-recipe.component';
 import { ListComponent } from './list/list.component';
+import { FilterRecipeComponent } from './recipes/FEC/filter-menu/filter-menu.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { ListComponent } from './list/list.component';
     RecipesComponent,
     RecipeNavBarComponent,
     NewRecipeComponent,
-    ListComponent
+    ListComponent,
+    FilterRecipeComponent
   ],
   imports: [
     AppRoutingModule,

@@ -115,8 +115,6 @@ func BestRecipes(userPantry Pantry, allRecipes []Recipe, deals []FoodItem) []Rec
 		}
 	}
 
-	invertSlice(returnRecommendations)
-
 	return returnRecommendations
 
 }

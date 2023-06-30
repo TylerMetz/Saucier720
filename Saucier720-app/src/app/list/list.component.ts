@@ -70,7 +70,6 @@ export class ListComponent implements OnInit {
         SalePrice: 0, // Example value, replace with actual value if needed
         SaleDetails: '' // Example value, replace with actual value if needed
       };
-      //this.ingredients.push(newIngredient);
 
       // Clear input fields
       this.newIngredientName = '';
