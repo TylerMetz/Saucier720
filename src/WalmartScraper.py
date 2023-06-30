@@ -3,13 +3,10 @@ import time
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-from selenium.webdriver import ActionChains
-from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.keys import Keys
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium_stealth import stealth
 
@@ -29,6 +26,7 @@ def scrape_walmart():
     # Start Selenium webdriver
     driver=webdriver.Chrome(service=Service(ChromeDriverManager().install()),options=options)
 
+    # Set stealth to be undetectable 
     stealth(driver,
        user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36',
        languages=["en-US", "en"],
@@ -53,19 +51,17 @@ def scrape_walmart():
         # Get the page source
         page_source = driver.page_source
         
-        #print(page_source) <div class="sans-serif ph1 pv2 w4 h4 lh-copy border-box br-100 b--solid mh2-m db tc no-underline gray bg-white b--white-90">25</div>
-        
-        
         # Create BeautifulSoup object to parse the page source
         soup = BeautifulSoup(page_source, "html.parser")
+
+        # Get the total amount of pages 
         if page_count == 1:
             total_pages_list = [div.text for div in soup.find_all("div", class_="sans-serif ph1 pv2 w4 h4 lh-copy border-box br-100 b--solid mh2-m db tc no-underline gray bg-white b--white-90")]
             total_pages = int(total_pages_list[0])
         
         # Extract the desired data from the soup object
         # Modify the code below according to your specific requirements
-        
-            # Example: Extract all product names and prices from the home page
+        # Example: Extract all product names and prices from the home page
         products = soup.find_all("span", {"class": "normal dark-gray mb0 mt1 lh-title f6 f5-l lh-copy"})
         prices = soup.find_all("div", {"class": "flex flex-wrap justify-start items-center lh-title mb1"})
             
@@ -82,6 +78,8 @@ def scrape_walmart():
             print("Price: " + "$" + re.findall(r'\$([\d.]+)', price.text.strip())[0])
             print()
             
+
+        # Page instances when the search bar is different sizes
         if page_count < 3:
             next_button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "#maincontent > main > div > div:nth-child(3) > div > div > div:nth-child(2) > nav > ul > li:nth-child(7) > a")))
             next_button.click()
@@ -97,15 +95,6 @@ def scrape_walmart():
             next_button.click()
             page_count += 1
 
-
-        
-        # Check if the next page button is present
-        # next_link = soup.find("a", {"aria-label": "Next Page"})
-        #if next_link:
-            #next_url = next_link["href"]
-            #url = "https://walmart.com" + next_url
-            # Close the Selenium webdriver
-            #driver.quit()
         
 def main():
     scrape_walmart()
