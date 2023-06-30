@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Ingredient } from '../core/interfaces/ingredient';
-import { IngredientService } from '../core/services/ingredient.service';
+import { ListService } from '../core/services/list/list.service';
+import { HttpClient } from '@angular/common/http';
+import { HttpEvent, HttpEventType } from "@angular/common/http"
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-list',
@@ -12,10 +15,34 @@ export class ListComponent implements OnInit {
   newIngredientName: string = '';
   newIngredientQuantity: number = 0;
 
-  constructor(private ingredientService: IngredientService) { }
+  constructor(private listService: ListService, private http: HttpClient) { }
 
-  ngOnInit() {
-    this.ingredients = this.ingredientService.getPantry();
+  async ngOnInit() {
+    await this.populateList();
+  }
+
+  public async populateList(): Promise<void> {
+    try {
+      const event: HttpEvent<any> = await lastValueFrom(this.listService.getList());
+      switch(event.type) {
+        case HttpEventType.Sent:
+          console.log('Request sent!');
+          break;
+        case HttpEventType.ResponseHeader:
+          console.log('Response header received!');
+          break;
+        case HttpEventType.DownloadProgress:
+          const kbLoaded = Math.round(event.loaded / 1024);
+          console.log(`Download in progress! ${kbLoaded}Kb loaded`);
+          break;
+        case HttpEventType.Response:
+          console.log('Done!', event.body);
+          this.ingredients = event.body;
+          break;
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   adjustQuantity(ingredient: Ingredient, action: string) {
@@ -43,11 +70,24 @@ export class ListComponent implements OnInit {
         SalePrice: 0, // Example value, replace with actual value if needed
         SaleDetails: '' // Example value, replace with actual value if needed
       };
-      this.ingredients.push(newIngredient);
+      //this.ingredients.push(newIngredient);
 
       // Clear input fields
       this.newIngredientName = '';
       this.newIngredientQuantity = 0;
+
+      // post new list item to backend
+      this.postList(newIngredient)
+    }  
+  }
+
+  async postList(ingredient: Ingredient) {
+    try {
+      const response = await lastValueFrom(this.listService.postListItem(ingredient));
+      console.log(response);
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
     }
   }
 }

@@ -1,5 +1,8 @@
 <div class="page">
     <div class="page-body">
-        <app-recipe-card></app-recipe-card>
+      <app-recipe-nav-bar [isNewRecipeEnabled]="isNewRecipeEnabled" (toggleNewRecipe)="isNewRecipeEnabled = $event"></app-recipe-nav-bar>
+      <app-new-recipe *ngIf="isNewRecipeEnabled"></app-new-recipe>
+      <app-recipe-card></app-recipe-card>
     </div>
-</div>
+  </div>
+  

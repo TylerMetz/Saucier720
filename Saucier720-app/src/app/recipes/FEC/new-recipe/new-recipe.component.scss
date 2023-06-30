@@ -1,0 +1,104 @@
+.new-recipe-component {
+    background-color: var(--secondary-color);
+    padding: 20px;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    margin-top: 20px;
+  }
+  
+  .header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .header h3 {
+    margin-right: 10px;
+  }
+  
+  .title-textbox {
+    flex: 1;
+    width: 238%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .content {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .ingredient-section,
+  .instruction-section {
+    flex-basis: 48%;
+  }
+  
+  .ingredient-textboxes,
+  .instruction-textboxes {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .ingredient-textbox,
+  .instruction-textbox {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+  }
+
+  .remove-button,
+  .add-button {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    font-size: 16px;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+  
+  .remove-button:hover,
+  .add-button:hover {
+    background-color: var(--text-color);
+    color: var(--primary-color);
+  }
+
+  .add-button:last-child,
+  .remove-button:last-child {
+  margin-right: 0; /* Remove the margin for the last button in each section */
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  .add-to-cookbook-section {
+    display: flex;
+    justify-content: center;
+    margin-top: 60px;
+  }
+  
+  .add-to-cookbook-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    font-size: 20px;
+    cursor: pointer;
+  }
+  
+  .add-to-cookbook-button:hover {
+    background-color: var(--text-color);
+    color: var(--primary-color);
+  }
+  

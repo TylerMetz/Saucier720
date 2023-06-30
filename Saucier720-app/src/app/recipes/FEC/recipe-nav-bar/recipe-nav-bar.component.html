@@ -1,0 +1,13 @@
+<div class="navbar">
+  <div class="left-buttons">
+    <button class="button" (click)="toggleNewRecipeComponent()">Add New Recipe</button>
+  </div>
+  <div class="middle-buttons">
+    <button class="button center-button">Recipe Recommendation Filters</button>
+  </div>
+  <div class="right-buttons">
+    <button class="button" *ngIf="this.showMyRecipesButton" (click)="toggleButtons('myRecipes'); postMyRecipesSelect()">View My Recipes</button>
+    <button class="button" *ngIf="this.showFavoriteRecipesButton" (click)="toggleButtons('favoriteRecipes'); postFavoriteRecipesSelect()">View Favorite Recipes</button>
+    <button class="button" *ngIf="this.showRecommendedRecipesButton" (click)="toggleButtons('recommendedRecipes'); postRecommendedRecipesSelect()">View Recommended Recipes</button>
+  </div>
+</div>
