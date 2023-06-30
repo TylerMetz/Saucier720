@@ -72,7 +72,7 @@ export class NewRecipeComponent {
       try {
         const response = await lastValueFrom(this.recipeService.postNewRecipe(recipe));
         console.log(response);
-        window.location.reload();
+        window.location.reload(); // refresh page to show updated data
       } catch (error) {
         console.error(error);
       }
