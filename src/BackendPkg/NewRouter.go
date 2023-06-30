@@ -141,7 +141,7 @@ func handleSignup(w http.ResponseWriter, r *http.Request) {
 
 	// store the new user
 	UpdatingData = true;
-	backendDatabase.StoreUserDatabase(newUser.User)
+	StoreUserDatabase(newUser.User)
 	UpdatingData = false;
 
 }

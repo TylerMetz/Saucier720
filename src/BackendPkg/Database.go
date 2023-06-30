@@ -5,18 +5,30 @@ import (
 	"time"
 	"encoding/json"
 	"strings"
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/microsoft/go-mssqldb"
 	"log"
 	"strconv"
+	"fmt"
+	"context"
+	"errors"
 )
+
+var db *sql.DB
+var server = "mealdealz.database.windows.net"
+var port = 1433
+var user = "mealdealz-dev"
+var password = "Babayaga720"
+var database = "MealDealz-db"
 
 type Database struct {
 	Name string
 }
 
-// initializes application database file
+// initializes application database file OLD FUNCTION
 func (d *Database) OpenDatabase() *sql.DB {
-	database, _ := sql.Open("sqlite3", "./MealDealz.db")
+	connString := fmt.Sprintf("server=%s;user id=%s;password=%s;port=%d;database=%s;",
+        server, user, password, port, database)
+	database, _ := sql.Open("sqlserver", connString)
 	return database
 }
 
@@ -167,25 +179,6 @@ func (d *Database) ReadUserDatabase(userName string) User {
 
 	return returnUser
 
-}
-
-func (d *Database) StoreUserDatabase(u User) {
-
-	// calls function to open the database
-	database := d.OpenDatabase()
-
-	// make table for user data
-	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS UserData (FirstName TEXT, LastName TEXT, Email TEXT, UserName TEXT PRIMARY KEY, Password TEXT)")
-	statement.Exec()
-
-	// insert into UserData table
-	statementTwo, _ := database.Prepare("INSERT OR IGNORE INTO UserData (FirstName, LastName, Email, UserName, Password) VALUES (?, ?, ?, ?, ?)")
-
-	// store data from this user into table
-	statementTwo.Exec(u.FirstName, u.LastName, u.Email, u.UserName, u.Password)
-
-	// close db
-	database.Close()
 }
 
 func (d *Database) StoreUserPantry(u User) {
@@ -383,8 +376,11 @@ func (d* Database) WriteJSONRecipes(){
 	for _, recipe := range recipes {
 		ingredients, _ := json.Marshal(recipe.Ingredients)
 		statementTwo.Exec(recipe.Title, string(ingredients), recipe.Instructions, ("json" + strconv.Itoa(idNum)))
+	
 		idNum++
 	}
+
+	
 
 	database.Exec("DELETE FROM JSONRecipeData WHERE ingredients = '[]'")
 	database.Exec("DELETE FROM JSONRecipeData WHERE instructions = ''")
@@ -635,6 +631,7 @@ func (d* Database) ReadFavoriteRecipes (currUser User) []Recipe{
 	return recipes
 
 }
+
 func getRecipeByID(db *sql.DB, recipeID string) (*Recipe, error) {
 	recipe, _ := getRecipeFromIdUserTable(db, recipeID)
 
@@ -648,6 +645,7 @@ func getRecipeByID(db *sql.DB, recipeID string) (*Recipe, error) {
 
 	return recipe, nil
 }
+
 func getRecipeFromIdUserTable(db *sql.DB, recipeID string) (*Recipe, error) {
 	query := "SELECT title, ingredients, instructions FROM UserRecipeData WHERE recipeID = ?"
 	row := db.QueryRow(query, recipeID)
@@ -674,6 +672,7 @@ func getRecipeFromIdUserTable(db *sql.DB, recipeID string) (*Recipe, error) {
 
 	return &recipe, nil
 }
+
 func getRecipeFromIdJSONTable(db *sql.DB, recipeID string) (*Recipe, error) {
 	query := "SELECT title, ingredients, instructions FROM JSONRecipeData WHERE recipeID = ?"
 	row := db.QueryRow(query, recipeID)
@@ -834,7 +833,6 @@ func (d *Database) ReadList(currUser User) List{
 	return list
 }
 
-
 func (d *Database) WriteList(newItem FoodItem, currUser User){
 	// FUNC OVERVIEW: adds a new item to the user's list
 	database := d.OpenDatabase()
@@ -867,4 +865,67 @@ func (d *Database) UpdateListItem(newItem FoodItem, currUser User){
 		statement, _ := database.Prepare("UPDATE UserLists SET Quantity = ?, TimeUpdated = ? WHERE Username = ? AND FoodItemName = ?")
 		statement.Exec(newItem.Quantity, time.Now(), currUser.UserName, newItem.Name)
 	}
+}
+
+////////////////////////////////////////////////////////////// AZURE FUNCTIONS //////////////////////////////////////////////////////////////
+
+// OpenDatabase initializes the database connection
+func SQLOpenDatabase() error {
+	connString := fmt.Sprintf("server=%s;user id=%s;password=%s;port=%d;database=%s;",
+		server, user, password, port, database)
+	var err error
+	db, err = sql.Open("sqlserver", connString)
+	if err != nil {
+		log.Println("Failed to open database connection:", err)
+		return err
+	}
+	return nil
+}
+// CloseDatabase closes the database connection
+func CloseDatabase() {
+	err := db.Close()
+	if err != nil {
+		log.Println("Failed to close database connection:", err)
+	}
+}
+// StoreUserDatabase stores user data in the UserData table
+func StoreUserDatabase(u User) error {
+	ctx := context.Background()
+	var err error
+
+	if db == nil {
+		err = errors.New("StoreUserDatabase: db is null")
+		return err
+	}
+
+	// Check if database is alive.
+	err = db.PingContext(ctx)
+	if err != nil {
+		return err
+	}
+
+	tsql := `
+		INSERT INTO DevSchema.UserData (FirstName, LastName, Email, UserName, Password)
+		VALUES (@FirstName, @LastName, @Email, @UserName, @Password);
+	`
+
+	stmt, err := db.Prepare(tsql)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx,
+		sql.Named("FirstName", u.FirstName),
+		sql.Named("LastName", u.LastName),
+		sql.Named("Email", u.Email),
+		sql.Named("UserName", u.UserName),
+		sql.Named("Password", u.Password),
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
