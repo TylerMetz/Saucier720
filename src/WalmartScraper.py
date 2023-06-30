@@ -18,7 +18,7 @@ def scrape_walmart():
     
     # Set up Selenium options
     options = Options()
-    #options.add_argument("--headless")  # Run Chrome in headless mode
+    options.add_argument("--headless")  # Run Chrome in headless mode
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-geolocation")
@@ -30,7 +30,7 @@ def scrape_walmart():
     driver=webdriver.Chrome(service=Service(ChromeDriverManager().install()),options=options)
 
     stealth(driver,
-       user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.5481.105 Safari/537.36',
+       user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36',
        languages=["en-US", "en"],
        vendor="Google Inc.",
        platform="Win32",
@@ -49,14 +49,18 @@ def scrape_walmart():
     page_count = 1
     div_count = 1
     while True: 
-        time.sleep(10)
+        time.sleep(5)
         # Get the page source
         page_source = driver.page_source
         
-        #print(page_source)
+        #print(page_source) <div class="sans-serif ph1 pv2 w4 h4 lh-copy border-box br-100 b--solid mh2-m db tc no-underline gray bg-white b--white-90">25</div>
+        
         
         # Create BeautifulSoup object to parse the page source
         soup = BeautifulSoup(page_source, "html.parser")
+        if page_count == 1:
+            total_pages_list = [div.text for div in soup.find_all("div", class_="sans-serif ph1 pv2 w4 h4 lh-copy border-box br-100 b--solid mh2-m db tc no-underline gray bg-white b--white-90")]
+            total_pages = int(total_pages_list[0])
         
         # Extract the desired data from the soup object
         # Modify the code below according to your specific requirements
@@ -77,13 +81,14 @@ def scrape_walmart():
             # product price
             print("Price: " + "$" + re.findall(r'\$([\d.]+)', price.text.strip())[0])
             print()
-#maincontent > main > div > div:nth-child(3) > div > div > div:nth-child(2) > nav > ul > li:nth-child(9) > a
-#maincontent > main > div > div:nth-child(3) > div > div > div:nth-child(2) > nav > ul > li:nth-child(8) > a
+            
         if page_count < 3:
             next_button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "#maincontent > main > div > div:nth-child(3) > div > div > div:nth-child(2) > nav > ul > li:nth-child(7) > a")))
             next_button.click()
             page_count += 1
-        elif page_count < 4:
+        elif page_count == total_pages:
+            driver.close()
+        elif page_count < 4 or page_count == total_pages - 2 or page_count == total_pages - 1:
             next_button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "#maincontent > main > div > div:nth-child(3) > div > div > div:nth-child(2) > nav > ul > li:nth-child(8) > a")))
             next_button.click()
             page_count += 1
@@ -91,6 +96,7 @@ def scrape_walmart():
             next_button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "#maincontent > main > div > div:nth-child(3) > div > div > div:nth-child(2) > nav > ul > li:nth-child(9) > a")))
             next_button.click()
             page_count += 1
+
 
         
         # Check if the next page button is present
