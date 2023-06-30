@@ -870,7 +870,7 @@ func (d *Database) UpdateListItem(newItem FoodItem, currUser User){
 ////////////////////////////////////////////////////////////// AZURE FUNCTIONS //////////////////////////////////////////////////////////////
 
 // OpenDatabase initializes the database connection
-func SQLOpenDatabase() error {
+func AzureOpenDatabase() error {
 	connString := fmt.Sprintf("server=%s;user id=%s;password=%s;port=%d;database=%s;",
 		server, user, password, port, database)
 	var err error
@@ -882,7 +882,7 @@ func SQLOpenDatabase() error {
 	return nil
 }
 // CloseDatabase closes the database connection
-func CloseDatabase() {
+func AzureSQLCloseDatabase() {
 	err := db.Close()
 	if err != nil {
 		log.Println("Failed to close database connection:", err)
