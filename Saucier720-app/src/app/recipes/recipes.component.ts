@@ -1,17 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { Ingredient } from '../core/interfaces/ingredient';
-import { IngredientService } from '../core/services/ingredient.service';
+import { Component } from '@angular/core';
+// import { RecipeNavBarComponent } from 'src/app/recipes/recipe-nav-bar.component';
+
 @Component({
   selector: 'app-recipes',
   templateUrl: './recipes.component.html',
   styleUrls: ['./recipes.component.scss']
 })
-export class RecipesComponent implements OnInit{
-  ingredients: Array<Ingredient> = [];
 
-  constructor(private ingredientService: IngredientService) { }
-
-  ngOnInit(){
-    this.ingredients = this.ingredientService.getPantry();
-  }
+export class RecipesComponent{
+  public isNewRecipeEnabled: boolean = false;
+  public isFilterMenuEnabled: boolean = false;
 }

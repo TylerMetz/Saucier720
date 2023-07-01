@@ -1,5 +1,14 @@
 <div class="page">
-    <div class="page-body">
-        <app-recipe-card></app-recipe-card>
+  <div class="page-body">
+    <app-recipe-nav-bar [isNewRecipeEnabled]="isNewRecipeEnabled" [isFilterMenuEnabled]="isFilterMenuEnabled" (toggleNewRecipe)="isNewRecipeEnabled = $event" (toggleFilterMenu)="isFilterMenuEnabled = $event"></app-recipe-nav-bar>
+    <div class="filter-recipe-container">
+      <div class="new-recipe-container" *ngIf="isNewRecipeEnabled">
+        <app-new-recipe></app-new-recipe>
+      </div>
+      <div class="filter-menu-container" *ngIf="isFilterMenuEnabled">
+        <app-filter-menu></app-filter-menu>
+      </div>
     </div>
+    <app-recipe-card></app-recipe-card>
+  </div>
 </div>

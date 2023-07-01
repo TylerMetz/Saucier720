@@ -67,9 +67,6 @@ This web app scrapes weekly deals from groccery store websites, and gives users 
     $ go get -u github.com/rs/cors
     ```
     ```
-    $ go get -u github.com/tebeka/selenium
-    ```
-    ```
     $ go get -u golang.org/x/exp/slices
     ```
     ```
@@ -78,6 +75,12 @@ This web app scrapes weekly deals from groccery store websites, and gives users 
     ```
     $ pip install selenium
     ```
+    ```
+    $ pip install webdriver-manager
+    ```
+    ```
+    $ pip install selenium-stealth
+   ```
     <br>
 
 4. Install Internal Package

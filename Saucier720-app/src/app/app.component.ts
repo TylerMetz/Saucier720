@@ -29,7 +29,13 @@ export class AppComponent implements OnInit {
       const response = await lastValueFrom(this.authService.logout());
       this.router.navigate(['/Login']);
       console.log('response', response);
-      
+
+      // clear button/checkbox states from session
+      localStorage.removeItem('recipeNavBarButtonState');
+      localStorage.removeItem('myRecipesValue');
+      localStorage.removeItem('userRecipesValue');
+      localStorage.removeItem('mdRecipesValue');
+
     } catch (error: any) {
       console.log(error.message);
     }

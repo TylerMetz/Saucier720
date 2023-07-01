@@ -8,7 +8,24 @@
     z-index: 20;
     transition: all 0.2s ease-in-out;
   }
-  
+
+  .topnav img {
+    position: absolute;
+    left: 50%; 
+    transform: translate(-50%);
+    top: 1%;
+    bottom: 4%; 
+    padding: 4px 16px 5px 16px;
+
+    background-size: 150px;
+    transition: 0.2s ease-in-out;
+  }
+
+  img:hover{
+    background-color: var(--text-color);
+    content: url("/assets/images/hover.png");
+    transition: 0.2s ease-in-out;
+  }
   /* Style the links inside the navigation bar */
   .topnav a {
     float: left;
