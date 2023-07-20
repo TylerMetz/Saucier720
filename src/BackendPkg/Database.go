@@ -831,6 +831,7 @@ func (d *Database) ReadList(currUser User) List{
 		list.ShoppingList = append(list.ShoppingList, foodItem)
 	}
 
+	database.Close()
 	return list
 }
 
@@ -854,10 +855,12 @@ func (d *Database) WriteList(newItem FoodItem, currUser User){
 
 	statement, _ := database.Prepare("INSERT INTO UserLists (Username, FoodItemName, Quantity, TimeUpdated) VALUES (?, ?, ?, ?)")
 	statement.Exec(currUser.UserName, newItem.Name, newItem.Quantity, time.Now())
+
+	database.Close()
 }
 
 func (d *Database) UpdateListItem(newItem FoodItem, currUser User){
-	// FUNC OVERVIEW: updates the quantity of an item in the list, if it == 0, delete it from user's list
+	// FUNC OVERVIEW: updates an item in the user's list
 	database := d.OpenDatabase()
 
 	if newItem.Quantity == 0 {
@@ -867,4 +870,6 @@ func (d *Database) UpdateListItem(newItem FoodItem, currUser User){
 		statement, _ := database.Prepare("UPDATE UserLists SET Quantity = ?, TimeUpdated = ? WHERE Username = ? AND FoodItemName = ?")
 		statement.Exec(newItem.Quantity, time.Now(), currUser.UserName, newItem.Name)
 	}
+
+	database.Close()
 }

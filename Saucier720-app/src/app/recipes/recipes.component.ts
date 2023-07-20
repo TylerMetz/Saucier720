@@ -9,4 +9,5 @@ import { Component } from '@angular/core';
 
 export class RecipesComponent{
   public isNewRecipeEnabled: boolean = false;
+  public isFilterMenuEnabled: boolean = false;
 }
