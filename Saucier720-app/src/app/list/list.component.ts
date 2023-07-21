@@ -64,11 +64,9 @@ export class ListComponent implements OnInit {
     if (this.newIngredientName && this.newIngredientQuantity > 0) {
       const newIngredient: Ingredient = {
         Name: this.newIngredientName,
-        Quantity: this.newIngredientQuantity,
-        StoreCost: 0, // Example value, replace with actual value if needed
-        OnSale: false, // Example value, replace with actual value if needed
-        SalePrice: 0, // Example value, replace with actual value if needed
-        SaleDetails: '' // Example value, replace with actual value if needed
+        FoodType: '', // Example value, replace with actual value if needed
+        SaleDeatails: '', // Example value, replace with actual value if needed
+        Quantity: this.newIngredientQuantity
       };
       //this.ingredients.push(newIngredient);
 

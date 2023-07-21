@@ -1,3 +1,5 @@
+import { Ingredient } from "./ingredient";
+
 export interface User {
     FirstName: string;
     LastName: string;

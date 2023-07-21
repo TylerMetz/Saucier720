@@ -11,17 +11,10 @@ type User struct{
 	Email string `json:"Email"`
     UserName string `json:"UserName"`
     Password string `json:"Password"`
-	UserPantry Pantry
+	UserPantry Pantry 
+	UserList List 
 }
 
-func (u* User) PrintUserInfo(){
-	fmt.Println("First Name: " + u.FirstName)
-	fmt.Println("Last Name: " + u.LastName)
-	fmt.Println("Email: " + u.Email)
-	fmt.Println("UserName: " + u.UserName)
-	fmt.Println("Password: " + u.Password)
-	u.UserPantry.DisplayPantry()
-}
 
 func ValidateUser(currUser User) string{
 	passwordDb := Database{
