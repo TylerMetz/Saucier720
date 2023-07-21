@@ -115,6 +115,7 @@ func BestRecipes(userPantry Pantry, allRecipes []Recipe, deals []FoodItem) []Rec
 		}
 	}
 
+	invertSlice(returnRecommendations)
 	return returnRecommendations
 
 }
@@ -175,6 +176,7 @@ func AllRecipesWithRelatedItems(userPantry Pantry, allRecipes []Recipe, deals []
 		returnRecommendations = append(returnRecommendations, newRecc)
 	}
 
+	invertSlice(returnRecommendations)
 	return returnRecommendations
 }
 

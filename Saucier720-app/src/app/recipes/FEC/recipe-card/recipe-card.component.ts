@@ -70,6 +70,17 @@ export class RecipeCardComponent implements OnInit {
     }
   }
 
+  getAuthorCreditFromRecipeID(recipeID: string): string {
+    const author = recipeID.replace(/\d+/g, '');
+  
+    if (author === 'json') {
+      return 'MealDealz Classic Recipe';
+    } else {
+      return 'Created by ' + author;
+    }
+  }
+  
+
   private updatePrintedSubRecipeLines() {
     this.currentIngredients.forEach((ingredient, i) => {
       if (this.checkForRecipeFollows(ingredient)) {

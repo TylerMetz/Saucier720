@@ -6,6 +6,7 @@
         <h1 *ngIf="recipes && recipes.length > 0" class="recipe-title">
           {{ recipes[currentRecipeIndex].R.title }}
         </h1>
+        <p>{{ getAuthorCreditFromRecipeID(recipes[currentRecipeIndex].R.recipeID) }}</p>
       </div>
       <div class="recipe-body">
           <div class="recipe-ingredients">
