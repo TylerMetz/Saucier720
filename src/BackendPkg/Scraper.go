@@ -14,7 +14,6 @@ import (
 var UserZipCodePlaceholder string = "32601"
 
 type Scraper struct {
-	TimeLastDealsScraped time.Time
 	PublixDeals			[]FoodItem
 	WalmartDeals 		[]FoodItem
 }
