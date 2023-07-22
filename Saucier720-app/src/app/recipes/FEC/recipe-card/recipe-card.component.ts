@@ -188,19 +188,36 @@ export class RecipeCardComponent implements OnInit {
     }
   }
 
+  holdTimer: any;
+  showHoldToConfirm: boolean = false;
+
+  startHoldTimer() {
+    this.holdTimer = setTimeout(() => {
+      this.showHoldToConfirm = true;
+    }, 3000); // Set the hold duration in milliseconds (3 seconds in this example)
+  }
+
+  clearHoldTimer() {
+    clearTimeout(this.holdTimer);
+    this.showHoldToConfirm = false;
+  }
+
   // for delete button
   async deleteUserRecipe() {
-    try {
-      // make post req
-      const response = await lastValueFrom(this.recipeService.postDeleteUserRecipe(this.currentRecipe.R.recipeID));
-      console.log(response);
+    if (this.showHoldToConfirm){
+      try {
+        // make post req
+        const response = await lastValueFrom(this.recipeService.postDeleteUserRecipe(this.currentRecipe.R.recipeID));
+        console.log(response);
 
-      // delete this recipe card and move to the next
-      this.recipes.splice(this.currentRecipeIndex, 1);
-      this.goToNextRecipe();
-      
-    } catch (error) {
-      console.error(error);
+        // delete this recipe card and move to the next
+        this.recipes.splice(this.currentRecipeIndex, 1);
+        this.goToNextRecipe();
+        
+      } catch (error) {
+        console.error(error);
+      }
+      this.showHoldToConfirm = false;
     }
   }
 
