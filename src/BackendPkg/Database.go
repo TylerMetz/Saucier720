@@ -482,6 +482,9 @@ func (d *Database) getNextRecipeID(username string) int {
 		return 0
 	}
 
+	database.Close()
+	rows.Close()
+
 	return lastIDNum + 1
 }
 

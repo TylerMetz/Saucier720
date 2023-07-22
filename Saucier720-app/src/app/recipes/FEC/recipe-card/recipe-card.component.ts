@@ -190,23 +190,33 @@ export class RecipeCardComponent implements OnInit {
 
   holdTimer: any;
   showHoldToConfirm: boolean = false;
-
+  deleteIconOpacity: number = 1 // Add a variable to store the current opacity of the delete icon
+  
   startHoldTimer() {
-    this.holdTimer = setTimeout(() => {
+    this.deleteIconOpacity = 0.1;
+    this.holdTimer = setInterval(() => { // Use setInterval instead of setTimeout to update the opacity continuously
       this.showHoldToConfirm = true;
-      // Call the deleteUserRecipe() method after the hold duration
-      this.deleteUserRecipe();
-    }, 3000); // Set the hold duration in milliseconds (3 seconds in this example)
+      const holdDuration = 3000; // Set the hold duration in milliseconds (3 seconds in this example)
+      const opacityStep = 0.9 / (holdDuration / 100); // Calculate the step to reach opacity 1 in 3 seconds
+      this.deleteIconOpacity += opacityStep;
+      if (this.deleteIconOpacity >= 1) {
+        this.deleteIconOpacity = 1; // Ensure the opacity does not exceed 1
+        clearInterval(this.holdTimer);
+        this.deleteUserRecipe(); // Call the deleteUserRecipe() method after the hold duration
+      }
+    }, 100); // Run the interval every 100ms for smoother transition
   }
-
+  
   clearHoldTimer() {
-    clearTimeout(this.holdTimer);
+    clearInterval(this.holdTimer); // Use clearInterval to stop the interval from updating the opacity
     this.showHoldToConfirm = false;
+    this.deleteIconOpacity = 1; // Reset the opacity to 1
   }
-
+  
   endHoldTimer() {
-    clearTimeout(this.holdTimer);
+    clearInterval(this.holdTimer); // Use clearInterval to stop the interval from updating the opacity
     this.showHoldToConfirm = false;
+    this.deleteIconOpacity = 1; // Reset the opacity to 1
   }
 
   // for delete button

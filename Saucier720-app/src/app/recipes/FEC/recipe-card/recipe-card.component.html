@@ -7,10 +7,13 @@
           class="delete-icon"
           src="assets/images/deleteIcon.png"
           alt="Delete Icon"
-          (mouseenter)="showHoldToConfirm = true"
+          (mouseenter)="showHoldToConfirm = true; deleteIconOpacity = 0.1"
           (mouseleave)="showHoldToConfirm = false; clearHoldTimer()"
           (mousedown)="startHoldTimer()"
-          (mouseup)="endHoldTimer()">
+          (mouseup)="endHoldTimer()"
+          [style.opacity]="deleteIconOpacity"
+          [class.hover]="showHoldToConfirm"
+        >
         <span *ngIf="showHoldToConfirm" class="confirm-text">Hold to Confirm</span>
       </div>
       <div class="recipe-title">
