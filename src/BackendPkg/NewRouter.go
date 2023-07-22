@@ -822,6 +822,50 @@ func handleRecipeFilters(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func handleDeleteUserRecipe(w http.ResponseWriter, r *http.Request) {
+
+	// verify POST request from frontend
+    if r.Method == "OPTIONS" {
+        w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+        w.Header().Set("Access-Control-Allow-Methods", "POST")
+        w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+        w.Header().Set("Access-Control-Allow-Credentials", "true")
+        w.WriteHeader(http.StatusOK)
+        return
+    }
+
+	// set correct headers
+    w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+    w.Header().Set("Access-Control-Allow-Methods", "POST")
+    w.Header().Set("Access-Control-Allow-Credentials", "true")
+
+	// translate POST data to ASCII
+	body, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// save ASCII as string
+	recipeID := string(body)
+
+	// change store selection global var
+	UpdatingData = true;
+	backendDatabase.DeleteUserRecipe(recipeID)
+	UpdatingData = false;
+
+	// write a successful header
+	w.WriteHeader(http.StatusOK)
+
+	// if the header was successful, change the recipe data
+	if http.StatusOK == 200 {
+		// get new data for routing
+		UpdateAllData()
+	}
+
+}
+
 func ListenForData(){
 	
 	// handle the listening functions
@@ -858,6 +902,10 @@ func ListenForData(){
 	http.HandleFunc("/api/RecommendedRecipesFilters", func(response http.ResponseWriter, request *http.Request) {
         handleRecipeFilters(response, request)
     })
+	http.HandleFunc("/api/DeleteUserRecipe", func(response http.ResponseWriter, request *http.Request) {
+        handleDeleteUserRecipe(response, request)
+    })
+	
 
 	// create server
 	server := &http.Server{Addr: ":8082"}

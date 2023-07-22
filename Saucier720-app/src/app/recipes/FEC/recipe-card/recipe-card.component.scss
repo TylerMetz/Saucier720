@@ -119,6 +119,7 @@
   font-size: 16px;
 }
 
+.delete-icon,
 .favorite-icon {
   position: absolute;
   top: 10px;
@@ -130,12 +131,27 @@
   transition: opacity 0.3s ease-in-out; /* Add a smooth transition effect */
 }
 
+.favorite-icon {
+  margin-top: 0.4px;
+}
+
+.delete-icon {
+  margin-left: 25px; /* Add some spacing between the icons */
+  width: 22px; /* Adjust the width as needed */
+  height: 22px; /* Adjust the height as needed */
+}
+
+.delete-icon:hover,
 .favorite-icon:hover {
   opacity: 1; /* Increase the opacity on hover to make it more visible */
 }
 
 .favorite-icon.active {
   filter: brightness(0%) saturate(500%) hue-rotate(-30deg); /* Apply a red color effect */
+}
+
+.icon-container {
+  display: inline-block; /* Ensure the icons are aligned horizontally */
 }
 
 

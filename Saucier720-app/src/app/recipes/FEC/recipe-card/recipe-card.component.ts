@@ -3,6 +3,7 @@ import { HttpEvent, HttpEventType } from '@angular/common/http';
 import { RecipeService } from 'src/app/core/services/recipes/recipe.service';
 import { lastValueFrom } from 'rxjs';
 import { RecipePost } from 'src/app/core/interfaces/recipe';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-recipe-card',
@@ -22,7 +23,8 @@ export class RecipeCardComponent implements OnInit {
 
   constructor(
     private recipeService: RecipeService,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private cookieService: CookieService
   ) {}
 
   ngOnInit(): void {
@@ -70,13 +72,22 @@ export class RecipeCardComponent implements OnInit {
     }
   }
 
-  getAuthorCreditFromRecipeID(recipeID: string): string {
+  public getAuthorCreditFromRecipeID(recipeID: string): string {
+    // used to get recipe author from recipeID
     const author = recipeID.replace(/\d+/g, '');
-  
     if (author === 'json') {
       return 'MealDealz Classic Recipe';
     } else {
       return 'Created by ' + author;
+    }
+  }
+
+  public isCurrentUserRecipe(recipeID: string): boolean {
+    // used to check if current recipe is made my the current user
+    if (recipeID.replace(/\d+/g, '') === this.cookieService.get("sessionID").replace(/\d+/g, '')){
+      return true
+    } else{
+      return false;
     }
   }
   
@@ -174,6 +185,22 @@ export class RecipeCardComponent implements OnInit {
       } catch (error) {
         console.error(error);
       }
+    }
+  }
+
+  // for delete button
+  async deleteUserRecipe() {
+    try {
+      // make post req
+      const response = await lastValueFrom(this.recipeService.postDeleteUserRecipe(this.currentRecipe.R.recipeID));
+      console.log(response);
+
+      // delete this recipe card and move to the next
+      this.recipes.splice(this.currentRecipeIndex, 1);
+      this.goToNextRecipe();
+      
+    } catch (error) {
+      console.error(error);
     }
   }
 
