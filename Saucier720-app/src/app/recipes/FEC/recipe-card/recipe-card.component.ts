@@ -190,7 +190,7 @@ export class RecipeCardComponent implements OnInit {
 
   holdTimer: any;
   showHoldToConfirm: boolean = false;
-  deleteIconOpacity: number = 1 // Add a variable to store the current opacity of the delete icon
+  deleteIconOpacity: number = 0.8 // Add a variable to store the current opacity of the delete icon
   
   startHoldTimer() {
     this.deleteIconOpacity = 0.1;
@@ -210,13 +210,13 @@ export class RecipeCardComponent implements OnInit {
   clearHoldTimer() {
     clearInterval(this.holdTimer); // Use clearInterval to stop the interval from updating the opacity
     this.showHoldToConfirm = false;
-    this.deleteIconOpacity = 1; // Reset the opacity to 1
+    this.deleteIconOpacity = 0.8; // Reset the opacity to 1
   }
   
   endHoldTimer() {
     clearInterval(this.holdTimer); // Use clearInterval to stop the interval from updating the opacity
     this.showHoldToConfirm = false;
-    this.deleteIconOpacity = 1; // Reset the opacity to 1
+    this.deleteIconOpacity = 0.8; // Reset the opacity to 1
   }
 
   // for delete button
@@ -228,7 +228,15 @@ export class RecipeCardComponent implements OnInit {
 
       // delete this recipe card and move to the next
       this.recipes.splice(this.currentRecipeIndex, 1);
-      this.goToNextRecipe();
+
+      // need to reload if there are no recipes left
+      if(this.currentRecipeIndex === 0){
+        window.location.reload();
+      }
+      else{
+        this.goToNextRecipe();
+      }
+      
       
     } catch (error) {
       console.error(error);
