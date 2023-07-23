@@ -424,6 +424,7 @@ func (d* Database) ReadJSONRecipes() []Recipe{
 			Ingredients:  ingredients,
 			Instructions: instructions,
 			RecipeID: 	  recipeID, 
+			RecipeAuthor: null, // set to null for all recipes from the JSON file
 		}
 		recipes = append(recipes, recipe)
 	}
@@ -527,6 +528,7 @@ func (d* Database) ReadAllUserRecipes() []Recipe{
 			Ingredients:  ingredients,
 			Instructions: instructions,
 			RecipeID: 	  recipeID, 
+			RecipeAuthor: userName,
 		}
 		recipes = append(recipes, recipe)
 	}
@@ -574,6 +576,7 @@ func (d* Database) ReadCurrUserRecipes (currUser User) []Recipe{
 			Ingredients:  ingredients,
 			Instructions: instructions,
 			RecipeID: 	  recipeID, 
+			RecipeAuthor: userName,
 		}
 		recipes = append(recipes, recipe)
 	}

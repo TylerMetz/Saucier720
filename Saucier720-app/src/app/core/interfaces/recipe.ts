@@ -1,3 +1,4 @@
+import { StringNullableChain } from "cypress/types/lodash";
 import { Ingredient } from "./ingredient";
 
 export interface Recipe {
@@ -7,6 +8,7 @@ export interface Recipe {
     pictureLink: string | null;
     recipeID: string;
     userFavorite: boolean;
+    recipeAuthor: string;
     [key: string]: any; // index signature
 }
 
