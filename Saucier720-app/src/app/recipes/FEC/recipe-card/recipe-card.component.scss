@@ -132,7 +132,7 @@
 }
 
 .favorite-icon {
-  margin-top: 0.4px; // added to make them look more even
+  margin-top: 0.485px; // added to make them look more even
 }
 
 .delete-icon {
@@ -156,16 +156,15 @@
   filter: brightness(0%) saturate(500%) hue-rotate(-30deg); /* Apply a red color effect */
 }
 
-.icon-container {
-  align-items: center;
-  display: flex;
-}
 
 .confirm-text {
-  margin-left: 5px; /* Add some spacing between the delete icon and the text */
   font-size: 12px; /* Adjust font size as needed */
-  color: white; /* Set the text color */
+  color: var(--text--color); /* Set the text color */
+  position: absolute; /* Position the "Hold to Confirm" text absolutely within the container */
+  top: 12px;
+  left: 65px; /* Adjust the left position as needed to place it to the right of the delete icon */
 }
+
 
 
 
