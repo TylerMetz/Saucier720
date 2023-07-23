@@ -12,7 +12,7 @@ import { AuthGuard } from './core/services/Auth/auth.guard.service';
 import { AuthService } from './core/services/Auth/auth.service';
 
 const routes: Routes = [
-  { path: 'Homepage', component: HomePageComponent},
+  { path: 'Home', component: HomePageComponent},
   { path: 'Pantry', component: PantryComponent, canActivate: [AuthGuard]},
   { path: 'List', component: ListComponent, canActivate: [AuthGuard]},
   { path: 'Deals', component: DealsComponent, canActivate: [AuthGuard]},
@@ -27,4 +27,4 @@ const routes: Routes = [
   providers: [AuthGuard, AuthService]
 })
 export class AppRoutingModule { }
-export const routingComponents = [PantryComponent, ListComponent, DealsComponent, RecipesComponent, LoginComponent, SignupComponent];
+export const routingComponents = [PantryComponent, ListComponent, DealsComponent, RecipesComponent, LoginComponent, SignupComponent, HomePageComponent];

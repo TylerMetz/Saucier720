@@ -18,6 +18,7 @@ export class AppComponent implements OnInit {
   constructor(private cookieService: CookieService, private authService: AuthService, private router: Router) {
     const sessionId = this.cookieService.get('sessionID');
     this.username = sessionId.slice(0, -3);
+    this.router.navigateByUrl('/Home'); // default to home page
   }
 
   ngOnInit() {
