@@ -1,4 +1,3 @@
-import { StringNullableChain } from "cypress/types/lodash";
 import { Ingredient } from "./ingredient";
 
 export interface Recipe {
