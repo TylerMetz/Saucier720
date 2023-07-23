@@ -3,7 +3,7 @@
     <div class="card">
       <div class="icon-container">
         <img class="favorite-icon" src="assets/images/favoriteIcon.png" alt="Favorite Icon" [class.active]="this.recipes[this.currentRecipeIndex].R.userFavorite" (click)="toggleFavorite()">
-        <img *ngIf="isCurrentUserRecipe(recipes[currentRecipeIndex].R.recipeID)"
+        <img *ngIf="isCurrentUserRecipe()"
           class="delete-icon"
           src="assets/images/deleteIcon.png"
           alt="Delete Icon"
@@ -20,7 +20,7 @@
         <h1 *ngIf="recipes && recipes.length > 0" class="recipe-title">
           {{ recipes[currentRecipeIndex].R.title }}
         </h1>
-        <p>{{ getAuthorCreditFromRecipeID(recipes[currentRecipeIndex].R.recipeID) }}</p>
+        <p>{{ getAuthorCredit() }}</p>
       </div>
       <div class="recipe-body">
           <div class="recipe-ingredients">

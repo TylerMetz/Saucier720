@@ -72,19 +72,19 @@ export class RecipeCardComponent implements OnInit {
     }
   }
 
-  public getAuthorCreditFromRecipeID(recipeID: string): string {
+  public getAuthorCredit(): string {
     // used to get recipe author from recipeID
-    const author = recipeID.replace(/\d+/g, '');
-    if (author === 'json') {
+    const author = this.currentRecipe.R.recipeAuthor;
+    if (author === null) {
       return 'MealDealz Classic Recipe';
     } else {
       return 'Created by ' + author;
     }
   }
 
-  public isCurrentUserRecipe(recipeID: string): boolean {
+  public isCurrentUserRecipe(): boolean {
     // used to check if current recipe is made my the current user
-    if (recipeID.replace(/\d+/g, '') === this.cookieService.get("sessionID").replace(/\d+/g, '')){
+    if (this.currentRecipe.R.recipeAuthor === this.cookieService.get("sessionID").replace(/\d+/g, '')){
       return true
     } else{
       return false;

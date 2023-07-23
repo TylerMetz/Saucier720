@@ -2,6 +2,7 @@ import { Component, EventEmitter, Output, Renderer2, ViewChild, ElementRef } fro
 import { RecipeService } from 'src/app/core/services/recipes/recipe.service';
 import { Recipe } from 'src/app/core/interfaces/recipe';
 import { lastValueFrom } from 'rxjs';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-new-recipe',
@@ -16,7 +17,7 @@ export class NewRecipeComponent {
 
   @Output() addRecipeToCookbook: EventEmitter<any> = new EventEmitter<any>();
 
-  constructor(private renderer: Renderer2, private recipeService: RecipeService) {}
+  constructor(private renderer: Renderer2, private recipeService: RecipeService, private cookieService: CookieService) {}
 
   addIngredientTextbox() {
     const ingredientTextboxes = this.ingredientTextboxesRef.nativeElement;
@@ -66,7 +67,8 @@ export class NewRecipeComponent {
         title: this.titleTextbox.nativeElement.value.trim(),
         pictureLink: null, // Provide the appropriate picture link here
         recipeID: 'test', // Provide the appropriate recipe ID here
-        userFavorite: false
+        userFavorite: false,
+        recipeAuthor: this.cookieService.get("sessionID").replace(/\d+/g, '') // pass in the current user's username, but doesn't matter because we store in backend anyways, just adding this incase we change it in backend
       };
 
       try {
