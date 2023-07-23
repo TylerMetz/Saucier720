@@ -19,6 +19,9 @@ import { RecipesComponent } from './recipes/recipes.component';
 import { NewRecipeComponent } from './recipes/FEC/new-recipe/new-recipe.component';
 import { ListComponent } from './list/list.component';
 import { FilterRecipeComponent } from './recipes/FEC/filter-menu/filter-menu.component';
+import { HomePageComponent } from './homepage/homepage.component';
+import { LandingPageComponent } from './homepage/FEC/landing-page/landing-page.component';
+import { UserDashBoardComponent } from './homepage/FEC/user-dashboard/user-dashboard.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +41,10 @@ import { FilterRecipeComponent } from './recipes/FEC/filter-menu/filter-menu.com
     RecipeNavBarComponent,
     NewRecipeComponent,
     ListComponent,
-    FilterRecipeComponent
+    FilterRecipeComponent,
+    HomePageComponent,
+    LandingPageComponent,
+    UserDashBoardComponent
   ],
   imports: [
     AppRoutingModule,
