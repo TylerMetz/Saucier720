@@ -1,11 +1,11 @@
 # MealDealz
 
-## Frontend Engineers
-1. Tyler Metz
-2. Edward Menello
-## Backend Engineers
-1. Sam Forstot
-2. Riley Cleavenger
+## Engineers
+- Riley Cleavenger
+- Tyler Metz
+- Sam Forstot
+- Steele Elliott
+- Edward Menello
 
 ## Project Description
 This web app scrapes weekly deals from groccery store websites, and gives users the most cost-effecient recipes based on filters such as what ingredients you already have. Users can manage their `pantry` by adding ingredients they already own.
@@ -67,9 +67,6 @@ This web app scrapes weekly deals from groccery store websites, and gives users 
     $ go get -u github.com/rs/cors
     ```
     ```
-    $ go get -u github.com/tebeka/selenium
-    ```
-    ```
     $ go get -u github.com/microsoft/go-mssqldb
     ```
     ```
@@ -84,6 +81,9 @@ This web app scrapes weekly deals from groccery store websites, and gives users 
     ```
     $ pip install webdriver-manager
     ```
+    ```
+    $ pip install selenium-stealth
+   ```
     <br>
 
 4. Install Internal Package

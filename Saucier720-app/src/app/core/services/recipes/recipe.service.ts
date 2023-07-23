@@ -13,6 +13,8 @@ export class RecipeService {
   private newRecipeUrl = 'http://localhost:8082/api/NewUserRecipe';
   private addFavoriteRecipeUrl = 'http://localhost:8082/api/AddFavoriteRecipe';
   private removeFavoriteRecipeUrl = 'http://localhost:8082/api/RemoveFavoriteRecipe';
+  private filtersUrl = 'http://localhost:8082/api/RecommendedRecipesFilters';
+  private deleteUserRecipeUrl = 'http://localhost:8082/api/DeleteUserRecipe';
 
   constructor(private http: HttpClient) { }
 
@@ -64,6 +66,20 @@ export class RecipeService {
       'Content-Type': 'application/json', 
     });
     return this.http.post<any>(this.removeFavoriteRecipeUrl, recipeID, { headers, withCredentials: true });
+  }
+
+  postFilterValues(filterValues: any){
+    const headers = new HttpHeaders({ 
+      'Content-Type': 'application/json', 
+    });
+    return this.http.post<any>(this.filtersUrl, filterValues, { headers, withCredentials: true });
+  }
+
+  postDeleteUserRecipe(recipeID: string){
+    const headers = new HttpHeaders({ 
+      'Content-Type': 'application/json', 
+    });
+    return this.http.post<any>(this.deleteUserRecipeUrl, recipeID, { headers, withCredentials: true });
   }
 
 }

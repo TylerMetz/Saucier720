@@ -68,7 +68,6 @@ export class ListComponent implements OnInit {
         SaleDeatails: '', // empty value, replace with actual value if needed
         Quantity: this.newIngredientQuantity
       };
-      //this.ingredients.push(newIngredient);
 
       // Clear input fields
       this.newIngredientName = '';
