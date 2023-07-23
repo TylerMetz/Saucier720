@@ -7,6 +7,6 @@ import { AuthService } from 'src/app/core/services/Auth/auth.service';
     styleUrls:[ './user-dashboard.component.scss']
   })
 
-  export class UserDashBoardComponent {
+  export class UserDashboardComponent {
 
   }

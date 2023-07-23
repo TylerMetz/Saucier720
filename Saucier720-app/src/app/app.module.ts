@@ -21,7 +21,8 @@ import { ListComponent } from './list/list.component';
 import { FilterRecipeComponent } from './recipes/FEC/filter-menu/filter-menu.component';
 import { HomePageComponent } from './homepage/homepage.component';
 import { LandingPageComponent } from './homepage/FEC/landing-page/landing-page.component';
-import { UserDashBoardComponent } from './homepage/FEC/user-dashboard/user-dashboard.component';
+import { UserDashboardComponent } from './homepage/FEC/user-dashboard/user-dashboard.component';
+import { AnimatedLogoComponent } from './homepage/FEC/landing-page/FEC/animated-logo/animated-logo.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { UserDashBoardComponent } from './homepage/FEC/user-dashboard/user-dashb
     FilterRecipeComponent,
     HomePageComponent,
     LandingPageComponent,
-    UserDashBoardComponent
+    UserDashboardComponent,
+    AnimatedLogoComponent
   ],
   imports: [
     AppRoutingModule,
