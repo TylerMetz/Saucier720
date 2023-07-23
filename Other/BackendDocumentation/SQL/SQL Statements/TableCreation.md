@@ -28,7 +28,7 @@ IF NOT EXISTS (SELECT * FROM dbo.tables WHERE name = 'scraped_time'),
 ## User Data
 
 ```SQL
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'user_data')
+IF NOT EXISTS (SELECT * FROM dbo.tables WHERE name = 'user_data')
                 BEGIN
                     CREATE TABLE user_data (
                         UserName VARCHAR(25) PRIMARY KEY,
@@ -44,7 +44,7 @@ IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'user_data')
 ## User Lists
 
 ```SQL
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'user_lists')
+IF NOT EXISTS (SELECT * FROM dbo.tables WHERE name = 'user_lists')
                 BEGIN
                     CREATE TABLE user_lists (
                         UserName VARCHAR(25) PRIMARY KEY,
@@ -58,7 +58,7 @@ IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'user_lists')
 ## User Cookies
 
 ```SQL
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'user_cookies')
+IF NOT EXISTS (SELECT * FROM dbo.tables WHERE name = 'user_cookies')
                 BEGIN
                     CREATE TABLE user_cookies (
                         UserName VARCHAR(25) PRIMARY KEY,
@@ -70,7 +70,7 @@ IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'user_cookies')
 ## User Ingredients
 
 ```SQL
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'user_ingredients')
+IF NOT EXISTS (SELECT * FROM dbo.tables WHERE name = 'user_ingredients')
                 BEGIN
                     CREATE TABLE user_ingredients (
                         UserName VARCHAR(25),
@@ -85,7 +85,7 @@ IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'user_ingredients')
 ## User Recipes
 
 ```SQL
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'user_recipes')
+IF NOT EXISTS (SELECT * FROM dbo.tables WHERE name = 'user_recipes')
                 BEGIN
                     CREATE TABLE user_recipes (
                         RecipeID INT PRIMARY KEY IDENTITY(1,1),
@@ -99,7 +99,7 @@ IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'user_recipes')
 
 ## Jason's Recipes
 ```SQL
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'jason_recipes')
+IF NOT EXISTS (SELECT * FROM dbo.tables WHERE name = 'jason_recipes')
                 BEGIN
                     CREATE TABLE jason_recipes (
                         RecipeID INT PRIMARY KEY IDENTITY(1,1),
@@ -112,7 +112,7 @@ IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'jason_recipes')
 
 ## User Favorite Recipes
 ```SQL
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'user_favorite_recipes')
+IF NOT EXISTS (SELECT * FROM dbo.tables WHERE name = 'user_favorite_recipes')
                 BEGIN
                     CREATE TABLE user_favorite_recipes (
                         RecipeID INT IDENTITY(1,1),
