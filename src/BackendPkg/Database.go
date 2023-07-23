@@ -9,11 +9,8 @@ import (
 	"log"
 	"strconv"
 	"fmt"
-<<<<<<< HEAD
 	"context"
 	"errors"
-=======
->>>>>>> develop
 )
 
 var db *sql.DB
