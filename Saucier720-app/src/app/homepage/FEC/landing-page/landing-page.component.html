@@ -2,7 +2,8 @@
     <h1>Landing Page</h1>
   </div>
   
-  <div class="icon-container" (click)="toggleAnimation()">
+  <div class="icon-container" [ngClass]="{ 'clicked': isMouthTalking }" (click)="toggleAnimation()">
     <div class="icon-top"></div>
-    <div class="icon-bottom" [@mouthTalking]="isMouthTalking"></div>
+    <div class="icon-bottom"></div>
   </div>
+  
