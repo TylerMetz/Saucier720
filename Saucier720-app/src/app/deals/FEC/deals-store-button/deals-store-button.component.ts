@@ -15,7 +15,15 @@ import { Store } from 'src/app/core/interfaces/store';
 export class DealsStoreButtonComponent {
   name: string = '';
 
-  constructor(private dealsService: DealsService) { }
+  constructor(private dealsService: DealsService) {
+    const buttonStateJson = localStorage.getItem('buttonState');
+    if (buttonStateJson) {
+      const buttonState = JSON.parse(buttonStateJson);
+      if (buttonState && buttonState.storeName) {
+        this.name = buttonState.storeName;
+      }
+    }
+  }
 
   async postStore(storeName: string) {
     const newStore: Store = {
@@ -25,9 +33,24 @@ export class DealsStoreButtonComponent {
     try {
       const response = await lastValueFrom(this.dealsService.postStore(newStore));
       console.log(response);
-      //window.location.reload();
+      this.saveButtonState(storeName);
+
+      window.location.reload();
     } catch (error) {
       console.error(error);
     }
+  }
+
+  private saveButtonState(storeName: string): void {
+    localStorage.setItem('buttonState', JSON.stringify({ storeName }));
+  }
+
+  ngAfterViewInit() {
+    const buttons = document.querySelectorAll('button');
+    buttons.forEach((button: HTMLElement) => {
+      if (button.innerText === this.name) {
+        button.classList.add('clicked');
+      }
+    });
   }
 }
