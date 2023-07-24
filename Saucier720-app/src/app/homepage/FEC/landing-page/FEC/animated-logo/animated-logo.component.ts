@@ -1,4 +1,4 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, HostListener, ElementRef } from '@angular/core';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 
 @Component({
@@ -14,8 +14,11 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
   ],
 })
 export class AnimatedLogoComponent implements AfterViewInit {
+  
   isMouthTalking = false;
   animatedText = "";
+
+  constructor(private elementRef: ElementRef) {}
 
   ngAfterViewInit() {
     this.generateText();
@@ -23,7 +26,7 @@ export class AnimatedLogoComponent implements AfterViewInit {
 
   // Function to generate the text character by character
   generateText() {
-    const fullText = "Welcome to MealDealz! Please create an account or login";
+    const fullText = "Welcome to MealDealz! Please create an account or login.";
     let currentIndex = 0;
 
     const interval = setInterval(() => {
@@ -34,14 +37,25 @@ export class AnimatedLogoComponent implements AfterViewInit {
 
       this.animatedText += fullText[currentIndex];
       currentIndex++;
+
+      // open and close mouth
       if (currentIndex % 2 === 0)
         this.toggleAnimation();
+
+      // check if text wrapping needs enabled
+      if (currentIndex > 30){
+        this.elementRef.nativeElement.querySelector('.text-container p').style.whiteSpace = 'normal';
+      }
+
     }, 50); // You can adjust the speed of text generation by changing the interval time (in milliseconds).
-    this.isMouthTalking = true; // resets the mouth to the open position
+
+     // resets the mouth to the open position
+    this.isMouthTalking = currentIndex % 2 === 1;
   }
 
   // Function to toggle the animation state
   toggleAnimation() {
     this.isMouthTalking = !this.isMouthTalking;
   }
+
 }

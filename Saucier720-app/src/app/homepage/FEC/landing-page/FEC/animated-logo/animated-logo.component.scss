@@ -48,7 +48,7 @@
 .text-container p {
   margin: 0;
   font-size: 18px; /* Adjust the font size as desired */
-  white-space: normal; /* Enable text wrapping */
+  white-space: nowrap; /* Enable text wrapping */
   animation: typeText 5s steps(40, end);
 }
 
