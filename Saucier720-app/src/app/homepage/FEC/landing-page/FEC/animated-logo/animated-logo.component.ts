@@ -43,9 +43,11 @@ export class AnimatedLogoComponent implements AfterViewInit {
         this.toggleAnimation();
 
       // check if text wrapping needs enabled
+      /*
       if (currentIndex > 30){
         this.elementRef.nativeElement.querySelector('.text-container p').style.whiteSpace = 'normal';
       }
+      */
 
     }, 50); // You can adjust the speed of text generation by changing the interval time (in milliseconds).
 
