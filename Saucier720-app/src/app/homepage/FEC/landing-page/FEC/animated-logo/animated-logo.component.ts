@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, HostListener, ElementRef } from '@angular/core';
+import { Component, AfterViewInit, ElementRef } from '@angular/core';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 
 @Component({
@@ -11,12 +11,14 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
       state('true', style({ transform: 'scaleY(0.7)' })),
       transition('false <=> true', animate('200ms ease-out')),
     ]),
+
   ],
 })
 export class AnimatedLogoComponent implements AfterViewInit {
   
   isMouthTalking = false;
   animatedText = "";
+  textGenerationComplete = false;
 
   constructor(private elementRef: ElementRef) {}
 
@@ -32,6 +34,7 @@ export class AnimatedLogoComponent implements AfterViewInit {
     const interval = setInterval(() => {
       if (currentIndex >= fullText.length) {
         clearInterval(interval);
+        this.textGenerationComplete = true;
         return;
       }
 
@@ -42,16 +45,9 @@ export class AnimatedLogoComponent implements AfterViewInit {
       if (currentIndex % 2 === 0)
         this.toggleAnimation();
 
-      // check if text wrapping needs enabled
-      /*
-      if (currentIndex > 30){
-        this.elementRef.nativeElement.querySelector('.text-container p').style.whiteSpace = 'normal';
-      }
-      */
-
     }, 50); // You can adjust the speed of text generation by changing the interval time (in milliseconds).
 
-     // resets the mouth to the open position
+    // resets the mouth to the open position
     this.isMouthTalking = currentIndex % 2 === 1;
   }
 

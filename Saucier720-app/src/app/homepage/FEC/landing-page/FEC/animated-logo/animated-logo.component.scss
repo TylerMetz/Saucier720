@@ -43,6 +43,7 @@
   justify-content: flex-start;
   align-items: center;
   overflow: hidden;
+  transition: top 500ms ease-out; /* Add a CSS transition for smooth animation of the 'top' property */
 }
 
 .text-container p {
@@ -50,5 +51,11 @@
   font-size: 18px; /* Adjust the font size as desired */
   white-space: normal; /* Enable text wrapping */
   animation: 5s linear; /* Use linear animation for smooth text appearance */
+}
+
+@keyframes textMovement {
+  to {
+    transform: translateY(-100px);
+  }
 }
 
