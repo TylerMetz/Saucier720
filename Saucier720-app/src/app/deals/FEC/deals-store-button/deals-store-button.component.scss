@@ -38,11 +38,11 @@
     }
 
   button:focus{
-    background-color: green;
-    color: white;
+    background-color: var(--background-color);
+    color: var(--secondary-color);
   }
 
   button.clicked {
-    background-color: green;
-    color: white;
+    background-color: var(--background-color);
+    color: var(--secondary-color);
   }

@@ -16,9 +16,9 @@ export class DealsStoreButtonComponent {
   name: string = 'Walmart';
 
   constructor(private dealsService: DealsService) {
-    const buttonStateJson = localStorage.getItem('buttonState');
-    if (buttonStateJson) {
-      const buttonState = JSON.parse(buttonStateJson);
+    const jsonString = localStorage.getItem('buttonState');
+    if (jsonString) {
+      const buttonState = JSON.parse(jsonString);
       if (buttonState && buttonState.storeName) {
         this.name = buttonState.storeName;
       }
