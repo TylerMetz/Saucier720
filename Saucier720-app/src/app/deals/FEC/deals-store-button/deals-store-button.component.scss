@@ -35,4 +35,9 @@
   button:hover {
       background-color: var(--button-hover-color);
       color: var(--button-hover-text-color);
+    }
+
+  button:focus{
+    background-color: green;
+    color: white;
   }
