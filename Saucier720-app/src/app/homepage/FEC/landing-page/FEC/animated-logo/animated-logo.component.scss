@@ -59,3 +59,33 @@
   }
 }
 
+.buttons-container {
+  position: absolute;
+  top: 200px; /* Adjust the value to position the text container vertically */
+  left: 250px; /* Adjust the value to position the text container horizontally */
+  width: 250px; /* Adjust the value to set the width of the text container */
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  overflow: hidden;
+}
+
+.login-button,
+.signup-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  font-size: 20px;
+  cursor: pointer;
+  transition: top 500ms ease-out;
+}
+
+.login-button:hover,
+.signup-button:hover {
+  background-color: var(--text-color);
+  color: var(--primary-color);
+}
+
+
