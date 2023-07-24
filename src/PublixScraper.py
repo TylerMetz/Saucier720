@@ -62,14 +62,15 @@ def scrape_publix():
     
     # Now we have the entire page as a string 
     page_source = driver.page_source
-    #print(page_source)
+    # print(page_source)
 
     # Create Beautifulsoup obj to parse page source
     soup = BeautifulSoup(page_source, "html.parser")
 
     # Extract desired data from soup object 
     products = soup.find_all("div", class_="aspect-ratio-content")
-    deals = soup.find_all("span", class_="p-text paragraph-sm strong context--default color--null")
+    # Class changed from "p-text paragraph-sm strong context--default color--null"
+    deals = soup.find_all("span", class_="p-text paragraph-sm normal context--default color--null")
 
     # Removes <li> tags because they share the same class
     for deal in deals[:]:
