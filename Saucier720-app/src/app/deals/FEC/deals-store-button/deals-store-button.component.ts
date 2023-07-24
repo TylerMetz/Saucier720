@@ -13,7 +13,7 @@ import { Store } from 'src/app/core/interfaces/store';
 })
 
 export class DealsStoreButtonComponent {
-  name: string = '';
+  name: string = 'Walmart';
 
   constructor(private dealsService: DealsService) {
     const buttonStateJson = localStorage.getItem('buttonState');
@@ -43,6 +43,18 @@ export class DealsStoreButtonComponent {
 
   private saveButtonState(storeName: string): void {
     localStorage.setItem('buttonState', JSON.stringify({ storeName }));
+  }
+
+  ngOnInit() {
+    // Apply the 'clicked' class to the button that matches the stored 'storeName'
+    const buttons = document.querySelectorAll('button');
+    buttons.forEach((button: HTMLElement) => {
+      if (button.innerText === this.name) {
+        button.classList.add('clicked');
+      } else {
+        button.classList.remove('clicked');
+      }
+    });
   }
 
   ngAfterViewInit() {
