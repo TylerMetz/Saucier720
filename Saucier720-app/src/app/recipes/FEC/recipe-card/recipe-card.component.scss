@@ -21,7 +21,10 @@
   
   li.recipe-ingredient > button:hover{
     background-color: var(--text-color);
-    color: var(--primary-color);
+  }
+
+  li.recipe-ingredient > button:focus{
+    background-color: var(--background-color);
   }
 
   button > img {
@@ -31,6 +34,11 @@
 
   button:hover > img {
     content: url("/assets/images/addListHover.png");
+    transition: 0.2s ease-in-out;
+  }
+
+  button:focus > img {
+    content: url("/assets/images/addListClick.png");
     transition: 0.2s ease-in-out;
   }
 
