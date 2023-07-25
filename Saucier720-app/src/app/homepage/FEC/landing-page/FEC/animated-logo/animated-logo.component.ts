@@ -19,11 +19,14 @@ export class AnimatedLogoComponent implements AfterViewInit {
   isMouthTalking = false;
   animatedText = "";
   textGenerationComplete = false;
+  backgroundSquareVisible = false; 
 
   constructor(private elementRef: ElementRef) {}
 
   ngAfterViewInit() {
-    this.generateText();
+    setTimeout(() => {
+      this.generateText();
+    }, 300); // slight delay to allow the page to load before the text starts generating
   }
 
   // Function to generate the text character by character
@@ -35,6 +38,9 @@ export class AnimatedLogoComponent implements AfterViewInit {
       if (currentIndex >= fullText.length) {
         clearInterval(interval);
         this.textGenerationComplete = true;
+        setTimeout(() => {
+          this.backgroundSquareVisible = true;
+        }, 500);
         return;
       }
 

@@ -111,4 +111,24 @@
   animation: fadeIn 1s ease forwards;
 }
 
+/* stylings for background square */
+/* Styles for the background square */
+.background-square {
+  position: absolute;
+  top: 180px; /* Adjust the value to position the background square vertically */
+  left: 225px; /* Adjust the value to position the background square horizontally */
+  width: 260px;
+  height: 150px;
+  background-color: var(--secondary-color);
+  border-radius: 10px; /* Adjust the value to control the roundness of the corners */
+  opacity: 0;
+  animation: fadeInBackground 1s ease forwards;
+}
+
+@keyframes fadeInBackground {
+  to {
+    opacity: 1;
+  }
+}
+
 

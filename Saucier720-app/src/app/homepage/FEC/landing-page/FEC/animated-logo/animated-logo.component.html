@@ -1,14 +1,17 @@
-<div class="icon-container" [ngClass]="{ 'clicked': isMouthTalking }" (click)="toggleAnimation()">
-  <div class="icon-top"></div>
-  <div class="icon-bottom"></div>
-</div>
+<div class="animation-container">
+  <div class="icon-container" [ngClass]="{ 'clicked': isMouthTalking }" (click)="toggleAnimation()">
+    <div class="icon-top"></div>
+    <div class="icon-bottom"></div>
+  </div>
 
-<div class="text-container" [ngStyle]="{ 'top.px': textGenerationComplete ? 100 : 200 }">
-  <p>{{ animatedText }}</p>
-</div>
+  <div *ngIf="backgroundSquareVisible" class="background-square"></div>
 
-<div class="buttons-container">
-  <button *ngIf="textGenerationComplete" [ngClass]="{ 'show': textGenerationComplete }" class="signup-button">Sign up</button>
-  <button *ngIf="textGenerationComplete" [ngClass]="{ 'show': textGenerationComplete }"  class="login-button">Login</button>
-</div>
+  <div class="text-container" [ngStyle]="{ 'top.px': textGenerationComplete ? 100 : 200 }">
+    <p>{{ animatedText }}</p>
+  </div>
 
+  <div class="buttons-container">
+    <button *ngIf="textGenerationComplete" [ngClass]="{ 'show': textGenerationComplete }" class="signup-button">Sign up</button>
+    <button *ngIf="textGenerationComplete" [ngClass]="{ 'show': textGenerationComplete }"  class="login-button">Login</button>
+  </div>
+</div>
