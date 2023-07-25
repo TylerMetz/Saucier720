@@ -1,5 +1,6 @@
 import { Component, AfterViewInit, ElementRef } from '@angular/core';
 import { trigger, state, style, transition, animate } from '@angular/animations';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-animated-logo',
@@ -21,7 +22,7 @@ export class AnimatedLogoComponent implements AfterViewInit {
   textGenerationComplete = false;
   backgroundSquareVisible = false; 
 
-  constructor(private elementRef: ElementRef) {}
+  constructor(private elementRef: ElementRef,  private router: Router) {}
 
   ngAfterViewInit() {
     setTimeout(() => {
@@ -60,6 +61,14 @@ export class AnimatedLogoComponent implements AfterViewInit {
   // Function to toggle the animation state
   toggleAnimation() {
     this.isMouthTalking = !this.isMouthTalking;
+  }
+
+  navigateToLoginPage() {
+    this.router.navigate(['/Login']);
+  }
+
+  navigateToSignupPage() {
+    this.router.navigate(['/Signup']);
   }
 
 }
