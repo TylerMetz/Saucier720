@@ -11,7 +11,7 @@
   </div>
 
   <div class="buttons-container">
-    <button *ngIf="textGenerationComplete" [ngClass]="{ 'show': textGenerationComplete }" class="signup-button">Sign up</button>
-    <button *ngIf="textGenerationComplete" [ngClass]="{ 'show': textGenerationComplete }"  class="login-button">Login</button>
+    <button *ngIf="textGenerationComplete" [ngClass]="{ 'show': textGenerationComplete }" routerLink="Signup" class="signup-button">Sign up</button>
+    <button *ngIf="textGenerationComplete" [ngClass]="{ 'show': textGenerationComplete }" routerLink="Login" class="login-button">Login</button>
   </div>
 </div>
