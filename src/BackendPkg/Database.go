@@ -8,6 +8,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 	"log"
 	"strconv"
+	"fmt"
 )
 
 type Database struct {
@@ -446,19 +447,47 @@ func (d *Database) WriteNewUserRecipe (currUser User, newRecipe Recipe){
 	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS UserRecipeData (title TEXT, ingredients TEXT, instructions TEXT, recipeID TEXT PRIMARY KEY, username TEXT)")
 	statement.Exec()
 
-	// find num of recipes made by user to generaate userID
-	idNum := 0
-	err := database.QueryRow("SELECT COUNT(*) FROM UserRecipeData WHERE username = ?", currUser.UserName).Scan(&idNum)
-	if err != nil {idNum = 1 } // if user has no recipes then idNum = 1
-
 	// Insert each recipe into the table
 	ingredients, _ := json.Marshal(newRecipe.Ingredients)
 	statementThree, _ := database.Prepare("INSERT OR IGNORE INTO UserRecipeData (title, ingredients, instructions, recipeID, username) values (?, ?, ?, ?, ?)")
-	statementThree.Exec(newRecipe.Title, string(ingredients), newRecipe.Instructions, (currUser.UserName + strconv.Itoa(idNum)), currUser.UserName)
+	statementThree.Exec(newRecipe.Title, string(ingredients), newRecipe.Instructions, (currUser.UserName + strconv.Itoa(d.getNextRecipeID(currUser.UserName))), currUser.UserName)
 
 	// close db
 	database.Close()
 }
+
+func (d *Database) getNextRecipeID(username string) int {
+	database := d.OpenDatabase()
+	defer database.Close()
+
+	query := fmt.Sprintf("SELECT recipeID FROM UserRecipeData WHERE username LIKE '%s%%' ORDER BY recipeID DESC LIMIT 1", username)
+	rows, _ := database.Query(query)
+	defer rows.Close()
+
+	var lastRecipeID string
+	for rows.Next() {
+		if err := rows.Scan(&lastRecipeID); err != nil {
+			return 0
+		}
+	}
+
+	if lastRecipeID == "" {
+		return 1
+	}
+
+	// Extract the numeric part of the last recipeID and increment it
+	lastIDNumStr := strings.TrimPrefix(lastRecipeID, username)
+	lastIDNum, err := strconv.Atoi(lastIDNumStr)
+	if err != nil {
+		return 0
+	}
+
+	database.Close()
+	rows.Close()
+
+	return lastIDNum + 1
+}
+
 
 func (d *Database) DeleteUserRecipe (recipeID string){
 	// Calls function to open the database

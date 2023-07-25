@@ -119,23 +119,56 @@
   font-size: 16px;
 }
 
+.delete-icon,
 .favorite-icon {
   position: absolute;
   top: 10px;
   left: 10px;
   width: 20px; /* Adjust the width as needed */
   height: 20px; /* Adjust the height as needed */
-  opacity: 0.5; /* Set the initial opacity for the transparent effect */
+  opacity: 1; /* Set the initial opacity for the transparent effect */
   cursor: pointer;
   transition: opacity 0.3s ease-in-out; /* Add a smooth transition effect */
 }
 
+.favorite-icon {
+  margin-top: 0.485px; // added to make them look more even
+}
+
+.delete-icon {
+  margin-left: 25px; /* Add some spacing between the icons */
+  width: 22px; /* Adjust the width as needed */
+  height: 22px; /* Adjust the height as needed */
+  opacity: 0.8;
+  transition: opacity 0.3s ease-in-out; /* Add a smooth transition effect */
+}
+
+
 .favorite-icon:hover {
-  opacity: 1; /* Increase the opacity on hover to make it more visible */
+  opacity: 0.5; /* Increase the opacity on hover to make it more visible */
+}
+
+.delete-icon:hover{
+  opacity: 0.1;
 }
 
 .favorite-icon.active {
   filter: brightness(0%) saturate(500%) hue-rotate(-30deg); /* Apply a red color effect */
 }
+
+
+.confirm-text {
+  font-size: 12px; /* Adjust font size as needed */
+  color: var(--text--color); /* Set the text color */
+  position: absolute; /* Position the "Hold to Confirm" text absolutely within the container */
+  top: 12px;
+  left: 65px; /* Adjust the left position as needed to place it to the right of the delete icon */
+}
+
+
+
+
+
+
 
 

@@ -115,6 +115,8 @@ func BestRecipes(userPantry Pantry, allRecipes []Recipe, deals []FoodItem) []Rec
 		}
 	}
 
+	// I realized it was returning the recommendations slice backwards so I inverted it in backend
+	invertSlice(returnRecommendations)
 	return returnRecommendations
 
 }
@@ -175,6 +177,8 @@ func AllRecipesWithRelatedItems(userPantry Pantry, allRecipes []Recipe, deals []
 		returnRecommendations = append(returnRecommendations, newRecc)
 	}
 
+	// I realized it was returning the recommendations slice backwards so I inverted it in backend
+	invertSlice(returnRecommendations)
 	return returnRecommendations
 }
 
