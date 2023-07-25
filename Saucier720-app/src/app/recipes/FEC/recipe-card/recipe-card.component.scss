@@ -10,7 +10,19 @@
   li.recipe-ingredient{
     white-space: normal;
   }
-  
+
+  li.recipe-ingredient > button{
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    border: none;
+    border-radius: 5px;
+  }
+
+  li.recipe-ingredient > button:hover{
+    background-color: var(--text-color);
+    color: var(--primary-color);
+  }
+
   .card-container {
     display: flex;
     flex-direction: column;

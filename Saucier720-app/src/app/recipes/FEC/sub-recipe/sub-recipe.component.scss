@@ -2,6 +2,14 @@
     text-align: center;
 }
 
-li.sub-ingredient {
-    white-space: normal;
+li.sub-ingredient > button {
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    border: none;
+    border-radius: 5px;
+}
+
+li.sub-ingredient > button:hover {
+    background-color: var(--text-color);
+    color: var(--primary-color);
 }
