@@ -8,7 +8,7 @@
 </div>
 
 <div class="buttons-container">
-  <button *ngIf="textGenerationComplete" class="signup-button">Sign up</button>
-  <button *ngIf="textGenerationComplete" class="login-button">Login</button>
+  <button *ngIf="textGenerationComplete" [ngClass]="{ 'show': textGenerationComplete }" class="signup-button">Sign up</button>
+  <button *ngIf="textGenerationComplete" [ngClass]="{ 'show': textGenerationComplete }"  class="login-button">Login</button>
 </div>
 
