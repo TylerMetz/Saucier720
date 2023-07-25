@@ -32,7 +32,9 @@
                 <ul>
                   <ng-container *ngFor="let ingredient of currentIngredients; let i = index">
                     <ng-container *ngIf="!checkForRecipeFollows(ingredient)">
-                      <li *ngIf="!printedSubRecipeLines.includes(ingredient)">{{ ingredient }}</li>
+                      <li class="recipe-ingredient" *ngIf="!printedSubRecipeLines.includes(ingredient)">{{ ingredient }}
+                        <button>hi</button>
+                      </li>
                     </ng-container>
                     <ng-container *ngIf="checkForRecipeFollows(ingredient)">
                         <app-sub-recipe [recipe]="ingredient" [ingredients]="currentIngredients.slice(i + 1)" [headerText]="ingredient"></app-sub-recipe>

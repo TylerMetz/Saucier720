@@ -6,6 +6,11 @@
     background-color: var(--secondary-color);
     width: 100%;
   }
+
+  li.recipe-ingredient{
+    white-space: normal;
+  }
+  
   .card-container {
     display: flex;
     flex-direction: column;
