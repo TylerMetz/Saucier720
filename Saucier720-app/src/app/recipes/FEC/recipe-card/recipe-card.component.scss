@@ -12,15 +12,26 @@
   }
 
   li.recipe-ingredient > button{
+    max-width: 25px;
     background-color: var(--primary-color);
     color: var(--text-color);
     border: none;
     border-radius: 5px;
   }
-
+  
   li.recipe-ingredient > button:hover{
     background-color: var(--text-color);
     color: var(--primary-color);
+  }
+
+  button > img {
+    max-width: 15px;
+    background-position: center;
+  }
+
+  button:hover > img {
+    content: url("/assets/images/addListHover.png");
+    transition: 0.2s ease-in-out;
   }
 
   .card-container {
