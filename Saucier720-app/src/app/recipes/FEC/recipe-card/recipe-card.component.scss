@@ -9,10 +9,15 @@
 
   li.recipe-ingredient{
     white-space: normal;
+    padding: 5px;
   }
 
   li.recipe-ingredient > button{
-    max-width: 25px;
+    width: 20px;
+    height: 20px;
+    margin-left: 15%;
+    float: right;
+    transform: translateX(75%) translateY(20%);
     background-color: var(--primary-color);
     color: var(--text-color);
     border: none;
@@ -28,8 +33,8 @@
   }
 
   button > img {
-    max-width: 15px;
-    background-position: center;
+    max-width: 12px;
+    transform: translateY(-50%)
   }
 
   button:hover > img {
@@ -39,6 +44,7 @@
 
   button:focus > img {
     content: url("/assets/images/addListClick.png");
+    transform: translateY(-52%);
     transition: 0.2s ease-in-out;
   }
 
@@ -88,7 +94,7 @@
     color: var(--header-color);
   }
 
-  .button{
+.button{
   display: inline-block;
   padding: 10px;
   margin: 10px;

@@ -32,8 +32,7 @@
                 <ul>
                   <ng-container *ngFor="let ingredient of currentIngredients; let i = index">
                     <ng-container *ngIf="!checkForRecipeFollows(ingredient)">
-                      <li class="recipe-ingredient" *ngIf="!printedSubRecipeLines.includes(ingredient)">{{ ingredient }}
-                        <button><img src="/assets/images/addList.png"></button>
+                      <li class="recipe-ingredient" *ngIf="!printedSubRecipeLines.includes(ingredient)"><button><img src="/assets/images/addList.png"></button>{{ ingredient }}
                       </li>
                     </ng-container>
                     <ng-container *ngIf="checkForRecipeFollows(ingredient)">
