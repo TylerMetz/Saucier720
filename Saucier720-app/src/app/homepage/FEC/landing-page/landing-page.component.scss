@@ -8,20 +8,30 @@
 
 .button-container {
   position: absolute;
-  bottom: 10%;
+  bottom: 5%;
   
   margin-left: 10%;
-  margin-right: 12%;
-  width: 78%;
+  margin-right: 10%;
+  width: 76.8%;
   display: flex;
   justify-content: space-between;
 }
 
 .button {
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+  width: 85px; /* Set the width and height to desired size */
+  height: 85px;
+  border-radius: 50%; /* This creates a circular background */
+  background-color: var(--secondary-color); /* Set the background color to white */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Optional: Add shadow for a 3D effect */
+  opacity: 0;
+  animation: fadeInBackground 1s ease forwards;
+}
+
+@keyframes fadeInBackground {
+  to {
+    opacity: 1;
+  }
 }

@@ -1,8 +1,8 @@
 <div class="page">
     <div class="animation-container">
-        <app-animated-logo></app-animated-logo>
+        <app-animated-logo (generationComplete)="onLogoGenerationComplete($event)"></app-animated-logo>
     </div>
-    <div class="button-container">
+    <div class="button-container" *ngIf="this.buttonsVisible">
         <button class="button">Button 1</button>
         <button class="button">Button 2</button>
         <button class="button">Button 3</button>

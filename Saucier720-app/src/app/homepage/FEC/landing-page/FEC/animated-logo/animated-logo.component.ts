@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ElementRef } from '@angular/core';
+import { Component, AfterViewInit, ElementRef, Output, EventEmitter } from '@angular/core';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { Router } from '@angular/router';
 
@@ -17,6 +17,9 @@ import { Router } from '@angular/router';
 })
 export class AnimatedLogoComponent implements AfterViewInit {
   
+  // used for button generation
+  @Output() generationComplete = new EventEmitter<boolean>();
+
   isMouthTalking = false;
   animatedText = "";
   textGenerationComplete = false;
@@ -42,6 +45,10 @@ export class AnimatedLogoComponent implements AfterViewInit {
         setTimeout(() => {
           this.backgroundSquareVisible = true;
         }, 500);
+        // emit that the animation is done
+        setTimeout(() => {
+          this.generationComplete.emit(true);
+        }, 1250);
         return;
       }
 
@@ -56,6 +63,7 @@ export class AnimatedLogoComponent implements AfterViewInit {
 
     // resets the mouth to the open position
     this.isMouthTalking = currentIndex % 2 === 1;
+
   }
 
   // Function to toggle the animation state
