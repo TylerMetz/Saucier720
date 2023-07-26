@@ -12,23 +12,31 @@
     padding: 5px;
   }
 
-  li.recipe-ingredient > button{
+  .ingredient-wrapper {
+    margin-right: 10px;
+  }
+
+  .ingredient-wrapper > button{
     width: 20px;
     height: 20px;
-    margin-left: 15%;
     float: right;
     transform: translateX(75%) translateY(20%);
+    display: none;
+  }
+
+  .ingredient-wrapper:hover > button{
+    display: block;
     background-color: var(--primary-color);
     color: var(--text-color);
     border: none;
     border-radius: 5px;
   }
   
-  li.recipe-ingredient > button:hover{
+  .ingredient-wrapper > button:hover{
     background-color: var(--text-color);
   }
 
-  li.recipe-ingredient > button:focus{
+  .ingredient-wrapper > button:focus{
     background-color: var(--background-color);
   }
 
