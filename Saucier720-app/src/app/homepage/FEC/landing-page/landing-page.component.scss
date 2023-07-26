@@ -1,7 +1,27 @@
 /* Styles for the landing page container */
 .animation-container {
   position: absolute; 
-  top: 70px; 
+  top: 5%; 
   left: 41%; 
   transform: translateX(-59%);
+}
+
+.button-container {
+  position: absolute;
+  bottom: 10%;
+  
+  margin-left: 10%;
+  margin-right: 12%;
+  width: 78%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
