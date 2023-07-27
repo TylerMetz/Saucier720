@@ -134,3 +134,8 @@
 .button.clicked .button-text {
   opacity: 1;
 }
+
+.button:hover,
+.button.clicked{
+  background-color: var(--text-color);
+}
