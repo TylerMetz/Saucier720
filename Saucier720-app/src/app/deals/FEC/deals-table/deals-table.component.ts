@@ -45,7 +45,7 @@ export class DealsTableComponent implements OnInit {
     }
   }
 
-  addIngredient(ingredient: Ingredient) {
+  addToList(ingredient: Ingredient) {
     this.listComponent.addIngredient(ingredient);
   }
 

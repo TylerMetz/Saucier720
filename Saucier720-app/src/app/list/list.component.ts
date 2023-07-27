@@ -61,11 +61,20 @@ export class ListComponent implements OnInit {
   }
 
   // Optional parameter so that we can call it from deals and recipes pages 
-  addIngredient(ingredient?: Ingredient) {
+  addIngredient(ingredient?: Ingredient | string) {
     let newIngredient: Ingredient | null = null; 
     
     // Assigns values from already created foodItem
-    if(ingredient){
+    if (typeof ingredient === 'string') {
+      newIngredient = {
+        Name: ingredient,
+        Quantity: 1,
+        StoreCost: 0, // Example value, replace with actual value if needed
+        OnSale: false, // Example value, replace with actual value if needed
+        SalePrice: 0, // Example value, replace with actual value if needed
+        SaleDetails: '' // Example value, replace with actual value if needed
+      };
+    } else if(ingredient){
       newIngredient = ingredient;
       newIngredient.Quantity = 1;
     } else {

@@ -4,11 +4,14 @@ import { RecipeService } from 'src/app/core/services/recipes/recipe.service';
 import { lastValueFrom } from 'rxjs';
 import { RecipePost } from 'src/app/core/interfaces/recipe';
 import { CookieService } from 'ngx-cookie-service';
+import { ListComponent } from 'src/app/list/list.component';
+import { Ingredient } from 'src/app/core/interfaces/ingredient';
 
 @Component({
   selector: 'app-recipe-card',
   templateUrl: './recipe-card.component.html',
   styleUrls: ['./recipe-card.component.scss'],
+  providers: [ListComponent],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RecipeCardComponent implements OnInit {
@@ -24,7 +27,8 @@ export class RecipeCardComponent implements OnInit {
   constructor(
     private recipeService: RecipeService,
     private cdRef: ChangeDetectorRef,
-    private cookieService: CookieService
+    private cookieService: CookieService,
+    private listComponent: ListComponent,
   ) {}
 
   ngOnInit(): void {
@@ -241,6 +245,10 @@ export class RecipeCardComponent implements OnInit {
     } catch (error) {
       console.error(error);
     }
+  }
+
+  addToList(ingredient: string) {
+    this.listComponent.addIngredient(ingredient)
   }
 
 }
