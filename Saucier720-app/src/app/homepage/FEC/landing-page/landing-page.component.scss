@@ -130,6 +130,7 @@
   transition: opacity 0.3s ease;
 }
 
-.button:hover .button-text {
+.button:hover .button-text,
+.button.clicked .button-text {
   opacity: 1;
 }

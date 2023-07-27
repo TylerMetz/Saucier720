@@ -17,5 +17,22 @@ import { Component } from '@angular/core';
         this.buttonsVisible = true;
       }
     }
+
+    // Add a property to keep track of clicked buttons
+  clickedButtons: Set<string> = new Set<string>();
+  
+  // Method to handle button clicks
+  onButtonClick(buttonId: string) {
+    if (this.clickedButtons.has(buttonId)) {
+      this.clickedButtons.delete(buttonId);
+    } else {
+      this.clickedButtons.add(buttonId);
+    }
+  }
+
+  // Method to check if a button is clicked
+  isButtonClicked(buttonId: string): boolean {
+    return this.clickedButtons.has(buttonId);
+  }
   }
   

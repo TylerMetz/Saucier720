@@ -3,31 +3,31 @@
         <app-animated-logo (generationComplete)="onLogoGenerationComplete($event)"></app-animated-logo>
     </div>
     <div class="button-container" *ngIf="buttonsVisible">
-        <button class="button">
+        <button class="button"  (click)="onButtonClick('aboutUs')" [class.clicked]="isButtonClicked('aboutUs')">
           <div class="image-wrapper">
             <span class="about-us"></span>
           </div>
           <span class="button-text">About Us</span>
         </button>
-        <button class="button">
+        <button class="button" (click)="onButtonClick('missionStatement')" [class.clicked]="isButtonClicked('missionStatement')">
             <div class="image-wrapper">
                 <span class="mission-statement"></span>
               </div>
               <span class="button-text">Our Mission</span>
         </button>
-        <button class="button">
+        <button class="button" (click)="onButtonClick('developers')" [class.clicked]="isButtonClicked('developers')">
             <div class="image-wrapper">
                 <span class="developers"></span>
               </div>
               <span class="button-text">Developers</span>
         </button>
-        <button class="button">
+        <button class="button" (click)="onButtonClick('faqs')" [class.clicked]="isButtonClicked('faqs')">
             <div class="image-wrapper">
                 <span class="faqs"></span>
               </div>
               <span class="button-text">FAQs</span>
         </button>
-        <button class="button">
+        <button class="button" (click)="onButtonClick('feedback')" [class.clicked]="isButtonClicked('feedback')">
             <div class="image-wrapper">
                 <span class="feedback"></span>
               </div>
