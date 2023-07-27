@@ -30,6 +30,7 @@
   animation: fadeInBackground 1s ease forwards;
   position: relative;
   flex-direction: column;
+  border: 0px;
 }
 
 
@@ -46,7 +47,7 @@
 }
 
 .about-us{
-  background-image: url('../../../../assets/images/--secondary-color.png');
+  background-image: url('../../../../assets/images/--primary-color.png');
   mask-image: url('../../../../assets/images/about-us.png'); /* Replace 'path-to-your-black-icon.png' with the actual path to your black icon image */
   mask-size: cover;
   mask-repeat: no-repeat;
@@ -61,7 +62,7 @@
 }
 
 .mission-statement{
-  background-image: url('../../../../assets/images/--secondary-color.png');
+  background-image: url('../../../../assets/images/--primary-color.png');
   mask-image: url('../../../../assets/images/mission-statement.png'); /* Replace 'path-to-your-black-icon.png' with the actual path to your black icon image */
   mask-size: cover;
   mask-repeat: no-repeat;
@@ -76,7 +77,7 @@
 }
 
 .developers{
-  background-image: url('../../../../assets/images/--secondary-color.png');
+  background-image: url('../../../../assets/images/--primary-color.png');
   mask-image: url('../../../../assets/images/developers.png'); /* Replace 'path-to-your-black-icon.png' with the actual path to your black icon image */
   mask-size: cover;
   mask-repeat: no-repeat;
@@ -91,7 +92,7 @@
 }
 
 .faqs{
-  background-image: url('../../../../assets/images/--secondary-color.png');
+  background-image: url('../../../../assets/images/--primary-color.png');
   mask-image: url('../../../../assets/images/faqs.png'); /* Replace 'path-to-your-black-icon.png' with the actual path to your black icon image */
   mask-size: cover;
   mask-repeat: no-repeat;
@@ -106,7 +107,7 @@
 }
 
 .feedback{
-  background-image: url('../../../../assets/images/--secondary-color.png');
+  background-image: url('../../../../assets/images/--primary-color.png');
   mask-image: url('../../../../assets/images/feedback.png'); /* Replace 'path-to-your-black-icon.png' with the actual path to your black icon image */
   mask-size: cover;
   mask-repeat: no-repeat;
@@ -137,5 +138,55 @@
 
 .button:hover,
 .button.clicked{
-  background-color: var(--text-color);
+  background-color: var(--primary-color);
+  box-shadow: 0 2px 4px rgba(255, 255, 255, 0.2); /* Optional: Add shadow for a 3D effect */
+}
+
+.button.clicked{
+  border: 1px ridge var(--secondary-color);
+}
+
+.button:hover .about-us,
+.button.clicked .about-us{
+  background-image: url('../../../../assets/images/--secondary-color.png');
+  mask-image: url('../../../../assets/images/about-us.png'); /* Replace 'path-to-your-black-icon.png' with the actual path to your black icon image */
+  mask-size: cover;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}
+
+.button:hover .mission-statement,
+.button.clicked .mission-statement{
+  background-image: url('../../../../assets/images/--secondary-color.png');
+  mask-image: url('../../../../assets/images/mission-statement.png'); /* Replace 'path-to-your-black-icon.png' with the actual path to your black icon image */
+  mask-size: cover;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}
+
+.button:hover .developers,
+.button.clicked .developers{
+  background-image: url('../../../../assets/images/--secondary-color.png');
+  mask-image: url('../../../../assets/images/developers.png'); /* Replace 'path-to-your-black-icon.png' with the actual path to your black icon image */
+  mask-size: cover;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}
+
+.button:hover .faqs,
+.button.clicked .faqs{
+  background-image: url('../../../../assets/images/--secondary-color.png');
+  mask-image: url('../../../../assets/images/faqs.png'); /* Replace 'path-to-your-black-icon.png' with the actual path to your black icon image */
+  mask-size: cover;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}
+
+.button:hover .feedback,
+.button.clicked .feedback{
+  background-image: url('../../../../assets/images/--secondary-color.png');
+  mask-image: url('../../../../assets/images/feedback.png'); /* Replace 'path-to-your-black-icon.png' with the actual path to your black icon image */
+  mask-size: cover;
+  mask-repeat: no-repeat;
+  mask-position: center;
 }
