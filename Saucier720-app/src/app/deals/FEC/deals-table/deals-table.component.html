@@ -11,7 +11,7 @@
     </thead>
     <tbody>
       <tr *ngFor="let ingredient of pantry">
-        <td><div title="Add{{ ingredient.Name }}to your list!" class="ingredient-wrapper"><button><img src="/assets/images/addList.png"></button>{{ ingredient.Name }}</div></td>
+        <td><div title="Add{{ ingredient.Name }}to your list!" class="ingredient-wrapper"><button (click)="addIngredient(ingredient)"><img src="/assets/images/addList.png"></button>{{ ingredient.Name }}</div></td>
         <td>{{ ingredient.SaleDetails }}</td>
       </tr>
     </tbody>
