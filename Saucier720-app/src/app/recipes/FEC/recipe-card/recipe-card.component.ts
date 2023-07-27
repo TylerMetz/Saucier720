@@ -248,7 +248,7 @@ export class RecipeCardComponent implements OnInit {
   }
 
   addToList(ingredient: string) {
-    this.listComponent.addIngredient(ingredient)
+    this.listComponent.addIngredient(ingredient);
   }
 
 }
