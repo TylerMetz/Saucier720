@@ -22,16 +22,114 @@
   height: 85px;
   border-radius: 50%; /* This creates a circular background */
   background-color: var(--secondary-color); /* Set the background color to white */
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Optional: Add shadow for a 3D effect */
   opacity: 0;
   animation: fadeInBackground 1s ease forwards;
+  position: relative;
+  flex-direction: column;
 }
+
+
 
 @keyframes fadeInBackground {
   to {
     opacity: 1;
   }
+}
+
+.image-wrapper{
+  margin-top: 50px;
+  margin-bottom: 20px;
+}
+
+.about-us{
+  background-image: url('../../../../assets/images/--secondary-color.png');
+  mask-image: url('../../../../assets/images/about-us.png'); /* Replace 'path-to-your-black-icon.png' with the actual path to your black icon image */
+  mask-size: cover;
+  mask-repeat: no-repeat;
+  mask-position: center;
+
+  display: inline-block; /* Ensure it occupies space in the button */
+
+  /* Set the dimensions for the icon */
+  width: 50px;
+  height: 50px;
+  
+}
+
+.mission-statement{
+  background-image: url('../../../../assets/images/--secondary-color.png');
+  mask-image: url('../../../../assets/images/mission-statement.png'); /* Replace 'path-to-your-black-icon.png' with the actual path to your black icon image */
+  mask-size: cover;
+  mask-repeat: no-repeat;
+  mask-position: center;
+
+  display: inline-block; /* Ensure it occupies space in the button */
+
+  /* Set the dimensions for the icon */
+  width: 50px;
+  height: 50px;
+  
+}
+
+.developers{
+  background-image: url('../../../../assets/images/--secondary-color.png');
+  mask-image: url('../../../../assets/images/developers.png'); /* Replace 'path-to-your-black-icon.png' with the actual path to your black icon image */
+  mask-size: cover;
+  mask-repeat: no-repeat;
+  mask-position: center;
+
+  display: inline-block; /* Ensure it occupies space in the button */
+
+  /* Set the dimensions for the icon */
+  width: 50px;
+  height: 50px;
+  
+}
+
+.faqs{
+  background-image: url('../../../../assets/images/--secondary-color.png');
+  mask-image: url('../../../../assets/images/faqs.png'); /* Replace 'path-to-your-black-icon.png' with the actual path to your black icon image */
+  mask-size: cover;
+  mask-repeat: no-repeat;
+  mask-position: center;
+
+  display: inline-block; /* Ensure it occupies space in the button */
+
+  /* Set the dimensions for the icon */
+  width: 50px;
+  height: 50px;
+  
+}
+
+.feedback{
+  background-image: url('../../../../assets/images/--secondary-color.png');
+  mask-image: url('../../../../assets/images/feedback.png'); /* Replace 'path-to-your-black-icon.png' with the actual path to your black icon image */
+  mask-size: cover;
+  mask-repeat: no-repeat;
+  mask-position: center;
+
+  display: inline-block; /* Ensure it occupies space in the button */
+
+  /* Set the dimensions for the icon */
+  width: 50px;
+  height: 50px;
+  
+}
+
+.button-text {
+  /* Remove the default margin and padding from the text */
+  padding: 0;
+  color: var(--text-color);
+  font-size: 18px;
+  white-space: nowrap;
+  opacity: 0; /* Set the initial opacity to 0 */
+  transition: opacity 0.3s ease;
+}
+
+.button:hover .button-text {
+  opacity: 1;
 }
