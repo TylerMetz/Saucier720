@@ -2,6 +2,7 @@ import { HttpEvent, HttpEventType } from "@angular/common/http"
 import { Component, OnInit } from '@angular/core';
 import { DealsService } from 'src/app/core/services/deals/deals.service';
 import { lastValueFrom } from "rxjs";
+import { ListComponent } from "src/app/list/list.component";
 
 @Component({
   selector: 'app-deals-table',

@@ -60,24 +60,37 @@ export class ListComponent implements OnInit {
     }
   }
 
-  addIngredient() {
-    if (this.newIngredientName && this.newIngredientQuantity > 0) {
-      const newIngredient: Ingredient = {
-        Name: this.newIngredientName,
-        Quantity: this.newIngredientQuantity,
-        StoreCost: 0, // Example value, replace with actual value if needed
-        OnSale: false, // Example value, replace with actual value if needed
-        SalePrice: 0, // Example value, replace with actual value if needed
-        SaleDetails: '' // Example value, replace with actual value if needed
-      };
+  // Optional parameter so that we can call it from deals and recipes pages 
+  addIngredient(ingredient?: Ingredient) {
+    let newIngredient: Ingredient | null = null; 
+    
+    // Assigns values from already created foodItem
+    if(ingredient){
+      newIngredient = ingredient;
+      newIngredient.Quantity = 1;
+    } else {
+      // Assigns values from list page
+      if (this.newIngredientName && this.newIngredientQuantity > 0) {
+        newIngredient = {
+          Name: this.newIngredientName,
+          Quantity: this.newIngredientQuantity,
+          StoreCost: 0, // Example value, replace with actual value if needed
+          OnSale: false, // Example value, replace with actual value if needed
+          SalePrice: 0, // Example value, replace with actual value if needed
+          SaleDetails: '' // Example value, replace with actual value if needed
+        };
 
       // Clear input fields
       this.newIngredientName = '';
-      this.newIngredientQuantity = 0;
+      this.newIngredientQuantity = 0;      
+      }
+    }
 
-      // post new list item to backend
-      this.postList(newIngredient)
-    }  
+    // Checks if not null 
+    if(newIngredient){
+            // post new list item to backend
+            this.postList(newIngredient)
+    }
   }
 
   async postList(ingredient: Ingredient) {
