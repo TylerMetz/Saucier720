@@ -11,4 +11,46 @@ table.table {
     overflow: hidden;
 }
 
+.ingredient-wrapper {
+    margin-right: 10px;
+  }
 
+.ingredient-wrapper > button {
+    width: 20px;
+    height: 20px;
+    float: right;
+    transform: translateX(75%) translateY(20%);
+    display: none;
+}
+
+.ingredient-wrapper:hover > button{
+    display: block;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    border: none;
+    border-radius: 5px;
+  }
+
+.ingredient-wrapper > button:hover{
+    background-color: var(--text-color);
+  }
+
+.ingredient-wrapper > button:focus{
+    background-color: var(--background-color);
+  }  
+  
+button > img {
+    max-width: 12px;
+    transform: translateY(-50%)
+  }
+
+button:hover > img {
+    content: url("/assets/images/addListHover.png");
+    transition: 0.2s ease-in-out;
+  }
+
+button:focus > img {
+    content: url("/assets/images/addListClick.png");
+    transform: translateY(-52%);
+    transition: 0.2s ease-in-out;
+  }

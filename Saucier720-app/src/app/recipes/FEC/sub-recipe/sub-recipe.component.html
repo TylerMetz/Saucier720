@@ -5,7 +5,7 @@
   <div class="sub-recipe-ingredients">
     <ul>
       <li class="sub-ingredient" *ngFor="let ingredient of ingredients">
-        <div class="sub-ingredient-wrapper"><button><img src="/assets/images/addList.png"></button>{{ ingredient }}</div>
+        <div title="Add {{ ingredient }} to your list!" class="sub-ingredient-wrapper"><button><img src="/assets/images/addList.png"></button>{{ ingredient }}</div>
       </li>
     </ul>
   </div>
