@@ -18,21 +18,20 @@ import { Component } from '@angular/core';
       }
     }
 
-    // Add a property to keep track of clicked buttons
-  clickedButtons: Set<string> = new Set<string>();
-  
-  // Method to handle button clicks
-  onButtonClick(buttonId: string) {
-    if (this.clickedButtons.has(buttonId)) {
-      this.clickedButtons.delete(buttonId);
-    } else {
-      this.clickedButtons.add(buttonId);
-    }
-  }
+    clickedButton: string | null = null;
 
-  // Method to check if a button is clicked
-  isButtonClicked(buttonId: string): boolean {
-    return this.clickedButtons.has(buttonId);
-  }
+    // Rest of your component code...
+  
+    onButtonClick(buttonId: string) {
+      if (this.clickedButton === buttonId) {
+        this.clickedButton = null; // Unselect the button if it's already clicked
+      } else {
+        this.clickedButton = buttonId; // Set the clickedButton to the current buttonId
+      }
+    }
+  
+    isButtonClicked(buttonId: string): boolean {
+      return this.clickedButton === buttonId;
+    }
   }
   

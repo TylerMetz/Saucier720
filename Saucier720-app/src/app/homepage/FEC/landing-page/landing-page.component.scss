@@ -1,7 +1,7 @@
 /* Styles for the landing page container */
 .animation-container {
   position: absolute; 
-  top: 5%; 
+  top: 2%; 
   left: 41%; 
   transform: translateX(-59%);
 }
@@ -127,7 +127,7 @@
   font-size: 18px;
   white-space: nowrap;
   opacity: 0; /* Set the initial opacity to 0 */
-  transition: opacity 0.3s ease;
+  transition: opacity 0.5s ease;
 }
 
 .button:hover .button-text,
