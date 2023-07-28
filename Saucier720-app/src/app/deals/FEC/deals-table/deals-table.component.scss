@@ -23,20 +23,27 @@ table.table {
 }
 
 .ingredient-wrapper:hover > button{
-    display: block;
-    float: left;
-    background-color: var(--primary-color);
-    color: var(--text-color);
-    border: none;
-    border-radius: 5px;
-    margin-right: 7px;
-  }
+  display: block;
+  float: left;
+  border: none;
+  border-radius: 5px;
+  margin-right: 7px;
+}
 
-.ingredient-wrapper > button:hover{
+.in-list {
+  background-color: var(--background-color);
+  content: "Already in list!";
+}
+
+.not-in-list {
+  background-color: var(--primary-color);
+}
+
+.ingredient-wrapper > button.not-in-list:hover{
     background-color: var(--text-color);
   }
 
-.ingredient-wrapper > button:focus{
+.ingredient-wrapper > button.not-in-list:focus{
     background-color: var(--background-color);
   }  
   
@@ -45,12 +52,17 @@ button > img {
     transform: translateY(-50%)
   }
 
-button:hover > img {
+.in-list > img {
+  content: url("/assets/images/addListClick.png");
+  transform: translateY(-52%);
+}
+
+.not-in-list:hover > img {
     content: url("/assets/images/addListHover.png");
     transition: 0.2s ease-in-out;
   }
 
-button:focus > img {
+.not-in-list:focus > img {
     content: url("/assets/images/addListClick.png");
     transform: translateY(-52%);
     transition: 0.2s ease-in-out;

@@ -65,7 +65,9 @@ export class DealsTableComponent implements OnInit {
   }
 
   toggleInList(element: HTMLElement){
-    element.style.backgroundColor = "blue"
+    element.classList.remove("not-in-list")
+    element.classList.add("in-list");
+    element.title = "Already in list!"
   }
 
 }
