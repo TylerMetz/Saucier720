@@ -4,6 +4,7 @@ import { DealsService } from 'src/app/core/services/deals/deals.service';
 import { lastValueFrom } from "rxjs";
 import { ListComponent } from "src/app/list/list.component";
 import { Ingredient } from "src/app/core/interfaces/ingredient";
+import { delay } from "cypress/types/bluebird";
 
 @Component({
   selector: 'app-deals-table',

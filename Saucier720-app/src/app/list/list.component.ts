@@ -109,8 +109,14 @@ export class ListComponent implements OnInit {
     }
   }
 
-  validateIngredient(ingredient: Ingredient){
-    console.log("Checking " + ingredient.Name);
+  async validateIngredient(ingredient: Ingredient){
+    //console.log("Checking " + ingredient.Name);
+    const response = await this.listService.checkIfExists(ingredient)
+    if (response){
+      console.log(ingredient.Name + " was found in list!")
+    } else {
+      console.log(ingredient.Name + " was not found in list!")
+    }
   }
 
   async postList(ingredient: Ingredient) {
