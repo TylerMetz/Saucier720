@@ -1,22 +1,29 @@
 
 /* Styles for the landing page container */
 .animation-container {
-  position: absolute; 
-  top: 2%; 
+  position: fixed; 
+  top: 0%;
   left: 50%; 
   transform: translateX(-50%);
   width: 485px;
+  margin: 0;
+  padding: 0;
 }
 
 .button-container {
-  position: absolute;
-  bottom: 5%;
+  position: relative;
   width: 100%;
   display: flex;
   justify-content: space-evenly;
   background-color: white;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0;
+  padding: 0;
+}
+
+.popups-and-buttons-container{
+  position: absolute;
+  bottom: 0;
+  width: 100%;
 }
 
 .button {
@@ -195,16 +202,15 @@
 
 /* Add this style for the popup-above-button class to position pop-ups above buttons */
 .popups-container {
-  position: absolute;
-  bottom: 17%;
-  margin-left: auto;
-  margin-right: auto;
+  position: relative;
   width: 100%;
   display: flex;
   justify-content: space-evenly;
   display: inline-flex;
   align-items: center;
   background-color: aqua;
+  margin: 0;
+  padding: 0;
 }
 
 .popup-window {
@@ -219,6 +225,7 @@
 }
 
 .page {
-  height: 100vh; /* Set the height to fill the viewport */
-  margin: 0 auto;
+  margin: 0;
+  padding: 0;
+  height: 87vh;
 }

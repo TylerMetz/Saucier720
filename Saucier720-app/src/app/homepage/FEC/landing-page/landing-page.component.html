@@ -2,24 +2,25 @@
     <div class="animation-container">
         <app-animated-logo (generationComplete)="onLogoGenerationComplete($event)"></app-animated-logo>
     </div>
-    <div class="popups-container">
-      <div class="popup-window" [class.show]="isButtonClicked('aboutUs')  || isButtonHovered('aboutUs')">
-        <app-about-us></app-about-us>
+    <div class="popups-and-buttons-container">
+      <div class="popups-container">
+        <div class="popup-window" [class.show]="isButtonClicked('aboutUs')  || isButtonHovered('aboutUs')">
+          <app-about-us></app-about-us>
+        </div>
+        <div class="popup-window" [class.show]="isButtonClicked('missionStatement') || isButtonHovered('missionStatement')">
+          <app-mission-statement></app-mission-statement>
+        </div>
+        <div class="popup-window" [class.show]="isButtonClicked('developers')  || isButtonHovered('developers')">
+          <app-developers></app-developers>
+        </div>
+        <div class="popup-window" [class.show]="isButtonClicked('faqs')  || isButtonHovered('faqs')">
+          <app-faqs></app-faqs>
+        </div>
+        <div class="popup-window" [class.show]="isButtonClicked('feedback')  || isButtonHovered('feedback')">
+          <app-feedback></app-feedback>
+        </div>
       </div>
-      <div class="popup-window" [class.show]="isButtonClicked('missionStatement') || isButtonHovered('missionStatement')">
-        <app-mission-statement></app-mission-statement>
-      </div>
-      <div class="popup-window" [class.show]="isButtonClicked('developers')  || isButtonHovered('developers')">
-        <app-developers></app-developers>
-      </div>
-      <div class="popup-window" [class.show]="isButtonClicked('faqs')  || isButtonHovered('faqs')">
-        <app-faqs></app-faqs>
-      </div>
-      <div class="popup-window" [class.show]="isButtonClicked('feedback')  || isButtonHovered('feedback')">
-        <app-feedback></app-feedback>
-      </div>
-    </div>
-    <div class="button-container" *ngIf="buttonsVisible">
+      <div class="button-container" *ngIf="buttonsVisible">
         <button class="button"  (click)="onButtonClick('aboutUs')" [class.clicked]="isButtonClicked('aboutUs')"  (mouseenter)="onButtonHover('aboutUs')" (mouseleave)="onButtonLeave('aboutUs')">
           <div class="image-wrapper">
             <span class="about-us"></span>
@@ -50,5 +51,6 @@
               </div>
               <span class="button-text">Feedback</span>
         </button>
+      </div>
     </div>
 </div>
