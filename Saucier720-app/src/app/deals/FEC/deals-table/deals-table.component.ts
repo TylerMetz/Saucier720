@@ -25,7 +25,6 @@ export class DealsTableComponent implements OnInit {
     for (const deal of this.pantry){
       const isValid = await this.listComponent.validateIngredient(deal);
       if(isValid){
-        const ingredientName = deal.Name;
         const selector = `#row` + count;
         const element = document.querySelector(selector) as HTMLElement
         if(element){

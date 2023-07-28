@@ -20,23 +20,34 @@
     width: 20px;
     height: 20px;
     float: right;
-    transform: translateX(75%) translateY(20%);
+    margin-left: 10px;
+    transform: translateY(20%);
     display: none;
   }
 
   .ingredient-wrapper:hover > button{
     display: block;
-    background-color: var(--primary-color);
-    color: var(--text-color);
     border: none;
     border-radius: 5px;
   }
+
+  .in-list{
+    background-color: var(--background-color);
+  }
+
+  .in-list:active{
+    pointer-events: none;
+  }
+
+  .not-in-list {
+    background-color: var(--primary-color);
+  }
   
-  .ingredient-wrapper > button:hover{
+  .ingredient-wrapper > button.not-in-list:hover{
     background-color: var(--text-color);
   }
 
-  .ingredient-wrapper > button:focus{
+  .ingredient-wrapper > button.not-in-list:focus{
     background-color: var(--background-color);
   }
 
@@ -45,12 +56,17 @@
     transform: translateY(-50%)
   }
 
-  button:hover > img {
+  .in-list > img {
+    content: url("/assets/images/addListClick.png");
+    transform: translateY(-52%);
+  }
+
+  .not-in-list:hover > img {
     content: url("/assets/images/addListHover.png");
     transition: 0.2s ease-in-out;
   }
 
-  button:focus > img {
+  .not-in-list:focus > img {
     content: url("/assets/images/addListClick.png");
     transform: translateY(-52%);
     transition: 0.2s ease-in-out;
@@ -214,11 +230,4 @@
   top: 12px;
   left: 65px; /* Adjust the left position as needed to place it to the right of the delete icon */
 }
-
-
-
-
-
-
-
 

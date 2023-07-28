@@ -70,7 +70,7 @@ export class RecipeCardComponent implements OnInit {
             console.log(this.currentIngredients);
             // Validate ingredient 
             for (var i = 0; i < this.currentIngredients.length; i++){
-               this.checkInList(this.currentIngredients[i])
+               this.checkInList(this.currentIngredients[i], "#row" + i)
             }
           }
           break;
@@ -255,7 +255,7 @@ export class RecipeCardComponent implements OnInit {
     this.listComponent.addIngredient(ingredient);
   }
 
-  checkInList(ingredient: string){
+  async checkInList(ingredient: string, rowId: string) {
     // Create a temporary variable to easily fill into the check 
     let tempIngredient: Ingredient | null = null;
     if(ingredient){
@@ -267,8 +267,23 @@ export class RecipeCardComponent implements OnInit {
         SalePrice: 0, // Filler
         SaleDetails: '' // Filler
       }
-      const response = this.listComponent.validateIngredient(tempIngredient)
+      const isValid = await this.listComponent.validateIngredient(tempIngredient)
+      if (isValid){
+        const element = document.querySelector(rowId) as HTMLElement
+        if(element){
+          this.toggleInList(element)
+        }
+      }
+      
     }
   }
+
+  toggleInList(element: HTMLElement){
+    element.classList.remove("not-in-list")
+    element.classList.add("in-list");
+    element.title = "Already in list!"
+  }
+
+
 
 }
