@@ -11,12 +11,12 @@
 .button-container {
   position: absolute;
   bottom: 5%;
-  width: 90%;
+  width: 100%;
   display: flex;
   justify-content: space-evenly;
   background-color: white;
-  margin-left: 5%;
-  margin-right: 5%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .button {
@@ -197,9 +197,9 @@
 .popups-container {
   position: absolute;
   bottom: 17%;
-  margin-left: 5%;
-  margin-right: 5%;
-  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
   display: flex;
   justify-content: space-evenly;
   display: inline-flex;
