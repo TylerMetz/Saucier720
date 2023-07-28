@@ -32,7 +32,9 @@ table.table {
 
 .in-list {
   background-color: var(--background-color);
-  content: "Already in list!";
+}
+.in-list:active {
+  pointer-events: none;
 }
 
 .not-in-list {
