@@ -3,13 +3,5 @@
   height: 380px;
   background-color: var(--secondary-color);
   border-radius: 10px; /* Adjust the value to control the roundness of the corners */
-  opacity: 0;
-  animation: fadeInBackground 1s ease forwards;
   position: relative;
-}
-
-@keyframes fadeInBackground {
-  to {
-    opacity: 1;
-  }
 }
