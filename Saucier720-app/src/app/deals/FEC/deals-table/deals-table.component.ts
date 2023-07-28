@@ -1,10 +1,11 @@
 import { HttpClient, HttpEvent, HttpEventType } from "@angular/common/http"
 import { Component, OnInit } from '@angular/core';
 import { DealsService } from 'src/app/core/services/deals/deals.service';
-import { lastValueFrom } from "rxjs";
+import { count, lastValueFrom } from "rxjs";
 import { ListComponent } from "src/app/list/list.component";
 import { Ingredient } from "src/app/core/interfaces/ingredient";
 import { delay } from "cypress/types/bluebird";
+import { forEach } from "cypress/types/lodash";
 
 @Component({
   selector: 'app-deals-table',
@@ -20,9 +21,19 @@ export class DealsTableComponent implements OnInit {
 
   async ngOnInit() {
     await this.populateDeals();
-    this.pantry.forEach((deal: Ingredient )=> {
-      this.listComponent.validateIngredient(deal);
-    });
+    var count = 0;
+    for (const deal of this.pantry){
+      const isValid = await this.listComponent.validateIngredient(deal);
+      if(isValid){
+        const ingredientName = deal.Name;
+        const selector = `#row` + count;
+        const element = document.querySelector(selector) as HTMLElement
+        if(element){
+          this.toggleInList(element)
+        }
+      }
+      ++count;
+    }
   }
 
   async populateDeals() {
@@ -51,6 +62,10 @@ export class DealsTableComponent implements OnInit {
 
   addToList(ingredient: Ingredient) {
     this.listComponent.addIngredient(ingredient);
+  }
+
+  toggleInList(element: HTMLElement){
+    element.style.backgroundColor = "blue"
   }
 
 }
