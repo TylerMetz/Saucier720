@@ -21,21 +21,28 @@ import { trigger, transition, style, animate } from '@angular/animations';
       }
     }
 
-    clickedButton: string | null = null;
+  activeButton: string = '';
+  hoveredButton: string = '';
 
-    // Rest of your component code...
-  
-    onButtonClick(buttonId: string) {
-      if (this.clickedButton === buttonId) {
-        this.clickedButton = null; // Unselect the button if it's already clicked
-      } else {
-        this.clickedButton = buttonId; // Set the clickedButton to the current buttonId
-      }
-    }
-  
-    isButtonClicked(buttonId: string): boolean {
-      return this.clickedButton === buttonId;
-    }
+  isButtonClicked(buttonName: string): boolean {
+    return this.activeButton === buttonName;
+  }
+
+  onButtonClick(buttonName: string): void {
+    this.activeButton = this.activeButton === buttonName ? '' : buttonName;
+  }
+
+  onButtonHover(buttonName: string): void {
+    this.hoveredButton = buttonName;
+  }
+
+  onButtonLeave(buttonName: string): void {
+    this.hoveredButton = '';
+  }
+
+  isButtonHovered(buttonName: string): boolean {
+    return this.hoveredButton === buttonName;
+  }
 
   }
   
