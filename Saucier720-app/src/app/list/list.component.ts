@@ -62,6 +62,13 @@ export class ListComponent implements OnInit {
 
   // Optional parameter so that we can call it from deals and recipes pages 
   addIngredient(ingredient?: Ingredient | string) {
+
+    // Check if ingredient exists in userList already
+    // create function validateIngredient 
+
+
+
+    // Ingredient is not in list 
     let newIngredient: Ingredient | null = null; 
     
     // Assigns values from already created foodItem
@@ -102,11 +109,18 @@ export class ListComponent implements OnInit {
     }
   }
 
+  validateIngredient(ingredient: Ingredient){
+    console.log("Checking " + ingredient.Name);
+  }
+
   async postList(ingredient: Ingredient) {
     try {
       const response = await lastValueFrom(this.listService.postListItem(ingredient));
       console.log(response);
-      window.location.reload();
+     //if(window.location.href == "http://localhost:4200/List"){
+     //   window.location.reload();
+     //}
+     window.location.reload();
     } catch (error) {
       console.error(error);
     }

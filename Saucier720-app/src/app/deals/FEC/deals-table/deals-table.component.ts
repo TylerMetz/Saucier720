@@ -19,6 +19,9 @@ export class DealsTableComponent implements OnInit {
 
   async ngOnInit() {
     await this.populateDeals();
+    this.pantry.forEach((deal: Ingredient )=> {
+      this.listComponent.validateIngredient(deal);
+    });
   }
 
   async populateDeals() {
