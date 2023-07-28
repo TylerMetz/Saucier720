@@ -1,19 +1,20 @@
+
 /* Styles for the landing page container */
 .animation-container {
   position: absolute; 
   top: 2%; 
-  left: 41%; 
-  transform: translateX(-59%);
+  left: 50%; 
+  transform: translateX(-50%);
+  width: 485px;
 }
 
 .button-container {
   position: absolute;
   bottom: 5%;
-  margin-left: 10%;
-  margin-right: 10%;
-  width: 76.8%;
+  width: 100%;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
+  margin: 0 auto;
 }
 
 .button {
@@ -194,13 +195,14 @@
 .popups-container {
   position: absolute;
   bottom: 16%;
-  margin-left: 5%;
-  margin-right: 5%;
-  width: 86.8%;
+  margin-left: 0%;
+  margin-right: 0%;
+  width: 100%;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
   display: inline-flex;
   align-items: center;
+  margin: 0 auto;
 }
 
 .popup-window {
@@ -214,4 +216,7 @@
   pointer-events: auto; /* Enable interactions with visible pop-ups */
 }
 
-
+.page {
+  height: 100vh; /* Set the height to fill the viewport */
+  margin: 0 auto;
+}
