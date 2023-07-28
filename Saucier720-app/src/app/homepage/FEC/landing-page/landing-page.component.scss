@@ -11,10 +11,12 @@
 .button-container {
   position: absolute;
   bottom: 5%;
-  width: 100%;
+  width: 90%;
   display: flex;
   justify-content: space-evenly;
-  margin: 0 auto;
+  background-color: white;
+  margin-left: 5%;
+  margin-right: 5%;
 }
 
 .button {
@@ -194,15 +196,15 @@
 /* Add this style for the popup-above-button class to position pop-ups above buttons */
 .popups-container {
   position: absolute;
-  bottom: 16%;
-  margin-left: 0%;
-  margin-right: 0%;
-  width: 100%;
+  bottom: 17%;
+  margin-left: 5%;
+  margin-right: 5%;
+  width: 90%;
   display: flex;
   justify-content: space-evenly;
   display: inline-flex;
   align-items: center;
-  margin: 0 auto;
+  background-color: aqua;
 }
 
 .popup-window {
