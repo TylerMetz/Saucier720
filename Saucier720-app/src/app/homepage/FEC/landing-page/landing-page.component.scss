@@ -190,3 +190,25 @@
   mask-repeat: no-repeat;
   mask-position: center;
 }
+
+/* Add this style for the popup-above-button class to position pop-ups above buttons */
+.popups-container {
+  position: absolute;
+  bottom: 16%;
+  margin-left: 5%;
+  margin-right: 5%;
+  width: 76.8%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.popup-window {
+  opacity: 0;
+  pointer-events: none; /* Disable interactions with hidden pop-ups */
+}
+
+.popup-window.show {
+  opacity: 1;
+  pointer-events: auto; /* Enable interactions with visible pop-ups */
+}
+

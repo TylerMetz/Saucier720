@@ -2,6 +2,23 @@
     <div class="animation-container">
         <app-animated-logo (generationComplete)="onLogoGenerationComplete($event)"></app-animated-logo>
     </div>
+    <div class="popups-container">
+      <div class="popup-window" [class.show]="isButtonClicked('aboutUs')">
+        <app-about-us></app-about-us>
+      </div>
+      <div class="popup-window" [class.show]="isButtonClicked('missionStatement')">
+        <app-mission-statement></app-mission-statement>
+      </div>
+      <div class="popup-window" [class.show]="isButtonClicked('developers')">
+        <app-developers></app-developers>
+      </div>
+      <div class="popup-window" [class.show]="isButtonClicked('faqs')">
+        <app-faqs></app-faqs>
+      </div>
+      <div class="popup-window" [class.show]="isButtonClicked('feedback')">
+        <app-feedback></app-feedback>
+      </div>
+    </div>
     <div class="button-container" *ngIf="buttonsVisible">
         <button class="button"  (click)="onButtonClick('aboutUs')" [class.clicked]="isButtonClicked('aboutUs')">
           <div class="image-wrapper">

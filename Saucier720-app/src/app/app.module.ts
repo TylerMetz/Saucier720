@@ -23,6 +23,11 @@ import { HomePageComponent } from './homepage/homepage.component';
 import { LandingPageComponent } from './homepage/FEC/landing-page/landing-page.component';
 import { UserDashboardComponent } from './homepage/FEC/user-dashboard/user-dashboard.component';
 import { AnimatedLogoComponent } from './homepage/FEC/landing-page/FEC/animated-logo/animated-logo.component';
+import { AboutUsComponent } from './homepage/FEC/landing-page/FEC/about-us/about-us.component';
+import { MissionStatementComponent } from './homepage/FEC/landing-page/FEC/mission-statement/mission-statement.component';
+import { DevelopersComponent } from './homepage/FEC/landing-page/FEC/developers/developers.component';
+import { FaqsComponent } from './homepage/FEC/landing-page/FEC/faqs/faqs.component';
+import { FeedbackComponent } from './homepage/FEC/landing-page/FEC/feedback/feedback.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +51,12 @@ import { AnimatedLogoComponent } from './homepage/FEC/landing-page/FEC/animated-
     HomePageComponent,
     LandingPageComponent,
     UserDashboardComponent,
-    AnimatedLogoComponent
+    AnimatedLogoComponent,
+    AboutUsComponent,
+    MissionStatementComponent,
+    DevelopersComponent,
+    FaqsComponent,
+    FeedbackComponent
   ],
   imports: [
     AppRoutingModule,
