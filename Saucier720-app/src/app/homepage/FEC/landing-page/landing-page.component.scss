@@ -9,7 +9,6 @@
 .button-container {
   position: absolute;
   bottom: 5%;
-  
   margin-left: 10%;
   margin-right: 10%;
   width: 76.8%;
@@ -197,9 +196,11 @@
   bottom: 16%;
   margin-left: 5%;
   margin-right: 5%;
-  width: 76.8%;
+  width: 86.8%;
   display: flex;
   justify-content: space-between;
+  display: inline-flex;
+  align-items: center;
 }
 
 .popup-window {
