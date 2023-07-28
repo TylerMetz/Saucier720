@@ -205,6 +205,7 @@
 .popup-window {
   opacity: 0;
   pointer-events: none; /* Disable interactions with hidden pop-ups */
+  transition: opacity 0.5s ease; /* Add a 0.5-second fade-in/out transition */
 }
 
 .popup-window.show {
