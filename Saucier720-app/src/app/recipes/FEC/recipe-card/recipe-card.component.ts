@@ -68,6 +68,10 @@ export class RecipeCardComponent implements OnInit {
             this.currentRecipe = this.recipes[this.currentRecipeIndex];
             this.currentIngredients = this.removeQuotesAndBrackets(this.currentRecipe.R.ingredients);
             console.log(this.currentIngredients);
+            // Validate ingredient 
+            for (var i = 0; i < this.currentIngredients.length; i++){
+               this.checkInList(this.currentIngredients[i])
+            }
           }
           break;
       }
@@ -117,7 +121,7 @@ export class RecipeCardComponent implements OnInit {
     }
     this.currentRecipe = this.recipes[this.currentRecipeIndex];
     this.currentIngredients = this.removeQuotesAndBrackets(this.currentRecipe.R.ingredients);
-    console.log(this.currentIngredients)
+    console.log('hi2', this.currentIngredients)
     console.log(this.currentRecipe.R.title)
   }
 
@@ -128,13 +132,13 @@ export class RecipeCardComponent implements OnInit {
     }
     this.currentRecipe = this.recipes[this.currentRecipeIndex];
     this.currentIngredients = this.removeQuotesAndBrackets(this.currentRecipe.R.ingredients);
-    console.log(this.currentIngredients)
+    console.log('hi3', this.currentIngredients)
     console.log(this.currentRecipe.R.title)
   }
 
   checkForRecipeFollows(ingredient: string): boolean {
     const pattern = /\brecipe\s+follows\b/i;
-    console.log('recipe follows',pattern.test(ingredient))
+    //console.log('recipe follows',pattern.test(ingredient))
     return pattern.test(ingredient);
   }
 
@@ -249,6 +253,22 @@ export class RecipeCardComponent implements OnInit {
 
   addToList(ingredient: string) {
     this.listComponent.addIngredient(ingredient);
+  }
+
+  checkInList(ingredient: string){
+    // Create a temporary variable to easily fill into the check 
+    let tempIngredient: Ingredient | null = null;
+    if(ingredient){
+      tempIngredient = {
+        Name: ingredient, // Necessary for check
+        Quantity: 1, // Necessary for check
+        StoreCost: 0, // Filler
+        OnSale: false, // Filler
+        SalePrice: 0, // Filler
+        SaleDetails: '' // Filler
+      }
+      const response = this.listComponent.validateIngredient(tempIngredient)
+    }
   }
 
 }
