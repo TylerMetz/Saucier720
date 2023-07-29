@@ -1,19 +1,18 @@
 <div class="popup">
-    <div [@animSlider]="counter">
-      <ng-container *ngFor="let o of developerProfiles; let i=index">
-        <img [src]="developerProfiles[counter].picture" alt="Developer Picture" *ngIf="i===counter" />
-      </ng-container>
-    </div>
   
     <div [@animSlider]="counter">
       <ng-container *ngFor="let o of developerProfiles; let i=index">
-      <h3 *ngIf="i===counter">{{ developerProfiles[counter].name }}</h3>
+        <div class="profile-container">
+          <img [src]="developerProfiles[i].picture" alt="Developer Picture" *ngIf="i===counter" />
+          <h3 *ngIf="i===counter">{{ developerProfiles[i].name }}</h3>
+          <div *ngIf="i===counter" class="links-container">
+            <a [href]="developerProfiles[i].github" target="_blank"><i class="fa fa-github"></i></a>
+            <a [href]="developerProfiles[i].linkedin" target="_blank"><i class="fa fa-linkedin"></i></a>
+          </div>
+        </div>
       </ng-container>
     </div>
-    <div class="links-container">
-        <a [href]="developerProfiles[counter].github" target="_blank"><i class="fa fa-github"></i></a>
-        <a [href]="developerProfiles[counter].linkedin" target="_blank"><i class="fa fa-linkedin"></i></a>
-    </div>
+
     <div class="arrows-container">
         <button (click)="onPrevious()" [disabled]="counter===0"><i class="fa fa-arrow-left"></i></button>
         <button (click)="onNext()" [disabled]="this.counter == this.developerProfiles.length - 1"><i class="fa fa-arrow-right"></i></button>
