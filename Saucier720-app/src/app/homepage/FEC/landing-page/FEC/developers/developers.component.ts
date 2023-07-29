@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { trigger, transition, query, style, animate, group } from '@angular/animations';
 const left = [
-  query(':enter, :leave', style({ position: 'relative'}), { optional: true }),
+  query(':enter, :leave', style({ position: 'absolute'}), { optional: true }),
   group([
     query(':enter', [style({ transform: 'translateX(-150%)' }), animate('.5s ease-out', style({ transform: 'translateX(0%)' }))], {
       optional: true,
@@ -13,7 +13,7 @@ const left = [
 ];
 
 const right = [
-  query(':enter, :leave', style({ position: 'relative' }), { optional: true }),
+  query(':enter, :leave', style({ position: 'absolute' }), { optional: true }),
   group([
     query(':enter', [style({ transform: 'translateX(150%)' }), animate('.5s ease-out', style({ transform: 'translateX(0%)' }))], {
       optional: true,

@@ -2,10 +2,10 @@
   
     <div [@animSlider]="counter">
       <ng-container *ngFor="let o of developerProfiles; let i=index">
-        <div class="profile-container">
-          <img [src]="developerProfiles[i].picture" alt="Developer Picture" *ngIf="i===counter" />
-          <h3 *ngIf="i===counter">{{ developerProfiles[i].name }}</h3>
-          <div *ngIf="i===counter" class="links-container">
+        <div class="profile-container" *ngIf="i===counter">
+          <img [src]="developerProfiles[i].picture" alt="Developer Picture"/>
+          <h3>{{ developerProfiles[i].name }}</h3>
+          <div class="links-container">
             <a [href]="developerProfiles[i].github" target="_blank"><i class="fa fa-github"></i></a>
             <a [href]="developerProfiles[i].linkedin" target="_blank"><i class="fa fa-linkedin"></i></a>
           </div>
