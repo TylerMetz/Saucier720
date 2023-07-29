@@ -34,10 +34,28 @@ export class DevelopersComponent {
       linkedin: 'https://www.linkedin.com/in/rileycleavenger',
     },
     {
+      picture: '../../../../assets/images/dev-profile-pictures/sam-dev-profile.jpeg',
+      name: 'Sam Forstot',
+      github: 'https://github.com/samforstot',
+      linkedin: 'https://www.linkedin.com/in/samforstot/',
+    },
+    {
       picture: '../../../../assets/images/dev-profile-pictures/tyler-dev-profile.jpeg',
       name: 'Tyler Metz',
       github: 'https://github.com/TylerMetz',
       linkedin: 'https://www.linkedin.com/in/tyler-metz-08146b221/',
+    },
+    {
+      picture: '../../../../assets/images/dev-profile-pictures/steele-dev-profile.jpeg',
+      name: 'Steele Elliott',
+      github: 'https://github.com/steeleelliott03',
+      linkedin: 'https://www.linkedin.com/in/evansteeleelliott/',
+    },
+    {
+      picture: '../../../../assets/images/dev-profile-pictures/mike-dev-profile.jpeg',
+      name: 'Mike Ciruzzi',
+      github: 'https://github.com/mciruzzi1',
+      linkedin: 'https://www.linkedin.com/in/mike-ciruzzi/',
     },
     // Add more developer profiles here...
   ];
