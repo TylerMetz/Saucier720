@@ -8,16 +8,16 @@ li.sub-ingredient {
 }
 
 .sub-ingredient-wrapper{
-    margin-right: 10px;
+    margin-right: 5px;
 }
 
 
 .sub-ingredient-wrapper > button {
     width: 20px;
     height: 20px;
-    margin-left: 15%;
+    margin-left: 10px;
     float: right;
-    transform: translateX(75%) translateY(20%);
+    transform: translateY(20%);
     display: none;
 }
 
@@ -27,11 +27,11 @@ li.sub-ingredient {
     border-radius: 5px;
 }
 
-.in_list{
+.in-list{
     background-color: var(--background-color);
 }
 
-.in_list:active{
+.in-list:active{
     pointer-events: none;
 }
 

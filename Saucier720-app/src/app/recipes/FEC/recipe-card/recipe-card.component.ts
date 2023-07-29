@@ -2,16 +2,18 @@ import { Component, OnInit, Input, ChangeDetectionStrategy, ChangeDetectorRef} f
 import { HttpEvent, HttpEventType } from '@angular/common/http';
 import { RecipeService } from 'src/app/core/services/recipes/recipe.service';
 import { lastValueFrom } from 'rxjs';
-import { RecipePost } from 'src/app/core/interfaces/recipe';
+import { Recipe, RecipePost } from 'src/app/core/interfaces/recipe';
 import { CookieService } from 'ngx-cookie-service';
 import { ListComponent } from 'src/app/list/list.component';
 import { Ingredient } from 'src/app/core/interfaces/ingredient';
+import { SubRecipeComponent } from '../sub-recipe/sub-recipe.component';
+import { RecipesComponent } from '../../recipes.component';
 
 @Component({
   selector: 'app-recipe-card',
   templateUrl: './recipe-card.component.html',
   styleUrls: ['./recipe-card.component.scss'],
-  providers: [ListComponent],
+  providers: [ListComponent, SubRecipeComponent],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RecipeCardComponent implements OnInit {
@@ -29,6 +31,7 @@ export class RecipeCardComponent implements OnInit {
     private cdRef: ChangeDetectorRef,
     private cookieService: CookieService,
     private listComponent: ListComponent,
+    private subRecipeComponent: SubRecipeComponent,
   ) {}
 
   ngOnInit(): void {
@@ -71,7 +74,11 @@ export class RecipeCardComponent implements OnInit {
             
             // Validate ingredient
             for (var i = 0; i < this.currentIngredients.length; i++){
-               this.checkInList(this.currentIngredients[i], "#row" + i)
+              if(this.currentIngredients[i].includes('recipe follows')){
+                console.log('Found subrecipe!')
+                break;
+              }
+               this.checkInList(this.currentIngredients[i], "#row" + i, false)
             }
           }
           break;
@@ -124,8 +131,28 @@ export class RecipeCardComponent implements OnInit {
     this.currentIngredients = this.removeQuotesAndBrackets(this.currentRecipe.R.ingredients);
     console.log('hi2', this.currentIngredients)
     console.log(this.currentRecipe.R.title)
+
+    const subRecipeDetails = this.checkSubRecipePattern(this.currentIngredients);
+    console.log(subRecipeDetails)
+
+    var inSub:boolean = false; 
+    var inSubHeader:string = '';
+    var subIngredientIndex = 0;
     for (var i = 0; i < this.currentIngredients.length; i++){
-      this.checkInList(this.currentIngredients[i], "#row" + i)
+      if(this.currentIngredients[i].includes('recipe follows')){
+        inSub = true; 
+        inSubHeader = "#" + this.subRecipeComponent.sanitizeHtmlId(this.currentIngredients[i]) + "-row";
+        subIngredientIndex = 0
+        continue;
+      }
+
+      if(inSub){
+        this.checkInList(this.currentIngredients[i], inSubHeader + subIngredientIndex, true)
+        ++subIngredientIndex
+      } else {
+        this.checkInList(this.currentIngredients[i], "#row" + i, false)
+      }
+      
    }
   }
 
@@ -139,7 +166,7 @@ export class RecipeCardComponent implements OnInit {
     console.log('hi3', this.currentIngredients)
     console.log(this.currentRecipe.R.title)
     for (var i = 0; i < this.currentIngredients.length; i++){
-      this.checkInList(this.currentIngredients[i], "#row" + i)
+      this.checkInList(this.currentIngredients[i], "#row" + i, false)
     }
   }
 
@@ -262,7 +289,7 @@ export class RecipeCardComponent implements OnInit {
     this.listComponent.addIngredient(ingredient);
   }
 
-  async checkInList(ingredient: string, rowId: string) {
+  async checkInList(ingredient: string, rowId: string, isSub: boolean) {
     // Create a temporary variable to easily fill into the check 
     let tempIngredient: Ingredient | null = null;
     if(ingredient){
@@ -276,13 +303,29 @@ export class RecipeCardComponent implements OnInit {
       }
       const isValid = await this.listComponent.validateIngredient(tempIngredient)
       if (isValid){
-        const element = document.querySelector(rowId) as HTMLElement
-        if(element){
-          this.toggleInList(element)
+
+        if(isSub){
+          this.subRecipeComponent.checkIngredient(rowId);
+        }
+        else {
+          const element = document.querySelector(rowId) as HTMLElement
+          if(element){
+            console.log("Valid id: " + rowId)
+            this.toggleInList(element)
+          }
         }
       }
-      
     }
+  }
+
+  checkSubRecipePattern(ingredients: string[]): number[]{
+    let subRecipeIndex: number[] = []
+    for (var i = 0; i < ingredients.length; i++){
+      if(ingredients[i].includes('recipe follows')){
+        subRecipeIndex.push(i)
+      }
+    }
+    return subRecipeIndex;
   }
 
   toggleInList(element: HTMLElement){
