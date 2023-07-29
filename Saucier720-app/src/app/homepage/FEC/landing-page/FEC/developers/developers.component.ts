@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { trigger, state, style, animate, transition } from '@angular/animations';
 
 interface DeveloperProfile {
   picture: string;
@@ -10,7 +11,19 @@ interface DeveloperProfile {
 @Component({
   selector: 'app-developers',
   templateUrl: './developers.component.html',
-  styleUrls: ['./developers.component.scss']
+  styleUrls: ['./developers.component.scss'],
+  animations: [
+    trigger('slide', [
+      transition(':increment', [
+        style({ transform: 'translateX(100%)' }),
+        animate('0.5s ease-out', style({ transform: 'translateX(0%)' }))
+      ]),
+      transition(':decrement', [
+        style({ transform: 'translateX(-100%)' }),
+        animate('0.5s ease-out', style({ transform: 'translateX(0%)' }))
+      ])
+    ])
+  ]
 })
 export class DevelopersComponent {
   developerProfiles: DeveloperProfile[] = [

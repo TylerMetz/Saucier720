@@ -5,6 +5,7 @@
   border-radius: 10px;
   position: relative;
   text-align: center;
+  overflow:hidden;
 }
 
 img {
@@ -63,3 +64,14 @@ button:hover {
   font-size: 1.3vw;
 }
 
+/*animation styles*/
+
+.slide-enter,
+.slide-leave-to {
+  transform: translateX(100%); /* Start and end state for sliding in and out from right */
+}
+
+.slide-enter-active,
+.slide-leave-active {
+  transition: transform 0.5s; /* Animation duration */
+}

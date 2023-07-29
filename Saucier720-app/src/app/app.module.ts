@@ -28,6 +28,7 @@ import { MissionStatementComponent } from './homepage/FEC/landing-page/FEC/missi
 import { DevelopersComponent } from './homepage/FEC/landing-page/FEC/developers/developers.component';
 import { FaqsComponent } from './homepage/FEC/landing-page/FEC/faqs/faqs.component';
 import { FeedbackComponent } from './homepage/FEC/landing-page/FEC/feedback/feedback.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -63,6 +64,7 @@ import { FeedbackComponent } from './homepage/FEC/landing-page/FEC/feedback/feed
     BrowserModule,
     HttpClientModule,
     FormsModule,
+    BrowserAnimationsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
