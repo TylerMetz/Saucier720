@@ -37,7 +37,9 @@ interface DeveloperProfile {
   styleUrls: ['./developers.component.scss'],
   animations: [
     trigger('animSlider', [
-      transition('* => 0', this.rightWrapperTransition()), // wrapping from last entry to first
+      transition('0 => 1', right),
+      transition('1 => 0', left),
+      transition('* => 0', right), // wrapping from last entry to first
       transition('0 => *', left), // wrapping from first entry to last
       transition(':increment', right),
       transition(':decrement', left),
