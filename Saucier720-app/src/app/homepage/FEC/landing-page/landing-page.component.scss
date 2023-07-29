@@ -2,7 +2,7 @@
 /* Styles for the landing page container */
 .animation-container {
   position: fixed; 
-  top: 0%;
+  top: 0;
   left: 50%; 
   transform: translateX(-50%);
   width: 485px;
@@ -10,14 +10,17 @@
   padding: 0;
 }
 
+
 .button-container {
+  --margin-px: 42.5px;
+  --margin-vw: 9.75vw;
   position: relative;
-  width: 100%;
   display: flex;
-  justify-content: space-evenly;
-  background-color: white;
+  justify-content: space-between;
   margin: 0;
   padding: 0;
+  margin-left: calc(var(--margin-vw) - var(--margin-px));
+  margin-right: calc(var(--margin-vw) - var(--margin-px));
 }
 
 .popups-and-buttons-container{
@@ -208,7 +211,6 @@
   justify-content: space-evenly;
   display: inline-flex;
   align-items: center;
-  background-color: aqua;
   margin: 0;
   padding: 0;
 }
@@ -227,6 +229,6 @@
 .page {
   margin: 0;
   padding: 0;
-  height: 87vh;
+  height: 85vh;
   width: 100%;
 }
