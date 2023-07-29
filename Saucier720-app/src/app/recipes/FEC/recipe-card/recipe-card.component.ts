@@ -71,15 +71,7 @@ export class RecipeCardComponent implements OnInit {
             this.currentRecipe = this.recipes[this.currentRecipeIndex];
             this.currentIngredients = this.removeQuotesAndBrackets(this.currentRecipe.R.ingredients);
             console.log(this.currentIngredients);
-            
-            // Validate ingredient
-            for (var i = 0; i < this.currentIngredients.length; i++){
-              if(this.currentIngredients[i].includes('recipe follows')){
-                console.log('Found subrecipe!')
-                break;
-              }
-               this.checkInList(this.currentIngredients[i], "#row" + i, false)
-            }
+            this.validteRecipeItems();
           }
           break;
       }
@@ -131,29 +123,7 @@ export class RecipeCardComponent implements OnInit {
     this.currentIngredients = this.removeQuotesAndBrackets(this.currentRecipe.R.ingredients);
     console.log('hi2', this.currentIngredients)
     console.log(this.currentRecipe.R.title)
-
-    const subRecipeDetails = this.checkSubRecipePattern(this.currentIngredients);
-    console.log(subRecipeDetails)
-
-    var inSub:boolean = false; 
-    var inSubHeader:string = '';
-    var subIngredientIndex = 0;
-    for (var i = 0; i < this.currentIngredients.length; i++){
-      if(this.currentIngredients[i].includes('recipe follows')){
-        inSub = true; 
-        inSubHeader = "#" + this.subRecipeComponent.sanitizeHtmlId(this.currentIngredients[i]) + "-row";
-        subIngredientIndex = 0
-        continue;
-      }
-
-      if(inSub){
-        this.checkInList(this.currentIngredients[i], inSubHeader + subIngredientIndex, true)
-        ++subIngredientIndex
-      } else {
-        this.checkInList(this.currentIngredients[i], "#row" + i, false)
-      }
-      
-   }
+    this.validteRecipeItems()
   }
 
   goToPrevRecipe() {
@@ -165,9 +135,7 @@ export class RecipeCardComponent implements OnInit {
     this.currentIngredients = this.removeQuotesAndBrackets(this.currentRecipe.R.ingredients);
     console.log('hi3', this.currentIngredients)
     console.log(this.currentRecipe.R.title)
-    for (var i = 0; i < this.currentIngredients.length; i++){
-      this.checkInList(this.currentIngredients[i], "#row" + i, false)
-    }
+    this.validteRecipeItems()
   }
 
   checkForRecipeFollows(ingredient: string): boolean {
@@ -318,22 +286,32 @@ export class RecipeCardComponent implements OnInit {
     }
   }
 
-  checkSubRecipePattern(ingredients: string[]): number[]{
-    let subRecipeIndex: number[] = []
-    for (var i = 0; i < ingredients.length; i++){
-      if(ingredients[i].includes('recipe follows')){
-        subRecipeIndex.push(i)
-      }
-    }
-    return subRecipeIndex;
-  }
-
   toggleInList(element: HTMLElement){
     element.classList.remove("not-in-list")
     element.classList.add("in-list");
     element.title = "Already in list!"
   }
 
+  validteRecipeItems(){
+    var inSub:boolean = false; 
+    var inSubHeader:string = '';
+    var subIngredientIndex = 0;
+    for (var i = 0; i < this.currentIngredients.length; i++){
+      if(this.currentIngredients[i].includes('recipe follows')){
+        inSub = true; 
+        inSubHeader = "#" + this.subRecipeComponent.sanitizeHtmlId(this.currentIngredients[i]) + "-row";
+        subIngredientIndex = 0
+        continue;
+      }
 
+      if(inSub){
+        this.checkInList(this.currentIngredients[i], inSubHeader + subIngredientIndex, true)
+        ++subIngredientIndex
+      } else {
+        this.checkInList(this.currentIngredients[i], "#row" + i, false)
+      }
+      
+    }
+ }
 
 }

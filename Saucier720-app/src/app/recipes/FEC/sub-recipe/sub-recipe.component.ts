@@ -33,7 +33,7 @@ export class SubRecipeComponent {
     //console.log(rowId)
     const element = document.querySelector(rowId) as HTMLElement
     if(element){
-      console.log("valid id: " + rowId)
+      //console.log("valid id: " + rowId)
       this.toggleInList(element)
     }
   }
