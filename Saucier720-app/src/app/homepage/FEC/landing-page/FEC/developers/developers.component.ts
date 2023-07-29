@@ -1,5 +1,28 @@
 import { Component } from '@angular/core';
-import { trigger, state, style, animate, transition } from '@angular/animations';
+import { trigger, transition, query, style, animate, group } from '@angular/animations';
+const left = [
+  query(':enter, :leave', style({ position: 'fixed'}), { optional: true }),
+  group([
+    query(':enter', [style({ transform: 'translateX(-100%)' }), animate('.3s ease-out', style({ transform: 'translateX(0%)' }))], {
+      optional: true,
+    }),
+    query(':leave', [style({ transform: 'translateX(0%)' }), animate('.3s ease-out', style({ transform: 'translateX(100%)' }))], {
+      optional: true,
+    }),
+  ]),
+];
+
+const right = [
+  query(':enter, :leave', style({ position: 'fixed' }), { optional: true }),
+  group([
+    query(':enter', [style({ transform: 'translateX(100%)' }), animate('.3s ease-out', style({ transform: 'translateX(0%)' }))], {
+      optional: true,
+    }),
+    query(':leave', [style({ transform: 'translateX(0%)' }), animate('.3s ease-out', style({ transform: 'translateX(-100%)' }))], {
+      optional: true,
+    }),
+  ]),
+];
 
 interface DeveloperProfile {
   picture: string;
@@ -13,17 +36,11 @@ interface DeveloperProfile {
   templateUrl: './developers.component.html',
   styleUrls: ['./developers.component.scss'],
   animations: [
-    trigger('slide', [
-      transition(':increment', [
-        style({ transform: 'translateX(100%)' }),
-        animate('0.5s ease-out', style({ transform: 'translateX(0%)' }))
-      ]),
-      transition(':decrement', [
-        style({ transform: 'translateX(-100%)' }),
-        animate('0.5s ease-out', style({ transform: 'translateX(0%)' }))
-      ])
-    ])
-  ]
+    trigger('animSlider', [
+      transition(':increment', right),
+      transition(':decrement', left),
+    ]),
+  ],
 })
 export class DevelopersComponent {
   developerProfiles: DeveloperProfile[] = [
@@ -60,15 +77,17 @@ export class DevelopersComponent {
     // Add more developer profiles here...
   ];
 
-  currentProfileIndex: number = 0;
+  counter: number = 0;
 
-  // Function to navigate to the next developer profile
-  nextProfile() {
-    this.currentProfileIndex = (this.currentProfileIndex + 1) % this.developerProfiles.length;
+  onNext() {
+    if (this.counter != this.developerProfiles.length - 1) {
+      this.counter++;
+    }
   }
 
-  // Function to navigate to the previous developer profile
-  previousProfile() {
-    this.currentProfileIndex = (this.currentProfileIndex - 1 + this.developerProfiles.length) % this.developerProfiles.length;
+  onPrevious() {
+    if (this.counter > 0) {
+      this.counter--;
+    }
   }
 }

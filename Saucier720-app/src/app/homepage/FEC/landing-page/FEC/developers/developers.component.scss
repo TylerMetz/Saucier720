@@ -66,12 +66,4 @@ button:hover {
 
 /*animation styles*/
 
-.slide-enter,
-.slide-leave-to {
-  transform: translateX(100%); /* Start and end state for sliding in and out from right */
-}
 
-.slide-enter-active,
-.slide-leave-active {
-  transition: transform 0.5s; /* Animation duration */
-}
