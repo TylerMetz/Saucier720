@@ -37,8 +37,11 @@ interface DeveloperProfile {
   styleUrls: ['./developers.component.scss'],
   animations: [
     trigger('animSlider', [
+      transition('* => 0', this.rightWrapperTransition()), // wrapping from last entry to first
+      transition('0 => *', left), // wrapping from first entry to last
       transition(':increment', right),
       transition(':decrement', left),
+      
     ]),
   ],
 })
@@ -82,12 +85,21 @@ export class DevelopersComponent {
   onNext() {
     if (this.counter != this.developerProfiles.length - 1) {
       this.counter++;
+    } else{
+      this.counter = 0;
     }
   }
 
   onPrevious() {
     if (this.counter > 0) {
       this.counter--;
+    } else{
+      this.counter = this.developerProfiles.length - 1;
     }
   }
+
+  rightWrapperTransition() {
+    return this.counter === 1 ? left : right;
+  }
+
 }
