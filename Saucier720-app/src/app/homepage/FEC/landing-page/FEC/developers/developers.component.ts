@@ -21,10 +21,10 @@ export class DevelopersComponent {
       linkedin: 'https://www.linkedin.com/in/rileycleavenger',
     },
     {
-      picture: '../../../../assets/images/dev-profile-pictures/tyler-dev-profile.png',
+      picture: '../../../../assets/images/dev-profile-pictures/tyler-dev-profile.jpeg',
       name: 'Tyler Metz',
-      github: 'https://github.com/janesmith',
-      linkedin: 'https://www.linkedin.com/in/janesmith',
+      github: 'https://github.com/TylerMetz',
+      linkedin: 'https://www.linkedin.com/in/tyler-metz-08146b221/',
     },
     // Add more developer profiles here...
   ];
