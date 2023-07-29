@@ -1,8 +1,65 @@
-.popup{
+.popup {
   width: 19.5vw;
   height: 36vh;
-    background-color: var(--secondary-color);
-    border-radius: 10px; /* Adjust the value to control the roundness of the corners */
-    position: relative;
-  }
-  
+  background-color: var(--secondary-color);
+  border-radius: 10px;
+  position: relative;
+  text-align: center;
+}
+
+img {
+  width: 10vw; /* Adjust the image width to your preference */
+  height: 10vw; /* Let the height adjust proportionally */
+  border-radius: 50%;
+  margin-bottom: 1vh; /* Adjust the margin as needed */
+  margin-top: 1vh;
+}
+
+h3 {
+  font-size: 2vw; /* Make the name larger, adjust as needed */
+  margin-bottom: 0.5vh; /* Adjust the margin as needed */
+  color: var(--text-color);
+}
+
+/* styling for github and linkedin links */
+a {
+  font-size: 3vw;
+  padding: 0.5vw;
+  color: var(--primary-color);
+}
+
+/* hover for github and linkedin*/
+a:hover {
+  color: var(--text-color)
+}
+
+
+/* Styling for navigation arrows */
+button {
+  border: none;
+  background: none;
+  color: var(--primary-color);
+  cursor: pointer;
+  position: relative;
+}
+
+
+/* Hover effect for navigation arrows */
+button:hover {
+  color: var(--text-color)
+}
+
+.arrows-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%; /* Take the full width of .popup */
+  position: absolute;
+  bottom: 0.3vw; /* Adjust the bottom position as needed */
+  left: 0; /* Align the arrows to the left edge */
+}
+
+.fa-arrow-left,
+.fa-arrow-right {
+  font-size: 1.3vw;
+}
+
