@@ -125,7 +125,7 @@ export class ListComponent implements OnInit {
       const response = await lastValueFrom(this.listService.postListItem(ingredient));
       console.log(response);
      //if(window.location.href == "http://localhost:4200/List"){
-     //   window.location.reload();
+        //window.location.reload();
      //}
      window.location.reload();
     } catch (error) {

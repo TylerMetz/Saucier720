@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectionStrategy, ChangeDetectorRef} from '@angular/core';
 import { HttpEvent, HttpEventType } from '@angular/common/http';
 import { RecipeService } from 'src/app/core/services/recipes/recipe.service';
 import { lastValueFrom } from 'rxjs';
@@ -68,7 +68,8 @@ export class RecipeCardComponent implements OnInit {
             this.currentRecipe = this.recipes[this.currentRecipeIndex];
             this.currentIngredients = this.removeQuotesAndBrackets(this.currentRecipe.R.ingredients);
             console.log(this.currentIngredients);
-            // Validate ingredient 
+            
+            // Validate ingredient
             for (var i = 0; i < this.currentIngredients.length; i++){
                this.checkInList(this.currentIngredients[i], "#row" + i)
             }
@@ -123,6 +124,9 @@ export class RecipeCardComponent implements OnInit {
     this.currentIngredients = this.removeQuotesAndBrackets(this.currentRecipe.R.ingredients);
     console.log('hi2', this.currentIngredients)
     console.log(this.currentRecipe.R.title)
+    for (var i = 0; i < this.currentIngredients.length; i++){
+      this.checkInList(this.currentIngredients[i], "#row" + i)
+   }
   }
 
   goToPrevRecipe() {
@@ -134,6 +138,9 @@ export class RecipeCardComponent implements OnInit {
     this.currentIngredients = this.removeQuotesAndBrackets(this.currentRecipe.R.ingredients);
     console.log('hi3', this.currentIngredients)
     console.log(this.currentRecipe.R.title)
+    for (var i = 0; i < this.currentIngredients.length; i++){
+      this.checkInList(this.currentIngredients[i], "#row" + i)
+    }
   }
 
   checkForRecipeFollows(ingredient: string): boolean {
