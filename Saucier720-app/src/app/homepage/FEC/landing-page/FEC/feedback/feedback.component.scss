@@ -6,7 +6,6 @@
   position: relative;
   text-align: center;
   overflow: hidden;
-  box-shadow: 0.5vw 1vw 2vw rgba(0, 0, 0, 0.2); /* Change the box-shadow to be in terms of vw */
   padding: 2vh;
 }
 
@@ -37,7 +36,7 @@
   border: 0.5px solid #ccc; /* Change the border to be in terms of vw */
   border-radius: 1vw; /* Change the border-radius to be in terms of vw */
   resize: none;
-  width: 12vw;
+  width: 100%;
 }
 
 .popup button {
