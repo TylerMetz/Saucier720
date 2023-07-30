@@ -1,8 +1,40 @@
-.popup{
+.popup {
   width: 19.5vw;
   height: 36vh;
-    background-color: var(--secondary-color);
-    border-radius: 10px; /* Adjust the value to control the roundness of the corners */
-    position: relative;
-  }
-  
+  background-color: var(--secondary-color);
+  border-radius: 10px;
+  position: relative;
+  padding: 20px;
+}
+
+.popup h2 {
+  text-align: center;
+}
+
+.popup form {
+  display: flex;
+  flex-direction: column;
+}
+
+.popup label {
+  margin-bottom: 5px;
+}
+
+.popup input,
+.popup textarea {
+  margin-bottom: 10px;
+  padding: 5px;
+}
+
+.popup button {
+  padding: 10px 20px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.popup button:hover {
+  background-color: var(--primary-color-dark);
+}
