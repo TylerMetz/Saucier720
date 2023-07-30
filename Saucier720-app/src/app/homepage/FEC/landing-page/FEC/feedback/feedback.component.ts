@@ -8,15 +8,15 @@ import { post } from 'cypress/types/jquery';
   templateUrl: './feedback.component.html',
   styleUrls: ['./feedback.component.scss'],
   animations: [
-    trigger('formState', [
-      state('shown', style({ opacity: 1, transform: 'translateY(0)' })),
-      state('hidden', style({ opacity: 0, transform: 'translateY(100%)' })),
-      transition('shown <=> hidden', animate('300ms ease-in-out')),
+    trigger('fadeInOut', [
+      state('void', style({ opacity: 0 })),
+      transition(':enter, :leave', [
+        animate(300) // Adjust the duration (ms) of the fade-in and fade-out here
+      ]),
     ]),
   ],
 })
 export class FeedbackComponent {
-
 
   name: string = '';
   email: string = '';
@@ -30,15 +30,17 @@ export class FeedbackComponent {
   onSubmit() {
     if (!this.showMessage) {
       
-
       // save textbox variables to post variables
       var postName = this.name;
       var postEmail = this.email;
       var postMessage = this.message;
 
       // reset textbox variables
-      this.showMessage = true; // Show the message
       this.showForm = false; // Hide the form
+      setTimeout(() => {
+        this.showMessage = true;
+      }, 301); // 301 milliseconds for the animation to finish
+
       this.name = '';
       this.email = '';
       this.message = '';
@@ -56,18 +58,12 @@ export class FeedbackComponent {
         );
     } else {
       // Show the form again and reset the message state
-      this.showForm = true;
+      
       this.showMessage = false;
+      setTimeout(() => {
+        this.showForm = true;
+      }, 301); // 301 milliseconds for the animation to finish
     }
-  }
-
-  onResetForm() {
-    // Reset the form fields and set the form state to its initial state
-    this.name = '';
-    this.email = '';
-    this.message = '';
-    this.showForm = true;
-    this.showMessage = false;
   }
 
 }
