@@ -1,20 +1,25 @@
 <div class="popup">
-    <form (ngSubmit)="onSubmit()">
-      <div class="form-group">
-        <input type="text" id="name" name="name" [(ngModel)]="name" placeholder="Name">
-      </div>
-  
-      <div class="form-group">
-        <input type="email" id="email" name="email" [(ngModel)]="email" placeholder="Email">
-      </div>
-  
-      <div class="form-group">
-        <textarea id="message" name="message" [(ngModel)]="message" rows="3" placeholder="Message"></textarea>
-      </div>
-  
-      <div class="button-group">
-        <button type="submit">Submit Feedback</button>
-      </div>
-    </form>
+        <div class="form-container" *ngIf="showForm">
+            <div class="form-group">
+                <input type="text" id="name" name="name" [(ngModel)]="name" placeholder="Name">
+            </div>
+
+            <div class="form-group">
+                <input type="email" id="email" name="email" [(ngModel)]="email" placeholder="Email">
+            </div>
+
+            <div class="form-group">
+                <textarea id="message" name="message" [(ngModel)]="message" rows="3" placeholder="Message"></textarea>
+            </div>
+        </div>
+        <div class="message" *ngIf="showMessage">
+            Your feedback has been received by the developers! Thank you for helping improve MealDealz.
+        </div>
+        <div class="button-group">
+        <!-- Change the button text based on the state -->
+        <button (click)="onSubmit()">
+            {{ showMessage ? 'New Feedback Form' : 'Submit Feedback' }}
+        </button>
+        </div>
   </div>
   
