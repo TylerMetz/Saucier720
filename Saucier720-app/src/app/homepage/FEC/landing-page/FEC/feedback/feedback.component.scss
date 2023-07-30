@@ -5,10 +5,15 @@
   border-radius: 10px;
   position: relative;
   padding: 20px;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2); /* Add a subtle shadow effect */
 }
 
-.popup h2 {
+.popup-title {
   text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: var(--primary-color); /* Change the color of the title */
 }
 
 .popup form {
@@ -18,12 +23,16 @@
 
 .popup label {
   margin-bottom: 5px;
+  font-weight: bold;
+  color: var(--primary-color); /* Change the color of the labels */
 }
 
 .popup input,
 .popup textarea {
   margin-bottom: 10px;
   padding: 5px;
+  border: 1px solid #ccc; /* Add a border to the input and textarea */
+  border-radius: 5px;
 }
 
 .popup button {
@@ -37,4 +46,8 @@
 
 .popup button:hover {
   background-color: var(--primary-color-dark);
+}
+
+.popup label{
+  color: var(--text-color);
 }
