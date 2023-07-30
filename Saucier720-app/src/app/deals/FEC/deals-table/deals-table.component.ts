@@ -59,9 +59,12 @@ export class DealsTableComponent implements OnInit {
     }
   }
 
+  // Add to shopping list 
   addToList(ingredient: Ingredient, event: Event) {
+    // Change button state
     const addBtn = event.target as HTMLElement;
     this.toggleInList(addBtn)
+    // Nav to actual list function 
     this.listComponent.addIngredient(ingredient);
   }
 

@@ -31,6 +31,7 @@ export class ListService {
     return this.http.post<any>(this.postListUrl, body, { headers, withCredentials: true });
   }
 
+  // Function checks against current list to see if an item is already in the user list 
   async checkIfExists(ingredient: Ingredient): Promise<boolean> {
     try {
       const response = await lastValueFrom(this.getList());

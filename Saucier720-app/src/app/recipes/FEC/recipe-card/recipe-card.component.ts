@@ -259,6 +259,7 @@ export class RecipeCardComponent implements OnInit {
     this.listComponent.addIngredient(ingredient);
   }
 
+  // Creates temporary ingredients so we can check if they exsit in list 
   async checkInList(ingredient: string, rowId: string, isSub: boolean) {
     // Create a temporary variable to easily fill into the check 
     let tempIngredient: Ingredient | null = null;
@@ -271,6 +272,8 @@ export class RecipeCardComponent implements OnInit {
         SalePrice: 0, // Filler
         SaleDetails: '' // Filler
       }
+
+      // Navs to list component function to check 
       const isValid = await this.listComponent.validateIngredient(tempIngredient)
       if (isValid){
 
@@ -280,7 +283,7 @@ export class RecipeCardComponent implements OnInit {
         else {
           const element = document.querySelector(rowId) as HTMLElement
           if(element){
-            console.log("Valid id: " + rowId)
+            //console.log("Valid id: " + rowId)
             this.toggleInList(element)
           }
         }
@@ -294,6 +297,7 @@ export class RecipeCardComponent implements OnInit {
     element.title = "Already in list!"
   }
 
+  // Checks for sub recipes
   validteRecipeItems(){
     var inSub:boolean = false; 
     var inSubHeader:string = '';

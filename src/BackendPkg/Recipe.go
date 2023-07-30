@@ -39,6 +39,8 @@ func GetJSONRecipes() ([]Recipe, error) {
         result = append(result, recipe)
     }*/
 
+
+    // Eliminate subrecipes
     filteredRecipes := make([]Recipe, 0)
 
     for _, recipe := range recipes {
