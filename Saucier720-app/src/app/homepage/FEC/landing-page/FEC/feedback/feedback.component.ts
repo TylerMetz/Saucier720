@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormService } from 'src/app/core/services/form/form.service';
 import { animate, state, style, transition, trigger } from '@angular/animations';
+import { post } from 'cypress/types/jquery';
 
 @Component({
   selector: 'app-feedback',
@@ -28,11 +29,25 @@ export class FeedbackComponent {
 
   onSubmit() {
     if (!this.showMessage) {
+      
+
+      // save textbox variables to post variables
+      var postName = this.name;
+      var postEmail = this.email;
+      var postMessage = this.message;
+
+      // reset textbox variables
       this.showMessage = true; // Show the message
       this.showForm = false; // Hide the form
-      this.formService.sendFeedback(this.name, this.email, this.message)
+      this.name = '';
+      this.email = '';
+      this.message = '';
+
+      // Send the feedback in POST req
+      this.formService.sendFeedback(postName, postEmail, postMessage)
         .subscribe(
           () => {
+            
             console.log('Feedback submitted successfully');
           },
           (error) => {
