@@ -100,8 +100,4 @@ export class DevelopersComponent {
     }
   }
 
-  rightWrapperTransition() {
-    return this.counter === 1 ? left : right;
-  }
-
 }

@@ -1,3 +1,17 @@
 <div class="popup">
-    
+  
+    <div [@animSlider]="counter">
+      <ng-container *ngFor="let o of allFaqs; let i=index">
+        <div class="question-container" *ngIf="i===counter">
+          <h3>{{ allFaqs[i].question }}</h3>
+          <p>{{ allFaqs[i].answer }}</p>
+        </div>
+      </ng-container>
+    </div>
+
+    <div class="arrows-container">
+        <button (click)="onPrevious()"><i class="fa fa-arrow-left"></i></button>
+        <button (click)="onNext()"><i class="fa fa-arrow-right"></i></button>
+    </div>
 </div>
+  

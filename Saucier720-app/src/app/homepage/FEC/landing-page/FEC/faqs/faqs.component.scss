@@ -1,8 +1,64 @@
-.popup{
+.popup {
   width: 19.5vw;
   height: 36vh;
-    background-color: var(--secondary-color);
-    border-radius: 10px; /* Adjust the value to control the roundness of the corners */
-    position: relative;
-  }
-  
+  background-color: var(--secondary-color);
+  border-radius: 10px;
+  position: relative;
+  text-align: center;
+  overflow: hidden;
+  padding: 2vh;
+}
+
+h3 {
+  font-size: 2vw; /* Make the name larger, adjust as needed */
+  margin-bottom: 2vh; /* Adjust the margin as needed */
+  color: var(--primary-color);
+  border-radius: 50%;
+  width: 19.5vw; 
+}
+
+p {
+  font-size: 1vw; /* Make the name larger, adjust as needed */
+  margin-bottom: 1vh; /* Adjust the margin as needed */
+  color: var(--text-color);
+  border-radius: 50%;
+  width: 100%; 
+}
+
+/* Styling for navigation arrows */
+button {
+  border: none;
+  background: none;
+  color: var(--primary-color);
+  cursor: pointer;
+  position: relative;
+}
+
+
+/* Hover effect for navigation arrows */
+button:hover {
+  color: var(--text-color)
+}
+
+.arrows-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%; /* Take the full width of .popup */
+  position: absolute;
+  bottom: 0.3vw; /* Adjust the bottom position as needed */
+  left: 0; /* Align the arrows to the left edge */
+}
+
+.fa-arrow-left,
+.fa-arrow-right {
+  font-size: 1.3vw;
+}
+
+/*animation styles*/
+
+.question-container {
+  padding: 0 10px; /* Add padding to create space on the left and right */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
