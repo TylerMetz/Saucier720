@@ -11,7 +11,7 @@
     </thead>
     <tbody>
       <tr *ngFor="let ingredient of pantry;  let i = index">
-        <td><div title="Add{{ ingredient.Name }}to your list!" class="ingredient-wrapper"><button class="not-in-list" [attr.id]="'row' + i" (click)="addToList(ingredient, $event)"><img class="list" src="/assets/images/addList.png"></button>{{ ingredient.Name }}</div></td>
+        <td><div title="Click to add {{ ingredient.Name }}to your list!" class="ingredient-wrapper"><button class="not-in-list" [attr.id]="'row' + i" (click)="addToList(ingredient, $event)"><img class="list" src="/assets/images/addList.png"></button>{{ ingredient.Name }}</div></td>
         <td>{{ ingredient.SaleDetails }}</td>
       </tr>
     </tbody>

@@ -63,11 +63,6 @@ export class ListComponent implements OnInit {
   // Optional parameter so that we can call it from deals and recipes pages 
   addIngredient(ingredient?: Ingredient | string) {
 
-    // Check if ingredient exists in userList already
-    // create function validateIngredient 
-
-
-
     // Ingredient is not in list 
     let newIngredient: Ingredient | null = null; 
     
