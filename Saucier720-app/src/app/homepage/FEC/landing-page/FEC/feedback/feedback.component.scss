@@ -6,6 +6,8 @@
   position: relative;
   text-align: center;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
   padding: 2vh;
 }
 
@@ -36,8 +38,17 @@
   border: 0.5px solid #ccc; /* Change the border to be in terms of vw */
   border-radius: 1vw; /* Change the border-radius to be in terms of vw */
   resize: none;
-  width: 100%;
+  width: 17.5vw;
 }
+
+.popup input{
+  height: 6vh;
+}
+
+.popup textarea{
+  height: 12vh;
+}
+
 
 .popup button {
   border: none;
@@ -68,4 +79,89 @@
   font-size: 1.2vw;
   color: var(--text-color);
   margin-bottom: 2vh;
+  opacity: 0;
+}
+
+.form-container,
+.message {
+  height: 100%; /* Fixed height to prevent layout shifts */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes slideIn {
+  0% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideOut {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+}
+
+@keyframes slideInOut {
+  0% {
+    transform: translateY(100%);
+  }
+  50% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+/* Animation triggers */
+
+.shown {
+  animation-name: fadeIn;
+}
+
+.hidden {
+  animation-name: fadeOut;
 }

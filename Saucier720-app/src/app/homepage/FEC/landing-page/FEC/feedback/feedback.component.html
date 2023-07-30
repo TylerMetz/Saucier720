@@ -1,25 +1,24 @@
 <div class="popup">
-        <div class="form-container" *ngIf="showForm">
-            <div class="form-group">
-                <input type="text" id="name" name="name" [(ngModel)]="name" placeholder="Name">
-            </div>
-
-            <div class="form-group">
-                <input type="email" id="email" name="email" [(ngModel)]="email" placeholder="Email">
-            </div>
-
-            <div class="form-group">
-                <textarea id="message" name="message" [(ngModel)]="message" rows="3" placeholder="Message"></textarea>
-            </div>
+    <div class="form-container" [@formState]="showForm ? 'shown' : 'hidden'" *ngIf="showForm">
+        <div class="form-group">
+            <input type="text" id="name" name="name" [(ngModel)]="name" placeholder="Name">
         </div>
-        <div class="message" *ngIf="showMessage">
-            Your feedback has been received by the developers! Thank you for helping improve MealDealz.
+
+        <div class="form-group">
+            <input type="email" id="email" name="email" [(ngModel)]="email" placeholder="Email">
         </div>
-        <div class="button-group">
-        <!-- Change the button text based on the state -->
+
+        <div class="form-group">
+            <textarea id="message" name="message" [(ngModel)]="message" rows="3" placeholder="Message"></textarea>
+        </div>
+    </div>
+    <div class="message" [@formState]="showMessage ? 'shown' : 'hidden'" *ngIf="showMessage">
+        Your feedback has been received by the developers! Thank you for helping improve MealDealz.
+    </div>
+    <div class="button-group">
         <button (click)="onSubmit()">
             {{ showMessage ? 'New Feedback Form' : 'Submit Feedback' }}
         </button>
-        </div>
-  </div>
+    </div>
+</div>
   

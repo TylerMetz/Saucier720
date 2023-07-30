@@ -6,6 +6,13 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
   selector: 'app-feedback',
   templateUrl: './feedback.component.html',
   styleUrls: ['./feedback.component.scss'],
+  animations: [
+    trigger('formState', [
+      state('shown', style({ opacity: 1, transform: 'translateY(0)' })),
+      state('hidden', style({ opacity: 0, transform: 'translateY(100%)' })),
+      transition('shown <=> hidden', animate('300ms ease-in-out')),
+    ]),
+  ],
 })
 export class FeedbackComponent {
 
