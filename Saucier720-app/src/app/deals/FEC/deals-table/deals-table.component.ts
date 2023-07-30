@@ -59,7 +59,9 @@ export class DealsTableComponent implements OnInit {
     }
   }
 
-  addToList(ingredient: Ingredient) {
+  addToList(ingredient: Ingredient, event: Event) {
+    const addBtn = event.target as HTMLElement;
+    this.toggleInList(addBtn)
     this.listComponent.addIngredient(ingredient);
   }
 

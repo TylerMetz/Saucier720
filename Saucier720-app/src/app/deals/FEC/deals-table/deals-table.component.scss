@@ -30,6 +30,9 @@ table.table {
   margin-right: 7px;
 }
 
+img.list {
+  pointer-events: none;
+}
 .in-list {
   background-color: var(--background-color);
 }
@@ -64,9 +67,5 @@ button > img {
     transition: 0.2s ease-in-out;
   }
 
-.not-in-list:focus > img {
-    content: url("/assets/images/addListClick.png");
-    transform: translateY(-52%);
-    transition: 0.2s ease-in-out;
-  }
+
 

@@ -253,7 +253,9 @@ export class RecipeCardComponent implements OnInit {
     }
   }
 
-  addToList(ingredient: string) {
+  addToList(ingredient: string, event: Event) {
+    const addBtn = event.target as HTMLElement;
+    this.toggleInList(addBtn)
     this.listComponent.addIngredient(ingredient);
   }
 
