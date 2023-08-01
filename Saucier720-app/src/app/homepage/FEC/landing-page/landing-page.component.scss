@@ -2,12 +2,15 @@
 /* Styles for the landing page container */
 .animation-container {
   position: fixed; 
-  top: 0;
   left: 50%; 
   transform: translateX(-50%);
-  width: 485px;
   margin: 0;
   padding: 0;
+}
+
+.animation-container.scaled-logo {
+  /* Apply the scaling effect using the 'transform' property */
+  transform: scale(0.85); /* Adjust the scale factor as needed */
 }
 
 
@@ -233,3 +236,4 @@
   height: 85vh;
   width: 100%;
 }
+

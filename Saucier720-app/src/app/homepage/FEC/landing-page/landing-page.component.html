@@ -1,7 +1,7 @@
 <div class="page">
-    <div class="animation-container">
-        <app-animated-logo (generationComplete)="onLogoGenerationComplete($event)"></app-animated-logo>
-    </div>
+  <div class="animation-container scaled-logo">
+    <app-animated-logo (generationComplete)="onLogoGenerationComplete($event)"></app-animated-logo>
+  </div>
     <div class="popups-and-buttons-container">
       <div class="popups-container">
         <div class="popup-window" [class.show]="isButtonClicked('aboutUs')  || isButtonHovered('aboutUs')">
