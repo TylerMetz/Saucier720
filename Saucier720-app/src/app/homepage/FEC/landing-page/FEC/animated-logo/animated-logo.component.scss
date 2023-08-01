@@ -1,6 +1,6 @@
 /* Styles for the icon */
 .icon-container {
-  top: 90px;
+  top: 0;
   width: 132px;
   height: 261px; /* 168px (top height) + 93px (bottom height) */
   position: relative;
@@ -37,7 +37,7 @@
 /* Styles for the text container */
 .text-container {
   position: absolute;
-  top: 200px; /* Adjust the value to position the text container vertically */
+  top: 0px; /* Adjust the value to position the text container vertically */
   left: 230px; /* Adjust the value to position the text container horizontally */
   width: 250px; /* Adjust the value to set the width of the text container */
   display: flex;
@@ -62,7 +62,7 @@
 
 .buttons-container {
   position: absolute;
-  top: 200px; /* Adjust the value to position the text container vertically */
+  top: 110px; /* Adjust the value to position the text container vertically */
   left: 230px; /* Adjust the value to position the text container horizontally */
   width: 250px; /* Adjust the value to set the width of the text container */
   display: flex;
@@ -116,7 +116,7 @@
 /* Styles for the background square */
 .background-square {
   position: absolute;
-  top: 180px; /* Adjust the value to position the background square vertically */
+  top: 90px; /* Adjust the value to position the background square vertically */
   left: 225px; /* Adjust the value to position the background square horizontally */
   width: 260px;
   height: 150px;
@@ -133,3 +133,6 @@
 }
 
 
+.animation-container {
+  width: 485px;
+}

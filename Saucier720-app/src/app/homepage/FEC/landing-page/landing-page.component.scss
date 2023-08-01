@@ -2,13 +2,13 @@
 /* Styles for the landing page container */
 .centered-container {
   /* Add Flexbox properties to center the logo horizontally and vertically */
-  position: fixed; 
+  position: relative;
+  display: flex;
   top: 0;
-  left: 50%; 
-  transform: translateX(-50%);
-  width: 25.25vw;
+  width: 100%;
   margin: 0;
   padding: 0;
+  justify-content: center;
 }
 
 
