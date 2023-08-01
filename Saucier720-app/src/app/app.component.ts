@@ -18,17 +18,23 @@ export class AppComponent implements OnInit {
   constructor(private cookieService: CookieService, private authService: AuthService, private router: Router) {
     const sessionId = this.cookieService.get('sessionID');
     this.username = sessionId.slice(0, -3);
-    this.router.navigateByUrl('/Home'); // default to home page
   }
 
   ngOnInit() {
     this.title = "Saucier720-App"
+    this.navigateToHomeIfFromBaseUrl();
+  }
+
+  private navigateToHomeIfFromBaseUrl() {
+    const baseUrl = this.router.url === '/' || this.router.url === '/#' || this.router.url === '/#/';
+    if (baseUrl) {
+      this.router.navigate(['/Home']);
+    }
   }
 
   async logout() {
     try {
       const response = await lastValueFrom(this.authService.logout());
-      this.router.navigate(['/Login']);
       console.log('response', response);
 
       // clear button/checkbox states from session
@@ -36,6 +42,12 @@ export class AppComponent implements OnInit {
       localStorage.removeItem('myRecipesValue');
       localStorage.removeItem('userRecipesValue');
       localStorage.removeItem('mdRecipesValue');
+
+      if (this.router.url === '/Home'){
+        window.location.reload();
+      } else{
+        this.router.navigate(['/Home']);
+      }
 
     } catch (error: any) {
       console.log(error.message);

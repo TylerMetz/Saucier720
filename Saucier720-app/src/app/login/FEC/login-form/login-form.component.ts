@@ -34,9 +34,7 @@ export class LoginFormComponent {
         this.cookieService.set('sessionID', sessionID, 7, '/', 'localhost', false, 'Lax');
         resolve();
       });
-      setTimeout(() => {
-        this.router.navigate(['/Pantry']);
-      }, 4000);
+      this.router.navigate(['/Home']);
     }
 
     async login() {
