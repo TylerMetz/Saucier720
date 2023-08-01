@@ -56,8 +56,20 @@ export class FaqsComponent {
       answer: 'Navigate to the Login page from the homepage, then enter your username and password.',
     },
     {
-      question: 'Who is a munch?',
-      answer: 'Tyler',
+      question: 'What is the Pantry page?',
+      answer: 'The pantry page is where you can view all of your ingredients, and add more as needed.',
+    },
+    {
+      question: 'What is the Deals page?',
+      answer: 'The deals page is where you can view all of the current sales at the select grocery stores that we support.',
+    },
+    {
+      question: 'What is the recipes page?',
+      answer: 'The recipes page is where you can view all of the recipes that are recommended to you, as well as your personal recipes and favorited recipes.',
+    },
+    {
+      question: 'What is the list page?',
+      answer: 'The list page is where you can view and update your shopping list, items you added from recipes or the Deals page will appear there as well.',
     },
     // Add more developer profiles here...
   ];
