@@ -24,7 +24,7 @@ def scrape_publix():
     options.add_experimental_option("prefs", {"profile.default_content_setting_values.geolocation": 2})
 
     # Installs driver depending on browser
-    driver=webdriver.Chrome(service=Service(ChromeDriverManager().install()),options=options)
+    driver=webdriver.Chrome(service=Service(ChromeDriverManager(version='114.0.5735.90').install()),options=options)
 
     # Open page
     wait = WebDriverWait(driver, 10)

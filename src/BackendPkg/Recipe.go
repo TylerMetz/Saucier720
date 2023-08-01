@@ -28,7 +28,7 @@ func GetJSONRecipes() ([]Recipe, error) {
         return nil, err
     }
 
-    for _, recipe := range recipes {
+    /*for _, recipe := range recipes {
         for i, ingredient := range recipe.Ingredients {
             recipe.Ingredients[i] = strings.ReplaceAll(ingredient, ",", ";")
         }
@@ -37,9 +37,29 @@ func GetJSONRecipes() ([]Recipe, error) {
     result := make([]Recipe, 0, len(recipes))
     for _, recipe := range recipes {
         result = append(result, recipe)
+    }*/
+
+
+    // Eliminate subrecipes
+    filteredRecipes := make([]Recipe, 0)
+
+    for _, recipe := range recipes {
+        containsSubRecipe := false
+
+        for i, ingredient := range recipe.Ingredients {
+            if strings.Contains(strings.ToLower(ingredient), "recipe follows") {
+                containsSubRecipe = true
+                break
+            } else {
+                recipe.Ingredients[i] = strings.ReplaceAll(ingredient, ",", ";")
+            }
+        }
+        if !containsSubRecipe {
+            filteredRecipes = append(filteredRecipes, recipe)
+        }
     }
 
-    return result, nil
+    return filteredRecipes, nil
 }
 
 
