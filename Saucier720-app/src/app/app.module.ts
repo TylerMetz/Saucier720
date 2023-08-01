@@ -20,14 +20,13 @@ import { NewRecipeComponent } from './recipes/FEC/new-recipe/new-recipe.componen
 import { ListComponent } from './list/list.component';
 import { FilterRecipeComponent } from './recipes/FEC/filter-menu/filter-menu.component';
 import { HomePageComponent } from './homepage/homepage.component';
-import { LandingPageComponent } from './homepage/FEC/landing-page/landing-page.component';
 import { UserDashboardComponent } from './homepage/FEC/user-dashboard/user-dashboard.component';
-import { AnimatedLogoComponent } from './homepage/FEC/landing-page/FEC/animated-logo/animated-logo.component';
-import { AboutUsComponent } from './homepage/FEC/landing-page/FEC/about-us/about-us.component';
-import { MissionStatementComponent } from './homepage/FEC/landing-page/FEC/mission-statement/mission-statement.component';
-import { DevelopersComponent } from './homepage/FEC/landing-page/FEC/developers/developers.component';
-import { FaqsComponent } from './homepage/FEC/landing-page/FEC/faqs/faqs.component';
-import { FeedbackComponent } from './homepage/FEC/landing-page/FEC/feedback/feedback.component';
+import { AnimatedLogoComponent } from './homepage/FEC/animated-logo/animated-logo.component';
+import { AboutUsComponent } from './homepage/FEC/about-us/about-us.component';
+import { MissionStatementComponent } from './homepage/FEC/mission-statement/mission-statement.component';
+import { DevelopersComponent } from './homepage/FEC/developers/developers.component';
+import { FaqsComponent } from './homepage/FEC/faqs/faqs.component';
+import { FeedbackComponent } from './homepage/FEC/feedback/feedback.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
@@ -50,7 +49,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     ListComponent,
     FilterRecipeComponent,
     HomePageComponent,
-    LandingPageComponent,
     UserDashboardComponent,
     AnimatedLogoComponent,
     AboutUsComponent,

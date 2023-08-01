@@ -1,3 +1,5 @@
+/* old styles */
+
 .page {
   margin: 0 auto;
   padding: 0;
@@ -5,9 +7,254 @@
   width: 100%;
 }
 
-app-landing-page{
+.interior-container{
   margin: 0 auto;
   padding: 0;
   position: relative;
   width: 100%;
+  height: 100%;
 }
+
+
+/* Styles for the landing page container */
+.centered-container {
+  /* Add Flexbox properties to center the logo horizontally and vertically */
+  position: relative;
+  display: flex;
+  top: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  justify-content: center;
+}
+
+
+.animation-container.scaled-logo {
+  /* Apply the scaling effect using the 'transform' property */
+  transform: scale(0.85); /* Adjust the scale factor as needed */
+}
+
+
+.button-container {
+  --margin-px: 42.5px;
+  --margin-vw: 9.75vw;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+  padding: 0;
+  margin-left: calc(var(--margin-vw) - var(--margin-px));
+  margin-right: calc(var(--margin-vw) - var(--margin-px));
+}
+
+.popups-and-buttons-container{
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+.button {
+  width: 85px; /* Set the width and height to desired size */
+  height: 85px;
+  border-radius: 50%; /* This creates a circular background */
+  background-color: var(--secondary-color); /* Set the background color to white */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Optional: Add shadow for a 3D effect */
+  opacity: 0;
+  animation: fadeInBackground 1s ease forwards;
+  position: relative;
+  flex-direction: column;
+  border: 0px;
+}
+
+
+
+@keyframes fadeInBackground {
+  to {
+    opacity: 1;
+  }
+}
+
+.image-wrapper{
+  margin-top: 50px;
+  margin-bottom: 20px;
+}
+
+.about-us{
+  background-image: url('../../assets/images/--primary-color.png');
+  mask-image: url('../../assets/images/about-us.png'); /* Replace 'path-to-your-black-icon.png' with the actual path to your black icon image */
+  mask-size: cover;
+  mask-repeat: no-repeat;
+  mask-position: center;
+
+  display: inline-block; /* Ensure it occupies space in the button */
+
+  /* Set the dimensions for the icon */
+  width: 50px;
+  height: 50px;
+  
+}
+
+.mission-statement{
+  background-image: url('../../assets/images/--primary-color.png');
+  mask-image: url('../../assets/images/mission-statement.png'); /* Replace 'path-to-your-black-icon.png' with the actual path to your black icon image */
+  mask-size: cover;
+  mask-repeat: no-repeat;
+  mask-position: center;
+
+  display: inline-block; /* Ensure it occupies space in the button */
+
+  /* Set the dimensions for the icon */
+  width: 50px;
+  height: 50px;
+  
+}
+
+.developers{
+  background-image: url('../../assets/images/--primary-color.png');
+  mask-image: url('../../assets/images/developers.png'); /* Replace 'path-to-your-black-icon.png' with the actual path to your black icon image */
+  mask-size: cover;
+  mask-repeat: no-repeat;
+  mask-position: center;
+
+  display: inline-block; /* Ensure it occupies space in the button */
+
+  /* Set the dimensions for the icon */
+  width: 50px;
+  height: 50px;
+  
+}
+
+.faqs{
+  background-image: url('../../assets/images/--primary-color.png');
+  mask-image: url('../../assets/images/faqs.png'); /* Replace 'path-to-your-black-icon.png' with the actual path to your black icon image */
+  mask-size: cover;
+  mask-repeat: no-repeat;
+  mask-position: center;
+
+  display: inline-block; /* Ensure it occupies space in the button */
+
+  /* Set the dimensions for the icon */
+  width: 50px;
+  height: 50px;
+  
+}
+
+.feedback{
+  background-image: url('../../assets/images/--primary-color.png');
+  mask-image: url('../../assets/images/feedback.png'); /* Replace 'path-to-your-black-icon.png' with the actual path to your black icon image */
+  mask-size: cover;
+  mask-repeat: no-repeat;
+  mask-position: center;
+
+  display: inline-block; /* Ensure it occupies space in the button */
+
+  /* Set the dimensions for the icon */
+  width: 50px;
+  height: 50px;
+  
+}
+
+.button-text {
+  /* Remove the default margin and padding from the text */
+  padding: 0;
+  color: var(--text-color);
+  font-size: 18px;
+  white-space: nowrap;
+  opacity: 0; /* Set the initial opacity to 0 */
+  transition: opacity 0.5s ease;
+}
+
+.button:hover .button-text,
+.button.clicked .button-text {
+  opacity: 1;
+}
+
+.button:hover,
+.button.clicked{
+  background-color: var(--primary-color);
+  box-shadow: 0 2px 4px rgba(255, 255, 255, 0.2); /* Optional: Add shadow for a 3D effect */
+}
+
+.button.clicked{
+  border: 1px ridge var(--secondary-color);
+}
+
+.button:hover .about-us,
+.button.clicked .about-us{
+  background-image: url('../../assets/images/--secondary-color.png');
+  mask-image: url('../../assets/images/about-us.png'); /* Replace 'path-to-your-black-icon.png' with the actual path to your black icon image */
+  mask-size: cover;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}
+
+.button:hover .mission-statement,
+.button.clicked .mission-statement{
+  background-image: url('../../assets/images/--secondary-color.png');
+  mask-image: url('../../assets/images/mission-statement.png'); /* Replace 'path-to-your-black-icon.png' with the actual path to your black icon image */
+  mask-size: cover;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}
+
+.button:hover .developers,
+.button.clicked .developers{
+  background-image: url('../../assets/images/--secondary-color.png');
+  mask-image: url('../../assets/images/developers.png'); /* Replace 'path-to-your-black-icon.png' with the actual path to your black icon image */
+  mask-size: cover;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}
+
+.button:hover .faqs,
+.button.clicked .faqs{
+  background-image: url('../../assets/images/--secondary-color.png');
+  mask-image: url('../../assets/images/faqs.png'); /* Replace 'path-to-your-black-icon.png' with the actual path to your black icon image */
+  mask-size: cover;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}
+
+.button:hover .feedback,
+.button.clicked .feedback{
+  background-image: url('../../assets/images/--secondary-color.png');
+  mask-image: url('../../assets/images/feedback.png'); /* Replace 'path-to-your-black-icon.png' with the actual path to your black icon image */
+  mask-size: cover;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}
+
+/* Add this style for the popup-above-button class to position pop-ups above buttons */
+.popups-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  margin-bottom: 0.75vh;
+}
+
+.popup-window {
+  opacity: 0;
+  pointer-events: none; /* Disable interactions with hidden pop-ups */
+  transition: opacity 0.5s ease; /* Add a 0.5-second fade-in/out transition */
+}
+
+.popup-window.show {
+  opacity: 1;
+  pointer-events: auto; /* Enable interactions with visible pop-ups */
+}
+
+.page {
+  margin: 0;
+  padding: 0;
+  height: 85vh;
+  width: 100%;
+}
+

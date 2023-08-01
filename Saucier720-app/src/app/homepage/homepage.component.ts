@@ -6,14 +6,42 @@ import { AppComponent } from '../app.component';
   templateUrl: './homepage.component.html',
   styleUrls: ['./homepage.component.scss']
 })
-export class HomePageComponent {
 
-// used to determine which component to display
-  landingPageActive: boolean;
-  userDashboardActive: boolean;
+export class HomePageComponent{
+  buttonsVisible: boolean = false;
+  isComponentReady = false;
 
-  constructor(private appComponent: AppComponent) {
-    this.landingPageActive = !appComponent.getAuthService().isLoggedIn();
-    this.userDashboardActive = appComponent.getAuthService().isLoggedIn();
+
+  onLogoGenerationComplete(generationComplete: boolean) {
+    if (generationComplete) {
+      // The logo generation is complete, you can now trigger the buttons generation or their appearance.
+      // For example, you can set a flag to control their visibility:
+      this.buttonsVisible = true;
+      this.isComponentReady = true;
+    }
   }
+
+activeButton: string = '';
+hoveredButton: string = '';
+
+isButtonClicked(buttonName: string): boolean {
+  return this.activeButton === buttonName;
+}
+
+onButtonClick(buttonName: string): void {
+  this.activeButton = this.activeButton === buttonName ? '' : buttonName;
+}
+
+onButtonHover(buttonName: string): void {
+  this.hoveredButton = buttonName;
+}
+
+onButtonLeave(buttonName: string): void {
+  this.hoveredButton = '';
+}
+
+isButtonHovered(buttonName: string): boolean {
+  return this.hoveredButton === buttonName;
+}
+
 }
