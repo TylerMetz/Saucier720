@@ -8,11 +8,21 @@ import { AppComponent } from '../app.component';
 })
 
 export class HomePageComponent{
+
+  // used to determine which component to display
+  noUserActive: boolean;
+  userActive: boolean;
+
+  constructor(private appComponent: AppComponent) {
+    this.noUserActive = !appComponent.getAuthService().isLoggedIn();
+    this.userActive = appComponent.getAuthService().isLoggedIn();
+  }
+
   buttonsVisible: boolean = false;
   isComponentReady = false;
 
 
-  onLogoGenerationComplete(generationComplete: boolean) {
+  onGenerationComplete(generationComplete: boolean) {
     if (generationComplete) {
       // The logo generation is complete, you can now trigger the buttons generation or their appearance.
       // For example, you can set a flag to control their visibility:
