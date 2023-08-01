@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Output, EventEmitter, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/core/services/Auth/auth.service';
 
 @Component({
@@ -7,6 +7,14 @@ import { AuthService } from 'src/app/core/services/Auth/auth.service';
     styleUrls:[ './user-dashboard.component.scss']
   })
 
-  export class UserDashboardComponent {
+  export class UserDashboardComponent implements OnInit{
+    
+    // used for button generation
+    @Output() generationComplete = new EventEmitter<boolean>();
 
+    ngOnInit() {
+      setTimeout(() => {
+        this.generationComplete.emit(true); // event for button generation
+      }, 500); // 500ms temporarily
+    }
   }

@@ -3,7 +3,7 @@
         <div class="centered-container">
         <div class="animation-container scaled-logo">
             <app-animated-logo *ngIf="this.noUserActive" (generationComplete)="onGenerationComplete($event)"></app-animated-logo>
-            <app-user-dashboard *ngIf="this.userActive"></app-user-dashboard>
+            <app-user-dashboard *ngIf="this.userActive" (generationComplete)="onGenerationComplete($event)"></app-user-dashboard>
         </div>
         </div>
         <div class="popups-and-buttons-container">
