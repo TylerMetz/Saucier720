@@ -183,6 +183,14 @@ func AllRecipesWithRelatedItems(userPantry Pantry, allRecipes []Recipe, deals []
 }
 
 func ReturnRecipesWithHighestPercentageOfOwnedIngredients(userPantry Pantry, recipes []Recipe, deals []FoodItem, numRecipesToReturn int) []Recommendation {
+	// cases where there are no recipes, or not enough recipes
+	if len(recipes) == 0 {
+		return []Recommendation{}
+	} else if len(recipes) < numRecipesToReturn {
+		numRecipesToReturn = len(recipes)
+	}
+
+	
 	var returnRecipes []Recipe
 	var returnRecipesPercentages []float64
 
