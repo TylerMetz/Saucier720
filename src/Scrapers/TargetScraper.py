@@ -16,7 +16,7 @@ def scrape_target():
     
     # Set up Selenium options 
     options = Options()
-    #options.add_argument("--headless")
+    options.add_argument("--headless")
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
     options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36")
@@ -32,12 +32,17 @@ def scrape_target():
     driver.get(url)
 
     # Give time to load
-    time.sleep(10)
+    time.sleep(20)
 
     # Get first set of deals
     page_source = driver.page_source
 
+    # Create soup object so we can parse
     soup = BeautifulSoup(page_source,"html.parser")
+
+    # Extract products and deals
+    products = soup.find_all(attrs={'data-test': 'product-title'})
+    deals = soup.find_all(class_="styles__Truncate-sc-1wcknu2-0 hcXfdl")
     
     # Get every other set of deals
     while True:
