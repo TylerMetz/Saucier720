@@ -221,7 +221,10 @@ func ReturnRecipesWithHighestPercentageOfOwnedIngredients(userPantry Pantry, rec
 		resultRecipes = append(resultRecipes, recipeRatios[i].recipe)
 	}
 
-	returnRecommendation := AllRecipesWithRelatedItems(userPantry, resultRecipes, deals);
+	// pass highest rated recipes into func to get related deals and pantry items
+	returnRecommendation := AllRecipesWithRelatedItems(userPantry, resultRecipes, deals)
+	// I realized it was returning the recommendations slice backwards so I inverted it in backend
+	invertSlice(returnRecommendation)
 	return returnRecommendation
 }
 

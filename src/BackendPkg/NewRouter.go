@@ -1093,11 +1093,12 @@ func UpdateAllData(){
 	for UpdatingData {}
 
 	// updates all data that's being routed
+	UpdateUserDashboard() // first because loaded first
 	UpdatePantryData()
 	UpdateRecipeData()
 	UpdateDealsData()
 	UpdateListData()
-	UpdateUserDashboard()
+		
 }
 
 // SHUTDOWN FUNCTIONS
