@@ -182,51 +182,46 @@ func AllRecipesWithRelatedItems(userPantry Pantry, allRecipes []Recipe, deals []
 	return returnRecommendations
 }
 
-func ReturnRecipesWithHighestPercentageOfOwnedIngredients(userPantry Pantry, recipes []Recipe, deals []FoodItem, numRecipesToReturn int) []Recommendation {
-	// cases where there are no recipes, or not enough recipes
-	if len(recipes) == 0 {
-		return []Recommendation{}
-	} else if len(recipes) < numRecipesToReturn {
-		numRecipesToReturn = len(recipes)
-	}
+func ReturnRecipesWithHighestPercentageOfOwnedIngredients(userPantry Pantry, recipesArr []Recipe, numRecipesToReturn int, deals []FoodItem) []Recommendation {
+	recipeRatios := make([]struct {
+		recipe      Recipe
+		ingredientRatio float64
+	}, 0)
 
-	
-	var returnRecipes []Recipe
-	var returnRecipesPercentages []float64
-
-	for i := 0; i < len(recipes); i++ {
-		// get items in pantry
-		var pantryItemsInRecipe []FoodItem
-
-		// check which food items are actually contained in recipe
-		for j := 0; j < len(userPantry.FoodInPantry); j++ {
-			for k := 0; k < len(recipes[i].Ingredients); k++ {
-				if strings.Contains(recipes[i].Ingredients[k], userPantry.FoodInPantry[j].Name) {
-					if !slices.Contains(pantryItemsInRecipe, userPantry.FoodInPantry[j]) {
-						pantryItemsInRecipe = append(pantryItemsInRecipe, userPantry.FoodInPantry[j])
-					}
+	for _, recipe := range recipesArr {
+		ownedIngredients := 0
+		for _, ingredient := range recipe.Ingredients {
+			for _, pantryItem := range userPantry.FoodInPantry {
+				if pantryItem.Name == ingredient {
+					ownedIngredients++
+					break
 				}
 			}
 		}
 
-		// calculate percentage of owned ingredients
-		percentage := float64(len(pantryItemsInRecipe)) / float64(len(recipes[i].Ingredients))
-		returnRecipesPercentages = append(returnRecipesPercentages, percentage)
+		ingredientRatio := float64(ownedIngredients) / float64(len(recipe.Ingredients))
+		recipeRatios = append(recipeRatios, struct {
+			recipe         Recipe
+			ingredientRatio float64
+		}{recipe: recipe, ingredientRatio: ingredientRatio})
 	}
 
-	// sort the percentages
-	sort.Float64s(returnRecipesPercentages)
-
-	// get the top numRecipesToReturn
-	for i := 0; i < numRecipesToReturn; i++ {
-		for j := 0; j < len(recipes); j++ {
-			if returnRecipesPercentages[i] == float64(len(recipes[j].Ingredients))/float64(len(recipes[j].Ingredients)) {
-				returnRecipes = append(returnRecipes, recipes[j])
+	// Sort recipes by ingredient ratio in descending order
+	for i := 0; i < len(recipeRatios)-1; i++ {
+		for j := i + 1; j < len(recipeRatios); j++ {
+			if recipeRatios[i].ingredientRatio < recipeRatios[j].ingredientRatio {
+				recipeRatios[i], recipeRatios[j] = recipeRatios[j], recipeRatios[i]
 			}
 		}
 	}
 
-	returnRecommendation := AllRecipesWithRelatedItems(userPantry, returnRecipes, deals);
+	// Select top numRecipesToReturn recipes
+	var resultRecipes []Recipe
+	for i := 0; i < numRecipesToReturn && i < len(recipeRatios); i++ {
+		resultRecipes = append(resultRecipes, recipeRatios[i].recipe)
+	}
+
+	returnRecommendation := AllRecipesWithRelatedItems(userPantry, resultRecipes, deals);
 	return returnRecommendation
 }
 

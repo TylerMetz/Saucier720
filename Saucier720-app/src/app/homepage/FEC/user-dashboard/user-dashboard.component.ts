@@ -72,7 +72,7 @@ const right = [
   
     public async populateDashboardRecipes(): Promise<void> {
       try {
-        const event: HttpEvent<any> = await lastValueFrom(this.recipeService.getRecipes());
+        const event: HttpEvent<any> = await lastValueFrom(this.userDashboardService.getUserDashboardData());
         switch(event.type) {
           case HttpEventType.Sent:
             console.log('Request sent!');
