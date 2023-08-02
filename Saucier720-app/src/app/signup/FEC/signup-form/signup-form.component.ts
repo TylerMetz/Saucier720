@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { User } from 'src/app/core/interfaces/user';
 import { SignupService } from 'src/app/signup.service';
 import { lastValueFrom } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-signup-form',
@@ -15,7 +16,7 @@ export class SignupFormComponent {
   userName: string = '';
   password: string = '';
 
-  constructor(private signupService: SignupService) {}
+  constructor(private signupService: SignupService, private router: Router) {}
   
   async signup() {
     const user: User = {
@@ -29,6 +30,7 @@ export class SignupFormComponent {
       console.log(user.UserName)
       const response = await lastValueFrom(this.signupService.signup(user));
       console.log(response);
+      this.router.navigate(['/Login']); // navigate to login page on successful user creation
     } catch (error) {
       console.error(error);
     }
