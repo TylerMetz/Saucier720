@@ -43,6 +43,9 @@ func main() {
 
 				// reset cookie change
 				cookieChanged = false
+
+				// update all of the data once there is a new current user
+				BackendPkg.UpdateAllData()
 			}
 		}
 	}()
