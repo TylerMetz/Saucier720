@@ -32,8 +32,8 @@ func main() {
 				for(BackendPkg.CurrentUser.UserName == prevUser.UserName){
 					if sessionCookie != "" {
 						BackendPkg.CurrentUser = programDatabase.UserFromCookie(sessionCookie)
+						BackendPkg.UpdateAllData()
 						if(prevCookie == sessionCookie){
-							BackendPkg.CurrentUser = programDatabase.UserFromCookie(sessionCookie)
 							break;
 						}
 					}

@@ -310,6 +310,8 @@ func handleLogout(w http.ResponseWriter, r *http.Request, sessionCookie *string)
 		pantryInterface = interfaceRefresh
 		dealsInterface = interfaceRefresh
 		recipesInterface = interfaceRefresh
+		listInterface = interfaceRefresh
+		userDashboardInterface = interfaceRefresh
 		
 	}
 
