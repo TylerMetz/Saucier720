@@ -22,14 +22,6 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.title = "Saucier720-App"
-    this.navigateToHomeIfFromBaseUrl();
-  }
-
-  private navigateToHomeIfFromBaseUrl() {
-    const baseUrl = this.router.url === '/' || this.router.url === '/#' || this.router.url === '/#/';
-    if (baseUrl) {
-      this.router.navigate(['/Home']);
-    }
   }
 
   async logout() {

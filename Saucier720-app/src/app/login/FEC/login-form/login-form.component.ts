@@ -29,7 +29,7 @@ export class LoginFormComponent {
     private cookieService: CookieService
     ) { }
 
-    async setSessionIDAndNavigateToPantry(sessionID: string): Promise<void> {
+    async setSessionIDAndNavigateToHome(sessionID: string): Promise<void> {
       await new Promise<void>((resolve) => {
         this.cookieService.set('sessionID', sessionID, 7, '/', 'localhost', false, 'Lax');
         resolve();
@@ -54,7 +54,7 @@ export class LoginFormComponent {
         console.log('response', response)
         const sessionID = response.body.value;
         console.log("cookie set ", sessionID);
-        this.setSessionIDAndNavigateToPantry(sessionID);
+        this.setSessionIDAndNavigateToHome(sessionID);
 
         // clear all button/checkbox states from session
         localStorage.removeItem('recipeNavBarButtonState');
