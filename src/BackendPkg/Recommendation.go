@@ -182,6 +182,46 @@ func AllRecipesWithRelatedItems(userPantry Pantry, allRecipes []Recipe, deals []
 	return returnRecommendations
 }
 
+func ReturnRecipesWithHighestPercentageOfOwnedIngredients(userPantry Pantry, recipes []Recipe, deals []FoodItem, numRecipesToReturn int) []Recommendation {
+	var returnRecipes []Recipe
+	var returnRecipesPercentages []float64
+
+	for i := 0; i < len(recipes); i++ {
+		// get items in pantry
+		var pantryItemsInRecipe []FoodItem
+
+		// check which food items are actually contained in recipe
+		for j := 0; j < len(userPantry.FoodInPantry); j++ {
+			for k := 0; k < len(recipes[i].Ingredients); k++ {
+				if strings.Contains(recipes[i].Ingredients[k], userPantry.FoodInPantry[j].Name) {
+					if !slices.Contains(pantryItemsInRecipe, userPantry.FoodInPantry[j]) {
+						pantryItemsInRecipe = append(pantryItemsInRecipe, userPantry.FoodInPantry[j])
+					}
+				}
+			}
+		}
+
+		// calculate percentage of owned ingredients
+		percentage := float64(len(pantryItemsInRecipe)) / float64(len(recipes[i].Ingredients))
+		returnRecipesPercentages = append(returnRecipesPercentages, percentage)
+	}
+
+	// sort the percentages
+	sort.Float64s(returnRecipesPercentages)
+
+	// get the top numRecipesToReturn
+	for i := 0; i < numRecipesToReturn; i++ {
+		for j := 0; j < len(recipes); j++ {
+			if returnRecipesPercentages[i] == float64(len(recipes[j].Ingredients))/float64(len(recipes[j].Ingredients)) {
+				returnRecipes = append(returnRecipes, recipes[j])
+			}
+		}
+	}
+
+	returnRecommendation := AllRecipesWithRelatedItems(userPantry, returnRecipes, deals);
+	return returnRecommendation
+}
+
 
 func min(a, b int) int {
 	if a < b {
@@ -205,7 +245,7 @@ func OutputRecommendations(r []Recommendation) {
 		for j := 0; j < len(r[i].ItemsInPantry); j++ {
 			fmt.Println(r[i].ItemsInPantry[j].Name)
 		}
-		fmt.Println("From Publix:")
+		fmt.Println("From Deals:")
 		for k := 0; k < len(r[i].ItemsOnSale); k++ {
 			fmt.Println(r[i].ItemsOnSale[k].Name)
 		}
