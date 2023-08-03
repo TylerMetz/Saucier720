@@ -6,7 +6,7 @@ import { lastValueFrom } from 'rxjs';
 import { RecipeService } from 'src/app/core/services/recipes/recipe.service';
 import { RecipePost } from 'src/app/core/interfaces/recipe';
 import { UserDashboardService } from 'src/app/core/services/user-dashboard/user-dashboard.service';
-
+import { ImagesService } from 'src/app/core/services/images/images.service';
 
 const left = [
   query(':enter, :leave', style({ position: 'absolute'}), { optional: true }),
@@ -69,6 +69,7 @@ const right = [
     constructor(
       private recipeService: RecipeService,
       private userDashboardService: UserDashboardService,
+      private imagesService: ImagesService,
     ) {}
   
     public async populateDashboardRecipes(): Promise<void> {
@@ -101,6 +102,22 @@ const right = [
     calculateRecipeIngredientsOwnedPercentage(recipeIndex: number): number {
       const percentage = (this.recipes[recipeIndex].ItemsInPantry.length / this.recipes[recipeIndex].R.ingredients.length) * 100;
       return Math.round(percentage);
+    }
+
+    searchImage(recipeTitle: string): string{
+      let imageUrl = '';
+      this.imagesService.searchImage(recipeTitle).subscribe((data: any) => {
+        if (data.photos && data.photos.length > 0) {
+          imageUrl = data.photos[0].src.large;
+        }
+      });
+      return imageUrl;
+    }
+
+    getImages(recipes: RecipePost[]): void {
+      recipes.forEach(recipe => {
+        recipe.R.pictureLink = this.searchImage(recipe.R.title);
+      });
     }
 
     // animation functions 

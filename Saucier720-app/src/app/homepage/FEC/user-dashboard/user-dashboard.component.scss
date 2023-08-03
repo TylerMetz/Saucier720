@@ -2,7 +2,6 @@
     position: relative;
     text-align: center;
     overflow: hidden;
- 
 }
 
 .highlighted-recipes-box {
@@ -14,7 +13,17 @@
     text-align: center;
     overflow: hidden;
     margin-bottom: 1.5vh;
+    padding: 2vh;
   }
+
+  .recipe-container {
+    padding: 0 5px; /* Add padding to create space on the left and right */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+  
 
 /* Add styles for the hover title */
 .hover-title {
@@ -70,11 +79,23 @@
     font-size: 1.3vw;
   }
   
-  .recipe-container {
-    padding: 0 5px; /* Add padding to create space on the left and right */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
+
+
+  .recipe-card-button {
+    position: absolute;
+    bottom: 1.5vh;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.recipe-card-button:hover{
+    background-color: var(--text-color);
+    color: var(--primary-color);
   }
-  
