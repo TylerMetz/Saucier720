@@ -57,6 +57,19 @@ def scrapePage(driver: webdriver.Chrome):
 
     product_cards = soup.find_all('div', {'class': 'hCeGXD'})
 
+    for card in product_cards:
+        
+        product = card.find('a', class_='styles__StyledTitleLink-sc-14ktig2-1').text
+        if card.find('div', class_='styles__Truncate-sc-1wcknu2-0 hcXfd'):
+            deal = card.find('div', class_='styles__Truncate-sc-1wcknu2-0 hcXfd').text
+        else:
+            deal = card.find('div', class_='styles__Truncate-sc-1wcknu2-0').text 
+
+        print(product)
+        print(deal)
+
+    
+
     time.sleep(5)
 
     
