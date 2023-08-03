@@ -9,12 +9,13 @@
                 </div>
             </ng-container>
         </div>
-        
-        <button class="recipe-card-button" (click)="sizeRecipePreviewWindow()">Show Recipe Card</button>
-        <div class="arrows-container">
-            <button (click)="onPrevious()"><i class="fa fa-arrow-left"></i></button>
-            <button (click)="onNext()"><i class="fa fa-arrow-right"></i></button>
-        </div>
+        <div class="buttons-wrapper">
+            <button class="recipe-card-button" (click)="sizeRecipePreviewWindow()">Show Recipe Card</button>
+            <div class="arrows-container">
+                <button (click)="onPrevious()"><i class="fa fa-arrow-left"></i></button>
+                <button (click)="onNext()"><i class="fa fa-arrow-right"></i></button>
+            </div>
+        </div>  
     </div>
     <span class="hover-title">Return to some of your favorites!</span>
 </div>
