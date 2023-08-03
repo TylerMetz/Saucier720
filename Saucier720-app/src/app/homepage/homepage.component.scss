@@ -20,24 +20,34 @@
   align-items: center; /* Center content horizontally */
 }
 
-
 /* Styles for the landing page container */
 .centered-container {
-  /* Add Flexbox properties to center the logo horizontally and vertically */
-  position: relative;
+  /* Use Flexbox properties to center the logo horizontally and align items to the top */
   display: flex;
+  flex-direction: column; /* Stack children vertically */
+  align-items: center; /* Center items horizontally */
+  justify-content: flex-start; /* Align items to the top */
+
+  position: relative;
   top: 0;
   width: 100%;
   margin: 0;
   padding: 0;
-  justify-content: center;
   margin-bottom: 1vh;
 }
 
 
+.top-content-container{
+  padding-top: 0;
+  top: 0;
+  margin-top: 0;
+  vertical-align: top;
+}
+
 .animation-container.scaled-logo {
   /* Apply the scaling effect using the 'transform' property */
   transform: scale(0.85); /* Adjust the scale factor as needed */
+
 }
 
 

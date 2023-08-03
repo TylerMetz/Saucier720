@@ -5,8 +5,8 @@
 }
 
 .highlighted-recipes-box {
-    width: 50vw;
-    height: 30vh;
+    width: 42.5vw;
+    height: 25.5vh;
     background-color: var(--secondary-color);
     border-radius: 10px;
     position: relative;
@@ -21,8 +21,8 @@
   }
   
   .highlighted-recipes-box.expanded {
-    width: 100vw;
-    height: 100vh;
+    width: 85vw;
+    height: 85vh;
   }
 
   .recipe-container {
@@ -42,7 +42,7 @@
     position: relative;
     text-align: center;
     transition: opacity 0.5s ease;
-    font-size: 1.75vw;
+    font-size: 1.5vw;
 }
 
 /* Show the hover title on hover */
@@ -52,7 +52,7 @@
 
   
   h3 {
-    font-size: 2.5vw; /* Make the name larger, adjust as needed */
+    font-size: 2.1vw; /* Make the name larger, adjust as needed */
     margin-bottom: 0.5vh; /* Adjust the margin as needed */
     color: var(--header-color);
     border-radius: 50%;
@@ -60,7 +60,7 @@
   }
 
   p{
-    font-size: 1.5vw;
+    font-size: 1.25vw;
     margin-top: 1vh;
     color: var(--text-color);
   }
