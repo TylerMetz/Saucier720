@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, OnInit, Renderer2, ElementRef} from '@angular/core';
+import { Component, Output, EventEmitter, OnInit, Renderer2, ElementRef, ViewChild} from '@angular/core';
 import { AuthService } from 'src/app/core/services/Auth/auth.service';
 import { trigger, transition, query, style, animate, group } from '@angular/animations';
 import { HttpEvent, HttpEventType } from '@angular/common/http';
@@ -53,6 +53,9 @@ const right = [
     
     // used for button generation
     @Output() generationComplete = new EventEmitter<boolean>();
+
+    // button
+    @ViewChild('recipeCardButton') recipeCardButton!: ElementRef;
 
     async ngOnInit() {
       await this.populateDashboardRecipes();
@@ -135,8 +138,10 @@ const right = [
       if (recipeCardPreview) {
         if (recipeCardPreview.classList.contains('expanded')) {
           recipeCardPreview.classList.remove('expanded');
+          this.recipeCardButton.nativeElement.innerText = 'Expand Recipe';
         } else {
           recipeCardPreview.classList.add('expanded');
+          this.recipeCardButton.nativeElement.innerText = 'Collapse Recipe';
         }
       }
     }
