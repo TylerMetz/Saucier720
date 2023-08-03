@@ -61,6 +61,7 @@ const right = [
       }, 500); // 500ms temporarily
     }
 
+    showTitle: boolean = false;
     recipes: RecipePost[] = [];
     currentRecipe!: RecipePost;
     counter: number = 0;

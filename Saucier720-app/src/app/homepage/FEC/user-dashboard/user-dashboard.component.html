@@ -1,16 +1,19 @@
-<div class="highlighted-recipes-box">
-    <div [@animSlider]="counter">
-      <ng-container *ngFor="let o of recipes; let i=index">
-        <div class="recipe-container" *ngIf="i===counter">
-          <h3>{{ recipes[i].R.title }}</h3>
-          <p>{{ "You have " + calculateRecipeIngredientsOwnedPercentage(i) + "% of the recipe ingredients!" }}</p>
-          <button>Show Recipe Card</button>
+<div class = "user-dashboard">
+    <div class="highlighted-recipes-box" (mouseenter)="showTitle = true" (mouseleave)="showTitle = false">
+        <div [@animSlider]="counter">
+            <ng-container *ngFor="let o of recipes; let i=index">
+                <div class="recipe-container" *ngIf="i===counter">
+                    <h3>{{ recipes[i].R.title }}</h3>
+                    <p>{{ "You have " + calculateRecipeIngredientsOwnedPercentage(i) + "% of the recipe ingredients!" }}</p>
+                    <button>Show Recipe Card</button>
+                </div>
+            </ng-container>
         </div>
-      </ng-container>
-    </div>
 
-    <div class="arrows-container">
-        <button (click)="onPrevious()"><i class="fa fa-arrow-left"></i></button>
-        <button (click)="onNext()"><i class="fa fa-arrow-right"></i></button>
+        <div class="arrows-container">
+            <button (click)="onPrevious()"><i class="fa fa-arrow-left"></i></button>
+            <button (click)="onNext()"><i class="fa fa-arrow-right"></i></button>
+        </div>
     </div>
+    <span class="hover-title">Return to some of your favorites!</span>
 </div>

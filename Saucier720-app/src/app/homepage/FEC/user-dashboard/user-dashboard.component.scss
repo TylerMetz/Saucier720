@@ -1,3 +1,10 @@
+.user-dashboard{
+    position: relative;
+    text-align: center;
+    overflow: hidden;
+ 
+}
+
 .highlighted-recipes-box {
     width: 50vw;
     height: 30vh;
@@ -6,12 +13,30 @@
     position: relative;
     text-align: center;
     overflow: hidden;
+    margin-bottom: 1.5vh;
   }
+
+/* Add styles for the hover title */
+.hover-title {
+    color: var(--text-color);
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    position: relative;
+    text-align: center;
+    transition: opacity 0.5s ease;
+    font-size: 1.75vw;
+}
+
+/* Show the hover title on hover */
+.user-dashboard:hover .hover-title {
+    opacity: 1;
+}
+
   
   h3 {
-    font-size: 2vw; /* Make the name larger, adjust as needed */
+    font-size: 2.5vw; /* Make the name larger, adjust as needed */
     margin-bottom: 0.5vh; /* Adjust the margin as needed */
-    color: var(--text-color);
+    color: var(--header-color);
     border-radius: 50%;
     width: 100%; 
   }
