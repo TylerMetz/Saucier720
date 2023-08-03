@@ -30,19 +30,11 @@ def scrape_target():
     wait = WebDriverWait(driver, 10)
     driver.maximize_window()
     driver.get(url)
-
+    driver.execute_script("document.body.style.zoom='25%'")
+    
     # Give time to load
     time.sleep(20)
-
-    # Get first set of deals
-    page_source = driver.page_source
-
-    # Create soup object so we can parse
-    soup = BeautifulSoup(page_source,"html.parser")
-
-    # Extract products and deals
-    products = soup.find_all(attrs={'data-test': 'product-title'})
-    deals = soup.find_all(class_="styles__Truncate-sc-1wcknu2-0 hcXfdl")
+    scrapePage(driver)
     
     # Get every other set of deals
     while True:
@@ -54,6 +46,20 @@ def scrape_target():
         except:
             break
 
+def scrapePage(driver: webdriver.Chrome):
+    driver.execute_script(f"window.scrollBy(0, 1000);")
+    time.sleep(5)
+    page_source = driver.page_source
+
+    soup = BeautifulSoup(page_source,"html.parser")
+    #products = soup.find_all(attrs={'data-test': 'product-title'})
+    #deals = soup.find_all('div', {'class': 'h-display-flex'})
+
+    product_cards = soup.find_all('div', {'class': 'hCeGXD'})
+
+    time.sleep(5)
+
+    
 def main():
     scrape_target()
 
