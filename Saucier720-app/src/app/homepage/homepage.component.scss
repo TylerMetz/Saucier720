@@ -3,8 +3,10 @@
 .page {
   margin: 0 auto;
   padding: 0;
-  height: 85vh;
   width: 100%;
+  display: flex;
+  align-items: center; /* Vertically align content */
+  justify-content: center; /* Horizontally align content */
 }
 
 .interior-container{
@@ -13,6 +15,9 @@
   position: relative;
   width: 100%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center content horizontally */
 }
 
 
@@ -26,6 +31,7 @@
   margin: 0;
   padding: 0;
   justify-content: center;
+  margin-bottom: 1vh;
 }
 
 
@@ -48,8 +54,7 @@
 }
 
 .popups-and-buttons-container{
-  position: absolute;
-  bottom: 0;
+  position: relative;
   width: 100%;
 }
 
