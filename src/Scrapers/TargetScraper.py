@@ -63,10 +63,11 @@ def scrapePage(driver: webdriver.Chrome):
         if card.find('div', class_='styles__Truncate-sc-1wcknu2-0 hcXfd'):
             deal = card.find('div', class_='styles__Truncate-sc-1wcknu2-0 hcXfd').text
         else:
-            deal = card.find('div', class_='styles__Truncate-sc-1wcknu2-0').text 
+            deal = card.find('div', class_='h-text-red').text 
 
-        print(product)
-        print(deal)
+        print("Product: ", product)
+        print("Deal: ", deal)
+        print()
 
     
 
