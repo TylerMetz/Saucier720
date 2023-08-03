@@ -54,4 +54,15 @@ isButtonHovered(buttonName: string): boolean {
   return this.hoveredButton === buttonName;
 }
 
+getTopMargin(): number {
+  // Define your margin values based on conditions
+  if (this.noUserActive) {
+    return 15; // Adjust the value as needed
+  } else if (this.userActive) {
+    return 10.25; // Adjust the value as needed
+  } else {
+    return 0; // Default margin value
+  }
+}
+
 }

@@ -8,7 +8,7 @@
                 <app-user-dashboard *ngIf="this.userActive" (generationComplete)="onGenerationComplete($event)"></app-user-dashboard>
             </div>
         </div>
-        <div class="popups-and-buttons-container">
+        <div class="popups-and-buttons-container" [style.margin-top.vh]="getTopMargin()">
             <div class="popups-container">
             <div class="popup-window" [class.show]="isButtonClicked('aboutUs')  || isButtonHovered('aboutUs')">
                 <app-about-us></app-about-us>
