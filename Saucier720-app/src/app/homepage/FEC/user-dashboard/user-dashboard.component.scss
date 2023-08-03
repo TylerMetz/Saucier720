@@ -17,11 +17,12 @@
     transition: all 0.5s ease;
     display: flex;
     flex-direction: column;
+    padding-bottom: 0;
   }
   
   .highlighted-recipes-box.expanded {
     width: 100vw;
-    height: 60vh;
+    height: 100vh;
   }
 
   .recipe-container {
@@ -30,7 +31,6 @@
     flex-direction: column;
     align-items: center;
     width: 100%;
-    z-index: 0;
   }
   
 
@@ -68,7 +68,6 @@
   .buttons-wrapper{
     position: relative;
     height: 100%;
-    z-index: 1;
   }
   
   /* Styling for navigation arrows */
@@ -91,22 +90,20 @@
     justify-content: space-between;
     width: 100%; /* Take the full width of .popup */
     position: absolute;
-    bottom: 0.3vw; /* Adjust the bottom position as needed */
-    left: 0; /* Align the arrows to the left edge */
+    bottom: 0; /* Adjust the bottom position as needed */
+    left: 0;
   }
   
   .fa-arrow-left,
   .fa-arrow-right {
     font-size: 1.3vw;
+    bottom: 0;
   }
   
 
 
   .recipe-card-button {
-    position: absolute;
-    bottom: 1.5vh;
-    left: 50%;
-    transform: translateX(-50%);
+    position: relative;
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
@@ -114,6 +111,7 @@
     color: var(--text-color);
     font-size: 20px;
     cursor: pointer;
+    margin-bottom: 1vh;
 }
 
 .recipe-card-button:hover{
