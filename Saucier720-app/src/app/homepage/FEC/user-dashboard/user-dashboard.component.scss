@@ -105,3 +105,35 @@
     background-color: var(--text-color);
     color: var(--primary-color);
   }
+
+  .error-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--secondary-color);
+    padding: 1.852vw; /* 20px converted to vw */
+    border-radius: 0.925vw; /* 10px converted to vw */
+    color: var(--text-color);
+    margin-top: 1.852vh; /* 20px converted to vh */
+}
+
+.error-icon {
+    font-size: 3.333vw; /* 36px converted to vw */
+    margin-right: 1.852vw; /* 20px converted to vw */
+}
+
+.error-text {
+    text-align: center;
+}
+
+.error-text h3 {
+    margin: 0;
+    font-size: 2.222vw; /* 24px converted to vw */
+    font-weight: bold;
+    margin-bottom: 0.925vw; /* 10px converted to vw */
+}
+
+.error-text p {
+    margin: 0;
+    font-size: 1.481vw; /* 16px converted to vw */
+}

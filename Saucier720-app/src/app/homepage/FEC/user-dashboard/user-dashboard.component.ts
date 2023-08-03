@@ -65,6 +65,7 @@ const right = [
     recipes: RecipePost[] = [];
     currentRecipe!: RecipePost;
     counter: number = 0;
+    hasError: boolean = false;
   
     constructor(
       private recipeService: RecipeService,
@@ -91,7 +92,13 @@ const right = [
             let recipeStr = JSON.stringify(event.body);
             let parsedRecipes = JSON.parse(recipeStr);
             this.recipes = parsedRecipes;
-            this.currentRecipe = this.recipes[this.counter];
+            // check if recipes are there
+            if (!this.recipes) {
+              this.hasError = true; // Set the error flag
+            } else {
+              this.hasError = false; // Clear the error flag
+              this.currentRecipe = this.recipes[this.counter];
+            }
             break;
         }
       } catch (error) {

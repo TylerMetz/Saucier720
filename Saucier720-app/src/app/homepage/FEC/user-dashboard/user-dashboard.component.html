@@ -1,3 +1,4 @@
+<ng-container *ngIf="!hasError; else errorMessage">
 <div class = "user-dashboard">
     <div class="highlighted-recipes-box" (mouseenter)="showTitle = true" (mouseleave)="showTitle = false">
         <div [@animSlider]="counter">
@@ -16,3 +17,16 @@
     </div>
     <span class="hover-title">Return to some of your favorites!</span>
 </div>
+</ng-container>
+
+<ng-template #errorMessage>
+    <!-- Render the error message -->
+    <div class="error-message">
+      <div class="error-icon">
+        <i class="fa fa-exclamation-circle"></i>
+      </div>
+      <div class="error-text">
+        <p>Welcome to MealDealz! Favorite recipes to see them here.</p>
+      </div>
+    </div>
+  </ng-template>
