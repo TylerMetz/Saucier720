@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, OnInit} from '@angular/core';
+import { Component, Output, EventEmitter, OnInit, Renderer2, ElementRef} from '@angular/core';
 import { AuthService } from 'src/app/core/services/Auth/auth.service';
 import { trigger, transition, query, style, animate, group } from '@angular/animations';
 import { HttpEvent, HttpEventType } from '@angular/common/http';
@@ -71,6 +71,8 @@ const right = [
       private recipeService: RecipeService,
       private userDashboardService: UserDashboardService,
       private imagesService: ImagesService,
+      private renderer: Renderer2, 
+      private elementRef: ElementRef
     ) {}
   
     public async populateDashboardRecipes(): Promise<void> {
@@ -126,6 +128,19 @@ const right = [
         recipe.R.pictureLink = this.searchImage(recipe.R.title);
       });
     }
+
+    sizeRecipePreviewWindow() {
+      const recipeCardPreview = this.elementRef.nativeElement.querySelector('.highlighted-recipes-box');
+      
+      if (recipeCardPreview) {
+        if (recipeCardPreview.classList.contains('expanded')) {
+          recipeCardPreview.classList.remove('expanded');
+        } else {
+          recipeCardPreview.classList.add('expanded');
+        }
+      }
+    }
+    
 
     // animation functions 
     onNext() {

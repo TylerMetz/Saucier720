@@ -1,6 +1,6 @@
 <ng-container *ngIf="!hasError; else errorMessage">
 <div class = "user-dashboard">
-    <div class="highlighted-recipes-box" (mouseenter)="showTitle = true" (mouseleave)="showTitle = false">
+    <div class="highlighted-recipes-box">
         <div [@animSlider]="counter">
             <ng-container *ngFor="let o of recipes; let i=index">
                 <div class="recipe-container" *ngIf="i===counter">
@@ -9,7 +9,8 @@
                 </div>
             </ng-container>
         </div>
-        <button class="recipe-card-button">Show Recipe Card</button>
+        
+        <button class="recipe-card-button" (click)="sizeRecipePreviewWindow()">Show Recipe Card</button>
         <div class="arrows-container">
             <button (click)="onPrevious()"><i class="fa fa-arrow-left"></i></button>
             <button (click)="onNext()"><i class="fa fa-arrow-right"></i></button>
