@@ -192,7 +192,7 @@ func ReturnRecipesWithHighestPercentageOfOwnedIngredients(userPantry Pantry, rec
 		ownedIngredients := 0
 		for _, ingredient := range recipe.Ingredients {
 			for _, pantryItem := range userPantry.FoodInPantry {
-				if pantryItem.Name == ingredient {
+				if strings.Contains(ingredient, pantryItem.Name) {
 					ownedIngredients++
 					break
 				}
@@ -223,7 +223,7 @@ func ReturnRecipesWithHighestPercentageOfOwnedIngredients(userPantry Pantry, rec
 
 	// pass highest rated recipes into func to get related deals and pantry items
 	returnRecommendation := AllRecipesWithRelatedItems(userPantry, resultRecipes, deals)
-	// I realized it was returning the recommendations slice backwards so I inverted it in backend
+	
 	invertSlice(returnRecommendation)
 	return returnRecommendation
 }
