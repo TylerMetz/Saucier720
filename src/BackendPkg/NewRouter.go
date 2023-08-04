@@ -73,11 +73,7 @@ func handleListPage(response http.ResponseWriter, request *http.Request) {
 func RoutData(){
 
     // setup all global variables to be routed
-	go func(){
-		for{
-			if(!UpdatingData) { UpdateAllData() }
-		}
-	}()
+	UpdateAllData();
 	
     // create server
     server := &http.Server{
@@ -280,6 +276,7 @@ func handleLogout(w http.ResponseWriter, r *http.Request, sessionCookie *string)
 		pantryInterface = interfaceRefresh
 		dealsInterface = interfaceRefresh
 		recipesInterface = interfaceRefresh
+		listInterface = interfaceRefresh
 		
 	}
 
