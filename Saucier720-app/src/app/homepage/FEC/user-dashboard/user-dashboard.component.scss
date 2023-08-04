@@ -14,14 +14,14 @@
     overflow: hidden;
     margin-bottom: 1.5vh;
     padding: 2vh;
-    transition: all 0.5s ease;
+    transition: all 1s ease;
     display: flex;
     flex-direction: column;
     padding-bottom: 0;
   }
   
   .highlighted-recipes-box.expanded {
-    width: 85vw;
+    width: 100vw;
     height: 85vh;
   }
 
@@ -149,4 +149,43 @@
 .error-text p {
     margin: 0;
     font-size: 1.481vw; /* 16px converted to vw */
+}
+
+// recipe card styling
+.card-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-wrap: wrap;
+  max-height: 60vh; /* Set the maximum height for the container */
+  overflow-y: auto; /* Enable vertical scrollbar when content overflows */
+}
+
+.recipe-body {
+  display: flex;
+  flex-direction: row;
+}
+
+.recipe-title {
+  text-align: center;
+}
+
+.recipe-ingredients-header {
+  text-align: center;
+}
+
+.recipe-deals-header {
+  text-align: center;
+}
+
+.recipe-instructions-header {
+  text-align: center;
+}
+.recipe-pantry-header {
+  text-align: center;
+}
+
+.recipe-related-header h2{
+  text-align: center;
+  font-size: 1.25vw;
 }

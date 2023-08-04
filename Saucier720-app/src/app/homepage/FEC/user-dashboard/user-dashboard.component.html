@@ -6,6 +6,79 @@
                 <div class="recipe-container" *ngIf="i===counter">
                     <h3>{{ recipes[i].R.title }}</h3>
                     <p>{{ "You have " + calculateRecipeIngredientsOwnedPercentage(i) + "% of the recipe ingredients!" }}</p>
+                    <div class="card-container" *ngIf="showRecipe">
+                          <div class="recipe-body">
+                              <div class="recipe-ingredients">
+                                <div class="recipe-ingredients-content">
+                                  <div class="recipe-ingredients-header">
+                                    <h2>Ingredients</h2>
+                                  </div>
+                                  <div *ngIf="recipes && recipes.length > 0" class="recipe-ingredients">
+                                    <ul>
+                                      <ng-container *ngFor="let ingredient of removeQuotesAndBrackets(recipes[counter].R.ingredients)">
+                                        <ng-container>
+                                          <li>{{ ingredient }}</li>
+                                        </ng-container>
+                                      </ng-container>
+                                    </ul>
+                                  </div>
+                                </div>       
+                              </div>
+                              <div class="recipe-instructions">
+                                <div class="recipe-instructions-content">
+                                <div class="recipe-instructions-header">
+                                  <h2>Instructions</h2>
+                                </div>
+                                <div *ngIf="recipes && recipes.length > 0" class="recipe-instructions">
+                                  <div *ngIf="recipes[counter].R.instructions" class="recipe-instructions">
+                                    <ol>
+                                      <ng-container *ngFor="let sentence of recipes[counter].R.instructions.split('.')">
+                                        <li *ngIf="sentence.trim().length >= 2">
+                                          <span>{{ sentence.trim() }}</span>
+                                        </li>
+                                      </ng-container>
+                                    </ol>
+                                  </div>
+                                </div>          
+                                </div>
+                              </div>
+                              
+                              <div class="recipe-pantry">
+                                <div class="recipe-pantry-content">
+                                  <div class="recipe-related-header">
+                                    <h2>Items in Pantry:</h2>
+                                  </div>
+                                  <div *ngIf="recipes && recipes.length > 0" class="recipe-pantry">
+                                    <ul>
+                                      <ng-container *ngFor="let ingredient of recipes[counter].ItemsInPantry">
+                                        <li> {{ ingredient.Name }}</li>
+                                      </ng-container>
+                                    </ul>
+                                  </div> 
+                                </div>
+                              </div>
+                    
+                              <div class="recipe-deals">
+                                <div class="recipe-deals-content">
+                                  <div class="recipe-related-header">
+                                    <h2>Related deals:</h2>
+                                  </div>
+                                  <div *ngIf="recipes && recipes.length > 0" class="recipe-deals">
+                                    <ul>
+                                      <ng-container *ngFor="let ingredient of recipes[counter].ItemsOnSale">
+                                        <li> {{ ingredient.Name }}</li>
+                                      </ng-container>
+                                    </ul>
+                                  </div> 
+                                </div>
+                              </div>
+                              <div class="recipe-picture">
+                                <div *ngIf="recipes && recipes.length > 0" class="recipe-picture">
+                                  {{ recipes[counter].R.pictureLink }}
+                                </div>
+                              </div>
+                          </div>
+                    </div>
                 </div>
             </ng-container>
         </div>

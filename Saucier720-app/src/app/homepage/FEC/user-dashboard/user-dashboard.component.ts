@@ -69,6 +69,7 @@ const right = [
     currentRecipe!: RecipePost;
     counter: number = 0;
     hasError: boolean = false;
+    showRecipe: boolean = false;
   
     constructor(
       private recipeService: RecipeService,
@@ -139,13 +140,29 @@ const right = [
         if (recipeCardPreview.classList.contains('expanded')) {
           recipeCardPreview.classList.remove('expanded');
           this.recipeCardButton.nativeElement.innerText = 'Expand Recipe';
+          this.showRecipe = false;
         } else {
           recipeCardPreview.classList.add('expanded');
           this.recipeCardButton.nativeElement.innerText = 'Collapse Recipe';
+          this.showRecipe = true;
         }
       }
     }
     
+    public getAuthorCreditFromRecipeID(recipeID: string): string {
+      // used to get recipe author from recipeID
+      const author = recipeID.replace(/\d+/g, '');
+      if (author === 'json') {
+        return 'MealDealz Classic Recipe';
+      } else {
+        return 'Created by ' + author;
+      }
+    }
+
+    removeQuotesAndBrackets(arr: string[]): string[] {
+      const regex = /["\[\]]/g; // Matches any occurrence of ", [, or ] globally
+      return arr.map(str => str.replace(regex, '')); // Replace all matches in each string in the array
+    }
 
     // animation functions 
     onNext() {
@@ -153,7 +170,7 @@ const right = [
         this.counter++;
       } else{
         this.counter = 0;
-      }
+      }      
     }
     onPrevious() {
       if (this.counter > 0) {
@@ -162,6 +179,8 @@ const right = [
         this.counter = this.recipes.length - 1;
       }
     }
+
+    
     
 }
 
