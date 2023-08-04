@@ -61,7 +61,39 @@ def scrape_aldi():
     # Select the 'Chilled' Button to make list appear and first set of deals load
     select_chilled = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "#FusionApp > div.sc-1jkt2oq-0-content__BaseContentPage-gVrcAy.kkrzRm > div > div > div > div:nth-child(1) > a > div.RootList__Title-sc-11zih5d-6.bXcopH")))
     select_chilled.click()
+    scrape_page(driver, 1)
     time.sleep(5)
+
+    #tab_button = [2,3,4,6]
+
+    #for tab in tab_button:
+        
+    # #DeptNaviLeft > ul > li:nth-child(2) > a > div
+
+def scrape_page(driver: webdriver.Chrome, tab: int):
+    if tab != 1:
+        wait = WebDriverWait(driver, 5)
+        select_page = wait.until(EC.element_selection_state_to_be((By.CSS_SELECTOR, "#DeptNaviLeft > ul > li:nth-child(" + tab + ") > a > div")))
+        select_page.click()
+
+    time.sleep(3)
+    page_source = driver.page_source
+
+    soup = BeautifulSoup(page_source, "html.parser")
+
+    # Grab image element 
+    img_elements = soup.find_all("img", class_="ListingMini_Image")
+    div_elements = soup.find_all("div", class_="sc-169d9gp-0-styled__Deal-kAKkkm fwsHHL")
+
+    for img, div in zip(img_elements, div_elements):
+        product = img['alt']
+        deal = div.find_all('span')[1]
+        deal = deal.get_text(strip=True)
+        
+        print("Product: ", product)
+        print("Deal: ", deal)
+        print()
+
 def main():
     scrape_aldi()
 
