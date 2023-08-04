@@ -113,6 +113,9 @@ const right = [
     }
 
     calculateRecipeIngredientsOwnedPercentage(recipeIndex: number): number {
+      if (this.recipes[recipeIndex].ItemsInPantry.length === 0 || this.recipes[recipeIndex].R.ingredients.length === 0) {
+        return 0;
+      }
       const percentage = (this.recipes[recipeIndex].ItemsInPantry.length / this.recipes[recipeIndex].R.ingredients.length) * 100;
       return Math.round(percentage);
     }
