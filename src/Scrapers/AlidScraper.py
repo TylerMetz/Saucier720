@@ -31,6 +31,28 @@ def scrape_aldi():
     driver.maximize_window()
     driver.get(url)
 
+    # Let page load
+    time.sleep(5)
+
+    # Need to switch to iframe elements 
+    iframe = driver.find_element(By.ID, 'shopLocalPlatformFrame')
+    driver.switch_to.frame(iframe)
+
+    # Click search bar 
+    iframe_search_bar = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR,'#locationInput')))
+    iframe_search_bar.click()
+    iframe_search_bar.send_keys("32601")
+    iframe_search_bar.send_keys(Keys.ENTER)
+
+    time.sleep(2)
+
+    # Select store
+    iframe_select = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "#StoreListContainer > div:nth-child(1) > div.Nuep__ButtonsContainer-sc-16nxgew-10.iTUGQX > button")))
+    iframe_select.click()
+
+    # Allow load
+    time.sleep(5)
+
 def main():
     scrape_aldi()
 
