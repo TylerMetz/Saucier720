@@ -21,7 +21,7 @@
   }
   
   .highlighted-recipes-box.expanded {
-    width: 100vw;
+    width: 90vw;
     height: 85vh;
   }
 
@@ -166,26 +166,27 @@
   flex-direction: row;
 }
 
-.recipe-title {
-  text-align: center;
-}
-
-.recipe-ingredients-header {
-  text-align: center;
-}
-
-.recipe-deals-header {
-  text-align: center;
-}
-
-.recipe-instructions-header {
-  text-align: center;
-}
+.recipe-instructions-header,
+.recipe-ingredients-header,
+.recipe-deals-header,
 .recipe-pantry-header {
-  text-align: center;
+  text-align: left;
 }
 
 .recipe-related-header h2{
   text-align: center;
   font-size: 1.25vw;
+}
+
+.recipe-pantry,
+.recipe-deals,
+.recipe-ingredients,
+.recipe-instructions{
+  text-align: left;
+}
+
+.recipe-ingredients,
+.recipe-pantry,
+.recipe-deals{
+  min-width: 10vw;
 }
