@@ -64,27 +64,36 @@ def scrape_aldi():
     scrape_page(driver, 1)
     time.sleep(5)
 
-    #tab_button = [2,3,4,6]
+    # Tab # for each of the following buttons 
+    tab_button = [2,3,4,6]
 
-    #for tab in tab_button:
+    # Run the scrape on each page
+    for tab in tab_button:
+        scrape_page(driver, tab)
+
+    driver.quit()
         
-    # #DeptNaviLeft > ul > li:nth-child(2) > a > div
-
+# Function that actually scrapes
 def scrape_page(driver: webdriver.Chrome, tab: int):
+    # Different conditions for anything not the first page
     if tab != 1:
-        wait = WebDriverWait(driver, 5)
-        select_page = wait.until(EC.element_selection_state_to_be((By.CSS_SELECTOR, "#DeptNaviLeft > ul > li:nth-child(" + tab + ") > a > div")))
+        wait = WebDriverWait(driver, 10)
+        select_page = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "#DeptNaviLeft > ul > li:nth-child(" + str(tab) + ") > a > div")))
         select_page.click()
 
     time.sleep(3)
+
+    # Grab page html
     page_source = driver.page_source
 
+    # Create Beautiful Soup Object
     soup = BeautifulSoup(page_source, "html.parser")
 
     # Grab image element 
     img_elements = soup.find_all("img", class_="ListingMini_Image")
     div_elements = soup.find_all("div", class_="sc-169d9gp-0-styled__Deal-kAKkkm fwsHHL")
 
+    # Grab all deals and products 
     for img, div in zip(img_elements, div_elements):
         product = img['alt']
         deal = div.find_all('span')[1]
