@@ -16,7 +16,7 @@ def scrape_target():
     
     # Set up Selenium options 
     options = Options()
-    options.add_argument("--headless")
+    #options.add_argument("--headless")
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
     options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36")
@@ -33,45 +33,51 @@ def scrape_target():
     driver.execute_script("document.body.style.zoom='25%'")
     
     # Give time to load
-    time.sleep(20)
-    scrapePage(driver)
+    time.sleep(10)
+    scrapePage(driver, True)
     
+    time.sleep(7)
     # Get every other set of deals
     while True:
         try:                                                                                        
             load_more = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR,"#pageBodyContainer > div > div:nth-child(1) > div > div:nth-child(10) > div > div > div > div > div.styles__ProductListGridFadedLoading-sc-u8zdb1-0 > div.styles__StyledRow-sc-wmoju4-0.cbPxiq > div > div.Pagination__RootDiv-sc-sq3l8r-4.bdkChJ > div:nth-child(3) > button")))
             load_more.click()
-            time.sleep(10)
-            page_source = page_source + driver.page_source
+            time.sleep(5)
+            scrapePage(driver, False)
         except:
             break
 
-def scrapePage(driver: webdriver.Chrome):
-    driver.execute_script(f"window.scrollBy(0, 1000);")
+def scrapePage(driver: webdriver.Chrome, startPage: bool):
+    if startPage:
+        driver.execute_script(f"window.scrollBy(0, 1000);")
+    else:
+        driver.execute_script("document.body.style.zoom='25%'")
+        driver.execute_script(f"window.scrollBy(0, -500);")
+
     time.sleep(5)
     page_source = driver.page_source
 
     soup = BeautifulSoup(page_source,"html.parser")
-    #products = soup.find_all(attrs={'data-test': 'product-title'})
-    #deals = soup.find_all('div', {'class': 'h-display-flex'})
 
     product_cards = soup.find_all('div', {'class': 'hCeGXD'})
 
     for card in product_cards:
-        
-        product = card.find('a', class_='styles__StyledTitleLink-sc-14ktig2-1').text
-        if card.find('div', class_='styles__Truncate-sc-1wcknu2-0 hcXfd'):
-            deal = card.find('div', class_='styles__Truncate-sc-1wcknu2-0 hcXfd').text
-        else:
-            deal = card.find('div', class_='h-text-red').text 
+        try:
+            product = card.find(attrs={'data-test': 'product-title'}).text
+            if card.find('div', class_='styles__Truncate-sc-1wcknu2-0 hcXfd'):
+                deal = card.find('div', class_='styles__Truncate-sc-1wcknu2-0 hcXfd').text
+            else:
+                deal = card.find('div', class_='h-text-red').text 
 
-        print("Product: ", product)
-        print("Deal: ", deal)
-        print()
+            print("Product: ", product)
+            print("Deal: ", deal)
+            print()
+        except Exception as e:
+            print("Error:", str(e))
+            continue
 
-    
-
-    time.sleep(5)
+    driver.execute_script(f"window.scrollBy(0, 800);")
+    driver.execute_script("document.body.style.zoom='100%'")
 
     
 def main():
