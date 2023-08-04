@@ -50,9 +50,18 @@ def scrape_aldi():
     iframe_select = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "#StoreListContainer > div:nth-child(1) > div.Nuep__ButtonsContainer-sc-16nxgew-10.iTUGQX > button")))
     iframe_select.click()
 
-    # Allow load
+    # Allow load & switch back out of iframe
     time.sleep(5)
 
+    # Select the 'Categories' Button
+    select_categories = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR,"#StyledMenu > a.nav_cat.sc-16w2z54-1-Menu__MenuItem-bfxgCG.XJcnJ")))
+    select_categories.click()
+    time.sleep(2)
+
+    # Select the 'Chilled' Button to make list appear and first set of deals load
+    select_chilled = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "#FusionApp > div.sc-1jkt2oq-0-content__BaseContentPage-gVrcAy.kkrzRm > div > div > div > div:nth-child(1) > a > div.RootList__Title-sc-11zih5d-6.bXcopH")))
+    select_chilled.click()
+    time.sleep(5)
 def main():
     scrape_aldi()
 

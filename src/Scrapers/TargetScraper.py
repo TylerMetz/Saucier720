@@ -34,7 +34,7 @@ def scrape_target():
     
     # Give time to load
     time.sleep(3)
-    scrapePage(driver, True)
+    scrape_page(driver, True)
     
     time.sleep(1)
     # Get every other set of deals, stop when page not clickable
@@ -43,12 +43,12 @@ def scrape_target():
             load_more = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR,"#pageBodyContainer > div > div:nth-child(1) > div > div:nth-child(10) > div > div > div > div > div.styles__ProductListGridFadedLoading-sc-u8zdb1-0 > div.styles__StyledRow-sc-wmoju4-0.cbPxiq > div > div.Pagination__RootDiv-sc-sq3l8r-4.bdkChJ > div:nth-child(3) > button")))
             load_more.click()
             time.sleep(1)
-            scrapePage(driver, False)
+            scrape_page(driver, False)
         except:
             break
 
 # Function that actually scrapes
-def scrapePage(driver: webdriver.Chrome, startPage: bool):
+def scrape_page(driver: webdriver.Chrome, startPage: bool):
     # Special conditions when it begins
     if startPage:
         driver.execute_script(f"window.scrollBy(0, 1000);")
