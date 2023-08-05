@@ -43,6 +43,7 @@ func main() {
 
 				// reset cookie change
 				cookieChanged = false
+				
 			}
 		}
 	}()

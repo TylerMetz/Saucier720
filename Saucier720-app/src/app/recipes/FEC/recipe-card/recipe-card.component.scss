@@ -6,6 +6,76 @@
     background-color: var(--secondary-color);
     width: 100%;
   }
+
+  li.recipe-ingredient{
+    white-space: normal;
+    padding: 5px;
+  }
+
+  img.list {
+    pointer-events: none;
+  }
+
+  .ingredient-wrapper {
+    margin-right: 5px;
+  }
+
+  .ingredient-wrapper > button{
+    width: 20px;
+    height: 20px;
+    float: right;
+    margin-left: 10px;
+    transform: translateY(20%);
+    display: none;
+  }
+
+  .ingredient-wrapper:hover > button{
+    display: block;
+    border: none;
+    border-radius: 5px;
+  }
+
+  .in-list{
+    background-color: var(--background-color);
+  }
+
+  .in-list:active{
+    pointer-events: none;
+  }
+
+  .not-in-list {
+    background-color: var(--primary-color);
+  }
+  
+  .ingredient-wrapper > button.not-in-list:hover{
+    background-color: var(--text-color);
+  }
+
+  .ingredient-wrapper > button.not-in-list:focus{
+    background-color: var(--background-color);
+  }
+
+  button > img {
+    max-width: 12px;
+    transform: translateY(-50%)
+  }
+
+  .in-list > img {
+    content: url("/assets/images/addListClick.png");
+    transform: translateY(-52%);
+  }
+
+  .not-in-list:hover > img {
+    content: url("/assets/images/addListHover.png");
+    transition: 0.2s ease-in-out;
+  }
+
+  .not-in-list:focus > img {
+    content: url("/assets/images/addListClick.png");
+    transform: translateY(-52%);
+    transition: 0.2s ease-in-out;
+  }
+
   .card-container {
     display: flex;
     flex-direction: column;
@@ -52,7 +122,7 @@
     color: var(--header-color);
   }
 
-  .button{
+.button{
   display: inline-block;
   padding: 10px;
   margin: 10px;
@@ -153,11 +223,4 @@
   top: 12px;
   left: 65px; /* Adjust the left position as needed to place it to the right of the delete icon */
 }
-
-
-
-
-
-
-
 

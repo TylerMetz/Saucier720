@@ -13,9 +13,17 @@ import { Store } from 'src/app/core/interfaces/store';
 })
 
 export class DealsStoreButtonComponent {
-  name: string = '';
+  name: string = 'Walmart';
 
-  constructor(private dealsService: DealsService) { }
+  constructor(private dealsService: DealsService) {
+    const jsonString = localStorage.getItem('buttonState');
+    if (jsonString) {
+      const buttonState = JSON.parse(jsonString);
+      if (buttonState && buttonState.storeName) {
+        this.name = buttonState.storeName;
+      }
+    }
+  }
 
   async postStore(storeName: string) {
     const newStore: Store = {
@@ -25,9 +33,36 @@ export class DealsStoreButtonComponent {
     try {
       const response = await lastValueFrom(this.dealsService.postStore(newStore));
       console.log(response);
+      this.saveButtonState(storeName);
+
       window.location.reload();
     } catch (error) {
       console.error(error);
     }
+  }
+
+  private saveButtonState(storeName: string): void {
+    localStorage.setItem('buttonState', JSON.stringify({ storeName }));
+  }
+
+  ngOnInit() {
+    // Apply the 'clicked' class to the button that matches the stored 'storeName'
+    const buttons = document.querySelectorAll('button');
+    buttons.forEach((button: HTMLElement) => {
+      if (button.innerText === this.name) {
+        button.classList.add('clicked');
+      } else {
+        button.classList.remove('clicked');
+      }
+    });
+  }
+
+  ngAfterViewInit() {
+    const buttons = document.querySelectorAll('button');
+    buttons.forEach((button: HTMLElement) => {
+      if (button.innerText === this.name) {
+        button.classList.add('clicked');
+      }
+    });
   }
 }
