@@ -16,23 +16,23 @@ def scrape_aldi():
     
     # Set up Selenium options 
     options = Options()
-    #options.add_argument("--headless")
+    options.add_argument("--headless")
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
     options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36")
     options.add_argument("--disable-geolocation")
+    options.add_argument("--window-size=1920x1080")
     options.add_experimental_option("prefs", {"profile.default_content_setting_values.geolocation": 2})
 
     # Installs driver depending on browser
     driver=webdriver.Chrome(service=Service(ChromeDriverManager(version='114.0.5735.90').install()),options=options)
 
     # Open page
-    wait = WebDriverWait(driver, 10)
-    driver.maximize_window()
+    wait = WebDriverWait(driver, 5)
     driver.get(url)
 
     # Let page load
-    time.sleep(5)
+    time.sleep(3)
 
     # Need to switch to iframe elements 
     iframe = driver.find_element(By.ID, 'shopLocalPlatformFrame')
@@ -51,7 +51,7 @@ def scrape_aldi():
     iframe_select.click()
 
     # Allow load & switch back out of iframe
-    time.sleep(5)
+    time.sleep(3)
 
     # Select the 'Categories' Button
     select_categories = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR,"#StyledMenu > a.nav_cat.sc-16w2z54-1-Menu__MenuItem-bfxgCG.XJcnJ")))
@@ -62,7 +62,7 @@ def scrape_aldi():
     select_chilled = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "#FusionApp > div.sc-1jkt2oq-0-content__BaseContentPage-gVrcAy.kkrzRm > div > div > div > div:nth-child(1) > a > div.RootList__Title-sc-11zih5d-6.bXcopH")))
     select_chilled.click()
     scrape_page(driver, 1)
-    time.sleep(5)
+    time.sleep(1)
 
     # Tab # for each of the following buttons 
     tab_button = [2,3,4,6]
@@ -77,11 +77,11 @@ def scrape_aldi():
 def scrape_page(driver: webdriver.Chrome, tab: int):
     # Different conditions for anything not the first page
     if tab != 1:
-        wait = WebDriverWait(driver, 10)
+        wait = WebDriverWait(driver, 5)
         select_page = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "#DeptNaviLeft > ul > li:nth-child(" + str(tab) + ") > a > div")))
         select_page.click()
 
-    time.sleep(3)
+    time.sleep(1)
 
     # Grab page html
     page_source = driver.page_source
