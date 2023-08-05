@@ -47,6 +47,8 @@ export class AppComponent implements OnInit {
   }
 
   getAuthService() {
+    const sessionId = this.cookieService.get('sessionID');
+    this.username = sessionId.slice(0, -3);
     return this.authService;
   }
 
