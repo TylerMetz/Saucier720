@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, ElementRef, Renderer2 } from '@angular/core';
 import { AppComponent } from '../app.component';
 
 @Component({
@@ -13,13 +13,15 @@ export class HomePageComponent{
   noUserActive: boolean;
   userActive: boolean;
 
-  constructor(private appComponent: AppComponent) {
+  constructor(private appComponent: AppComponent, private renderer: Renderer2) {
     this.noUserActive = !appComponent.getAuthService().isLoggedIn();
     this.userActive = appComponent.getAuthService().isLoggedIn();
   }
 
   buttonsVisible: boolean = false;
   isComponentReady = false;
+
+  positionValue: string = 'absolute'; // Default position
 
 
   onGenerationComplete(generationComplete: boolean) {
@@ -28,6 +30,19 @@ export class HomePageComponent{
       // For example, you can set a flag to control their visibility:
       this.buttonsVisible = true;
       this.isComponentReady = true;
+    }
+  }
+
+  buttonMovement(cardExpanded: boolean) {
+    if (cardExpanded) {
+      // change button to be relative
+      this.positionValue = 'relative';
+    }
+    else {
+      // change button to be absolute
+      setTimeout(() => {
+        this.positionValue = 'absolute';
+      }, 650); // to wait for recipe card to collapse past the point of the buttons' location
     }
   }
 
@@ -52,17 +67,6 @@ onButtonLeave(buttonName: string): void {
 
 isButtonHovered(buttonName: string): boolean {
   return this.hoveredButton === buttonName;
-}
-
-getTopMargin(): number {
-  // Define your margin values based on conditions
-  if (this.noUserActive) {
-    return 15; // Adjust the value as needed
-  } else if (this.userActive) {
-    return 10.25; // Adjust the value as needed
-  } else {
-    return 0; // Default margin value
-  }
 }
 
 }

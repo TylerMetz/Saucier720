@@ -7,6 +7,7 @@
   display: flex;
   align-items: center; /* Vertically align content */
   justify-content: center; /* Horizontally align content */
+  height: calc(100vh - 120px); // 120px is the height of the navbar
 }
 
 .interior-container{
@@ -64,7 +65,8 @@
 }
 
 .popups-and-buttons-container{
-  position: relative;
+  position: absolute;
+  bottom: 0;
   width: 100%;
 }
 
@@ -266,10 +268,5 @@
   pointer-events: auto; /* Enable interactions with visible pop-ups */
 }
 
-.page {
-  margin: 0;
-  padding: 0;
-  height: 85vh;
-  width: 100%;
-}
+
 

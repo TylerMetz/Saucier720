@@ -5,10 +5,10 @@
                 <div class="animation-container scaled-logo">
                     <app-animated-logo *ngIf="this.noUserActive" (generationComplete)="onGenerationComplete($event)"></app-animated-logo>
                 </div>
-                <app-user-dashboard *ngIf="this.userActive" (generationComplete)="onGenerationComplete($event)"></app-user-dashboard>
+                <app-user-dashboard *ngIf="this.userActive" (generationComplete)="onGenerationComplete($event)" (cardExpanded)="buttonMovement($event)"></app-user-dashboard>
             </div>
         </div>
-        <div class="popups-and-buttons-container" [style.margin-top.vh]="getTopMargin()">
+        <div #popupsAndButtonsContainer class="popups-and-buttons-container" [ngStyle]="{ 'position': positionValue }">
             <div class="popups-container">
             <div class="popup-window" [class.show]="isButtonClicked('aboutUs')  || isButtonHovered('aboutUs')">
                 <app-about-us></app-about-us>

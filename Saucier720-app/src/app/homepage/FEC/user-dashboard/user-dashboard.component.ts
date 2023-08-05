@@ -54,9 +54,12 @@ const right = [
     // used for button generation
     @Output() generationComplete = new EventEmitter<boolean>();
 
+    // used for button repositioning
+    @Output() cardExpanded = new EventEmitter<boolean>();
+
     // button
     @ViewChild('recipeCardButton') recipeCardButton!: ElementRef;
-
+    
     async ngOnInit() {
       await this.populateDashboardRecipes();
       setTimeout(() => {
@@ -144,10 +147,12 @@ const right = [
           recipeCardPreview.classList.remove('expanded');
           this.recipeCardButton.nativeElement.innerText = 'Expand Recipe';
           this.showRecipe = false;
+          this.cardExpanded.emit(false);
         } else {
           recipeCardPreview.classList.add('expanded');
           this.recipeCardButton.nativeElement.innerText = 'Collapse Recipe';
           this.showRecipe = true;
+          this.cardExpanded.emit(true);
         }
       }
     }
