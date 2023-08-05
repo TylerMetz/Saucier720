@@ -15,15 +15,17 @@ var pantryInterface []interface{}
 var dealsInterface []interface{}
 var recipesInterface []interface{}
 var listInterface []interface{}
+var userDashboardInterface []interface{}
 var backendDatabase Database
 var dataMutex sync.Mutex
 var NewServers []*http.Server
 var wait sync.WaitGroup
 var UpdatingData bool
 var CurrentUser User
-var StoreSelection string = "Walmart" // set to Walmart by default (temp)
+var StoreSelection string
 var StoreDeals []FoodItem
 var RoutingRecipesType RecipeType
+var RoutingUserDashboardData UserDashboardData
 var RecipesRecommendationPool []Recipe
 
 // RECIPE TYPE ENUM
@@ -32,6 +34,16 @@ const (
 	RecommendedRecipes RecipeType = iota
 	UserRecipes
 	FavoriteRecipes
+)
+
+// USER DASHBOARD DATA ENUM
+type UserDashboardData int
+const (
+	// making examples here for what we could output to user dashboard
+	TopFiveFavoritesEasiestToMake UserDashboardData = iota
+	TopTenFavoritesEasiestToMake
+	RecentRecipesViewed
+	RecentUsersViewed
 )
 
 // ROUTING FUNCTIONS
@@ -62,6 +74,7 @@ func handleRecipes(response http.ResponseWriter, request *http.Request) {
 	// Encode the items as JSON and send the response
 	json.NewEncoder(response).Encode(recipesInterface)
 }
+
 func handleListPage(response http.ResponseWriter, request *http.Request) {
 	// set header and encode items
 	response.Header().Set("Content-Type", "application/json")
@@ -70,6 +83,16 @@ func handleListPage(response http.ResponseWriter, request *http.Request) {
 	// Encode the items as JSON and send the response
 	json.NewEncoder(response).Encode(listInterface)
 }
+
+func handleUserDashboard(response http.ResponseWriter, request *http.Request) {
+	// set header and encode items
+	response.Header().Set("Content-Type", "application/json")
+	response.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200") 
+	response.Header().Set("Access-Control-Allow-Methods", "GET")
+	// Encode the items as JSON and send the response
+	json.NewEncoder(response).Encode(userDashboardInterface)
+}
+
 func RoutData(){
 
     // setup all global variables to be routed
@@ -85,6 +108,7 @@ func RoutData(){
     http.HandleFunc("/api/Recipes", handleRecipes)
     http.HandleFunc("/api/Deals", handleDeals)
 	http.HandleFunc("/api/List", handleListPage)
+	http.HandleFunc("/api/UserDashboard", handleUserDashboard)	
 
     // append the server to the global list
 	NewServers = append(NewServers, server)
@@ -229,11 +253,21 @@ func handleLogin(w http.ResponseWriter, r *http.Request, sessionCookie *string, 
 		// Get the new "sessionID" cookie value
 		*sessionCookie = cookie.Value
 
+		///////////////////////////////////////////////////////////////////////////////////// DEFAULTS /////////////////////////////////////////////////////////////////////////////////////////////////
+
 		// set recommended recipes to pull from MealDealz classsic recipes by default
 		RecipesRecommendationPool = backendDatabase.ReadJSONRecipes()
 
 		// set recipes that are routed to recommended by default
 		RoutingRecipesType = RecommendedRecipes
+
+		// set user dashboard default to be top 5 recipes
+		RoutingUserDashboardData = TopFiveFavoritesEasiestToMake
+
+		// set default deals to Publix 
+		StoreSelection = "Publix"
+
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		// allow data to be routed again
 		UpdatingData = false;
@@ -277,6 +311,7 @@ func handleLogout(w http.ResponseWriter, r *http.Request, sessionCookie *string)
 		dealsInterface = interfaceRefresh
 		recipesInterface = interfaceRefresh
 		listInterface = interfaceRefresh
+		userDashboardInterface = interfaceRefresh
 		
 	}
 
@@ -1006,16 +1041,64 @@ func UpdateListData(){
 	dataMutex.Unlock()
 }
 
+func UpdateUserDashboard(){
+
+	// selects what type of data to send to the user dashboard
+	if RoutingUserDashboardData == TopFiveFavoritesEasiestToMake{
+		
+		// get recipe recommendations
+		var routingUserDashboardRecipes []Recommendation
+		routingUserDashboardRecipes = ReturnRecipesWithHighestPercentageOfOwnedIngredients(backendDatabase.GetUserPantry(CurrentUser.UserName), backendDatabase.ReadFavoriteRecipes(CurrentUser), 5, StoreDeals)
+		routingUserDashboardRecipes = backendDatabase.FindFavoriteRecipes(CurrentUser, routingUserDashboardRecipes) // used to determine if star is darkened in full recipe card
+
+		// lock the recipe data
+		dataMutex.Lock()
+
+		var userDashboardInterfaceRefresh []interface{}
+		userDashboardInterface = userDashboardInterfaceRefresh
+		for i := 0; i < len(routingUserDashboardRecipes); i++ {
+			// sends recipes, items in recipe, and deals related 
+			userDashboardInterface = append(userDashboardInterface, routingUserDashboardRecipes[i])
+		}
+
+		// unlock the data
+		dataMutex.Unlock()
+
+	} else if RoutingUserDashboardData == TopTenFavoritesEasiestToMake{
+		
+		// get recipe recommendations
+		var routingUserDashboardRecipes []Recommendation
+		routingUserDashboardRecipes = ReturnRecipesWithHighestPercentageOfOwnedIngredients(backendDatabase.GetUserPantry(CurrentUser.UserName), backendDatabase.ReadFavoriteRecipes(CurrentUser), 10, StoreDeals)
+		routingUserDashboardRecipes = backendDatabase.FindFavoriteRecipes(CurrentUser, routingUserDashboardRecipes) // used to determine if star is darkened in full recipe card
+
+		// lock the recipe data
+		dataMutex.Lock()
+
+		var userDashboardInterfaceRefresh []interface{}
+		userDashboardInterface = userDashboardInterfaceRefresh
+		for i := 0; i < len(routingUserDashboardRecipes); i++ {
+			// sends recipes, items in recipe, and deals related 
+			userDashboardInterface = append(userDashboardInterface, routingUserDashboardRecipes[i])
+		}
+
+		// unlock the data
+		dataMutex.Unlock()
+	}
+	
+}
+
 
 func UpdateAllData(){
 	// wait if any data is being altered
 	for UpdatingData {}
 
 	// updates all data that's being routed
+	UpdateUserDashboard() // first because loaded first
 	UpdatePantryData()
 	UpdateRecipeData()
 	UpdateDealsData()
 	UpdateListData()
+		
 }
 
 // SHUTDOWN FUNCTIONS

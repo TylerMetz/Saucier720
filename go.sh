@@ -1,4 +1,4 @@
 #!/bin/bash
 cd src
 echo "Running backend"
-go run main.go 
+go run main.go

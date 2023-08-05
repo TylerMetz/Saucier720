@@ -1,0 +1,193 @@
+.user-dashboard{
+    position: relative;
+    text-align: center;
+    overflow: hidden;
+}
+
+.highlighted-recipes-box {
+    width: 42.5vw;
+    height: 25.5vh;
+    background-color: var(--secondary-color);
+    border-radius: 10px;
+    position: relative;
+    text-align: center;
+    overflow: hidden;
+    margin-bottom: 1.5vh;
+    padding: 2vh;
+    transition: all 1s ease;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 0;
+  }
+  
+  .highlighted-recipes-box.expanded {
+    width: 90vw;
+    height: 85vh;
+  }
+
+  .recipe-container {
+    padding: 0 5px; /* Add padding to create space on the left and right */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+  
+
+/* Add styles for the hover title */
+.hover-title {
+    color: var(--text-color);
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    position: relative;
+    text-align: center;
+    transition: opacity 0.5s ease;
+    font-size: 1.5vw;
+}
+
+/* Show the hover title on hover */
+.user-dashboard:hover .hover-title {
+    opacity: 1;
+}
+
+  
+  h3 {
+    font-size: 2.1vw; /* Make the name larger, adjust as needed */
+    margin-bottom: 0.5vh; /* Adjust the margin as needed */
+    color: var(--header-color);
+    border-radius: 50%;
+    width: 100%; 
+  }
+
+  p{
+    font-size: 1.25vw;
+    margin-top: 1vh;
+    color: var(--text-color);
+  }
+
+  .buttons-wrapper{
+    position: relative;
+    height: 100%;
+  }
+  
+  /* Styling for navigation arrows */
+  button {
+    border: none;
+    background: none;
+    color: var(--primary-color);
+    cursor: pointer;
+    position: relative;
+  }
+  
+  
+  /* Hover effect for navigation arrows */
+  button:hover {
+    color: var(--text-color)
+  }
+  
+  .arrows-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%; /* Take the full width of .popup */
+    position: absolute;
+    bottom: 0; /* Adjust the bottom position as needed */
+    left: 0;
+  }
+  
+  .fa-arrow-left,
+  .fa-arrow-right {
+    font-size: 1.3vw;
+    bottom: 0;
+  }
+  
+
+
+  .recipe-card-button {
+    position: relative;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    font-size: 20px;
+    cursor: pointer;
+    margin-bottom: 1vh;
+}
+
+.recipe-card-button:hover{
+    background-color: var(--text-color);
+    color: var(--primary-color);
+  }
+
+  .error-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--secondary-color);
+    padding: 1.852vw; /* 20px converted to vw */
+    border-radius: 0.925vw; /* 10px converted to vw */
+    color: var(--text-color);
+    margin-top: 1.852vh; /* 20px converted to vh */
+    margin-bottom: 12.5vh;
+}
+
+.error-icon {
+    font-size: 3.333vw; /* 36px converted to vw */
+    margin-right: 1.852vw; /* 20px converted to vw */
+}
+
+.error-text {
+    text-align: center;
+}
+
+.error-text h3 {
+    margin: 0;
+    font-size: 1.5vw; /* 24px converted to vw */
+    font-weight: bold;
+    margin-bottom: 0.925vw; /* 10px converted to vw */
+}
+
+.error-text p {
+    margin: 0;
+    font-size: 1vw; /* 16px converted to vw */
+}
+
+// recipe card styling
+.card-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-wrap: wrap;
+  max-height: 60vh; /* Set the maximum height for the container */
+  overflow-y: auto; /* Enable vertical scrollbar when content overflows */
+}
+
+.recipe-body {
+  display: flex;
+  flex-direction: row;
+}
+
+.recipe-instructions-header,
+.recipe-ingredients-header,
+.recipe-deals-header,
+.recipe-pantry-header {
+  text-align: left;
+}
+
+.recipe-related-header h2{
+  text-align: center;
+  font-size: 1.25vw;
+}
+
+.recipe-pantry,
+.recipe-deals,
+.recipe-ingredients,
+.recipe-instructions{
+  text-align: left;
+}
+
+.recipe-ingredients,
+.recipe-pantry,
+.recipe-deals{
+  min-width: 10vw;
+}
