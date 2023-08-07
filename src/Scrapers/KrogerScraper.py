@@ -33,7 +33,7 @@ def scrape_kroger():
     driver.get(url)
 
     # Let page load
-    time.sleep(3)
+    time.sleep(5)
     
     # Create a Beautiful Soup object from HTML
     soup = BeautifulSoup(driver.page_source, 'html.parser')
@@ -42,12 +42,15 @@ def scrape_kroger():
     products = [span.get_text(strip=True) for span in soup.find_all('span', class_='kds-Text--m SWA-OmniDealDescription2Lines SWA-Clamp2Lines')]
     prices = [div['aria-label'] for div in soup.find_all('div', class_='kds-Text--l SWA-OmniPriceHeading font-heavy font-secondary pl-16 pr-4 truncate mb-8 mt-0 font-bold')]
 
-
+    # Remove Coupons
+    products = [product for product in products if not product.startswith('Save')]
+    
     # Print the extracted data
     for product, price in zip(products, prices):
-        print("Product:", product)
-        print("Price:", price)
-        print()
+        if price != "FREE":
+            print("Product:", re.sub(r'^\$\d+\.\d+\s', '', product))
+            print("Price:", price)
+            print()
     
 def main():
     scrape_kroger()
