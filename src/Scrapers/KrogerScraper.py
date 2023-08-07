@@ -11,9 +11,9 @@ from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import TimeoutException
 from webdriver_manager.chrome import ChromeDriverManager
 
-def scrape_costco():
+def scrape_kroger():
     # Get to test website 
-    url = "https://www.costco.com/grocery-household.html?keyword=OFF&dept=All&sortBy=item_page_views+desc"
+    url = "https://www.kroger.com/weeklyad/shoppable"
     
     # Set up Selenium options 
     options = Options()
@@ -35,49 +35,22 @@ def scrape_costco():
     # Let page load
     time.sleep(3)
     
-    # Accumulate all page HTML
-    all_html = ""
-
-    while True:
-        # Wait for the "Next Page" button to be clickable
-        
-        try:
-            next_button = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.CSS_SELECTOR, '#search-results > div.product-list.grid > nav > div > div.paging.col-xs-12 > ul > li.forward > a')))
-            
-            # get page html
-            all_html += driver.page_source
-
-            # Find the "Next Page" button and click it
-            next_button.click()
-
-            # Re-locate the next_button element after the page navigation
-            next_button = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, '#search-results > div.product-list.grid > nav > div > div.paging.col-xs-12 > ul > li.forward > a')))
-            
-        except Exception as e:
-            # Break the loop if the "Next Page" button is not clickable (end of pagination)
-            break
-        
-        
-
-
-    # Close the WebDriver
-    driver.quit()
-
-    # Create a Beautiful Soup object from all accumulated HTML
-    soup = BeautifulSoup(all_html, 'html.parser')
+    # Create a Beautiful Soup object from HTML
+    soup = BeautifulSoup(driver.page_source, 'html.parser')
 
     # Extract the data and remove white space
-    products = [a.get_text(strip=True) for span in soup.find_all("span", class_="description") for a in span.find_all('a')]
-    prices = [price.get_text(strip=True) for price in soup.find_all("div", class_="price")]
+    products = [span.get_text(strip=True) for span in soup.find_all('span', class_='kds-Text--m SWA-OmniDealDescription2Lines SWA-Clamp2Lines')]
+    prices = [div['aria-label'] for div in soup.find_all('div', class_='kds-Text--l SWA-OmniPriceHeading font-heavy font-secondary pl-16 pr-4 truncate mb-8 mt-0 font-bold')]
+
 
     # Print the extracted data
     for product, price in zip(products, prices):
         print("Product:", product)
         print("Price:", price)
         print()
-
+    
 def main():
-    scrape_costco()
+    scrape_kroger()
 
 if __name__ == "__main__":
     main()
