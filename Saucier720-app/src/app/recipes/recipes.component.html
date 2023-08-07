@@ -6,7 +6,7 @@
         <app-new-recipe></app-new-recipe>
       </div>
       <div class="filter-menu-container" *ngIf="isFilterMenuEnabled">
-        <app-filter-menu></app-filter-menu>
+        <app-filter-menu (refreshRecipeCard)="handleRecipeRefresh()"></app-filter-menu>
       </div>
     </div>
     <app-recipe-card #recipeCard></app-recipe-card>
