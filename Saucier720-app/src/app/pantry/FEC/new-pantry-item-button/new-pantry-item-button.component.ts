@@ -3,12 +3,13 @@ import { PantryService } from 'src/app/core/services/pantry/pantry.service';
 import { PANTRY } from 'src/app/mocks/pantry.mock';
 import { lastValueFrom } from 'rxjs';
 import { Ingredient } from 'src/app/core/interfaces/ingredient';
+import { PantryTableComponent } from '../pantry-table/pantry-table.component';
 
 @Component({
   selector: 'app-new-pantry-item-button',
   templateUrl: './new-pantry-item-button.component.html',
   styleUrls:[ './new-pantry-item-button.component.scss'],
-  providers: [PantryService]
+  providers: [PantryService, PantryTableComponent]
 })
 
 export class NewPantryItemButtonComponent {
@@ -19,7 +20,7 @@ export class NewPantryItemButtonComponent {
   saleDetails: string = '';
   quantity: number = 1;
 
-  constructor(private pantryService: PantryService) { }
+  constructor(private pantryService: PantryService, private pantryTableComponent: PantryTableComponent) { }
 
   async postPantryItem() {
     if(!this.name){
@@ -37,7 +38,8 @@ export class NewPantryItemButtonComponent {
     try {
       const response = await lastValueFrom(this.pantryService.postPantryItem(newPantryItem));
       console.log(response);
-      window.location.reload();
+      //window.location.reload();
+      this.pantryTableComponent.addTempValue(newPantryItem.Name, newPantryItem.Quantity)
     } catch (error) {
       console.error(error);
     }

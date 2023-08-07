@@ -12,7 +12,7 @@ import { Ingredient } from "src/app/core/interfaces/ingredient";
 })
 export class PantryTableComponent implements OnInit {
 
-  pantry: any;
+  pantry: Ingredient[] = [];
 
   constructor(private pantryService: PantryService) { }
 
@@ -55,6 +55,17 @@ export class PantryTableComponent implements OnInit {
     } catch (error) {
       console.error(error);
     }
+  } 
+
+  addTempValue(name: string, quantity: number){
+    const newIngredient: Ingredient = {
+      Name: name, 
+      StoreCost: 0, 
+      OnSale: false,
+      SalePrice: 0, 
+      SaleDetails: '', 
+      Quantity: quantity
+    };
+    this.pantry.push(newIngredient)
   }
-  
 }
