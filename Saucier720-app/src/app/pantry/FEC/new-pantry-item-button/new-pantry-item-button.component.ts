@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 import { PantryService } from 'src/app/core/services/pantry/pantry.service';
 import { PANTRY } from 'src/app/mocks/pantry.mock';
 import { lastValueFrom } from 'rxjs';
@@ -20,7 +20,9 @@ export class NewPantryItemButtonComponent {
   saleDetails: string = '';
   quantity: number = 1;
 
-  constructor(private pantryService: PantryService, private pantryTableComponent: PantryTableComponent) { }
+  @Output() newItemAdded: EventEmitter<{ name: string, quantity: number }> = new EventEmitter<{ name: string, quantity: number }>();
+
+  constructor(private pantryService: PantryService) { }
 
   async postPantryItem() {
     if(!this.name){
@@ -39,7 +41,11 @@ export class NewPantryItemButtonComponent {
       const response = await lastValueFrom(this.pantryService.postPantryItem(newPantryItem));
       console.log(response);
       //window.location.reload();
-      this.pantryTableComponent.addTempValue(newPantryItem.Name, newPantryItem.Quantity)
+      const newItem = {
+        name: newPantryItem.Name,
+        quantity: newPantryItem.Quantity,
+      };
+      this.newItemAdded.emit(newItem);
     } catch (error) {
       console.error(error);
     }

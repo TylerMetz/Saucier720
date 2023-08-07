@@ -1,5 +1,5 @@
 import { HttpEvent, HttpEventType } from "@angular/common/http"
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { PantryService } from 'src/app/core/services/pantry/pantry.service';
 import { lastValueFrom } from 'rxjs';
 import { Ingredient } from "src/app/core/interfaces/ingredient";
@@ -68,4 +68,7 @@ export class PantryTableComponent implements OnInit {
     };
     this.pantry.push(newIngredient)
   }
+
+  
+
 }
