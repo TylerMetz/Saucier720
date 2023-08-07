@@ -46,6 +46,8 @@ export class NewPantryItemButtonComponent {
         quantity: newPantryItem.Quantity,
       };
       this.newItemAdded.emit(newItem);
+      this.name = '';
+      this.quantity = 1;
     } catch (error) {
       console.error(error);
     }
