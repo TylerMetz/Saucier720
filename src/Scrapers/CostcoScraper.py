@@ -16,7 +16,7 @@ def scrape_costco():
     
     # Set up Selenium options 
     options = Options()
-    #options.add_argument("--headless")
+    options.add_argument("--headless")
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
     options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36")
@@ -33,6 +33,25 @@ def scrape_costco():
 
     # Let page load
     time.sleep(3)
+    
+    #while True:
+        # Get the page source
+    page_source = driver.page_source
+    
+    # Create BeautifulSoup object to parse the page source
+    soup = BeautifulSoup(page_source, "html.parser")
+    
+    # Extract the data and remove white space
+    products = [a.get_text(strip=True) for span in soup.find_all("span", class_="description") for a in span.find_all('a')]  
+    prices = [price.get_text(strip=True) for price in soup.find_all("div", class_="price")]
+    
+    print(len(products))
+    print(len(prices))
+    
+    for product, price in zip(products, prices):
+        print("Product:", product)
+        print("Price:", price)
+        print()
 
 
 def main():
