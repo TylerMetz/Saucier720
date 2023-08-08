@@ -16,5 +16,6 @@ export class RecipesComponent{
 
   handleRecipeRefresh(){
     this.recipeCard.populateRecipes();
+    this.recipeCard.currentRecipeIndex = 0;
   }
 }
