@@ -1,6 +1,7 @@
 import { Component, AfterViewInit, ElementRef, Output, EventEmitter } from '@angular/core';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { Router } from '@angular/router';
+import { ColorService } from 'src/app/core/services/color/color.service';
 
 @Component({
   selector: 'app-animated-logo',
@@ -25,7 +26,7 @@ export class AnimatedLogoComponent implements AfterViewInit {
   textGenerationComplete = false;
   backgroundSquareVisible = false; 
 
-  constructor(private elementRef: ElementRef,  private router: Router) {}
+  constructor(private elementRef: ElementRef,  private router: Router, private colorService: ColorService) {}
 
   ngAfterViewInit() {
     setTimeout(() => {
@@ -79,4 +80,18 @@ export class AnimatedLogoComponent implements AfterViewInit {
     this.router.navigate(['/Signup']);
   }
 
+  private availablePalettes = [
+    ColorService.ColorPalette.Default,
+    ColorService.ColorPalette.Custom1,
+    ColorService.ColorPalette.Custom2,
+    ColorService.ColorPalette.Custom3,
+    ColorService.ColorPalette.Custom4,
+  ];
+
+  private currentPaletteIndex = 0;
+  changeToCustomPalette() {
+    this.currentPaletteIndex = (this.currentPaletteIndex + 1) % this.availablePalettes.length;
+    const nextPalette = this.availablePalettes[this.currentPaletteIndex];
+    this.colorService.setColorPalette(nextPalette);
+  }
 }
