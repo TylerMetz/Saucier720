@@ -59,7 +59,6 @@
     float: left;
     color: var(--text-color);
     text-align: center;
-    padding: 14px 16px;
     text-decoration: none;
     font-size: 17px;
   }
@@ -67,7 +66,7 @@
     float: right;
     color: var(--text-color);
     text-align: center;
-    padding: 14px 16px;
+    padding: 14px 12px;
     text-decoration: none;
     font-size: 17px;
   }
@@ -76,12 +75,24 @@
     float: right;
     color: var(--text-color);
     text-align: center;
-    padding: 14px 16px;
+    
     text-decoration: none;
     font-size: 17px;
   }
  
-  
+  .nav-link{
+    padding: 14px 16px;
+  }
+  .nav-link-button{
+    padding: 0px 1px;
+    margin-top: 14px;
+    margin-right: 16px;
+  }
+
+  .topnav .nav-link-button:hover{
+    background-color: var(--text-color);
+    color: var(--primary-color);
+  }
   .topnav .nav-link:hover{
     background-color: var(--text-color);
     color: var(--primary-color);

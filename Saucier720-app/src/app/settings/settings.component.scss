@@ -4,7 +4,8 @@
   width: 100%;
   display: flex;
   align-items: center; /* Vertically align content */
-  justify-content: center; /* Horizontally align content */
+  justify-content: flex-start; /* Horizontally align content */
+  flex-direction: column;
   height: calc(100vh - 120px); // 120px is the height of the navbar
 }
 
