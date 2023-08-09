@@ -8,20 +8,21 @@ import { ColorService } from '../core/services/color/color.service';
 })
 export class SettingsComponent{
 
-  constructor(private colorService: ColorService) {}
+  constructor(public colorService: ColorService) {}
 
-  private availablePalettes = [
-    ColorService.ColorPalette.Default,
-    ColorService.ColorPalette.Custom1,
-    ColorService.ColorPalette.Custom2,
-    ColorService.ColorPalette.Custom3,
-    ColorService.ColorPalette.Custom4,
-  ];
-
-  private currentPaletteIndex = 0;
-  changeToCustomPalette() {
-    this.currentPaletteIndex = (this.currentPaletteIndex + 1) % this.availablePalettes.length;
-    const nextPalette = this.availablePalettes[this.currentPaletteIndex];
-    this.colorService.setColorPalette(nextPalette);
+  setThemeDefault(){
+    this.colorService.setColorPalette(ColorService.ColorPalette.Default);
+  }
+  setThemeCustom1(){
+    this.colorService.setColorPalette(ColorService.ColorPalette.Custom1);
+  }
+  setThemeCustom2(){
+    this.colorService.setColorPalette(ColorService.ColorPalette.Custom2);
+  }
+  setThemeCustom3(){
+    this.colorService.setColorPalette(ColorService.ColorPalette.Custom3);
+  }
+  setThemeCustom4(){
+    this.colorService.setColorPalette(ColorService.ColorPalette.Custom4);
   }
 }

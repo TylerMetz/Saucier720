@@ -3,23 +3,37 @@
   padding: 0;
   width: 100%;
   display: flex;
-  align-items: center; /* Vertically align content */
-  justify-content: flex-start; /* Horizontally align content */
+  align-items: center;
+  justify-content: flex-start;
   flex-direction: column;
-  height: calc(100vh - 120px); // 120px is the height of the navbar
+  height: calc(100vh - 120px);
 }
 
-.theme-cycle-button{
+.theme-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 40px;
+}
+
+h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.theme-button {
+  margin: 5px;
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
   background-color: var(--primary-color);
   color: var(--text-color);
-  font-size: 20px;
+  font-size: 16px;
   cursor: pointer;
+  width: 200px;
 }
 
-.theme-cycle-button:hover{
+.theme-button:hover {
   background-color: var(--text-color);
   color: var(--primary-color);
 }
