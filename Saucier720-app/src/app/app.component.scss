@@ -17,6 +17,14 @@
     bottom: 4%; 
     padding: 4px 16px 5px 16px;
 
+    background-image: url('/assets/images/--primary-color.png');
+    mask-image: url('/assets/images/mainIcon-default.svg');
+    mask-size: cover;
+    mask-repeat: no-repeat;
+    mask-position: center;
+
+    display: inline-block; /* Ensure it occupies space in the button */
+
     background-size: 150px;
     transition: 0.2s ease-in-out;
   }
