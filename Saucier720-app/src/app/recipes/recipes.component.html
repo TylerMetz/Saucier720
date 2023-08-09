@@ -3,7 +3,7 @@
     <app-recipe-nav-bar [isNewRecipeEnabled]="isNewRecipeEnabled" [isFilterMenuEnabled]="isFilterMenuEnabled" (toggleNewRecipe)="isNewRecipeEnabled = $event" (toggleFilterMenu)="isFilterMenuEnabled = $event" (refreshRecipeCard)="handleRecipeRefresh()" ></app-recipe-nav-bar>
     <div class="filter-recipe-container">
       <div class="new-recipe-container" *ngIf="isNewRecipeEnabled">
-        <app-new-recipe></app-new-recipe>
+        <app-new-recipe (refreshRecipeCard)="handleRecipeRefresh()"></app-new-recipe>
       </div>
       <div class="filter-menu-container" *ngIf="isFilterMenuEnabled">
         <app-filter-menu (refreshRecipeCard)="handleRecipeRefresh()"></app-filter-menu>

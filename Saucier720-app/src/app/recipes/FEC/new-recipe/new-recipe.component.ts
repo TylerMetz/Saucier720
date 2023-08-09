@@ -16,6 +16,8 @@ export class NewRecipeComponent {
 
   @Output() addRecipeToCookbook: EventEmitter<any> = new EventEmitter<any>();
 
+  @Output() refreshRecipeCard: EventEmitter<void> = new EventEmitter<void>(); 
+
   constructor(private renderer: Renderer2, private recipeService: RecipeService) {}
 
   addIngredientTextbox() {
@@ -72,7 +74,8 @@ export class NewRecipeComponent {
       try {
         const response = await lastValueFrom(this.recipeService.postNewRecipe(recipe));
         console.log(response);
-        window.location.reload(); // refresh page to show updated data
+        //window.location.reload(); // refresh page to show updated data
+        this.refreshRecipeCard.emit()
       } catch (error) {
         console.error(error);
       }
