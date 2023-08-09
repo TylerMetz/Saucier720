@@ -7,6 +7,7 @@ import { PantryComponent } from './pantry/pantry.component';
 import { RecipesComponent } from './recipes/recipes.component';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
+import { SettingsComponent } from './settings/settings.component';
 import { HttpClientModule } from '@angular/common/http';
 import { AuthGuard } from './core/services/Auth/auth.guard.service';
 import { AuthService } from './core/services/Auth/auth.service';
@@ -17,6 +18,7 @@ const routes: Routes = [
   { path: 'List', component: ListComponent, canActivate: [AuthGuard]},
   { path: 'Deals', component: DealsComponent, canActivate: [AuthGuard]},
   { path: 'Recipes', component: RecipesComponent, canActivate: [AuthGuard]},
+  { path: 'Settings', component: SettingsComponent, canActivate: [AuthGuard]},
   { path: 'Login', component: LoginComponent},
   { path: 'Signup', component: SignupComponent}
 ];

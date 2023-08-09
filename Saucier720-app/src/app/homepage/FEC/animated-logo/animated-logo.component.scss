@@ -15,14 +15,22 @@
 }
 
 .icon-top {
-  background-image: url('../../../../assets/images/mealdealz-top.png');
+  background-image: var(--text-color-image);
+  mask-image: url('../../../../assets/images/mealdealz-top.png');
+  mask-size: cover;
+  mask-repeat: no-repeat;
+  mask-position: center;
   top: 0;
   width: 101%;
   height: 65%;
 }
 
 .icon-bottom {
-  background-image: url('../../../../assets/images/mealdealz-bottom.png');
+  background-image: var(--text-color-image);
+  mask-image: url('../../../../assets/images/mealdealz-bottom.png'); 
+  mask-size: cover;
+  mask-repeat: no-repeat;
+  mask-position: center;
   bottom: 0;
   width: 100%;
   height: 35%;

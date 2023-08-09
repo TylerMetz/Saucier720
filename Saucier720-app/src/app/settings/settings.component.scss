@@ -1,0 +1,24 @@
+.page {
+  margin: 0 auto;
+  padding: 0;
+  width: 100%;
+  display: flex;
+  align-items: center; /* Vertically align content */
+  justify-content: center; /* Horizontally align content */
+  height: calc(100vh - 120px); // 120px is the height of the navbar
+}
+
+.theme-cycle-button{
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.theme-cycle-button:hover{
+  background-color: var(--text-color);
+  color: var(--primary-color);
+}
