@@ -63,6 +63,7 @@ export class LoginFormComponent {
         console.log('response', response)
         const sessionID = response.body.value;
         console.log("cookie set ", sessionID);
+        this.authService.loggedIn = true;
         this.setSessionIDAndNavigateToHome(sessionID);
 
         // clear all button/checkbox states from session
