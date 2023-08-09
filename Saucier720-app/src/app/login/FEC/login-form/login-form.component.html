@@ -5,6 +5,10 @@
                 <span class="logo"></span>
             </div>
         </div>
+        <div class="error-msg" *ngIf="failedLogin">
+            <i class="fa fa-exclamation-circle"></i>
+            <p>Invalid Login</p>
+        </div>
         <div class="form-body">
             <div class="form-group">
                 <div class="input-field">

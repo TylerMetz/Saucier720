@@ -129,3 +129,30 @@ button:hover {
   width: 200px;
   margin-bottom: 10px;
 }
+
+.error-msg i,
+.error-msg p {
+  color: red;
+  margin: 0; /* Reset margin to avoid unintended spacing */
+}
+
+.error-msg i {
+  margin-right: 5px;
+  margin-top: 2px;
+}
+
+.error-msg p {
+  vertical-align: middle; /* Vertically align the text */
+  margin: 0; /* Reset margin to avoid unintended spacing */
+  display: inline-block; /* Display the <p> element as inline-block */
+  vertical-align: middle; /* Vertically align the <p> element */
+}
+
+.error-msg {
+  width: 200px;
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
