@@ -9,15 +9,8 @@
     transition: all 0.2s ease-in-out;
   }
 
-  .topnav img {
-    position: absolute;
-    left: 50%; 
-    transform: translate(-50%);
-    top: 1%;
-    bottom: 4%; 
-    padding: 4px 16px 5px 16px;
-
-    background-image: url('/assets/images/--primary-color.png');
+  .logo{
+    background-image: var(--text-color-image);
     mask-image: url('/assets/images/mainIcon-default.svg');
     mask-size: cover;
     mask-repeat: no-repeat;
@@ -25,15 +18,42 @@
 
     display: inline-block; /* Ensure it occupies space in the button */
 
-    background-size: 150px;
-    transition: 0.2s ease-in-out;
+    width: 20px;
+    height: 40px;
   }
 
-  img:hover{
-    background-color: var(--text-color);
-    content: url("/assets/images/hover.png");
-    transition: 0.2s ease-in-out;
+  .button:hover .logo{
+    background-image: var(--primary-color-image);
+    mask-image: url('/assets/images/mainIcon-default.svg'); 
+    mask-size: cover;
+    mask-repeat: no-repeat;
+    mask-position: center;
   }
+
+  .image-wrapper{
+    margin-top: 5px;
+  }
+
+  .button{    
+    position: absolute;
+    left: 50%; 
+    transform: translate(-50%);
+
+    width: 50px;
+    height: 100%;
+    background-color: var(--primary-color); 
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    border: 0px;
+  }
+
+  .button:hover,
+  .button.clicked{
+    background-color: var(--text-color);
+  }
+
   /* Style the links inside the navigation bar */
   .topnav a {
     float: left;
