@@ -100,7 +100,7 @@
 }
 
 .about-us{
-  background-image: url('../../assets/images/--primary-color.png');
+  background-image: var(--primary-color-image);
   mask-image: url('../../assets/images/about-us.png'); /* Replace 'path-to-your-black-icon.png' with the actual path to your black icon image */
   mask-size: cover;
   mask-repeat: no-repeat;
@@ -115,7 +115,7 @@
 }
 
 .mission-statement{
-  background-image: url('../../assets/images/--primary-color.png');
+  background-image: var(--primary-color-image);
   mask-image: url('../../assets/images/mission-statement.png'); /* Replace 'path-to-your-black-icon.png' with the actual path to your black icon image */
   mask-size: cover;
   mask-repeat: no-repeat;
@@ -130,7 +130,7 @@
 }
 
 .developers{
-  background-image: url('../../assets/images/--primary-color.png');
+  background-image: var(--primary-color-image);
   mask-image: url('../../assets/images/developers.png'); /* Replace 'path-to-your-black-icon.png' with the actual path to your black icon image */
   mask-size: cover;
   mask-repeat: no-repeat;
@@ -145,7 +145,7 @@
 }
 
 .faqs{
-  background-image: url('../../assets/images/--primary-color.png');
+  background-image: var(--primary-color-image);
   mask-image: url('../../assets/images/faqs.png'); /* Replace 'path-to-your-black-icon.png' with the actual path to your black icon image */
   mask-size: cover;
   mask-repeat: no-repeat;
@@ -160,7 +160,7 @@
 }
 
 .feedback{
-  background-image: url('../../assets/images/--primary-color.png');
+  background-image: var(--primary-color-image);
   mask-image: url('../../assets/images/feedback.png'); /* Replace 'path-to-your-black-icon.png' with the actual path to your black icon image */
   mask-size: cover;
   mask-repeat: no-repeat;
@@ -201,7 +201,7 @@
 
 .button:hover .about-us,
 .button.clicked .about-us{
-  background-image: url('../../assets/images/--secondary-color.png');
+  background-image: var(--secondary-color-image);
   mask-image: url('../../assets/images/about-us.png'); /* Replace 'path-to-your-black-icon.png' with the actual path to your black icon image */
   mask-size: cover;
   mask-repeat: no-repeat;
@@ -210,7 +210,7 @@
 
 .button:hover .mission-statement,
 .button.clicked .mission-statement{
-  background-image: url('../../assets/images/--secondary-color.png');
+  background-image: var(--secondary-color-image);;
   mask-image: url('../../assets/images/mission-statement.png'); /* Replace 'path-to-your-black-icon.png' with the actual path to your black icon image */
   mask-size: cover;
   mask-repeat: no-repeat;
@@ -219,7 +219,7 @@
 
 .button:hover .developers,
 .button.clicked .developers{
-  background-image: url('../../assets/images/--secondary-color.png');
+  background-image: var(--secondary-color-image);;
   mask-image: url('../../assets/images/developers.png'); /* Replace 'path-to-your-black-icon.png' with the actual path to your black icon image */
   mask-size: cover;
   mask-repeat: no-repeat;
@@ -228,7 +228,7 @@
 
 .button:hover .faqs,
 .button.clicked .faqs{
-  background-image: url('../../assets/images/--secondary-color.png');
+  background-image: var(--secondary-color-image);;
   mask-image: url('../../assets/images/faqs.png'); /* Replace 'path-to-your-black-icon.png' with the actual path to your black icon image */
   mask-size: cover;
   mask-repeat: no-repeat;
@@ -237,7 +237,7 @@
 
 .button:hover .feedback,
 .button.clicked .feedback{
-  background-image: url('../../assets/images/--secondary-color.png');
+  background-image: var(--secondary-color-image);;
   mask-image: url('../../assets/images/feedback.png'); /* Replace 'path-to-your-black-icon.png' with the actual path to your black icon image */
   mask-size: cover;
   mask-repeat: no-repeat;

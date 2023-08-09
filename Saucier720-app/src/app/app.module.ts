@@ -28,6 +28,7 @@ import { DevelopersComponent } from './homepage/FEC/developers/developers.compon
 import { FaqsComponent } from './homepage/FEC/faqs/faqs.component';
 import { FeedbackComponent } from './homepage/FEC/feedback/feedback.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SettingsComponent } from './settings/settings.component';
 
 @NgModule({
   declarations: [
@@ -55,7 +56,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     MissionStatementComponent,
     DevelopersComponent,
     FaqsComponent,
-    FeedbackComponent
+    FeedbackComponent,
+    SettingsComponent
   ],
   imports: [
     AppRoutingModule,
