@@ -29,6 +29,9 @@
     </div>
     <div class="submit-button">
         <button class="login-button" type="submit" (click)="login()">Login</button>
+        <div class="loading-overlay" *ngIf="isLoading">
+            <div class="spinner"></div>
+        </div>
     </div>
     <div class="signup-link">
         Don't have an account? <a href="/Signup">Sign up</a>
