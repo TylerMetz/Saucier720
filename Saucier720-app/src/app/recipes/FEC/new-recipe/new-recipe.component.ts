@@ -16,6 +16,7 @@ export class NewRecipeComponent {
 
   @Output() addRecipeToCookbook: EventEmitter<any> = new EventEmitter<any>();
 
+  // No Refresh
   @Output() refreshRecipeCard: EventEmitter<void> = new EventEmitter<void>(); 
 
   constructor(private renderer: Renderer2, private recipeService: RecipeService) {}

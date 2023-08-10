@@ -17,5 +17,11 @@ export class RecipesComponent{
   handleRecipeRefresh(){
     this.recipeCard.populateRecipes();
     this.recipeCard.currentRecipeIndex = 0;
+    if(this.isNewRecipeEnabled){
+      this.isNewRecipeEnabled = false;
+    }
+    else if(this.isFilterMenuEnabled){
+      this.isFilterMenuEnabled = false;
+    }
   }
 }
