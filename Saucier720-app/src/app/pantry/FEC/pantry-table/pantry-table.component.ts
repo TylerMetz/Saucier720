@@ -66,7 +66,11 @@ export class PantryTableComponent implements OnInit {
       SaleDetails: '', 
       Quantity: quantity
     };
+    if(this.pantry === null){
+      this.pantry = []
+    }
     this.pantry.push(newIngredient)
+    console.log('hi')
   }
 
   
