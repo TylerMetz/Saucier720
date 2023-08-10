@@ -108,9 +108,9 @@ export class ListComponent implements OnInit {
     //console.log("Checking " + ingredient.Name);
     const response = await this.listService.checkIfExists(ingredient)
     if (response){
-      console.log(ingredient.Name + " was found in list!")
+      //console.log(ingredient.Name + " was found in list!")
     } else {
-      console.log(ingredient.Name + " was not found in list!")
+      //console.log(ingredient.Name + " was not found in list!")
     }
     return response;
   }
