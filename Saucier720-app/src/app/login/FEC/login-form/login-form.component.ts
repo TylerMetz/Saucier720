@@ -29,14 +29,15 @@ export class LoginFormComponent {
     private cookieService: CookieService
     ) { }
 
-    async setSessionIDAndNavigateToPantry(sessionID: string): Promise<void> {
+    async setSessionIDAndNavigateToHome(sessionID: string): Promise<void> {
       await new Promise<void>((resolve) => {
         this.cookieService.set('sessionID', sessionID, 7, '/', 'localhost', false, 'Lax');
         resolve();
       });
+      // time delay before going home
       setTimeout(() => {
-        this.router.navigate(['/Pantry']);
-      }, 4000);
+        this.router.navigate(['/Home']);
+      }, 1000);
     }
 
     async login() {
@@ -56,7 +57,7 @@ export class LoginFormComponent {
         console.log('response', response)
         const sessionID = response.body.value;
         console.log("cookie set ", sessionID);
-        this.setSessionIDAndNavigateToPantry(sessionID);
+        this.setSessionIDAndNavigateToHome(sessionID);
 
         // clear all button/checkbox states from session
         localStorage.removeItem('recipeNavBarButtonState');

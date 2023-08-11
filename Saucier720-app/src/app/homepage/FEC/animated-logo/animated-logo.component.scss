@@ -1,0 +1,146 @@
+/* Styles for the icon */
+.icon-container {
+  top: 0;
+  width: 132px;
+  height: 261px; /* 168px (top height) + 93px (bottom height) */
+  position: relative;
+}
+
+.icon-top,
+.icon-bottom {
+  position: absolute;
+  left: 0;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.icon-top {
+  background-image: var(--text-color-image);
+  mask-image: url('../../../../assets/images/mealdealz-top.png');
+  mask-size: cover;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  top: 0;
+  width: 101%;
+  height: 65%;
+}
+
+.icon-bottom {
+  background-image: var(--text-color-image);
+  mask-image: url('../../../../assets/images/mealdealz-bottom.png'); 
+  mask-size: cover;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  bottom: 0;
+  width: 100%;
+  height: 35%;
+  transition: transform 200ms ease-out; /* Add a CSS transition for smooth animation */
+}
+
+.icon-container.clicked .icon-bottom {
+  transform: scaleY(0.7); /* Apply the scaleY transformation for the animation */
+}
+
+
+/* Styles for the text container */
+.text-container {
+  position: absolute;
+  top: 0px; /* Adjust the value to position the text container vertically */
+  left: 230px; /* Adjust the value to position the text container horizontally */
+  width: 250px; /* Adjust the value to set the width of the text container */
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  overflow: hidden;
+  transition: top 500ms ease-out; /* Add a CSS transition for smooth animation of the 'top' property */
+}
+
+.text-container p {
+  margin: 0;
+  font-size: 18px; /* Adjust the font size as desired */
+  white-space: normal; /* Enable text wrapping */
+  animation: 5s linear; /* Use linear animation for smooth text appearance */
+}
+
+@keyframes textMovement {
+  to {
+    transform: translateY(-100px);
+  }
+}
+
+.buttons-container {
+  position: absolute;
+  top: 110px; /* Adjust the value to position the text container vertically */
+  left: 230px; /* Adjust the value to position the text container horizontally */
+  width: 250px; /* Adjust the value to set the width of the text container */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  overflow: hidden;
+}
+
+.login-button,
+.signup-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  font-size: 20px;
+  cursor: pointer;
+  transition: top 500ms ease-out;
+}
+
+
+.login-button:hover,
+.signup-button:hover {
+  background-color: var(--text-color);
+  color: var(--primary-color);
+}
+
+.login-button{
+  margin-top: 10px;
+}
+
+/* Add an animation for the buttons fade in */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Apply the animation to the buttons when they become visible */
+.show {
+  animation: fadeIn 1s ease forwards;
+}
+
+/* stylings for background square */
+/* Styles for the background square */
+.background-square {
+  position: absolute;
+  top: 90px; /* Adjust the value to position the background square vertically */
+  left: 225px; /* Adjust the value to position the background square horizontally */
+  width: 260px;
+  height: 150px;
+  background-color: var(--secondary-color);
+  border-radius: 10px; /* Adjust the value to control the roundness of the corners */
+  opacity: 0;
+  animation: fadeInBackground 1s ease forwards;
+}
+
+@keyframes fadeInBackground {
+  to {
+    opacity: 1;
+  }
+}
+
+
+.animation-container {
+  width: 485px;
+}

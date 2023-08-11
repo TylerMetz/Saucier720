@@ -1,0 +1,94 @@
+.popup {
+  width: 19.5vw;
+  height: 36vh;
+  background-color: var(--secondary-color);
+  border-radius: 10px;
+  position: relative;
+  text-align: center;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 2vh;
+}
+
+.popup-title {
+  text-align: center;
+  font-size: 1vw; /* Change the font-size to be in terms of vw */
+  font-weight: bold;
+  margin-bottom: 2vh; /* Change the margin to be in terms of vh */
+  color: var(--text-color);
+}
+
+.popup form {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Center items vertically */
+  height: 100%; /* Ensure the form takes full height of the popup */
+}
+
+.popup label {
+  font-weight: bold;
+  color: var(--text-color);
+}
+
+.popup input,
+.popup textarea {
+  margin-bottom: 1vh; /* Change the margin to be in terms of vh */
+  padding: 1vw; /* Change the padding to be in terms of vw */
+  border: 0.5px solid #ccc; /* Change the border to be in terms of vw */
+  border-radius: 1vw; /* Change the border-radius to be in terms of vw */
+  resize: none;
+  width: 17.5vw;
+}
+
+.popup input{
+  height: 6vh;
+}
+
+.popup textarea{
+  height: 12vh;
+}
+
+
+.popup button {
+  border: none;
+  border-radius: 5px;
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  font-size: 1vw;
+  padding: 0.5vw 1vw;
+}
+
+.popup button:hover {
+  background-color: var(--text-color);
+  color: var(--primary-color);
+}
+
+.form-group{
+  display: flex;
+  justify-content: space-between;
+}
+
+.button-group{
+  display: flex;
+  justify-content: center;
+
+}
+
+.message {
+  font-size: 1.2vw;
+  color: var(--text-color);
+  margin-bottom: 2vh;
+}
+
+.form-container,
+.message {
+  height: 100%; /* Fixed height to prevent layout shifts */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+

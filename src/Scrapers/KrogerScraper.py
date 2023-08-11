@@ -14,7 +14,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 def scrape_kroger():
     # Get to test website 
     url = "https://www.kroger.com/weeklyad/shoppable"
-    
+
     # Set up Selenium options 
     options = Options()
     options.add_argument("--headless")
@@ -34,7 +34,7 @@ def scrape_kroger():
 
     # Let page load
     time.sleep(5)
-    
+
     # Create a Beautiful Soup object from HTML
     soup = BeautifulSoup(driver.page_source, 'html.parser')
 
@@ -44,14 +44,14 @@ def scrape_kroger():
 
     # Remove Coupons
     products = [product for product in products if not product.startswith('Save')]
-    
+
     # Print the extracted data
     for product, price in zip(products, prices):
         if price != "FREE":
             print("Product:", re.sub(r'^\$\d+\.\d+\s', '', product))
             print("Price:", price)
             print()
-    
+
 def main():
     scrape_kroger()
 

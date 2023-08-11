@@ -43,6 +43,7 @@
   }
 
   button.clicked {
+    pointer-events: none;
     background-color: var(--background-color);
     color: var(--secondary-color);
   }

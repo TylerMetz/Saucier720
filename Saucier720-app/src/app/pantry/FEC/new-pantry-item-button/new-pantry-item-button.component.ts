@@ -1,14 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 import { PantryService } from 'src/app/core/services/pantry/pantry.service';
 import { PANTRY } from 'src/app/mocks/pantry.mock';
 import { lastValueFrom } from 'rxjs';
 import { Ingredient } from 'src/app/core/interfaces/ingredient';
+import { PantryTableComponent } from '../pantry-table/pantry-table.component';
 
 @Component({
   selector: 'app-new-pantry-item-button',
   templateUrl: './new-pantry-item-button.component.html',
   styleUrls:[ './new-pantry-item-button.component.scss'],
-  providers: [PantryService]
+  providers: [PantryService, PantryTableComponent]
 })
 
 export class NewPantryItemButtonComponent {
@@ -18,6 +19,8 @@ export class NewPantryItemButtonComponent {
   salePrice: number = 0;
   saleDetails: string = '';
   quantity: number = 1;
+
+  @Output() newItemAdded: EventEmitter<{ name: string, quantity: number }> = new EventEmitter<{ name: string, quantity: number }>();
 
   constructor(private pantryService: PantryService) { }
 
@@ -37,7 +40,13 @@ export class NewPantryItemButtonComponent {
     try {
       const response = await lastValueFrom(this.pantryService.postPantryItem(newPantryItem));
       console.log(response);
-      window.location.reload();
+      const newItem = {
+        name: newPantryItem.Name,
+        quantity: newPantryItem.Quantity,
+      };
+      this.newItemAdded.emit(newItem);
+      this.name = '';
+      this.quantity = 1;
     } catch (error) {
       console.error(error);
     }
