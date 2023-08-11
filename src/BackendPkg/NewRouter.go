@@ -973,6 +973,10 @@ func UpdateDealsData(){
 	// set all deals to global variable
 	var dealsInterfaceRefresh []interface{}
 	dealsInterface = dealsInterfaceRefresh
+
+	// Create a temp food item to store the name of the store
+	storeItem := FoodItem{Name: StoreSelection}
+	dealsInterface = append(dealsInterface, storeItem)
 	for i := 0; i < len(StoreDeals); i++{
 		dealsInterface = append(dealsInterface, StoreDeals[i])
 	}

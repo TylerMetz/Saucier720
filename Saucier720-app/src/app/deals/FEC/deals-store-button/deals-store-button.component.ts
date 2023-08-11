@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { DealsService } from 'src/app/core/services/deals/deals.service';
 import { PANTRY } from 'src/app/mocks/pantry.mock';
 import { lastValueFrom } from 'rxjs';
 import { Store } from 'src/app/core/interfaces/store';
+import { OutletContext } from '@angular/router';
 
 
 @Component({
@@ -13,16 +14,12 @@ import { Store } from 'src/app/core/interfaces/store';
 })
 
 export class DealsStoreButtonComponent {
-  name: string = 'Walmart';
+  activeButton: string = '';
+
+  // Output 
+  @Output() refreshDealsTable: EventEmitter<void> = new EventEmitter<void>();
 
   constructor(private dealsService: DealsService) {
-    const jsonString = localStorage.getItem('buttonState');
-    if (jsonString) {
-      const buttonState = JSON.parse(jsonString);
-      if (buttonState && buttonState.storeName) {
-        this.name = buttonState.storeName;
-      }
-    }
   }
 
   async postStore(storeName: string) {
@@ -33,36 +30,31 @@ export class DealsStoreButtonComponent {
     try {
       const response = await lastValueFrom(this.dealsService.postStore(newStore));
       console.log(response);
-      this.saveButtonState(storeName);
 
-      window.location.reload();
+      this.refreshDealsTable.emit()
+      const buttons = document.querySelectorAll('button');
+      buttons.forEach((button: HTMLElement) => {
+        if (button.innerText === storeName) {
+          button.classList.add('clicked');
+        } else {
+          button.classList.remove('clicked');
+        }
+     });
+      
     } catch (error) {
       console.error(error);
     }
   }
 
-  private saveButtonState(storeName: string): void {
-    localStorage.setItem('buttonState', JSON.stringify({ storeName }));
-  }
-
-  ngOnInit() {
-    // Apply the 'clicked' class to the button that matches the stored 'storeName'
+  setButton() {
     const buttons = document.querySelectorAll('button');
     buttons.forEach((button: HTMLElement) => {
-      if (button.innerText === this.name) {
+      if (button.innerText === this.activeButton) {
         button.classList.add('clicked');
       } else {
         button.classList.remove('clicked');
       }
-    });
+   });
   }
 
-  ngAfterViewInit() {
-    const buttons = document.querySelectorAll('button');
-    buttons.forEach((button: HTMLElement) => {
-      if (button.innerText === this.name) {
-        button.classList.add('clicked');
-      }
-    });
-  }
 }

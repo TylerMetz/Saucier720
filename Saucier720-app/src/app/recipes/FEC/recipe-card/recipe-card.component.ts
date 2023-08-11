@@ -121,7 +121,7 @@ export class RecipeCardComponent implements OnInit {
     }
     this.currentRecipe = this.recipes[this.currentRecipeIndex];
     this.currentIngredients = this.removeQuotesAndBrackets(this.currentRecipe.R.ingredients);
-    console.log('hi2', this.currentIngredients)
+    console.log(this.currentIngredients)
     console.log(this.currentRecipe.R.title)
     this.validteRecipeItems()
   }
@@ -133,7 +133,7 @@ export class RecipeCardComponent implements OnInit {
     }
     this.currentRecipe = this.recipes[this.currentRecipeIndex];
     this.currentIngredients = this.removeQuotesAndBrackets(this.currentRecipe.R.ingredients);
-    console.log('hi3', this.currentIngredients)
+    console.log(this.currentIngredients)
     console.log(this.currentRecipe.R.title)
     this.validteRecipeItems()
   }
