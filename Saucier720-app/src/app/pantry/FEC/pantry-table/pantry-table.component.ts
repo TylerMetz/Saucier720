@@ -70,7 +70,6 @@ export class PantryTableComponent implements OnInit {
       this.pantry = []
     }
     this.pantry.push(newIngredient)
-    console.log('hi')
   }
 
   

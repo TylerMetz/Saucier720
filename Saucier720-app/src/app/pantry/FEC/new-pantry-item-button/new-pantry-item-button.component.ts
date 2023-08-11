@@ -40,7 +40,6 @@ export class NewPantryItemButtonComponent {
     try {
       const response = await lastValueFrom(this.pantryService.postPantryItem(newPantryItem));
       console.log(response);
-      //window.location.reload();
       const newItem = {
         name: newPantryItem.Name,
         quantity: newPantryItem.Quantity,

@@ -66,7 +66,6 @@ export class RecipeNavBarComponent implements OnInit {
     try {
       const response = await lastValueFrom(this.recipeService.postFavoriteRecipesSelect());
       console.log(response);
-      //window.location.reload();
       this.refreshRecipeCard.emit();
     } catch (error) {
       console.error(error);
@@ -77,7 +76,6 @@ export class RecipeNavBarComponent implements OnInit {
     try {
       const response = await lastValueFrom(this.recipeService.postMyRecipesSelect());
       console.log(response);
-      //window.location.reload();
       this.refreshRecipeCard.emit();
     } catch (error) {
       console.error(error);
@@ -88,7 +86,6 @@ export class RecipeNavBarComponent implements OnInit {
     try {
       const response = await lastValueFrom(this.recipeService.postRecommendedRecipesSelect());
       console.log(response);
-      //window.location.reload();
       this.refreshRecipeCard.emit();
     } catch (error) {
       console.error(error);

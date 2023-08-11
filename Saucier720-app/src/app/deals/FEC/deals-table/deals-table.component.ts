@@ -1,11 +1,12 @@
-import { HttpClient, HttpEvent, HttpEventType } from "@angular/common/http"
-import { Component, OnInit } from '@angular/core';
+import { HttpClient, HttpEvent, HttpEventType} from "@angular/common/http"
+import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 import { DealsService } from 'src/app/core/services/deals/deals.service';
 import { count, lastValueFrom } from "rxjs";
 import { ListComponent } from "src/app/list/list.component";
 import { Ingredient } from "src/app/core/interfaces/ingredient";
 import { delay } from "cypress/types/bluebird";
 import { forEach } from "cypress/types/lodash";
+import { createUrlTreeFromSnapshot } from "@angular/router";
 
 @Component({
   selector: 'app-deals-table',
@@ -16,6 +17,9 @@ import { forEach } from "cypress/types/lodash";
 export class DealsTableComponent implements OnInit {
 
   pantry: any;
+  currentStore: string = ''
+
+  @Output() sendButtonData: EventEmitter<string> = new EventEmitter<string>();
 
   constructor(private dealsService: DealsService, private listComponent: ListComponent) { }
 
@@ -52,6 +56,10 @@ export class DealsTableComponent implements OnInit {
         case HttpEventType.Response:
           console.log('Done!', event.body);
           this.pantry = event.body;
+          this.currentStore = this.pantry[0].Name
+          //console.log(this.currentStore)
+          this.sendButtonData.emit(this.currentStore)
+          this.pantry.shift()
           break;
       }
     } catch (error) {

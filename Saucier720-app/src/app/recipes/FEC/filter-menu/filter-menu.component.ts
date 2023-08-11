@@ -61,7 +61,6 @@ export class FilterRecipeComponent implements OnInit{
       }
       const response = await lastValueFrom(this.recipeService.postFilterValues(filterValues));
       console.log(response);
-      //window.location.reload(); // refresh page to show updated data
       this.refreshRecipeCard.emit();
     } catch (error) {
       console.error(error);
