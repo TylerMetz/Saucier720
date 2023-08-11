@@ -74,7 +74,7 @@ func (s *Scraper) PublixScrapeDealsPy(){
 		name = "python"
 	}
 	
-	cmd := exec.Command(name, "-X", "utf8", "PublixScraper.py")
+	cmd := exec.Command(name, "-X", "utf8", "Scrapers/PublixScraper.py")
 	output, _:= cmd.Output()
 
 	outputClean := html.UnescapeString(string(output))
@@ -101,7 +101,7 @@ func (s *Scraper) WalmartScrapeDealsPy(){
 		name = "python"
 	}
 	
-	cmd := exec.Command(name, "-X", "utf8", "WalmartScraper.py")
+	cmd := exec.Command(name, "-X", "utf8", "Scrapers/WalmartScraper.py")
 	output, _ := cmd.Output()
 	
 	// parse output into FoodItems
