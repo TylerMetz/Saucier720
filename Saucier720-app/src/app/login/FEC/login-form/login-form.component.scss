@@ -57,6 +57,36 @@ h1 {
     font-size: medium;
 }
 
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left: 4px solid var(--secondary-color);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 button:hover {
     background-color: var(--button-hover-color);
     color: var(--button-hover-text-color);
@@ -99,3 +129,30 @@ button:hover {
   width: 200px;
   margin-bottom: 10px;
 }
+
+.error-msg i,
+.error-msg p {
+  color: var(--text-color);
+  margin: 0; /* Reset margin to avoid unintended spacing */
+}
+
+.error-msg i {
+  margin-right: 5px;
+  margin-top: 2px;
+}
+
+.error-msg p {
+  vertical-align: middle; /* Vertically align the text */
+  margin: 0; /* Reset margin to avoid unintended spacing */
+  display: inline-block; /* Display the <p> element as inline-block */
+  vertical-align: middle; /* Vertically align the <p> element */
+}
+
+.error-msg {
+  width: 200px;
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+

@@ -5,6 +5,10 @@
                 <span class="logo"></span>
             </div>
         </div>
+        <div class="error-msg" *ngIf="failedLogin">
+            <i class="fa fa-exclamation-circle"></i>
+            <p>Invalid Login</p>
+        </div>
         <div class="form-body">
             <div class="form-group">
                 <div class="input-field">
@@ -29,6 +33,9 @@
     </div>
     <div class="submit-button">
         <button class="login-button" type="submit" (click)="login()">Login</button>
+        <div class="loading-overlay" *ngIf="isLoading">
+            <div class="spinner"></div>
+        </div>
     </div>
     <div class="signup-link">
         Don't have an account? <a href="/Signup">Sign up</a>
