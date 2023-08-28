@@ -24,27 +24,6 @@ type Database struct {
 	Name string
 }
 
-// need to pass in the inventory slice from the grocery store item
-func (d *Database) StorePublixDatabase(f []FoodItem) {
-
-	// calls function to open the database
-	database := d.OpenDatabase()
-
-	// make table for food item data
-	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS PublixData (Name TEXT PRIMARY KEY, StoreCost REAL, OnSale INTEGER, SalePrice REAL, SaleDetails TEXT, Quantity INTEGER)")
-	statement.Exec()
-
-	// insert into food item table
-	statementTwo, _ := database.Prepare("INSERT OR IGNORE INTO PublixData (Name, StoreCost, OnSale, SalePrice, SaleDetails, Quantity) VALUES (?, ?, ?, ?, ?, ?)")
-
-	for _, item := range f {
-		statementTwo.Exec(item.Name, item.StoreCost, item.OnSale, item.SalePrice, item.SaleDetails, item.Quantity)
-	}
-
-	// close db
-	database.Close()
-}
-
 func (d *Database) ReadPublixDatabase() []FoodItem {
 	// calls function to open the database
 	database := d.OpenDatabase()
@@ -935,7 +914,7 @@ func StoreUserDatabase(u User) error {
 	}
 
 	tsql := `
-		INSERT INTO DevSchema.UserData (FirstName, LastName, Email, UserName, Password)
+		INSERT INTO dbo.user_data (FirstName, LastName, Email, UserName, Password)
 		VALUES (@FirstName, @LastName, @Email, @UserName, @Password);
 	`
 
@@ -952,6 +931,48 @@ func StoreUserDatabase(u User) error {
 		sql.Named("UserName", u.UserName),
 		sql.Named("Password", u.Password),
 	)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// need to pass in the inventory slice from the grocery store item
+func (d *Database) StorePublixDatabase(f []FoodItem) {
+	ctx := context.Background()
+	var err error
+
+	if db == nil {
+		err = errors.New("StorePublixDatabase: db is null")
+		return err
+	}
+
+	// Check if database is alive.
+	err = db.PingContext(ctx)
+	if err != nil {
+		return err
+	}
+
+	tsql := `
+		INSERT INTO dbo.deals_data (Store, foodName, saleDetails)
+		VALUES (@store, @foodName, @saleDetails);
+	`
+
+	stmt, err := db.Prepare(tsql)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	for _, item := range f {
+		_, err = stmt.ExecContext(ctx,
+			sql.Named("store", "Publix"),
+			sql.Named("foodName", item.Name),
+			sql.Named("saleDetails", item.saleDetails),
+		)
+	}
 
 	if err != nil {
 		return err
