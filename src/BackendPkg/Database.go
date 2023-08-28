@@ -24,14 +24,6 @@ type Database struct {
 	Name string
 }
 
-// initializes application database file OLD FUNCTION
-func (d *Database) OpenDatabase() *sql.DB {
-	connString := fmt.Sprintf("server=%s;user id=%s;password=%s;port=%d;database=%s;",
-        server, user, password, port, database)
-	database, _ := sql.Open("sqlserver", connString)
-	return database
-}
-
 // need to pass in the inventory slice from the grocery store item
 func (d *Database) StorePublixDatabase(f []FoodItem) {
 
@@ -917,6 +909,7 @@ func AzureOpenDatabase() error {
 	}
 	return nil
 }
+
 // CloseDatabase closes the database connection
 func AzureSQLCloseDatabase() {
 	err := db.Close()
@@ -924,6 +917,7 @@ func AzureSQLCloseDatabase() {
 		log.Println("Failed to close database connection:", err)
 	}
 }
+
 // StoreUserDatabase stores user data in the UserData table
 func StoreUserDatabase(u User) error {
 	ctx := context.Background()
