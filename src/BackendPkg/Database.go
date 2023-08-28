@@ -59,26 +59,6 @@ func (d *Database) ClearPublixDeals() {
 	database.Close()
 }
 
-func (d *Database) StoreWalmartDatabase(f []FoodItem) {
-
-	// calls function to open the database
-	database := d.OpenDatabase()
-
-	// make table for food item data
-	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS WalmartData (Name TEXT PRIMARY KEY, StoreCost REAL, OnSale INTEGER, SalePrice REAL, SaleDetails TEXT, Quantity INTEGER)")
-	statement.Exec()
-
-	// insert into food item table
-	statementTwo, _ := database.Prepare("INSERT OR IGNORE INTO WalmartData (Name, StoreCost, OnSale, SalePrice, SaleDetails, Quantity) VALUES (?, ?, ?, ?, ?, ?)")
-
-	for _, item := range f {
-		statementTwo.Exec(item.Name, item.StoreCost, item.OnSale, item.SalePrice, item.SaleDetails, item.Quantity)
-	}
-
-	// close db
-	database.Close()
-}
-
 func (d *Database) ReadWalmartDatabase() []FoodItem {
 	// calls function to open the database
 	database := d.OpenDatabase()
@@ -969,6 +949,47 @@ func (d *Database) StorePublixDatabase(f []FoodItem) {
 	for _, item := range f {
 		_, err = stmt.ExecContext(ctx,
 			sql.Named("store", "Publix"),
+			sql.Named("foodName", item.Name),
+			sql.Named("saleDetails", item.saleDetails),
+		)
+	}
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (d *Database) StoreWalmartDatabase(f []FoodItem) {
+	ctx := context.Background()
+	var err error
+
+	if db == nil {
+		err = errors.New("StoreWalmartDatabase: db is null")
+		return err
+	}
+
+	// Check if database is alive.
+	err = db.PingContext(ctx)
+	if err != nil {
+		return err
+	}
+
+	tsql := `
+		INSERT INTO dbo.deals_data (Store, foodName, saleDetails)
+		VALUES (@store, @foodName, @saleDetails);
+	`
+
+	stmt, err := db.Prepare(tsql)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	for _, item := range f {
+		_, err = stmt.ExecContext(ctx,
+			sql.Named("store", "Walmart"),
 			sql.Named("foodName", item.Name),
 			sql.Named("saleDetails", item.saleDetails),
 		)
