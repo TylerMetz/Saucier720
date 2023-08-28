@@ -132,26 +132,6 @@ func (d *Database) ReadUserDatabase(userName string) User {
 
 }
 
-func (d *Database) StoreUserPantry(u User) {
-
-	// calls function to open the database
-	database := d.OpenDatabase() // need to open database
-
-	// make table for food item data
-	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS UserPantries (UserName TEXT, PantryLastUpdated DATETIME, Name TEXT, StoreCost REAL, OnSale INTEGER, SalePrice REAL, SaleDetails TEXT, Quantity INTEGER, PRIMARY KEY (UserName, Name))")
-	statement.Exec()
-
-	// insert into food item table
-	statementTwo, _ := database.Prepare("INSERT OR IGNORE INTO UserPantries (UserName, PantryLastUpdated, Name, StoreCost, OnSale, SalePrice, SaleDetails, Quantity) VALUES (?, datetime(?), ?, ?, ?, ?, ?, ?)")
-
-	for _, item := range u.UserPantry.FoodInPantry {
-		statementTwo.Exec(u.UserName, u.UserPantry.TimeLastUpdated.Format("2006-01-02 15:04:05"), item.Name, item.StoreCost, item.OnSale, item.SalePrice, item.SaleDetails, item.Quantity)
-	}
-
-	// close db
-	database.Close()
-}
-
 func (d *Database) InsertPantryItemPost (currUser User, f FoodItem){
 
 	// calls function to open the database
@@ -992,6 +972,48 @@ func (d *Database) StoreWalmartDatabase(f []FoodItem) {
 			sql.Named("store", "Walmart"),
 			sql.Named("foodName", item.Name),
 			sql.Named("saleDetails", item.saleDetails),
+		)
+	}
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (d *Database) StoreUserPantry(u User) {
+	ctx := context.Background()
+	var err error
+
+	if db == nil {
+		err = errors.New("StoreUserPantry: db is null")
+		return err
+	}
+
+	// Check if database is alive.
+	err = db.PingContext(ctx)
+	if err != nil {
+		return err
+	}
+
+	tsql := `
+		INSERT INTO dbo.user_ingredients (UserName, FoodName, FoodType, Quantity)
+		VALUES (@UserName, @FoodName, @FoodType, @Quantity);
+	`
+
+	stmt, err := db.Prepare(tsql)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	for _, item := range u.UserPantry.FoodInPantry {
+		_, err = stmt.ExecContext(ctx,
+			sql.Named("UserName", u.UserName),
+			sql.Named("FoodName", item.Name),
+			sql.Named("FoodType", item.FoodType),
+			sql.Named("Quantity", item.Quantity),
 		)
 	}
 
