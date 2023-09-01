@@ -685,26 +685,6 @@ func (d* Database) GetUserPassword(username string) string{
 	return password
 }
 
-func (d *Database) StoreCookie(username string, cookie string) {
-
-	// calls function to open the database
-	database := d.OpenDatabase()
-
-	// make table for user data
-	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS Cookies (UserName TEXT PRIMARY KEY, Cookie TEXT)")
-	statement.Exec()
-
-	// insert into UserData table
-	statementTwo, _ := database.Prepare("INSERT OR IGNORE INTO Cookies (UserName, Cookie) VALUES (?, ?)")
-
-	// store data from this user into table
-	statementTwo.Exec(username, cookie)
-
-	// close db
-	database.Close()
-
-}
-
 func (d *Database) ReadCookie(username string) string {
 	// return user data from a unique username
 	database := d.OpenDatabase()
@@ -1038,6 +1018,45 @@ func (d *Database) InsertPantryItemPost (currUser User, f FoodItem){
 		sql.Named("FoodName", FoodItem.Name),
 		sql.Named("FoodType", FoodItem.FoodType),
 		sql.Named("Quantity", FoodItem.Quantity),
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (d *Database) StoreCookie(username string, cookie string) {
+
+	ctx := context.Background()
+	var err error
+
+	if db == nil {
+		err = errors.New("StorkeCookie: db is null")
+		return err
+	}
+
+	// Check if database is alive.
+	err = db.PingContext(ctx)
+	if err != nil {
+		return err
+	}
+
+	tsql := `
+		INSERT INTO dbo.user_cookies (UserName, Cookie)
+		VALUES (@UserName, @Cookie);
+	`
+
+	stmt, err := db.Prepare(tsql)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx,
+		sql.Named("UserName", username),
+		sql.Named("Cookie", cookie),
 	)
 
 	if err != nil {
