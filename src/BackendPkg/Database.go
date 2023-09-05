@@ -24,27 +24,6 @@ type Database struct {
 	Name string
 }
 
-func (d *Database) ReadPublixDatabase() []FoodItem {
-	// calls function to open the database
-	database := d.OpenDatabase()
-
-	statement, _ := database.Prepare("SELECT Name, StoreCost, OnSale, SalePrice, SaleDetails, Quantity FROM PublixData")
-
-	rows, _ := statement.Query()
-
-	var items []FoodItem
-	for rows.Next() {
-		var item FoodItem
-		rows.Scan(&item.Name, &item.StoreCost, &item.OnSale, &item.SalePrice, &item.SaleDetails, &item.Quantity)
-		items = append(items, item)
-	}
-
-	// close db
-	database.Close()
-
-	return items
-}
-
 func (d *Database) ClearPublixDeals() {
 	// open the database
 	database := d.OpenDatabase()
@@ -397,7 +376,6 @@ func (d *Database) getNextRecipeID(username string) int {
 
 	return lastIDNum + 1
 }
-
 
 func (d *Database) DeleteUserRecipe (recipeID string){
 	// Calls function to open the database
@@ -820,7 +798,7 @@ func AzureSQLCloseDatabase() {
 	}
 }
 
-// StoreUserDatabase stores user data in the UserData table
+//INSERTS
 func StoreUserDatabase(u User) error {
 	ctx := context.Background()
 	var err error
@@ -862,8 +840,7 @@ func StoreUserDatabase(u User) error {
 	return nil
 }
 
-// need to pass in the inventory slice from the grocery store item
-func (d *Database) StorePublixDatabase(f []FoodItem) {
+func (d *Database) StorePublixDatabase(f []FoodItem) error {
 	ctx := context.Background()
 	var err error
 
@@ -1065,3 +1042,34 @@ func (d *Database) StoreCookie(username string, cookie string) {
 
 	return nil
 }
+
+//READS
+func (d *Database) ReadPublixDatabase() ([]FoodItem, error) {
+	AzureOpenDatabase();
+
+	query := "SELECT foodName, saleDetails FROM dbo.deals_data WHERE store = 'Publix'"
+	rows, err := db.Query(query)
+
+	if erro != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var items []FoodItem
+
+	for rows.Next() {
+		var item FoodItem
+		err := rows.Scan(&item.FoodName, &item.saleDetails)
+		if err != nil {
+			return nil, err
+		}
+	}
+	items = append(items, item)
+
+	if err := rows.Err(); err !=nil {
+		return nil, err
+	}
+
+	return items, nil
+}
+
