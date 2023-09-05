@@ -38,42 +38,6 @@ func (d *Database) ClearPublixDeals() {
 	database.Close()
 }
 
-func (d *Database) ReadWalmartDatabase() []FoodItem {
-	// calls function to open the database
-	database := d.OpenDatabase()
-
-	statement, err := database.Prepare("SELECT Name, StoreCost, OnSale, SalePrice, SaleDetails, Quantity FROM WalmartData")
-	if err != nil {
-		// handle the error, e.g., log or return an empty list
-		log.Println("Failed to prepare statement:", err)
-		return []FoodItem{}
-	}
-
-	rows, err := statement.Query()
-	if err != nil {
-		// handle the error, e.g., log or return an empty list
-		log.Println("Failed to execute query:", err)
-		return []FoodItem{}
-	}
-
-	var items []FoodItem
-	for rows.Next() {
-		var item FoodItem
-		err := rows.Scan(&item.Name, &item.StoreCost, &item.OnSale, &item.SalePrice, &item.SaleDetails, &item.Quantity)
-		if err != nil {
-			// handle the error, e.g., log or skip this row
-			log.Println("Failed to scan row:", err)
-			continue
-		}
-		items = append(items, item)
-	}
-
-	// close db
-	database.Close()
-
-	return items
-}
-
 func (d *Database) ClearWalmartDeals() {
 	// open the database
 	database := d.OpenDatabase()
@@ -1073,3 +1037,31 @@ func (d *Database) ReadPublixDatabase() ([]FoodItem, error) {
 	return items, nil
 }
 
+func (d *Database) ReadWalmartDatabase() []FoodItem {
+	AzureOpenDatabase();
+
+	query := "SELECT foodName, saleDetails FROM dbo.deals_data WHERE store = 'Walmart'"
+	rows, err := db.Query(query)
+
+	if erro != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var items []FoodItem
+
+	for rows.Next() {
+		var item FoodItem
+		err := rows.Scan(&item.FoodName, &item.saleDetails)
+		if err != nil {
+			return nil, err
+		}
+	}
+	items = append(items, item)
+
+	if err := rows.Err(); err !=nil {
+		return nil, err
+	}
+
+	return items, nil
+}
