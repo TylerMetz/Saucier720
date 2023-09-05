@@ -52,29 +52,6 @@ func (d *Database) ClearWalmartDeals() {
 	database.Close()
 }
 
-func (d *Database) ReadUserDatabase(userName string) User {
-	// return user data from a unique username
-	// used to validate password
-	database := d.OpenDatabase()
-
-	var returnUser User
-
-	stmt, err := database.Prepare("SELECT FirstName, LastName, Email, UserName, Password FROM UserData WHERE UserName=?")
-	if err != nil {
-		// handle error
-	}
-	defer stmt.Close()
-
-	row := stmt.QueryRow(userName)
-	row.Scan(&returnUser.FirstName, &returnUser.LastName, &returnUser.Email, &returnUser.UserName, &returnUser.Password)
-
-	// close db
-	database.Close()
-
-	return returnUser
-
-}
-
 func (d *Database) UpdatePantry(currUser User, f []FoodItem){
 	
 	// calls function to open the database
@@ -1009,7 +986,12 @@ func (d *Database) StoreCookie(username string, cookie string) {
 
 //READS
 func (d *Database) ReadPublixDatabase() ([]FoodItem, error) {
-	AzureOpenDatabase();
+	db, err := AzureOpenDatabase()
+	if err != nil {
+		// Handle the error
+		fmt.Println("Failed to establish a database connection:", err)
+		return
+	}
 
 	query := "SELECT foodName, saleDetails FROM dbo.deals_data WHERE store = 'Publix'"
 	rows, err := db.Query(query)
@@ -1038,7 +1020,12 @@ func (d *Database) ReadPublixDatabase() ([]FoodItem, error) {
 }
 
 func (d *Database) ReadWalmartDatabase() []FoodItem {
-	AzureOpenDatabase();
+	db, err := AzureOpenDatabase()
+	if err != nil {
+		// Handle the error
+		fmt.Println("Failed to establish a database connection:", err)
+		return
+	}
 
 	query := "SELECT foodName, saleDetails FROM dbo.deals_data WHERE store = 'Walmart'"
 	rows, err := db.Query(query)
@@ -1064,4 +1051,27 @@ func (d *Database) ReadWalmartDatabase() []FoodItem {
 	}
 
 	return items, nil
+}
+
+func (d *Database) ReadUserDatabase(userName string) User {
+	// return user data from a unique username
+	// used to validate password
+	database := d.OpenDatabase()
+
+	var returnUser User
+
+	stmt, err := database.Prepare("SELECT FirstName, LastName, Email, UserName, Password FROM UserData WHERE UserName=?")
+	if err != nil {
+		// handle error
+	}
+	defer stmt.Close()
+
+	row := stmt.QueryRow(userName)
+	row.Scan(&returnUser.FirstName, &returnUser.LastName, &returnUser.Email, &returnUser.UserName, &returnUser.Password)
+
+	// close db
+	database.Close()
+
+	return returnUser
+
 }
