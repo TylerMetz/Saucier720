@@ -24,34 +24,6 @@ type Database struct {
 	Name string
 }
 
-func (d *Database) ClearPublixDeals() {
-	// open the database
-	database := d.OpenDatabase()
-
-	// delete the deals table if it exists
-	database.Exec("DROP TABLE IF EXISTS PublixData")
-
-	// delete the deals scraped time if it exists
-	database.Exec("DROP TABLE IF EXISTS PublixDealsScrapedTime")
-
-	// close db
-	database.Close()
-}
-
-func (d *Database) ClearWalmartDeals() {
-	// open the database
-	database := d.OpenDatabase()
-
-	// delete the deals table if it exists
-	database.Exec("DROP TABLE IF EXISTS WalmartData")
-
-	// delete the deals scraped time if it exists
-	database.Exec("DROP TABLE IF EXISTS WalmartDealsScrapedTime")
-
-	// close db
-	database.Close()
-}
-
 func (d *Database) UpdatePantry(currUser User, f []FoodItem){
 	
 	// calls function to open the database
@@ -1053,25 +1025,69 @@ func (d *Database) ReadWalmartDatabase() []FoodItem {
 	return items, nil
 }
 
-func (d *Database) ReadUserDatabase(userName string) User {
-	// return user data from a unique username
-	// used to validate password
-	database := d.OpenDatabase()
+func (d *Database) ReadUserDatabase(userName string) (User, error) {
+	db, err := AzureOpenDatabase()
+	if err != nil {
+		// Handle the error
+		fmt.Println("Failed to establish a database connection:", err)
+		return
+	}
 
 	var returnUser User
 
-	stmt, err := database.Prepare("SELECT FirstName, LastName, Email, UserName, Password FROM UserData WHERE UserName=?")
+	stmt, err := database.Prepare("SELECT FirstName, LastName, Email, UserName, Password FROM dbo.user_data WHERE UserName=?")
 	if err != nil {
 		// handle error
 	}
 	defer stmt.Close()
 
 	row := stmt.QueryRow(userName)
+
 	row.Scan(&returnUser.FirstName, &returnUser.LastName, &returnUser.Email, &returnUser.UserName, &returnUser.Password)
+	if err != nil {
+		return returnUser, err
+	}
 
-	// close db
-	database.Close()
+	return returnUser, nil
 
-	return returnUser
+}
 
+func (d *Database) ClearPublixDeals() error {
+	// Establish a connection to the Azure SQL Database
+	db, err := AzureOpenDatabase()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	// Define the SQL DELETE statement
+	query := "DELETE FROM dbo.deals_data WHERE store = 'Publix'"
+
+	// Execute the DELETE statement
+	_, err = db.Exec(query)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (d *Database) ClearWalmartDeals() {
+	// Establish a connection to the Azure SQL Database
+	db, err := AzureOpenDatabase()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	// Define the SQL DELETE statement
+	query := "DELETE FROM dbo.deals_data WHERE store = 'Walmart'"
+
+	// Execute the DELETE statement
+	_, err = db.Exec(query)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
