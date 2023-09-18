@@ -24,84 +24,6 @@ type Database struct {
 	Name string
 }
 
-func (d* Database) WriteJSONRecipes(){
-	// Read the recipes from the file
-	recipes, _ := GetJSONRecipes()
-
-	// calls function to open the database
-	database := d.OpenDatabase()
-
-	// Create a new table for the recipes
-	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS JSONRecipeData (title, ingredients TEXT, instructions TEXT, recipeID TEXT PRIMARY KEY)")
-	statement.Exec()
-
-	// Insert each recipe into the table
-	statementTwo, _ := database.Prepare("INSERT OR IGNORE INTO JSONRecipeData (title, ingredients, instructions, recipeID) values (?, ?, ?, ?)")
-
-	idNum := 1
-
-	for _, recipe := range recipes {
-		ingredients, _ := json.Marshal(recipe.Ingredients)
-		statementTwo.Exec(recipe.Title, string(ingredients), recipe.Instructions, ("json" + strconv.Itoa(idNum)))
-	
-		idNum++
-	}
-
-	
-
-	database.Exec("DELETE FROM JSONRecipeData WHERE ingredients = '[]'")
-	database.Exec("DELETE FROM JSONRecipeData WHERE instructions = ''")
-
-	// close db
-	database.Close()
-}
-
-func (d* Database) DeleteJSONRecipes(){
-	// calls function to open the database
-	database := d.OpenDatabase()
-
-	// Create a new table for the recipes
-	statement, _ := database.Prepare("DROP TABLE JSONRecipeData")
-	statement.Exec()
-
-	// close db
-	database.Close()
-
-}
-
-func (d* Database) ReadJSONRecipes() []Recipe{
-	// calls function to open the database
-	database := d.OpenDatabase()
-
-	// Execute a SELECT statement to retrieve all rows from the RecipeData table
-	rows, _ := database.Query("SELECT * FROM JSONRecipeData")
-
-	// Iterate through the rows and create a slice of Recipe structs
-	var recipes []Recipe
-	for rows.Next() {
-		var title, ingredientsStr, instructions, recipeID string
-		rows.Scan(&title, &ingredientsStr, &instructions, &recipeID)
-
-		// Convert the comma-separated list of ingredients to a slice
-		ingredients := strings.Split(ingredientsStr, ",")
-
-		// Create a new Recipe struct and append it to the slice
-		recipe := Recipe{
-			Title:        title,
-			Ingredients:  ingredients,
-			Instructions: instructions,
-			RecipeID: 	  recipeID, 
-			RecipeAuthor: null, // set to null for all recipes from the JSON file
-		}
-		recipes = append(recipes, recipe)
-	}
-
-	// close db
-	database.Close()
-
-	return recipes;
-}
-
 func (d *Database) WriteNewUserRecipe (currUser User, newRecipe Recipe){
 	// calls function to open the database
 	database := d.OpenDatabase()
@@ -1117,5 +1039,129 @@ func (d *Database) ReadWalmartScrapedTime() (time.Time, error) {
 	}
 
 	return dealsLastScraped, nil
+}
+
+func (d *Database) WriteJSONRecipes() error {
+	// Read the recipes from the file
+	recipes, err := GetJSONRecipes()
+	if err != nil {
+		return err
+	}
+
+	// Establish a connection to the Azure SQL Database
+	db, err := AzureOpenDatabase()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	// Create a new table for the JSON recipes if it doesn't exist
+	createTableQuery := `
+		CREATE TABLE IF NOT EXISTS json_recipes (
+			recipeID TEXT PRIMARY KEY,
+			Title TEXT,
+			Ingredients TEXT,
+			Instructions TEXT
+		)`
+	_, err = db.Exec(createTableQuery)
+	if err != nil {
+		return err
+	}
+
+	// Prepare the INSERT statement
+	insertQuery := `
+		INSERT OR IGNORE INTO json_recipes (recipeID, Title, Ingredients, Instructions)
+		VALUES (?, ?, ?, ?)`
+
+	// Insert each recipe into the table
+	for _, recipe := range recipes {
+		ingredientsJSON, _ := json.Marshal(recipe.Ingredients)
+		_, err := db.Exec(
+			insertQuery,
+			("json" + strconv.Itoa(recipe.RecipeID)),
+			recipe.Title,
+			string(ingredientsJSON),
+			recipe.Instructions,
+		)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Delete rows where Ingredients are empty
+	_, err = db.Exec("DELETE FROM json_recipes WHERE Ingredients = '[]'")
+	if err != nil {
+		return err
+	}
+
+	// Delete rows where Instructions are empty
+	_, err = db.Exec("DELETE FROM json_recipes WHERE Instructions = ''")
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (d *Database) DeleteJSONRecipes() error {
+	// Establish a connection to the Azure SQL Database
+	db, err := AzureOpenDatabase()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	// Drop the JSON recipes table if it exists
+	_, err = db.Exec("DROP TABLE IF EXISTS json_recipes")
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (d *Database) ReadJSONRecipes() ([]Recipe, error) {
+	// Establish a connection to the Azure SQL Database
+	db, err := AzureOpenDatabase()
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+
+	// Execute a SELECT statement to retrieve all rows from the json_recipes table
+	rows, err := db.Query("SELECT recipeID, Title, Ingredients, Instructions FROM json_recipes")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	// Iterate through the rows and create a slice of Recipe structs
+	var recipes []Recipe
+	for rows.Next() {
+		var recipeID, title, ingredientsStr, instructions string
+		err := rows.Scan(&recipeID, &title, &ingredientsStr, &instructions)
+		if err != nil {
+			return nil, err
+		}
+
+		// Convert the JSON string of ingredients to a slice
+		var ingredients []string
+		err = json.Unmarshal([]byte(ingredientsStr), &ingredients)
+		if err != nil {
+			return nil, err
+		}
+
+		// Create a new Recipe struct and append it to the slice
+		recipe := Recipe{
+			RecipeID:     recipeID,
+			Title:        title,
+			Ingredients:  ingredients,
+			Instructions: instructions,
+			RecipeAuthor: nil, // set to null for all recipes from the JSON file
+		}
+		recipes = append(recipes, recipe)
+	}
+
+	return recipes, nil
 }
 
