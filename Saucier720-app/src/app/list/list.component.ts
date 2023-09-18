@@ -65,7 +65,7 @@ export class ListComponent implements OnInit {
       const newIngredient: Ingredient = {
         Name: this.newIngredientName,
         FoodType: '', // empty value, replace with actual value if needed
-        SaleDeatails: '', // empty value, replace with actual value if needed
+        SaleDetails: '', // empty value, replace with actual value if needed
         Quantity: this.newIngredientQuantity
       };
 

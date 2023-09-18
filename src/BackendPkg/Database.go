@@ -608,9 +608,9 @@ func (d *Database) WriteJSONRecipes() error {
 	defer db.Close()
 
 	// Prepare the INSERT statement
-	insertQuery := `
-		INSERT INTO dbo.jason_recipes (Title, Ingredients, Instructions)
-		VALUES (@Title, @Ingredients, @Instructions)`
+	// insertQuery := `
+	// 	INSERT INTO dbo.jason_recipes (Title, Ingredients, Instructions)
+	// 	VALUES (@Title, @Ingredients, @Instructions)`
 
 	// Insert each recipe into the table
 	
@@ -618,13 +618,13 @@ func (d *Database) WriteJSONRecipes() error {
 		ingredientsJSON, _ := json.Marshal(recipe.Ingredients)
 		fmt.Println(recipe.RecipeID, recipe.Title, ingredientsJSON, recipe.Instructions, recipe.Ingredients)
 		
-		_, err = insertQuery.ExecContext(ctx,
-			sql.Named("FirstName", u.FirstName),
-			sql.Named("LastName", u.LastName),
-			sql.Named("Email", u.Email),
-			sql.Named("UserName", u.UserName),
-			sql.Named("Password", u.Password),
-		)
+		// _, err = insertQuery.ExecContext(ctx,
+		// 	sql.Named("FirstName", u.FirstName),
+		// 	sql.Named("LastName", u.LastName),
+		// 	sql.Named("Email", u.Email),
+		// 	sql.Named("UserName", u.UserName),
+		// 	sql.Named("Password", u.Password),
+		// )
 
 		// _, err := db.Exec(
 		// 	insertQuery,

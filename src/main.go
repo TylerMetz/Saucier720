@@ -15,12 +15,13 @@ var prevUser BackendPkg.User
 func main() {
 
 	// open the Azure SQL database
-	// BackendPkg.AzureOpenDatabase()
+	BackendPkg.AzureOpenDatabase()
 
-	programDatabase.WriteJSONRecipes()
+	go BackendPkg.ListenUserInfo(&sessionCookie, &cookieChanged)
 
-	for{}
+	for {}
 
+	// programDatabase.WriteJSONRecipes()
 
 	// // Reads recipes dataset in not read in yet and stores in DB
 	// programDatabase.WriteJSONRecipes()
@@ -28,8 +29,8 @@ func main() {
 	// // runs scraper if new deals at publix or walmart
 	// programScraper.CheckIfScrapeNewDeals(programDatabase)
 
-	// // listen for user in a separate goroutine, and wait for session cookie to be defined
-	// go BackendPkg.ListenUserInfo(&sessionCookie, &cookieChanged)
+	// listen for user in a separate goroutine, and wait for session cookie to be defined
+	
 	// for sessionCookie == "" && !cookieChanged {}
 	
 	// // always check if cookie is changed

@@ -13,11 +13,9 @@ import { Ingredient } from 'src/app/core/interfaces/ingredient';
 
 export class NewPantryItemButtonComponent {
   name: string = '';
-  storeCost: number = 100;
-  onSale: boolean = true;
-  salePrice: number = 0;
+  foodtype: string = '';
   saleDetails: string = '';
-  quantity: number = 1;
+  quantity: number = 100;
 
   constructor(private pantryService: PantryService) { }
 
@@ -27,9 +25,7 @@ export class NewPantryItemButtonComponent {
     }
     const newPantryItem: Ingredient = {
       Name: this.name,
-      StoreCost: this.storeCost,
-      OnSale: this.onSale,
-      SalePrice: this.salePrice,
+      FoodType: this.foodtype,
       SaleDetails: this.saleDetails,
       Quantity: this.quantity,
     };
