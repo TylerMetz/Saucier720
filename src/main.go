@@ -15,10 +15,10 @@ var prevUser BackendPkg.User
 func main() {
 
 	// open the Azure SQL database
-	BackendPkg.AzureOpenDatabase()
+	// BackendPkg.AzureOpenDatabase()
 
 	programDatabase.WriteJSONRecipes()
-	
+
 	for{}
 
 

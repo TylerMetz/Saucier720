@@ -595,6 +595,7 @@ func (d *Database) ReadWalmartScrapedTime() (time.Time, error) {
 func (d *Database) WriteJSONRecipes() error {
 	// Read the recipes from the file
 	recipes, err := GetJSONRecipes()
+	//fmt.Println(recipes)
 	if err != nil {
 		return err
 	}
@@ -608,23 +609,36 @@ func (d *Database) WriteJSONRecipes() error {
 
 	// Prepare the INSERT statement
 	insertQuery := `
-		INSERT OR IGNORE INTO dbo.jason_recipes (RecipeID, Title, Ingredients, Instructions)
-		VALUES (?, ?, ?, ?)`
+		INSERT INTO dbo.jason_recipes (Title, Ingredients, Instructions)
+		VALUES (@Title, @Ingredients, @Instructions)`
 
 	// Insert each recipe into the table
+	
 	for _, recipe := range recipes {
 		ingredientsJSON, _ := json.Marshal(recipe.Ingredients)
 		fmt.Println(recipe.RecipeID, recipe.Title, ingredientsJSON, recipe.Instructions, recipe.Ingredients)
-		_, err := db.Exec(
-			insertQuery,
-			("json" + recipe.RecipeID),
-			recipe.Title,
-			string(ingredientsJSON),
-			recipe.Instructions,
+		
+		_, err = insertQuery.ExecContext(ctx,
+			sql.Named("FirstName", u.FirstName),
+			sql.Named("LastName", u.LastName),
+			sql.Named("Email", u.Email),
+			sql.Named("UserName", u.UserName),
+			sql.Named("Password", u.Password),
 		)
+
+		// _, err := db.Exec(
+		// 	insertQuery,
+		// 	recipe.Title,
+		// 	string(ingredientsJSON),
+		// 	recipe.Instructions,
+		// )
+		
 		if err != nil {
+			panic(err)
 			return err
 		}
+		
+		
 	}
 
 	// Delete rows where Ingredients are empty
