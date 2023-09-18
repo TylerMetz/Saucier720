@@ -606,22 +606,9 @@ func (d *Database) WriteJSONRecipes() error {
 	}
 	defer db.Close()
 
-	// Create a new table for the JSON recipes if it doesn't exist
-	createTableQuery := `
-		CREATE TABLE IF NOT EXISTS json_recipes (
-			recipeID TEXT PRIMARY KEY,
-			Title TEXT,
-			Ingredients TEXT,
-			Instructions TEXT
-		)`
-	_, err = db.Exec(createTableQuery)
-	if err != nil {
-		return err
-	}
-
 	// Prepare the INSERT statement
 	insertQuery := `
-		INSERT OR IGNORE INTO json_recipes (recipeID, Title, Ingredients, Instructions)
+		INSERT OR IGNORE INTO dbo.json_recipes (recipeID, Title, Ingredients, Instructions)
 		VALUES (?, ?, ?, ?)`
 
 	// Insert each recipe into the table
@@ -640,30 +627,13 @@ func (d *Database) WriteJSONRecipes() error {
 	}
 
 	// Delete rows where Ingredients are empty
-	_, err = db.Exec("DELETE FROM json_recipes WHERE Ingredients = '[]'")
+	_, err = db.Exec("DELETE FROM dbo.json_recipes WHERE Ingredients = '[]'")
 	if err != nil {
 		return err
 	}
 
 	// Delete rows where Instructions are empty
-	_, err = db.Exec("DELETE FROM json_recipes WHERE Instructions = ''")
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (d *Database) DeleteJSONRecipes() error {
-	// Establish a connection to the Azure SQL Database
-	db, err := AzureOpenDatabase()
-	if err != nil {
-		return err
-	}
-	defer db.Close()
-
-	// Drop the JSON recipes table if it exists
-	_, err = db.Exec("DROP TABLE IF EXISTS json_recipes")
+	_, err = db.Exec("DELETE FROM dbo.json_recipes WHERE Instructions = ''")
 	if err != nil {
 		return err
 	}
@@ -680,7 +650,7 @@ func (d *Database) ReadJSONRecipes() ([]Recipe, error) {
 	defer db.Close()
 
 	// Execute a SELECT statement to retrieve all rows from the json_recipes table
-	rows, err := db.Query("SELECT recipeID, Title, Ingredients, Instructions FROM json_recipes")
+	rows, err := db.Query("SELECT recipeID, Title, Ingredients, Instructions FROM dbo.json_recipes")
 	if err != nil {
 		return nil, err
 	}
