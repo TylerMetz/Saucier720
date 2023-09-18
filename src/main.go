@@ -14,9 +14,6 @@ var prevUser BackendPkg.User
 
 func main() {
 
-	// open the Azure SQL database
-	BackendPkg.AzureOpenDatabase()
-
 	go BackendPkg.ListenUserInfo(&sessionCookie, &cookieChanged)
 
 	for {}

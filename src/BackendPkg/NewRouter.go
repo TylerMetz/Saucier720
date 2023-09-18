@@ -188,6 +188,7 @@ func handleLogin(w http.ResponseWriter, r *http.Request, sessionCookie *string, 
 		Password: CurrentUser.Password,
 		UserName: CurrentUser.UserName,
 	}
+	
 
 	// checks if validate user function returned an empty cookie, if not then setts the cookies
 	if ValidateUser(activeUser) == "" {

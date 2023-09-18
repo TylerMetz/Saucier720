@@ -53,19 +53,10 @@ func AzureSQLCloseDatabase() {
 
 //INSERTS
 func StoreUserDatabase(u User) error {
-	ctx := context.Background()
 	var err error
+	db, err := AzureOpenDatabase()
 
-	if db == nil {
-		err = errors.New("StoreUserDatabase: db is null")
-		return err
-	}
-
-	// Check if database is alive.
-	err = db.PingContext(ctx)
-	if err != nil {
-		return err
-	}
+	ctx := context.Background()
 
 	tsql := `
 		INSERT INTO dbo.user_data (FirstName, LastName, Email, UserName, Password)
@@ -73,10 +64,13 @@ func StoreUserDatabase(u User) error {
 	`
 
 	stmt, err := db.Prepare(tsql)
-	if err != nil {
-		return err
-	}
+	// if err != nil {
+		
+	// 	return err
+	// }
 	defer stmt.Close()
+
+	
 
 	_, err = stmt.ExecContext(ctx,
 		sql.Named("FirstName", u.FirstName),
@@ -90,6 +84,7 @@ func StoreUserDatabase(u User) error {
 		return err
 	}
 
+	
 	return nil
 }
 
