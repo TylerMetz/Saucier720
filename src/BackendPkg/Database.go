@@ -27,17 +27,21 @@ type Database struct {
 ////////////////////////////////////////////////////////////// AZURE FUNCTIONS //////////////////////////////////////////////////////////////
 
 // OpenDatabase initializes the database connection
-func AzureOpenDatabase() error {
+func AzureOpenDatabase() (*sql.DB, error) {
 	connString := fmt.Sprintf("server=%s;user id=%s;password=%s;port=%d;database=%s;",
 		server, user, password, port, database)
-	var err error
-	db, err = sql.Open("sqlserver", connString)
+
+	db, err := sql.Open("sqlserver", connString)
 	if err != nil {
-		log.Println("Failed to open database connection:", err)
-		return err
+		log.Printf("Failed to open database connection: %v", err)
+		return nil, err
 	}
-	return nil
+
+	// Set up connection pooling and other database configurations here
+
+	return db, nil
 }
+
 
 // CloseDatabase closes the database connection
 func AzureSQLCloseDatabase() {
@@ -94,7 +98,7 @@ func (d *Database) StorePublixDatabase(f []FoodItem) error {
 	var err error
 
 	if db == nil {
-		err = errors.New("StorePublixDatabase: db is null")
+		err = errors.New("StoreUserDatabase: db is null")
 		return err
 	}
 
@@ -119,7 +123,7 @@ func (d *Database) StorePublixDatabase(f []FoodItem) error {
 		_, err = stmt.ExecContext(ctx,
 			sql.Named("store", "Publix"),
 			sql.Named("foodName", item.Name),
-			sql.Named("saleDetails", item.saleDetails),
+			sql.Named("saleDetails", item.SaleDetails),
 		)
 	}
 
@@ -130,7 +134,7 @@ func (d *Database) StorePublixDatabase(f []FoodItem) error {
 	return nil
 }
 
-func (d *Database) StoreWalmartDatabase(f []FoodItem) {
+func (d *Database) StoreWalmartDatabase(f []FoodItem) error {
 	ctx := context.Background()
 	var err error
 
@@ -160,7 +164,7 @@ func (d *Database) StoreWalmartDatabase(f []FoodItem) {
 		_, err = stmt.ExecContext(ctx,
 			sql.Named("store", "Walmart"),
 			sql.Named("foodName", item.Name),
-			sql.Named("saleDetails", item.saleDetails),
+			sql.Named("saleDetails", item.SaleDetails),
 		)
 	}
 
@@ -171,7 +175,7 @@ func (d *Database) StoreWalmartDatabase(f []FoodItem) {
 	return nil
 }
 
-func (d *Database) StoreUserPantry(u User) {
+func (d *Database) StoreUserPantry(u User) error {
 	ctx := context.Background()
 	var err error
 
@@ -213,7 +217,7 @@ func (d *Database) StoreUserPantry(u User) {
 	return nil
 }
 
-func (d *Database) InsertPantryItemPost (currUser User, f FoodItem){
+func (d *Database) InsertPantryItemPost (currUser User, f FoodItem) error{
 	ctx := context.Background()
 	var err error
 
@@ -241,9 +245,9 @@ func (d *Database) InsertPantryItemPost (currUser User, f FoodItem){
 
 	_, err = stmt.ExecContext(ctx,
 		sql.Named("UserName", currUser.UserName),
-		sql.Named("FoodName", FoodItem.Name),
-		sql.Named("FoodType", FoodItem.FoodType),
-		sql.Named("Quantity", FoodItem.Quantity),
+		sql.Named("Name", f.Name),
+		sql.Named("FoodType", f.FoodType),
+		sql.Named("Quantity", f.Quantity),
 	)
 
 	if err != nil {
@@ -253,7 +257,7 @@ func (d *Database) InsertPantryItemPost (currUser User, f FoodItem){
 	return nil
 }
 
-func (d *Database) StoreCookie(username string, cookie string) {
+func (d *Database) StoreCookie(username string, cookie string) error {
 
 	ctx := context.Background()
 	var err error
@@ -298,13 +302,13 @@ func (d *Database) ReadPublixDatabase() ([]FoodItem, error) {
 	if err != nil {
 		// Handle the error
 		fmt.Println("Failed to establish a database connection:", err)
-		return
+		return nil, err
 	}
 
 	query := "SELECT foodName, saleDetails FROM dbo.deals_data WHERE store = 'Publix'"
 	rows, err := db.Query(query)
 
-	if erro != nil {
+	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
@@ -313,12 +317,12 @@ func (d *Database) ReadPublixDatabase() ([]FoodItem, error) {
 
 	for rows.Next() {
 		var item FoodItem
-		err := rows.Scan(&item.FoodName, &item.saleDetails)
+		err := rows.Scan(&item.Name, &item.SaleDetails)
 		if err != nil {
 			return nil, err
 		}
+		items = append(items, item)
 	}
-	items = append(items, item)
 
 	if err := rows.Err(); err !=nil {
 		return nil, err
@@ -327,18 +331,18 @@ func (d *Database) ReadPublixDatabase() ([]FoodItem, error) {
 	return items, nil
 }
 
-func (d *Database) ReadWalmartDatabase() []FoodItem {
+func (d *Database) ReadWalmartDatabase() ([]FoodItem, error) {
 	db, err := AzureOpenDatabase()
 	if err != nil {
 		// Handle the error
 		fmt.Println("Failed to establish a database connection:", err)
-		return
+		return nil, err
 	}
 
 	query := "SELECT foodName, saleDetails FROM dbo.deals_data WHERE store = 'Walmart'"
 	rows, err := db.Query(query)
 
-	if erro != nil {
+	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
@@ -347,12 +351,12 @@ func (d *Database) ReadWalmartDatabase() []FoodItem {
 
 	for rows.Next() {
 		var item FoodItem
-		err := rows.Scan(&item.FoodName, &item.saleDetails)
+		err := rows.Scan(&item.Name, &item.SaleDetails)
 		if err != nil {
 			return nil, err
 		}
+		items = append(items, item)
 	}
-	items = append(items, item)
 
 	if err := rows.Err(); err !=nil {
 		return nil, err
@@ -362,31 +366,33 @@ func (d *Database) ReadWalmartDatabase() []FoodItem {
 }
 
 func (d *Database) ReadUserDatabase(userName string) (User, error) {
+	// Establish a connection to the Azure SQL Database
 	db, err := AzureOpenDatabase()
 	if err != nil {
 		// Handle the error
 		fmt.Println("Failed to establish a database connection:", err)
-		return
+		return User{}, err
 	}
+	defer db.Close()
 
 	var returnUser User
 
-	stmt, err := database.Prepare("SELECT FirstName, LastName, Email, UserName, Password FROM dbo.user_data WHERE UserName=?")
-	if err != nil {
-		// handle error
-	}
-	defer stmt.Close()
+	row := db.QueryRow("SELECT FirstName, LastName, Email, UserName, Password FROM dbo.user_data WHERE UserName=?", userName)
 
-	row := stmt.QueryRow(userName)
-
-	row.Scan(&returnUser.FirstName, &returnUser.LastName, &returnUser.Email, &returnUser.UserName, &returnUser.Password)
+	err = row.Scan(&returnUser.FirstName, &returnUser.LastName, &returnUser.Email, &returnUser.UserName, &returnUser.Password)
 	if err != nil {
-		return returnUser, err
+		if err == sql.ErrNoRows {
+			// Handle the case where no rows were found (user not found)
+			return User{}, err
+		}
+		// Handle other errors
+		fmt.Println("Failed to scan user data:", err)
+		return User{}, err
 	}
 
 	return returnUser, nil
-
 }
+
 
 func (d *Database) ClearPublixDeals() error {
 	// Establish a connection to the Azure SQL Database
@@ -408,7 +414,7 @@ func (d *Database) ClearPublixDeals() error {
 	return nil
 }
 
-func (d *Database) ClearWalmartDeals() {
+func (d *Database) ClearWalmartDeals() error {
 	// Establish a connection to the Azure SQL Database
 	db, err := AzureOpenDatabase()
 	if err != nil {
@@ -535,7 +541,7 @@ func (d *Database) StorePubixScrapedTime(t time.Time) error {
 	return nil
 }
 
-func (d *Database) StoreWalmartScrapedTime(t time.Time) {
+func (d *Database) StoreWalmartScrapedTime(t time.Time) error {
 	// Establish a connection to the Azure SQL Database
 	db, err := AzureOpenDatabase()
 	if err != nil {
