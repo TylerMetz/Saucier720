@@ -234,7 +234,7 @@ func handleLogin(w http.ResponseWriter, r *http.Request, sessionCookie *string, 
 		*sessionCookie = cookie.Value
 
 		// set recommended recipes to pull from MealDealz classsic recipes by default
-		RecipesRecommendationPool = backendDatabase.ReadJSONRecipes()
+		RecipesRecommendationPool, _ = backendDatabase.ReadJSONRecipes()
 
 		// set recipes that are routed to recommended by default
 		RoutingRecipesType = RecommendedRecipes
@@ -800,13 +800,16 @@ func handleRecipeFilters(w http.ResponseWriter, r *http.Request) {
 
 	//check each checkbox value and add accordingly
 	if newFilters.MyRecipesCheckbox {
-		RecipesRecommendationPool = append(RecipesRecommendationPool, backendDatabase.ReadCurrUserRecipes(CurrentUser)...)
+		temp, _ := backendDatabase.ReadCurrUserRecipes(CurrentUser)
+		RecipesRecommendationPool = append(RecipesRecommendationPool, temp...)
 	}
 	if newFilters.UserRecipesCheckbox {
-		RecipesRecommendationPool = append(RecipesRecommendationPool, backendDatabase.ReadAllUserRecipes()...)
+		temp, _ := backendDatabase.ReadAllUserRecipes()
+		RecipesRecommendationPool = append(RecipesRecommendationPool, temp...)
 	}
 	if newFilters.MdRecipesCheckbox {
-		RecipesRecommendationPool = append(RecipesRecommendationPool, backendDatabase.ReadJSONRecipes()...)
+		temp, _ := backendDatabase.ReadJSONRecipes()
+		RecipesRecommendationPool = append(RecipesRecommendationPool, temp...)
 	}
 
 	UpdatingData = false
@@ -930,9 +933,9 @@ func ListenForData(){
 func UpdateDealsData(){
 	// determine which store to take deals from
 	if StoreSelection == "Publix"{
-		StoreDeals = backendDatabase.ReadPublixDatabase() 
+		StoreDeals, _ = backendDatabase.ReadPublixDatabase() 
 	} else if StoreSelection == "Walmart"{
-		StoreDeals = backendDatabase.ReadWalmartDatabase()
+		StoreDeals, _ = backendDatabase.ReadWalmartDatabase()
 	}
 
 	// lock the deals data
@@ -966,14 +969,17 @@ func UpdatePantryData(){
 
 func UpdateRecipeData(){
 	var routingRecipes []Recommendation
+
+	currUserRecipes, _ := backendDatabase.ReadCurrUserRecipes(CurrentUser)
+	currUserFavRecipes, _ := backendDatabase.ReadFavoriteRecipes(CurrentUser)
 	
 	// save all recipes data to global variable
 	if RoutingRecipesType == RecommendedRecipes{
 		routingRecipes = BestRecipes(backendDatabase.GetUserPantry(CurrentUser.UserName), RecipesRecommendationPool, StoreDeals)
 	} else if RoutingRecipesType == UserRecipes{
-		routingRecipes = AllRecipesWithRelatedItems(backendDatabase.GetUserPantry(CurrentUser.UserName), backendDatabase.ReadCurrUserRecipes(CurrentUser), StoreDeals)
+		routingRecipes = AllRecipesWithRelatedItems(backendDatabase.GetUserPantry(CurrentUser.UserName), currUserRecipes, StoreDeals)
 	} else if RoutingRecipesType == FavoriteRecipes {
-		routingRecipes = AllRecipesWithRelatedItems(backendDatabase.GetUserPantry(CurrentUser.UserName), backendDatabase.ReadFavoriteRecipes(CurrentUser), StoreDeals)
+		routingRecipes = AllRecipesWithRelatedItems(backendDatabase.GetUserPantry(CurrentUser.UserName), currUserFavRecipes, StoreDeals)
 	}
 	
 	// find which recipes are user favorites

@@ -29,7 +29,8 @@ func (s *Scraper)CheckIfScrapeNewDeals(d Database){
 	previousThursday8am := time.Date(previousThursday.Year(), previousThursday.Month(), previousThursday.Day(), 8, 0, 0, 0, location)
 
 	// Check if last Publix scrape occurred before the previous Thursday at 8am EST
-	if d.ReadPublixScrapedTime().In(location).Before(previousThursday8am) {
+	publixScrapeTime, _ := d.ReadPublixScrapedTime()
+	if publixScrapeTime.In(location).Before(previousThursday8am) {
 
 		// deletes old weekly deals from .db file
 		d.ClearPublixDeals()
@@ -49,7 +50,9 @@ func (s *Scraper)CheckIfScrapeNewDeals(d Database){
 	firstDayOfMonth := time.Date(year, month, 1, 0, 0, 0, 0, location)
 
 	// check if last Walmart scrape occured over a month ago
-	if d.ReadWalmartScrapedTime().In(location).Before(firstDayOfMonth) {
+	walmartScrapeTime, _ :=d .ReadWalmartScrapedTime()
+
+	if walmartScrapeTime.In(location).Before(firstDayOfMonth) {
 		
 		// deletes old weekly deals from .db file
 		d.ClearWalmartDeals()

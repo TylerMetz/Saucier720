@@ -480,7 +480,6 @@ func (d *Database) GetUserPantry(userName string) Pantry {
 	// Create the pantry object
 	// RILEY!! DO WE STILL NEED THIS TIME
 	pantry := Pantry{
-		TimeLastUpdated: time.Now(),
 		FoodInPantry:    []FoodItem{},
 	}
 
@@ -494,27 +493,20 @@ func (d *Database) GetUserPantry(userName string) Pantry {
 
 	// Loop through each row and add the food item to the pantry
 	for rows.Next() {
-		var name, saleDetails string
-		var storeCost, salePrice float64
-		var onSale bool
+		var name, foodType, saleDetails string
 		var quantity int
-		var pantryLastUpdated string
 
-		if err := rows.Scan(&name, &storeCost, &onSale, &salePrice, &saleDetails, &quantity, &pantryLastUpdated); err != nil {
+		if err := rows.Scan(&name, &foodType, &saleDetails, &quantity); err != nil {
 			return Pantry{}
 		}
 
 		pantry.FoodInPantry = append(pantry.FoodInPantry, FoodItem{
 			Name:        name,
-			StoreCost:   storeCost,
-			OnSale:      onSale,
-			SalePrice:   salePrice,
+			FoodType: foodType,
 			SaleDetails: saleDetails,
-			Quantity:    quantity,
+			Quantity: quantity,
 		})
 
-		// Set the time last updated
-		pantry.TimeLastUpdated, _ = time.Parse("2006-01-02 15:04:05", pantryLastUpdated)
 	}
 
 	return pantry
@@ -637,7 +629,7 @@ func (d *Database) WriteJSONRecipes() error {
 		ingredientsJSON, _ := json.Marshal(recipe.Ingredients)
 		_, err := db.Exec(
 			insertQuery,
-			("json" + strconv.Itoa(recipe.RecipeID)),
+			("json" + recipe.RecipeID),
 			recipe.Title,
 			string(ingredientsJSON),
 			recipe.Instructions,
@@ -716,7 +708,7 @@ func (d *Database) ReadJSONRecipes() ([]Recipe, error) {
 			Title:        title,
 			Ingredients:  ingredients,
 			Instructions: instructions,
-			RecipeAuthor: nil, // set to null for all recipes from the JSON file
+			RecipeAuthor: "", // set to null for all recipes from the JSON file
 		}
 		recipes = append(recipes, recipe)
 	}
@@ -1217,7 +1209,7 @@ func (d *Database) UserFromCookie(cookie string) (User, error) {
 	}
 
 	// Retrieve user details based on the username
-	returnUser = d.ReadUserDatabase(userName)
+	returnUser, err = d.ReadUserDatabase(userName)
 
 	return returnUser, nil
 }
@@ -1227,16 +1219,12 @@ func (d *Database) ReadList(currUser User) List {
 	db, err := AzureOpenDatabase()
 	if err != nil {
 		return List{
-			ListOwner:    currUser,
-			TimeUpdated:  time.Now(),
 			ShoppingList: make([]FoodItem, 0),
 		}
 	}
 	defer db.Close()
 
 	list := List{
-		ListOwner:    currUser,
-		TimeUpdated:  time.Now(),
 		ShoppingList: make([]FoodItem, 0),
 	}
 
