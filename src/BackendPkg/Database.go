@@ -24,25 +24,6 @@ type Database struct {
 	Name string
 }
 
-func (d *Database) UpdatePantry(currUser User, f []FoodItem){
-	
-	// calls function to open the database
-	database := d.OpenDatabase()
-
-	// clear all of user's current pantry
-	statementOne, _ := database.Prepare("DELETE FROM UserPantries WHERE UserName = ?")
-	statementOne.Exec(currUser.UserName)
-
-	// insert all items in recieved pantry to user's pantry
-	statementTwo, _ := database.Prepare("INSERT OR IGNORE INTO UserPantries (UserName, PantryLastUpdated, Name, StoreCost, OnSale, SalePrice, SaleDetails, Quantity) VALUES (?, datetime(?), ?, ?, ?, ?, ?, ?)")
-	for _, item := range f {
-		statementTwo.Exec(currUser.UserName, time.Now().Format("2006-01-02 15:04:05"), item.Name, item.StoreCost, item.OnSale, item.SalePrice, item.SaleDetails, item.Quantity)
-	}
-
-	// close db
-	database.Close()
-}
-
 func (d *Database) GetUserPantry(userName string) Pantry {
 	// calls function to open the database
 	database := d.OpenDatabase()
@@ -1091,3 +1072,39 @@ func (d *Database) ClearWalmartDeals() {
 
 	return nil
 }
+
+func (d *Database) UpdatePantry(currUser User, f []FoodItem) error {
+	// Establish a connection to the Azure SQL Database
+	db, err := AzureOpenDatabase()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	// Clear all of the user's current pantry
+	queryDelete := "DELETE FROM dbo.user_ingredients WHERE UserName = ?"
+	_, err = db.Exec(queryDelete, currUser.UserName)
+	if err != nil {
+		return err
+	}
+
+	// Insert all items in the received pantry to the user's pantry
+	queryInsert := `
+		INSERT INTO dbo.user_ingredients (UserName, FoodName, Foodtype, Quantity)
+		VALUES (?, ?, ?, ?,)`
+	for _, item := range f {
+		_, err = db.Exec(
+			queryInsert,
+			currUser.UserName,
+			item.Name,
+			item.FoodType,
+			item.Quantity,
+		)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
