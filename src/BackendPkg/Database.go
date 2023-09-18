@@ -58,6 +58,11 @@ func StoreUserDatabase(u User) error {
 
 	ctx := context.Background()
 
+	if db == nil {
+		fmt.Println("Failed to open database")
+		return err
+	}
+
 	tsql := `
 		INSERT INTO dbo.user_data (FirstName, LastName, Email, UserName, Password)
 		VALUES (@FirstName, @LastName, @Email, @UserName, @Password);
@@ -84,13 +89,15 @@ func StoreUserDatabase(u User) error {
 		return err
 	}
 
-	
+	AzureSQLCloseDatabase();
 	return nil
 }
 
 func (d *Database) StorePublixDatabase(f []FoodItem) error {
-	ctx := context.Background()
 	var err error
+	db, err := AzureOpenDatabase()
+
+	ctx := context.Background()
 
 	if db == nil {
 		err = errors.New("StoreUserDatabase: db is null")
