@@ -69,10 +69,10 @@ func StoreUserDatabase(u User) error {
 	`
 
 	stmt, err := db.Prepare(tsql)
-	// if err != nil {
+	if err != nil {
 		
-	// 	return err
-	// }
+		return err
+	}
 	defer stmt.Close()
 
 	
@@ -100,13 +100,7 @@ func (d *Database) StorePublixDatabase(f []FoodItem) error {
 	ctx := context.Background()
 
 	if db == nil {
-		err = errors.New("StoreUserDatabase: db is null")
-		return err
-	}
-
-	// Check if database is alive.
-	err = db.PingContext(ctx)
-	if err != nil {
+		fmt.Println("Failed to open database")
 		return err
 	}
 
@@ -133,21 +127,18 @@ func (d *Database) StorePublixDatabase(f []FoodItem) error {
 		return err
 	}
 
+	AzureSQLCloseDatabase();
 	return nil
 }
 
 func (d *Database) StoreWalmartDatabase(f []FoodItem) error {
-	ctx := context.Background()
 	var err error
+	db, err := AzureOpenDatabase()
+
+	ctx := context.Background()
 
 	if db == nil {
-		err = errors.New("StoreWalmartDatabase: db is null")
-		return err
-	}
-
-	// Check if database is alive.
-	err = db.PingContext(ctx)
-	if err != nil {
+		fmt.Println("Failed to open database")
 		return err
 	}
 
@@ -174,21 +165,18 @@ func (d *Database) StoreWalmartDatabase(f []FoodItem) error {
 		return err
 	}
 
+	AzureSQLCloseDatabase();
 	return nil
 }
 
 func (d *Database) StoreUserPantry(u User) error {
-	ctx := context.Background()
 	var err error
+	db, err := AzureOpenDatabase()
+
+	ctx := context.Background()
 
 	if db == nil {
-		err = errors.New("StoreUserPantry: db is null")
-		return err
-	}
-
-	// Check if database is alive.
-	err = db.PingContext(ctx)
-	if err != nil {
+		fmt.Println("Failed to open database")
 		return err
 	}
 
@@ -216,21 +204,18 @@ func (d *Database) StoreUserPantry(u User) error {
 		return err
 	}
 
+	AzureSQLCloseDatabase();
 	return nil
 }
 
 func (d *Database) InsertPantryItemPost (currUser User, f FoodItem) error{
-	ctx := context.Background()
 	var err error
+	db, err := AzureOpenDatabase()
+
+	ctx := context.Background()
 
 	if db == nil {
-		err = errors.New("StoreUserPantry: db is null")
-		return err
-	}
-
-	// Check if database is alive.
-	err = db.PingContext(ctx)
-	if err != nil {
+		fmt.Println("Failed to open database")
 		return err
 	}
 
@@ -256,22 +241,18 @@ func (d *Database) InsertPantryItemPost (currUser User, f FoodItem) error{
 		return err
 	}
 
+	AzureSQLCloseDatabase();
 	return nil
 }
 
 func (d *Database) StoreCookie(username string, cookie string) error {
+	var err error
+	db, err := AzureOpenDatabase()
 
 	ctx := context.Background()
-	var err error
 
 	if db == nil {
-		err = errors.New("StorkeCookie: db is null")
-		return err
-	}
-
-	// Check if database is alive.
-	err = db.PingContext(ctx)
-	if err != nil {
+		fmt.Println("Failed to open database")
 		return err
 	}
 
@@ -295,15 +276,17 @@ func (d *Database) StoreCookie(username string, cookie string) error {
 		return err
 	}
 
+	AzureSQLCloseDatabase();
 	return nil
 }
 
 //READS
 func (d *Database) ReadPublixDatabase() ([]FoodItem, error) {
+	var err error
 	db, err := AzureOpenDatabase()
-	if err != nil {
-		// Handle the error
-		fmt.Println("Failed to establish a database connection:", err)
+
+	if db == nil {
+		fmt.Println("Failed to open database")
 		return nil, err
 	}
 
@@ -330,14 +313,16 @@ func (d *Database) ReadPublixDatabase() ([]FoodItem, error) {
 		return nil, err
 	}
 
+	AzureSQLCloseDatabase();
 	return items, nil
 }
 
 func (d *Database) ReadWalmartDatabase() ([]FoodItem, error) {
+	var err error
 	db, err := AzureOpenDatabase()
-	if err != nil {
-		// Handle the error
-		fmt.Println("Failed to establish a database connection:", err)
+
+	if db == nil {
+		fmt.Println("Failed to open database")
 		return nil, err
 	}
 
@@ -364,18 +349,18 @@ func (d *Database) ReadWalmartDatabase() ([]FoodItem, error) {
 		return nil, err
 	}
 
+	AzureSQLCloseDatabase();
 	return items, nil
 }
 
 func (d *Database) ReadUserDatabase(userName string) (User, error) {
-	// Establish a connection to the Azure SQL Database
+	var err error
 	db, err := AzureOpenDatabase()
-	if err != nil {
-		// Handle the error
-		fmt.Println("Failed to establish a database connection:", err)
+
+	if db == nil {
+		fmt.Println("Failed to open database")
 		return User{}, err
 	}
-	defer db.Close()
 
 	var returnUser User
 
@@ -392,17 +377,18 @@ func (d *Database) ReadUserDatabase(userName string) (User, error) {
 		return User{}, err
 	}
 
+	AzureSQLCloseDatabase();
 	return returnUser, nil
 }
 
-
 func (d *Database) ClearPublixDeals() error {
-	// Establish a connection to the Azure SQL Database
+	var err error
 	db, err := AzureOpenDatabase()
-	if err != nil {
+
+	if db == nil {
+		fmt.Println("Failed to open database")
 		return err
 	}
-	defer db.Close()
 
 	// Define the SQL DELETE statement
 	query := "DELETE FROM dbo.deals_data WHERE store = 'Publix'"
@@ -413,16 +399,18 @@ func (d *Database) ClearPublixDeals() error {
 		return err
 	}
 
+	AzureSQLCloseDatabase();
 	return nil
 }
 
 func (d *Database) ClearWalmartDeals() error {
-	// Establish a connection to the Azure SQL Database
+	var err error
 	db, err := AzureOpenDatabase()
-	if err != nil {
+
+	if db == nil {
+		fmt.Println("Failed to open database")
 		return err
 	}
-	defer db.Close()
 
 	// Define the SQL DELETE statement
 	query := "DELETE FROM dbo.deals_data WHERE store = 'Walmart'"
@@ -433,16 +421,18 @@ func (d *Database) ClearWalmartDeals() error {
 		return err
 	}
 
+	AzureSQLCloseDatabase();
 	return nil
 }
 
 func (d *Database) UpdatePantry(currUser User, f []FoodItem) error {
-	// Establish a connection to the Azure SQL Database
+	var err error
 	db, err := AzureOpenDatabase()
-	if err != nil {
+
+	if db == nil {
+		fmt.Println("Failed to open database")
 		return err
 	}
-	defer db.Close()
 
 	// Clear all of the user's current pantry
 	queryDelete := "DELETE FROM dbo.user_ingredients WHERE UserName = ?"
@@ -454,20 +444,21 @@ func (d *Database) UpdatePantry(currUser User, f []FoodItem) error {
 	// Insert all items in the received pantry to the user's pantry
 	queryInsert := `
 		INSERT INTO dbo.user_ingredients (UserName, FoodName, Foodtype, Quantity)
-		VALUES (?, ?, ?, ?,)`
+		VALUES (@UserName, @FoodName, @FoodType, ?,)`
 	for _, item := range f {
-		_, err = db.Exec(
-			queryInsert,
-			currUser.UserName,
-			item.Name,
-			item.FoodType,
-			item.Quantity,
-		)
+		// _, err = db.Exec(
+		// 	queryInsert,
+		// 	currUser.UserName,
+		// 	item.Name,
+		// 	item.FoodType,
+		// 	item.Quantity,
+		// )
 		if err != nil {
 			return err
 		}
 	}
 
+	AzureSQLCloseDatabase();
 	return nil
 }
 
