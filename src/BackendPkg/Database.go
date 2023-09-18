@@ -24,453 +24,6 @@ type Database struct {
 	Name string
 }
 
-func (d *Database) WriteNewUserRecipe (currUser User, newRecipe Recipe){
-	// calls function to open the database
-	database := d.OpenDatabase()
-
-	// Create a new table for the recipes
-	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS UserRecipeData (title TEXT, ingredients TEXT, instructions TEXT, recipeID TEXT PRIMARY KEY, username TEXT)")
-	statement.Exec()
-
-	// Insert each recipe into the table
-	ingredients, _ := json.Marshal(newRecipe.Ingredients)
-	statementThree, _ := database.Prepare("INSERT OR IGNORE INTO UserRecipeData (title, ingredients, instructions, recipeID, username) values (?, ?, ?, ?, ?)")
-	statementThree.Exec(newRecipe.Title, string(ingredients), newRecipe.Instructions, (currUser.UserName + strconv.Itoa(d.getNextRecipeID(currUser.UserName))), currUser.UserName)
-
-	// close db
-	database.Close()
-}
-
-func (d *Database) getNextRecipeID(username string) int {
-	database := d.OpenDatabase()
-	defer database.Close()
-
-	query := fmt.Sprintf("SELECT recipeID FROM UserRecipeData WHERE username LIKE '%s%%' ORDER BY recipeID DESC LIMIT 1", username)
-	rows, _ := database.Query(query)
-	defer rows.Close()
-
-	var lastRecipeID string
-	for rows.Next() {
-		if err := rows.Scan(&lastRecipeID); err != nil {
-			return 0
-		}
-	}
-
-	if lastRecipeID == "" {
-		return 1
-	}
-
-	// Extract the numeric part of the last recipeID and increment it
-	lastIDNumStr := strings.TrimPrefix(lastRecipeID, username)
-	lastIDNum, err := strconv.Atoi(lastIDNumStr)
-	if err != nil {
-		return 0
-	}
-
-	database.Close()
-	rows.Close()
-
-	return lastIDNum + 1
-}
-
-func (d *Database) DeleteUserRecipe (recipeID string){
-	// Calls function to open the database
-	database := d.OpenDatabase()
-
-	// Delete based on recipeID
-	statement, _ := database.Prepare("DELETE FROM UserRecipeData WHERE recipeID = ?")
-	statement.Exec(recipeID)
-
-	// close db
-	database.Close()
-
-}
-
-func (d* Database) ReadAllUserRecipes() []Recipe{
-	// calls function to open the database
-	database := d.OpenDatabase()
-
-	// create the recipes return slice
-	var recipes []Recipe
-
-	// Execute a SELECT statement to retrieve all rows from the RecipeData table
-	rows, err := database.Query("SELECT * FROM UserRecipeData")
-	// handle case where user recipes don't exist
-	if err != nil{
-		// close db
-		database.Close()
-		return recipes
-	}
-
-	// Iterate through the rows and create a slice of Recipe structs
-	for rows.Next() {
-		var title, ingredientsStr, instructions, recipeID, userName string
-		rows.Scan(&title, &ingredientsStr, &instructions, &recipeID, &userName)
-
-		// Convert the comma-separated list of ingredients to a slice
-		ingredients := strings.Split(ingredientsStr, ",")
-
-		// Create a new Recipe struct and append it to the slice
-		recipe := Recipe{
-			Title:        title,
-			Ingredients:  ingredients,
-			Instructions: instructions,
-			RecipeID: 	  recipeID, 
-			RecipeAuthor: userName,
-		}
-		recipes = append(recipes, recipe)
-	}
-
-	// close db
-	database.Close()
-
-	return recipes;
-}
-
-func (d* Database) ReadCurrUserRecipes (currUser User) []Recipe{
-	
-	// calls function to open the database
-	database := d.OpenDatabase()
-
-	// create the recipes return slice
-	var recipes []Recipe
-
-	// Execute a SELECT statement to retrieve all rows from the RecipeData table
-	statement, err := database.Prepare("SELECT title, ingredients, instructions, recipeID, username FROM UserRecipeData WHERE username = ?")
-	// handle case where user recipes don't exist
-	if err != nil{
-		database.Close()
-		return recipes
-	}
-
-	rows, err := statement.Query(currUser.UserName)
-	// handle case where user recipes don't exist
-	if err != nil{
-		database.Close()
-		return recipes
-	}
-
-	// Iterate through the rows and create a slice of Recipe structs
-	for rows.Next() {
-		var title, ingredientsStr, instructions, recipeID, userName string
-		rows.Scan(&title, &ingredientsStr, &instructions, &recipeID, &userName)
-
-		// Convert the comma-separated list of ingredients to a slice
-		ingredients := strings.Split(ingredientsStr, ",")
-
-		// Create a new Recipe struct and append it to the slice
-		recipe := Recipe{
-			Title:        title,
-			Ingredients:  ingredients,
-			Instructions: instructions,
-			RecipeID: 	  recipeID, 
-			RecipeAuthor: userName,
-		}
-		recipes = append(recipes, recipe)
-	}
-
-	// close db
-	database.Close()
-
-	return recipes;
-}
-
-func (d* Database) FavoriteRecipe (currUser User, recipeID string){
-	// calls function to open the database
-	database := d.OpenDatabase()
-
-	// Create a new table for the recipes
-	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS UserFavoriteRecipes (recipeID TEXT PRIMARY KEY, username TEXT)")
-	statement.Exec()
-
-	// save username and favorited recipe's recipe ID
-	statementTwo, _ := database.Prepare("INSERT OR IGNORE INTO UserFavoriteRecipes (recipeID, username) values (?, ?)")
-	statementTwo.Exec(recipeID, currUser.UserName)
-
-	// close db
-	database.Close()
-}
-
-func (d* Database) UnfavoriteRecipe (currUser User, recipeID string){
-	// calls function to open the database
-	database := d.OpenDatabase()
-
-	// delete favorite recipe from table
-	statement, _ := database.Prepare("DELETE FROM UserFavoriteRecipes WHERE username = ? AND recipeID = ?")
-	statement.Exec(currUser.UserName, recipeID)
-
-	// close db
-	database.Close()
-
-}
-
-func (d* Database) ReadFavoriteRecipes (currUser User) []Recipe{
-	
-	// calls function to open the database
-	database := d.OpenDatabase()
-
-	var recipes []Recipe
-
-	// Retrieve recipeIDs from UserFavoriteRecipes table based on the given username
-	statement, err := database.Prepare("SELECT recipeID FROM UserFavoriteRecipes WHERE username = ?")
-	if err != nil {
-		database.Close()
-		return recipes
-	}
-
-	// Execute the statement
-	rows, err := statement.Query(currUser.UserName)
-	if err != nil {
-		database.Close()
-		return recipes
-	}
-
-	var recipeIDs []string
-
-	for rows.Next() {
-		var recipeID string
-		err := rows.Scan(&recipeID)
-		if err != nil {
-			database.Close()
-			return recipes
-		}
-		recipeIDs = append(recipeIDs, recipeID)
-	}
-
-	for _, recipeID := range recipeIDs {
-		// loop through all recipeIDs from a user ravorites and retrieve the recipe
-		recipe, _ := getRecipeByID(database, recipeID)
-		if recipe != nil {
-			recipes = append(recipes, *recipe)
-		}
-	}
-
-	// close db and return recipes
-	database.Close()
-	return recipes
-
-}
-
-func getRecipeByID(db *sql.DB, recipeID string) (*Recipe, error) {
-	recipe, _ := getRecipeFromIdUserTable(db, recipeID)
-
-	if recipe == nil {
-		recipeJSON, err := getRecipeFromIdJSONTable(db, recipeID)
-		if err != nil {
-			return nil, err
-		}
-		recipe = recipeJSON
-	}
-
-	return recipe, nil
-}
-
-func getRecipeFromIdUserTable(db *sql.DB, recipeID string) (*Recipe, error) {
-	query := "SELECT title, ingredients, instructions FROM UserRecipeData WHERE recipeID = ?"
-	row := db.QueryRow(query, recipeID)
-
-	var title, ingredientsStr, instructions string
-	err := row.Scan(&title, &ingredientsStr, &instructions)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, nil // Recipe not found in UserRecipeData
-		}
-		return nil, err
-	}
-
-	// Convert the comma-separated list of ingredients to a slice
-	ingredients := strings.Split(ingredientsStr, ",")
-
-	// define recipe object based on returned values
-	recipe := Recipe{
-		Title:        title,
-		Ingredients:  ingredients,
-		Instructions: instructions,
-		RecipeID:     recipeID,
-	}
-
-	return &recipe, nil
-}
-
-func getRecipeFromIdJSONTable(db *sql.DB, recipeID string) (*Recipe, error) {
-	query := "SELECT title, ingredients, instructions FROM JSONRecipeData WHERE recipeID = ?"
-	row := db.QueryRow(query, recipeID)
-
-	var title, ingredientsStr, instructions string
-	err := row.Scan(&title, &ingredientsStr, &instructions)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, nil // Recipe not found in JSONRecipeData
-		}
-		return nil, err
-	}
-
-	// Convert the comma-separated list of ingredients to a slice
-	ingredients := strings.Split(ingredientsStr, ",")
-
-	// define recipe object based on returned values
-	recipe := Recipe{
-		Title:        title,
-		Ingredients:  ingredients,
-		Instructions: instructions,
-		RecipeID:     recipeID,
-	}
-
-	return &recipe, nil
-}
-
-func (d *Database) FindFavoriteRecipes(currUser User, routingRecipes []Recommendation) []Recommendation{
-	// open the database file
-	database := d.OpenDatabase()
-
-	var count int
-	for i := range routingRecipes {
-		
-		// Check if the recipe is a favorite for the user
-		err := database.QueryRow("SELECT COUNT(*) FROM UserFavoriteRecipes WHERE recipeID = ? AND username = ?", routingRecipes[i].R.RecipeID, currUser.UserName).Scan(&count)
-		if err != nil {
-			count = 0
-		}
-		// Set the UserFavorite field based on the query result
-		if count > 0 {
-			routingRecipes[i].R.UserFavorite = true
-		}
-
-	}
-	return routingRecipes
-}
-
-func (d* Database) GetUserPassword(username string) string{
-	database := d.OpenDatabase()
-	var password string 
-
-	stmt, err := database.Prepare("SELECT Password FROM UserData WHERE UserName=?")
-	if err != nil {
-		// handle error
-	}
-	defer stmt.Close()
-
-	row := stmt.QueryRow(username)
-	row.Scan(&password)
-
-	// close db
-	database.Close()
-
-	return password
-}
-
-func (d *Database) ReadCookie(username string) string {
-	// return user data from a unique username
-	database := d.OpenDatabase()
-
-	var returnCookie string
-	stmt, err := database.Prepare("SELECT Cookie FROM Cookies WHERE UserName=?")
-	if err != nil {
-		// handle error
-	}
-	defer stmt.Close()
-
-	row := stmt.QueryRow(username)
-	row.Scan(&returnCookie)
-
-	// close db
-	database.Close()
-
-	return returnCookie
-}
-
-func (d *Database) UserFromCookie(cookie string) User {
-	// return user based off of the cookie
-	database := d.OpenDatabase()
-	var returnUser User
-	var userName string
-	stmt, err := database.Prepare("SELECT UserName FROM Cookies WHERE Cookie=?")
-	if err != nil {
-		// handle error
-	}
-	defer stmt.Close()
-
-	row := stmt.QueryRow(cookie)
-	row.Scan(&userName)
-
-	// grabs the user based of the username
-	returnUser = d.ReadUserDatabase(userName)
-
-	// close db
-	database.Close()
-
-	return returnUser
-}
-
-func (d *Database) ReadList(currUser User) List{
-	// FUNC OVERVIEW: returns a user's list based on User (User.Username)
-	database := d.OpenDatabase()
-
-	list := List{
-		ListOwner:    currUser,
-		TimeUpdated:  time.Now(),
-		ShoppingList: make([]FoodItem, 0),
-	}
-
-	rows, err := database.Query("SELECT FoodItemName, Quantity FROM UserLists WHERE Username = ?", currUser.UserName)
-	if err != nil {
-		return list
-	}
-
-	for rows.Next() {
-		var foodItemName string
-		var quantity int
-		rows.Scan(&foodItemName, &quantity)
-
-		foodItem := FoodItem{
-			Name:     foodItemName,
-			Quantity: quantity,
-		}
-		list.ShoppingList = append(list.ShoppingList, foodItem)
-	}
-
-	database.Close()
-	return list
-}
-
-func (d *Database) WriteList(newItem FoodItem, currUser User){
-	// FUNC OVERVIEW: adds a new item to the user's list
-	database := d.OpenDatabase()
-
-	_, err := database.Exec(`
-		CREATE TABLE IF NOT EXISTS UserLists (
-			Username TEXT,
-			FoodItemName TEXT,
-			Quantity INT,
-			TimeUpdated TIMESTAMP,
-			PRIMARY KEY (Username, FoodItemName)
-		)
-	`)
-	if err != nil {
-		// Handle error
-	}
-
-	statement, _ := database.Prepare("INSERT INTO UserLists (Username, FoodItemName, Quantity, TimeUpdated) VALUES (?, ?, ?, ?)")
-	statement.Exec(currUser.UserName, newItem.Name, newItem.Quantity, time.Now())
-
-	database.Close()
-}
-
-func (d *Database) UpdateListItem(newItem FoodItem, currUser User){
-	// FUNC OVERVIEW: updates an item in the user's list
-	database := d.OpenDatabase()
-
-	if newItem.Quantity == 0 {
-		statement, _ := database.Prepare("DELETE FROM UserLists WHERE Username = ? AND FoodItemName = ?")
-		statement.Exec(currUser.UserName, newItem.Name)
-	} else {
-		statement, _ := database.Prepare("UPDATE UserLists SET Quantity = ?, TimeUpdated = ? WHERE Username = ? AND FoodItemName = ?")
-		statement.Exec(newItem.Quantity, time.Now(), currUser.UserName, newItem.Name)
-	}
-
-	database.Close()
-}
-
 ////////////////////////////////////////////////////////////// AZURE FUNCTIONS //////////////////////////////////////////////////////////////
 
 // OpenDatabase initializes the database connection
@@ -1163,5 +716,598 @@ func (d *Database) ReadJSONRecipes() ([]Recipe, error) {
 	}
 
 	return recipes, nil
+}
+
+func (d *Database) WriteNewUserRecipe(currUser User, newRecipe Recipe) error {
+	// Establish a connection to the Azure SQL Database
+	db, err := AzureOpenDatabase()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	// Create a new table for the user recipes if it doesn't exist
+	createTableQuery := `
+		CREATE TABLE IF NOT EXISTS user_recipes (
+			RecipeID TEXT PRIMARY KEY,
+			Title TEXT,
+			Ingredients TEXT,
+			Instructions TEXT,
+			UserName TEXT
+		)`
+	_, err = db.Exec(createTableQuery)
+	if err != nil {
+		return err
+	}
+
+	// Prepare the INSERT statement
+	insertQuery := `
+		INSERT OR IGNORE INTO user_recipes (RecipeID, Title, Ingredients, Instructions, UserName)
+		VALUES (?, ?, ?, ?, ?)`
+
+	// Generate a unique RecipeID based on the user's UserName
+	recipeID := currUser.UserName + strconv.Itoa(d.getNextRecipeID(currUser.UserName))
+
+	// Insert the new recipe into the table
+	ingredientsJSON, _ := json.Marshal(newRecipe.Ingredients)
+	_, err = db.Exec(
+		insertQuery,
+		recipeID,
+		newRecipe.Title,
+		string(ingredientsJSON),
+		newRecipe.Instructions,
+		currUser.UserName,
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (d *Database) getNextRecipeID(username string) int {
+	// Establish a connection to the Azure SQL Database
+	db, err := AzureOpenDatabase()
+	if err != nil {
+		return 0
+	}
+	defer db.Close()
+
+	// Construct the SQL query to find the last recipeID for the given username
+	query := `
+		SELECT RecipeID
+		FROM user_recipes
+		WHERE UserName = ?
+		ORDER BY RecipeID DESC
+		LIMIT 1`
+	var lastRecipeID string
+	err = db.QueryRow(query, username).Scan(&lastRecipeID)
+	if err != nil && err != sql.ErrNoRows {
+		return 0
+	}
+
+	// If no rows are found, return 1 as the starting RecipeID
+	if lastRecipeID == "" {
+		return 1
+	}
+
+	// Extract the numeric part of the last recipeID and increment it
+	lastIDNumStr := strings.TrimPrefix(lastRecipeID, username)
+	lastIDNum, err := strconv.Atoi(lastIDNumStr)
+	if err != nil {
+		return 0
+	}
+
+	return lastIDNum + 1
+}
+
+func (d *Database) DeleteUserRecipe(recipeID string) error {
+	// Establish a connection to the Azure SQL Database
+	db, err := AzureOpenDatabase()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	// Prepare and execute the DELETE statement based on recipeID
+	deleteQuery := "DELETE FROM user_recipes WHERE RecipeID = ?"
+	_, err = db.Exec(deleteQuery, recipeID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (d *Database) ReadAllUserRecipes() ([]Recipe, error) {
+	// Establish a connection to the Azure SQL Database
+	db, err := AzureOpenDatabase()
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+
+	// Create the recipes return slice
+	var recipes []Recipe
+
+	// Execute a SELECT statement to retrieve all rows from the user_recipes table
+	rows, err := db.Query("SELECT Title, Ingredients, Instructions, RecipeID, UserName FROM user_recipes")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	// Iterate through the rows and create a slice of Recipe structs
+	for rows.Next() {
+		var title, ingredientsStr, instructions, recipeID, userName string
+		err := rows.Scan(&title, &ingredientsStr, &instructions, &recipeID, &userName)
+		if err != nil {
+			return nil, err
+		}
+
+		// Convert the JSON string of ingredients to a slice
+		var ingredients []string
+		err = json.Unmarshal([]byte(ingredientsStr), &ingredients)
+		if err != nil {
+			return nil, err
+		}
+
+		// Create a new Recipe struct and append it to the slice
+		recipe := Recipe{
+			Title:        title,
+			Ingredients:  ingredients,
+			Instructions: instructions,
+			RecipeID:     recipeID,
+			RecipeAuthor: userName,
+		}
+		recipes = append(recipes, recipe)
+	}
+
+	return recipes, nil
+}
+
+func (d *Database) ReadCurrUserRecipes(currUser User) ([]Recipe, error) {
+	// Establish a connection to the Azure SQL Database
+	db, err := AzureOpenDatabase()
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+
+	// Create the recipes return slice
+	var recipes []Recipe
+
+	// Execute a SELECT statement to retrieve all rows from the user_recipes table for the current user
+	query := "SELECT Title, Ingredients, Instructions, RecipeID, UserName FROM user_recipes WHERE UserName = ?"
+	rows, err := db.Query(query, currUser.UserName)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	// Iterate through the rows and create a slice of Recipe structs
+	for rows.Next() {
+		var title, ingredientsStr, instructions, recipeID, userName string
+		err := rows.Scan(&title, &ingredientsStr, &instructions, &recipeID, &userName)
+		if err != nil {
+			return nil, err
+		}
+
+		// Convert the JSON string of ingredients to a slice
+		var ingredients []string
+		err = json.Unmarshal([]byte(ingredientsStr), &ingredients)
+		if err != nil {
+			return nil, err
+		}
+
+		// Create a new Recipe struct and append it to the slice
+		recipe := Recipe{
+			Title:        title,
+			Ingredients:  ingredients,
+			Instructions: instructions,
+			RecipeID:     recipeID,
+			RecipeAuthor: userName,
+		}
+		recipes = append(recipes, recipe)
+	}
+
+	return recipes, nil
+}
+
+func (d *Database) FavoriteRecipe(currUser User, recipeID string) error {
+	// Establish a connection to the Azure SQL Database
+	db, err := AzureOpenDatabase()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	// Save the username and favorited recipe's RecipeID
+	insertQuery := `
+		INSERT OR IGNORE INTO dbo.user_favorite_recipes (RecipeID, UserName)
+		VALUES (?, ?)`
+	_, err = db.Exec(insertQuery, recipeID, currUser.UserName)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (d *Database) UnfavoriteRecipe(currUser User, recipeID string) error {
+	// Establish a connection to the Azure SQL Database
+	db, err := AzureOpenDatabase()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	// Delete the favorite recipe from the table
+	deleteQuery := "DELETE FROM dbo.user_favorite_recipes WHERE RecipeID = ? AND UserName = ?"
+	_, err = db.Exec(deleteQuery, recipeID, currUser.UserName)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (d *Database) ReadFavoriteRecipes(currUser User) ([]Recipe, error) {
+	// Establish a connection to the Azure SQL Database
+	db, err := AzureOpenDatabase()
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+
+	var recipes []Recipe
+
+	// Retrieve recipeIDs from UserFavoriteRecipes table based on the given username
+	query := "SELECT RecipeID FROM dbo.user_favorite_recipes WHERE UserName = ?"
+	rows, err := db.Query(query, currUser.UserName)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var recipeIDs []string
+
+	for rows.Next() {
+		var recipeID string
+		err := rows.Scan(&recipeID)
+		if err != nil {
+			return nil, err
+		}
+		recipeIDs = append(recipeIDs, recipeID)
+	}
+
+	for _, recipeID := range recipeIDs {
+		// Retrieve the recipe based on recipeID
+		recipe, err := d.getRecipeByID(db, recipeID)
+		if err != nil {
+			return nil, err
+		}
+		if recipe != nil {
+			recipes = append(recipes, *recipe)
+		}
+	}
+
+	return recipes, nil
+}
+
+// Helper function to get a recipe by RecipeID
+func (d *Database) getRecipeByID(db *sql.DB, recipeID string) (*Recipe, error) {
+	query := "SELECT Title, Ingredients, Instructions FROM dbo.user_recipes WHERE RecipeID = ?"
+	row := db.QueryRow(query, recipeID)
+
+	var title, ingredientsStr, instructions string
+	err := row.Scan(&title, &ingredientsStr, &instructions)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// Recipe not found
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	// Convert the JSON string of ingredients to a slice
+	var ingredients []string
+	err = json.Unmarshal([]byte(ingredientsStr), &ingredients)
+	if err != nil {
+		return nil, err
+	}
+
+	recipe := Recipe{
+		Title:        title,
+		Ingredients:  ingredients,
+		Instructions: instructions,
+		RecipeID:     recipeID,
+	}
+
+	return &recipe, nil
+}
+
+func (d *Database) getRecipeFromUserTable(recipeID string) (*Recipe, error) {
+	// Establish a connection to the Azure SQL Database
+	db, err := AzureOpenDatabase()
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+
+	query := "SELECT Title, Ingredients, Instructions FROM dbo.user_recipes WHERE RecipeID = ?"
+	row := db.QueryRow(query, recipeID)
+
+	var title, ingredientsStr, instructions string
+	err = row.Scan(&title, &ingredientsStr, &instructions)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil // Recipe not found in user_recipes
+		}
+		return nil, err
+	}
+
+	// Convert the JSON string of ingredients to a slice
+	var ingredients []string
+	err = json.Unmarshal([]byte(ingredientsStr), &ingredients)
+	if err != nil {
+		return nil, err
+	}
+
+	// Define a Recipe object based on returned values
+	recipe := Recipe{
+		Title:        title,
+		Ingredients:  ingredients,
+		Instructions: instructions,
+		RecipeID:     recipeID,
+	}
+
+	return &recipe, nil
+}
+
+func (d *Database) getRecipeFromJSONTable(recipeID string) (*Recipe, error) {
+	// Establish a connection to the Azure SQL Database
+	db, err := AzureOpenDatabase()
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+
+	query := "SELECT Title, Ingredients, Instructions FROM dbo.jason_recipes WHERE recipeID = ?"
+	row := db.QueryRow(query, recipeID)
+
+	var title, ingredientsStr, instructions string
+	err = row.Scan(&title, &ingredientsStr, &instructions)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil // Recipe not found in JSONRecipeData
+		}
+		return nil, err
+	}
+
+	// Convert the JSON string of ingredients to a slice
+	var ingredients []string
+	err = json.Unmarshal([]byte(ingredientsStr), &ingredients)
+	if err != nil {
+		return nil, err
+	}
+
+	// Define a Recipe object based on returned values
+	recipe := Recipe{
+		Title:        title,
+		Ingredients:  ingredients,
+		Instructions: instructions,
+		RecipeID:     recipeID,
+	}
+
+	return &recipe, nil
+}
+
+func (d *Database) FindFavoriteRecipes(currUser User, routingRecipes []Recommendation) []Recommendation {
+	// Establish a connection to the Azure SQL Database
+	db, err := AzureOpenDatabase()
+	if err != nil {
+		return routingRecipes // Return the original list if there's a database error
+	}
+	defer db.Close()
+
+	// Iterate through the routingRecipes and check if each recipe is a favorite for the user
+	for i := range routingRecipes {
+		var count int
+		err := db.QueryRow("SELECT COUNT(*) FROM user_favorite_recipes WHERE RecipeID = ? AND UserName = ?", routingRecipes[i].R.RecipeID, currUser.UserName).Scan(&count)
+		if err != nil {
+			count = 0
+		}
+		// Set the UserFavorite field based on the query result
+		routingRecipes[i].R.UserFavorite = count > 0
+	}
+
+	return routingRecipes
+}
+
+func (d *Database) GetUserPassword(username string) (string, error) {
+	// Establish a connection to the Azure SQL Database
+	db, err := AzureOpenDatabase()
+	if err != nil {
+		return "", err
+	}
+	defer db.Close()
+
+	var password string
+
+	stmt, err := db.Prepare("SELECT Password FROM user_data WHERE UserName=?")
+	if err != nil {
+		return "", err
+	}
+	defer stmt.Close()
+
+	row := stmt.QueryRow(username)
+	err = row.Scan(&password)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// Handle the case where the username is not found
+			return "", nil
+		}
+		return "", err
+	}
+
+	return password, nil
+}
+
+func (d *Database) ReadCookie(username string) (string, error) {
+	// Establish a connection to the Azure SQL Database
+	db, err := AzureOpenDatabase()
+	if err != nil {
+		return "", err
+	}
+	defer db.Close()
+
+	var returnCookie string
+
+	stmt, err := db.Prepare("SELECT Cookie FROM user_cookies WHERE UserName=?")
+	if err != nil {
+		return "", err
+	}
+	defer stmt.Close()
+
+	row := stmt.QueryRow(username)
+	err = row.Scan(&returnCookie)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// Handle the case where the username is not found
+			return "", nil
+		}
+		return "", err
+	}
+
+	return returnCookie, nil
+}
+
+func (d *Database) UserFromCookie(cookie string) (User, error) {
+	// Establish a connection to the Azure SQL Database
+	db, err := AzureOpenDatabase()
+	if err != nil {
+		return User{}, err
+	}
+	defer db.Close()
+
+	var returnUser User
+	var userName string
+
+	stmt, err := db.Prepare("SELECT UserName FROM dbo.user_cookies WHERE Cookie=?")
+	if err != nil {
+		return User{}, err
+	}
+	defer stmt.Close()
+
+	row := stmt.QueryRow(cookie)
+	err = row.Scan(&userName)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// Handle the case where the cookie is not found
+			return User{}, nil
+		}
+		return User{}, err
+	}
+
+	// Retrieve user details based on the username
+	returnUser = d.ReadUserDatabase(userName)
+
+	return returnUser, nil
+}
+
+func (d *Database) ReadList(currUser User) List {
+	// Establish a connection to the Azure SQL Database
+	db, err := AzureOpenDatabase()
+	if err != nil {
+		return List{
+			ListOwner:    currUser,
+			TimeUpdated:  time.Now(),
+			ShoppingList: make([]FoodItem, 0),
+		}
+	}
+	defer db.Close()
+
+	list := List{
+		ListOwner:    currUser,
+		TimeUpdated:  time.Now(),
+		ShoppingList: make([]FoodItem, 0),
+	}
+
+	rows, err := db.Query("SELECT FoodName, Quantity FROM dbo.user_lists WHERE UserName = ?", currUser.UserName)
+	if err != nil {
+		return list
+	}
+
+	for rows.Next() {
+		var foodName string
+		var quantity int
+		err := rows.Scan(&foodName, &quantity)
+		if err != nil {
+			continue
+		}
+
+		foodItem := FoodItem{
+			Name:     foodName,
+			Quantity: quantity,
+		}
+		list.ShoppingList = append(list.ShoppingList, foodItem)
+	}
+
+	return list
+}
+
+func (d *Database) WriteList(newItem FoodItem, currUser User) {
+	// Establish a connection to the Azure SQL Database
+	db, err := AzureOpenDatabase()
+	if err != nil {
+		// Handle error
+		return
+	}
+	defer db.Close()
+
+	// Insert or update the item in the "user_lists" table
+	statement, err := db.Prepare("MERGE INTO user_lists AS target "+
+		"USING (SELECT ? AS UserName, ? AS FoodName, ? AS FoodType, ? AS Quantity) AS source "+
+		"ON (target.UserName = source.UserName AND target.FoodName = source.FoodName) "+
+		"WHEN MATCHED THEN "+
+		"UPDATE SET target.Quantity = source.Quantity "+
+		"WHEN NOT MATCHED THEN "+
+		"INSERT (UserName, FoodName, FoodType, Quantity) "+
+		"VALUES (source.UserName, source.FoodName, source.FoodType, source.Quantity);")
+
+	if err != nil {
+		// Handle error
+		return
+	}
+
+	_, err = statement.Exec(currUser.UserName, newItem.Name, newItem.FoodType, newItem.Quantity)
+	if err != nil {
+		// Handle error
+		return
+	}
+}
+
+func (d *Database) UpdateListItem(newItem FoodItem, currUser User) {
+	// Establish a connection to the Azure SQL Database
+	db, err := AzureOpenDatabase()
+	if err != nil {
+		// Handle error
+		return
+	}
+	defer db.Close()
+
+	// Update the item in the "user_lists" table
+	statement, err := db.Prepare("UPDATE dbo.user_lists SET Quantity = ? WHERE UserName = ? AND FoodName = ?")
+	if err != nil {
+		// Handle error
+		return
+	}
+
+	_, err = statement.Exec(newItem.Quantity, currUser.UserName, newItem.Name)
+	if err != nil {
+		// Handle error
+		return
+	}
 }
 
