@@ -696,7 +696,7 @@ func (d *Database) WriteNewUserRecipe(currUser User, newRecipe Recipe) error {
 
 	// Create a new table for the user recipes if it doesn't exist
 	createTableQuery := `
-		CREATE TABLE IF NOT EXISTS user_recipes (
+		CREATE TABLE IF NOT EXISTS dbo.user_recipes (
 			RecipeID TEXT PRIMARY KEY,
 			Title TEXT,
 			Ingredients TEXT,
@@ -744,7 +744,7 @@ func (d *Database) getNextRecipeID(username string) int {
 	// Construct the SQL query to find the last recipeID for the given username
 	query := `
 		SELECT RecipeID
-		FROM user_recipes
+		FROM dbo.user_recipes
 		WHERE UserName = ?
 		ORDER BY RecipeID DESC
 		LIMIT 1`
@@ -778,7 +778,7 @@ func (d *Database) DeleteUserRecipe(recipeID string) error {
 	defer db.Close()
 
 	// Prepare and execute the DELETE statement based on recipeID
-	deleteQuery := "DELETE FROM user_recipes WHERE RecipeID = ?"
+	deleteQuery := "DELETE FROM dbo.user_recipes WHERE RecipeID = ?"
 	_, err = db.Exec(deleteQuery, recipeID)
 	if err != nil {
 		return err
@@ -799,7 +799,7 @@ func (d *Database) ReadAllUserRecipes() ([]Recipe, error) {
 	var recipes []Recipe
 
 	// Execute a SELECT statement to retrieve all rows from the user_recipes table
-	rows, err := db.Query("SELECT Title, Ingredients, Instructions, RecipeID, UserName FROM user_recipes")
+	rows, err := db.Query("SELECT Title, Ingredients, Instructions, RecipeID, UserName FROM dbo.user_recipes")
 	if err != nil {
 		return nil, err
 	}
@@ -846,7 +846,7 @@ func (d *Database) ReadCurrUserRecipes(currUser User) ([]Recipe, error) {
 	var recipes []Recipe
 
 	// Execute a SELECT statement to retrieve all rows from the user_recipes table for the current user
-	query := "SELECT Title, Ingredients, Instructions, RecipeID, UserName FROM user_recipes WHERE UserName = ?"
+	query := "SELECT Title, Ingredients, Instructions, RecipeID, UserName FROM dbo.user_recipes WHERE UserName = ?"
 	rows, err := db.Query(query, currUser.UserName)
 	if err != nil {
 		return nil, err
@@ -1082,7 +1082,7 @@ func (d *Database) FindFavoriteRecipes(currUser User, routingRecipes []Recommend
 	// Iterate through the routingRecipes and check if each recipe is a favorite for the user
 	for i := range routingRecipes {
 		var count int
-		err := db.QueryRow("SELECT COUNT(*) FROM user_favorite_recipes WHERE RecipeID = ? AND UserName = ?", routingRecipes[i].R.RecipeID, currUser.UserName).Scan(&count)
+		err := db.QueryRow("SELECT COUNT(*) FROM dbo.user_favorite_recipes WHERE RecipeID = ? AND UserName = ?", routingRecipes[i].R.RecipeID, currUser.UserName).Scan(&count)
 		if err != nil {
 			count = 0
 		}
@@ -1103,7 +1103,7 @@ func (d *Database) GetUserPassword(username string) (string, error) {
 
 	var password string
 
-	stmt, err := db.Prepare("SELECT Password FROM user_data WHERE UserName=?")
+	stmt, err := db.Prepare("SELECT Password FROM dbo.user_data WHERE UserName=?")
 	if err != nil {
 		return "", err
 	}
@@ -1132,7 +1132,7 @@ func (d *Database) ReadCookie(username string) (string, error) {
 
 	var returnCookie string
 
-	stmt, err := db.Prepare("SELECT Cookie FROM user_cookies WHERE UserName=?")
+	stmt, err := db.Prepare("SELECT Cookie FROM dbo.user_cookies WHERE UserName=?")
 	if err != nil {
 		return "", err
 	}
