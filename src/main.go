@@ -18,6 +18,8 @@ func main() {
 	BackendPkg.AzureOpenDatabase()
 
 	programDatabase.WriteJSONRecipes()
+	
+	for{}
 
 
 	// // Reads recipes dataset in not read in yet and stores in DB
