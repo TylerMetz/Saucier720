@@ -24,79 +24,6 @@ type Database struct {
 	Name string
 }
 
-
-func (d *Database) StorePubixScrapedTime(t time.Time) {
-	// calls function to open the database
-	database := d.OpenDatabase()
-
-	// make table for user data
-	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS PublixDealsScrapedTime (DealsLastScraped DATETIME PRIMARY KEY)")
-	statement.Exec()
-
-	// insert into UserData table
-	statementTwo, _ := database.Prepare("INSERT INTO PublixDealsScrapedTime (DealsLastScraped) VALUES (?)")
-
-	// store data from this user into table
-	statementTwo.Exec(t.Format("2006-01-02 15:04:05"))
-
-	// close db
-	database.Close()
-}
-
-func (d *Database) ReadPublixScrapedTime() time.Time {
-	// calls function to open the database
-	database := d.OpenDatabase()
-
-	// make a query to return the last scrape time value
-	row := database.QueryRow("SELECT DealsLastScraped FROM PublixDealsScrapedTime")
-	var dealsLastScrapedStr string
-	row.Scan(&dealsLastScrapedStr)
-
-	// Parse the datetime string into a time.Time object
-	dealsLastScraped, _ := time.Parse(time.RFC3339, dealsLastScrapedStr)
-
-	// close db
-	database.Close()
-
-	return dealsLastScraped
-}
-
-func (d *Database) StoreWalmartScrapedTime(t time.Time) {
-	// calls function to open the database
-	database := d.OpenDatabase()
-
-	// make table for user data
-	statement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS WalmartDealsScrapedTime (DealsLastScraped DATETIME PRIMARY KEY)")
-	statement.Exec()
-
-	// insert into UserData table
-	statementTwo, _ := database.Prepare("INSERT INTO WalmartDealsScrapedTime (DealsLastScraped) VALUES (?)")
-
-	// store data from this user into table
-	statementTwo.Exec(t.Format("2006-01-02 15:04:05"))
-
-	// close db
-	database.Close()
-}
-
-func (d *Database) ReadWalmartScrapedTime() time.Time {
-	// calls function to open the database
-	database := d.OpenDatabase()
-
-	// make a query to return the last scrape time value
-	row := database.QueryRow("SELECT DealsLastScraped FROM WalmartDealsScrapedTime")
-	var dealsLastScrapedStr string
-	row.Scan(&dealsLastScrapedStr)
-
-	// Parse the datetime string into a time.Time object
-	dealsLastScraped, _ := time.Parse(time.RFC3339, dealsLastScrapedStr)
-
-	// close db
-	database.Close()
-
-	return dealsLastScraped
-}
-
 func (d* Database) WriteJSONRecipes(){
 	// Read the recipes from the file
 	recipes, _ := GetJSONRecipes()
@@ -1110,5 +1037,85 @@ func (d *Database) GetUserPantry(userName string) Pantry {
 	}
 
 	return pantry
+}
+
+func (d *Database) StorePubixScrapedTime(t time.Time) error {
+	// Establish a connection to the Azure SQL Database
+	db, err := AzureOpenDatabase()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	// Define the SQL INSERT statement for the "dbo.deals_data" table
+	query := "INSERT INTO dbo.deals_data (store, foodName, saleDetails) VALUES (?, ?, ?)"
+	store := "Publix" // Assuming "Publix" is the store name
+
+	// Execute the INSERT statement
+	_, err = db.Exec(query, store, t.Format("2006-01-02 15:04:05"), "Scraped time")
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (d *Database) StoreWalmartScrapedTime(t time.Time) {
+	// Establish a connection to the Azure SQL Database
+	db, err := AzureOpenDatabase()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	// Define the SQL INSERT statement for the "dbo.deals_data" table
+	query := "INSERT INTO dbo.deals_data (store, foodName, saleDetails) VALUES (?, ?, ?)"
+	store := "Walmart" // Assuming "Walmart" is the store name
+
+	// Execute the INSERT statement
+	_, err = db.Exec(query, store, t.Format("2006-01-02 15:04:05"), "Scraped time")
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (d *Database) ReadPublixScrapedTime() (time.Time, error) {
+	// Establish a connection to the Azure SQL Database
+	db, err := AzureOpenDatabase()
+	if err != nil {
+		return time.Time{}, err
+	}
+	defer db.Close()
+
+	// Make a query to return the last scrape time value for Publix
+	query := "SELECT MAX(CAST(saleDetails AS DATETIME)) FROM dbo.deals_data WHERE store = 'Publix'"
+	var dealsLastScraped time.Time
+	err = db.QueryRow(query).Scan(&dealsLastScraped)
+	if err != nil {
+		return time.Time{}, err
+	}
+
+	return dealsLastScraped, nil
+}
+
+func (d *Database) ReadWalmartScrapedTime() (time.Time, error) {
+	// Establish a connection to the Azure SQL Database
+	db, err := AzureOpenDatabase()
+	if err != nil {
+		return time.Time{}, err
+	}
+	defer db.Close()
+
+	// Make a query to return the last scrape time value for Walmart
+	query := "SELECT MAX(CAST(saleDetails AS DATETIME)) FROM dbo.deals_data WHERE store = 'Walmart'"
+	var dealsLastScraped time.Time
+	err = db.QueryRow(query).Scan(&dealsLastScraped)
+	if err != nil {
+		return time.Time{}, err
+	}
+
+	return dealsLastScraped, nil
 }
 
