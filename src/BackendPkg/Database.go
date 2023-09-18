@@ -608,7 +608,7 @@ func (d *Database) WriteJSONRecipes() error {
 
 	// Prepare the INSERT statement
 	insertQuery := `
-		INSERT OR IGNORE INTO dbo.json_recipes (recipeID, Title, Ingredients, Instructions)
+		INSERT OR IGNORE INTO dbo.jason_recipes (RecipeID, Title, Ingredients, Instructions)
 		VALUES (?, ?, ?, ?)`
 
 	// Insert each recipe into the table
@@ -627,13 +627,13 @@ func (d *Database) WriteJSONRecipes() error {
 	}
 
 	// Delete rows where Ingredients are empty
-	_, err = db.Exec("DELETE FROM dbo.json_recipes WHERE Ingredients = '[]'")
+	_, err = db.Exec("DELETE FROM dbo.jason_recipes WHERE Ingredients = '[]'")
 	if err != nil {
 		return err
 	}
 
 	// Delete rows where Instructions are empty
-	_, err = db.Exec("DELETE FROM dbo.json_recipes WHERE Instructions = ''")
+	_, err = db.Exec("DELETE FROM dbo.jason_recipes WHERE Instructions = ''")
 	if err != nil {
 		return err
 	}
@@ -650,7 +650,7 @@ func (d *Database) ReadJSONRecipes() ([]Recipe, error) {
 	defer db.Close()
 
 	// Execute a SELECT statement to retrieve all rows from the json_recipes table
-	rows, err := db.Query("SELECT recipeID, Title, Ingredients, Instructions FROM dbo.json_recipes")
+	rows, err := db.Query("SELECT recipeID, Title, Ingredients, Instructions FROM dbo.jason_recipes")
 	if err != nil {
 		return nil, err
 	}
@@ -710,7 +710,7 @@ func (d *Database) WriteNewUserRecipe(currUser User, newRecipe Recipe) error {
 
 	// Prepare the INSERT statement
 	insertQuery := `
-		INSERT OR IGNORE INTO user_recipes (RecipeID, Title, Ingredients, Instructions, UserName)
+		INSERT OR IGNORE INTO dbo.user_recipes (RecipeID, Title, Ingredients, Instructions, UserName)
 		VALUES (?, ?, ?, ?, ?)`
 
 	// Generate a unique RecipeID based on the user's UserName

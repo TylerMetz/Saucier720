@@ -17,7 +17,7 @@ func main() {
 	// open the Azure SQL database
 	BackendPkg.AzureOpenDatabase()
 
-	
+	programDatabase.WriteJSONRecipes()
 
 
 	// // Reads recipes dataset in not read in yet and stores in DB
