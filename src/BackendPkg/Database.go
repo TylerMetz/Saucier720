@@ -24,53 +24,6 @@ type Database struct {
 	Name string
 }
 
-func (d *Database) GetUserPantry(userName string) Pantry {
-	// calls function to open the database
-	database := d.OpenDatabase()
-
-	// create the pantry object
-	pantry := Pantry{
-		TimeLastUpdated: time.Now(),
-		FoodInPantry:    []FoodItem{},
-	}
-
-	// query the database for the pantry data
-	rows, err := database.Query("SELECT Name, StoreCost, OnSale, SalePrice, SaleDetails, Quantity, PantryLastUpdated FROM UserPantries WHERE UserName = ?", userName)
-
-	// handle case where user pantry doesn't exist
-	if err != nil{
-		return pantry
-	}
-
-	// loop through each row and add the food item to the pantry
-	for rows.Next() {
-		var name, saleDetails string
-		var storeCost, salePrice float64
-		var onSale bool
-		var quantity int
-		var pantryLastUpdated string
-		if err := rows.Scan(&name, &storeCost, &onSale, &salePrice, &saleDetails, &quantity, &pantryLastUpdated); err != nil {
-			return Pantry{}
-		}
-		pantry.FoodInPantry = append(pantry.FoodInPantry, FoodItem{
-			Name:        name,
-			StoreCost:   storeCost,
-			OnSale:      onSale,
-			SalePrice:   salePrice,
-			SaleDetails: saleDetails,
-			Quantity:    quantity,
-		})
-
-		// set the time last updated
-		pantry.TimeLastUpdated, _ = time.Parse("2006-01-02 15:04:05", pantryLastUpdated)
-
-	}
-
-	// close db
-	database.Close()
-
-	return pantry
-}
 
 func (d *Database) StorePubixScrapedTime(t time.Time) {
 	// calls function to open the database
@@ -1106,5 +1059,56 @@ func (d *Database) UpdatePantry(currUser User, f []FoodItem) error {
 	}
 
 	return nil
+}
+
+func (d *Database) GetUserPantry(userName string) Pantry {
+	// Establish a connection to the Azure SQL Database
+	db, err := AzureOpenDatabase()
+	if err != nil {
+		return Pantry{}
+	}
+	defer db.Close()
+
+	// Create the pantry object
+	// RILEY!! DO WE STILL NEED THIS TIME
+	pantry := Pantry{
+		TimeLastUpdated: time.Now(),
+		FoodInPantry:    []FoodItem{},
+	}
+
+	// Query the database for the pantry data
+	query := "SELECT UserName, FoodName, FoodType, Quantity, dbo.user_ingredients WHERE UserName = ?"
+	rows, err := db.Query(query, userName)
+	if err != nil {
+		return pantry
+	}
+	defer rows.Close()
+
+	// Loop through each row and add the food item to the pantry
+	for rows.Next() {
+		var name, saleDetails string
+		var storeCost, salePrice float64
+		var onSale bool
+		var quantity int
+		var pantryLastUpdated string
+
+		if err := rows.Scan(&name, &storeCost, &onSale, &salePrice, &saleDetails, &quantity, &pantryLastUpdated); err != nil {
+			return Pantry{}
+		}
+
+		pantry.FoodInPantry = append(pantry.FoodInPantry, FoodItem{
+			Name:        name,
+			StoreCost:   storeCost,
+			OnSale:      onSale,
+			SalePrice:   salePrice,
+			SaleDetails: saleDetails,
+			Quantity:    quantity,
+		})
+
+		// Set the time last updated
+		pantry.TimeLastUpdated, _ = time.Parse("2006-01-02 15:04:05", pantryLastUpdated)
+	}
+
+	return pantry
 }
 
