@@ -614,6 +614,7 @@ func (d *Database) WriteJSONRecipes() error {
 	// Insert each recipe into the table
 	for _, recipe := range recipes {
 		ingredientsJSON, _ := json.Marshal(recipe.Ingredients)
+		fmt.Println(recipe.RecipeID, recipe.Title, ingredientsJSON, recipe.Instructions, recipe.Ingredients)
 		_, err := db.Exec(
 			insertQuery,
 			("json" + recipe.RecipeID),
