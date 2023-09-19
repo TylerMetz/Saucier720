@@ -8,6 +8,7 @@ import (
 	"log"
 	"sync"
 	"context"
+	_"fmt"
 )
 
 // GLOBAL VARIABLES
@@ -188,7 +189,6 @@ func handleLogin(w http.ResponseWriter, r *http.Request, sessionCookie *string, 
 		Password: CurrentUser.Password,
 		UserName: CurrentUser.UserName,
 	}
-	
 
 	// checks if validate user function returned an empty cookie, if not then setts the cookies
 	if ValidateUser(activeUser) == "" { // RILEY what is this validate user
@@ -209,6 +209,7 @@ func handleLogin(w http.ResponseWriter, r *http.Request, sessionCookie *string, 
 			SameSite: http.SameSiteLaxMode,
 			Domain: "localhost",
 		}
+
 
 		// sets cookie changed to true
 		*cookieChanged = true

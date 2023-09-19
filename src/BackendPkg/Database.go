@@ -1101,7 +1101,6 @@ func (d *Database) FindFavoriteRecipes(currUser User, routingRecipes []Recommend
 
 func (d *Database) GetUserPassword(username string) (string, error) {
 	// Establish a connection to the Azure SQL Database
-	fmt.Println("username:" + username)
 	var err error
 	db, err := AzureOpenDatabase()
 
