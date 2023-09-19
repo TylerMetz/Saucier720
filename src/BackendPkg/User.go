@@ -1,7 +1,7 @@
 package BackendPkg
 
 import(
-	_ "fmt"
+	_"fmt"
 )
 
 
@@ -30,7 +30,8 @@ func ValidateUser(currUser User) string{
 		passwordDb.StoreCookie(currUser.UserName,GenerateCookie(currUser.UserName))
 		returnCookie, _ = passwordDb.ReadCookie(currUser.UserName)
 
-	} 
+
+	}
 	
 	return returnCookie
 }
