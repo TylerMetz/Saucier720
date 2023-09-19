@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"fmt"
 	"context"
-	"errors"
+	_ "errors"
 )
 
 var db *sql.DB
@@ -381,49 +381,49 @@ func (d *Database) ReadUserDatabase(userName string) (User, error) {
 	return returnUser, nil
 }
 
-func (d *Database) ClearPublixDeals() error {
-	var err error
-	db, err := AzureOpenDatabase()
+// func (d *Database) ClearPublixDeals() error {
+// 	var err error
+// 	db, err := AzureOpenDatabase()
 
-	if db == nil {
-		fmt.Println("Failed to open database")
-		return err
-	}
+// 	if db == nil {
+// 		fmt.Println("Failed to open database")
+// 		return err
+// 	}
 
-	// Define the SQL DELETE statement
-	query := "DELETE FROM dbo.deals_data WHERE store = 'Publix'"
+// 	// Define the SQL DELETE statement
+// 	query := "DELETE FROM dbo.deals_data WHERE store = 'Publix'"
 
-	// Execute the DELETE statement
-	_, err = db.Exec(query)
-	if err != nil {
-		return err
-	}
+// 	// Execute the DELETE statement
+// 	_, err = db.Exec(query)
+// 	if err != nil {
+// 		return err
+// 	}
 
-	AzureSQLCloseDatabase();
-	return nil
-}
+// 	AzureSQLCloseDatabase();
+// 	return nil
+// }
 
-func (d *Database) ClearWalmartDeals() error {
-	var err error
-	db, err := AzureOpenDatabase()
+// func (d *Database) ClearWalmartDeals() error {
+// 	var err error
+// 	db, err := AzureOpenDatabase()
 
-	if db == nil {
-		fmt.Println("Failed to open database")
-		return err
-	}
+// 	if db == nil {
+// 		fmt.Println("Failed to open database")
+// 		return err
+// 	}
 
-	// Define the SQL DELETE statement
-	query := "DELETE FROM dbo.deals_data WHERE store = 'Walmart'"
+// 	// Define the SQL DELETE statement
+// 	query := "DELETE FROM dbo.deals_data WHERE store = 'Walmart'"
 
-	// Execute the DELETE statement
-	_, err = db.Exec(query)
-	if err != nil {
-		return err
-	}
+// 	// Execute the DELETE statement
+// 	_, err = db.Exec(query)
+// 	if err != nil {
+// 		return err
+// 	}
 
-	AzureSQLCloseDatabase();
-	return nil
-}
+// 	AzureSQLCloseDatabase();
+// 	return nil
+// }
 
 func (d *Database) UpdatePantry(currUser User, f []FoodItem) error {
 	var err error
@@ -444,15 +444,15 @@ func (d *Database) UpdatePantry(currUser User, f []FoodItem) error {
 	// Insert all items in the received pantry to the user's pantry
 	queryInsert := `
 		INSERT INTO dbo.user_ingredients (UserName, FoodName, Foodtype, Quantity)
-		VALUES (@UserName, @FoodName, @FoodType, ?,)`
+		VALUES (@UserName, @FoodName, @FoodType, @Quantity,)`
 	for _, item := range f {
-		// _, err = db.Exec(
-		// 	queryInsert,
-		// 	currUser.UserName,
-		// 	item.Name,
-		// 	item.FoodType,
-		// 	item.Quantity,
-		// )
+		_, err = db.Exec(
+			queryInsert,
+			currUser.UserName,
+			item.Name,
+			item.FoodType,
+			item.Quantity,
+		)
 		if err != nil {
 			return err
 		}
@@ -502,88 +502,89 @@ func (d *Database) GetUserPantry(userName string) Pantry {
 
 	}
 
+	AzureSQLCloseDatabase();
 	return pantry
 }
 
-func (d *Database) StorePubixScrapedTime(t time.Time) error {
-	// Establish a connection to the Azure SQL Database
-	db, err := AzureOpenDatabase()
-	if err != nil {
-		return err
-	}
-	defer db.Close()
+// func (d *Database) StorePubixScrapedTime(t time.Time) error {
+// 	// Establish a connection to the Azure SQL Database
+// 	db, err := AzureOpenDatabase()
+// 	if err != nil {
+// 		return err
+// 	}
+// 	defer db.Close()
 
-	// Define the SQL INSERT statement for the "dbo.deals_data" table
-	query := "INSERT INTO dbo.deals_data (store, foodName, saleDetails) VALUES (?, ?, ?)"
-	store := "Publix" // Assuming "Publix" is the store name
+// 	// Define the SQL INSERT statement for the "dbo.deals_data" table
+// 	query := "INSERT INTO dbo.deals_data (store, foodName, saleDetails) VALUES (?, ?, ?)"
+// 	store := "Publix" // Assuming "Publix" is the store name
 
-	// Execute the INSERT statement
-	_, err = db.Exec(query, store, t.Format("2006-01-02 15:04:05"), "Scraped time")
-	if err != nil {
-		return err
-	}
+// 	// Execute the INSERT statement
+// 	_, err = db.Exec(query, store, t.Format("2006-01-02 15:04:05"), "Scraped time")
+// 	if err != nil {
+// 		return err
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
-func (d *Database) StoreWalmartScrapedTime(t time.Time) error {
-	// Establish a connection to the Azure SQL Database
-	db, err := AzureOpenDatabase()
-	if err != nil {
-		return err
-	}
-	defer db.Close()
+// func (d *Database) StoreWalmartScrapedTime(t time.Time) error {
+// 	// Establish a connection to the Azure SQL Database
+// 	db, err := AzureOpenDatabase()
+// 	if err != nil {
+// 		return err
+// 	}
+// 	defer db.Close()
 
-	// Define the SQL INSERT statement for the "dbo.deals_data" table
-	query := "INSERT INTO dbo.deals_data (store, foodName, saleDetails) VALUES (?, ?, ?)"
-	store := "Walmart" // Assuming "Walmart" is the store name
+// 	// Define the SQL INSERT statement for the "dbo.deals_data" table
+// 	query := "INSERT INTO dbo.deals_data (store, foodName, saleDetails) VALUES (?, ?, ?)"
+// 	store := "Walmart" // Assuming "Walmart" is the store name
 
-	// Execute the INSERT statement
-	_, err = db.Exec(query, store, t.Format("2006-01-02 15:04:05"), "Scraped time")
-	if err != nil {
-		return err
-	}
+// 	// Execute the INSERT statement
+// 	_, err = db.Exec(query, store, t.Format("2006-01-02 15:04:05"), "Scraped time")
+// 	if err != nil {
+// 		return err
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
-func (d *Database) ReadPublixScrapedTime() (time.Time, error) {
-	// Establish a connection to the Azure SQL Database
-	db, err := AzureOpenDatabase()
-	if err != nil {
-		return time.Time{}, err
-	}
-	defer db.Close()
+// func (d *Database) ReadPublixScrapedTime() (time.Time, error) {
+// 	// Establish a connection to the Azure SQL Database
+// 	db, err := AzureOpenDatabase()
+// 	if err != nil {
+// 		return time.Time{}, err
+// 	}
+// 	defer db.Close()
 
-	// Make a query to return the last scrape time value for Publix
-	query := "SELECT MAX(CAST(saleDetails AS DATETIME)) FROM dbo.deals_data WHERE store = 'Publix'"
-	var dealsLastScraped time.Time
-	err = db.QueryRow(query).Scan(&dealsLastScraped)
-	if err != nil {
-		return time.Time{}, err
-	}
+// 	// Make a query to return the last scrape time value for Publix
+// 	query := "SELECT MAX(CAST(saleDetails AS DATETIME)) FROM dbo.deals_data WHERE store = 'Publix'"
+// 	var dealsLastScraped time.Time
+// 	err = db.QueryRow(query).Scan(&dealsLastScraped)
+// 	if err != nil {
+// 		return time.Time{}, err
+// 	}
 
-	return dealsLastScraped, nil
-}
+// 	return dealsLastScraped, nil
+// }
 
-func (d *Database) ReadWalmartScrapedTime() (time.Time, error) {
-	// Establish a connection to the Azure SQL Database
-	db, err := AzureOpenDatabase()
-	if err != nil {
-		return time.Time{}, err
-	}
-	defer db.Close()
+// func (d *Database) ReadWalmartScrapedTime() (time.Time, error) {
+// 	// Establish a connection to the Azure SQL Database
+// 	db, err := AzureOpenDatabase()
+// 	if err != nil {
+// 		return time.Time{}, err
+// 	}
+// 	defer db.Close()
 
-	// Make a query to return the last scrape time value for Walmart
-	query := "SELECT MAX(CAST(saleDetails AS DATETIME)) FROM dbo.deals_data WHERE store = 'Walmart'"
-	var dealsLastScraped time.Time
-	err = db.QueryRow(query).Scan(&dealsLastScraped)
-	if err != nil {
-		return time.Time{}, err
-	}
+// 	// Make a query to return the last scrape time value for Walmart
+// 	query := "SELECT MAX(CAST(saleDetails AS DATETIME)) FROM dbo.deals_data WHERE store = 'Walmart'"
+// 	var dealsLastScraped time.Time
+// 	err = db.QueryRow(query).Scan(&dealsLastScraped)
+// 	if err != nil {
+// 		return time.Time{}, err
+// 	}
 
-	return dealsLastScraped, nil
-}
+// 	return dealsLastScraped, nil
+// }
 
 func (d *Database) WriteJSONRecipes() error {
 	// Read the recipes from the file

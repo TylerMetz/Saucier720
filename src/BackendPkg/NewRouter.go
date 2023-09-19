@@ -191,7 +191,7 @@ func handleLogin(w http.ResponseWriter, r *http.Request, sessionCookie *string, 
 	
 
 	// checks if validate user function returned an empty cookie, if not then setts the cookies
-	if ValidateUser(activeUser) == "" {
+	if ValidateUser(activeUser) == "" { // RILEY what is this validate user
 		http.Error(w, "Invalid login credentials", http.StatusUnauthorized)
 		return
 	} else {
