@@ -796,22 +796,39 @@ func (d *Database) ReadCurrUserRecipes(currUser User) ([]Recipe, error) {
 }
 
 func (d *Database) FavoriteRecipe(currUser User, recipeID string) error {
-	// Establish a connection to the Azure SQL Database
-	db, err := AzureOpenDatabase()
+	var err error
+    db, err := AzureOpenDatabase()
+
+    ctx := context.Background()
+
+    if db == nil {
+        fmt.Println("Failed to open database")
+        return err
+    }
+
+    tsql := fmt.Sprintf(`
+        INSERT INTO dbo.user_favorite_recipes (RecipeID, UserName)
+        VALUES (@RecipeID, UserName);
+    `)
+
+	stmt, err := db.Prepare(tsql)
+    if err != nil {
+        
+        return err
+    }
+    defer stmt.Close()
+
+	_, err = stmt.ExecContext(
+		ctx,
+		tsql, 
+		sql.Named("RecipeID", recipeID),
+		sql.Named("UserName", currUser.UserName),
+	)
 	if err != nil {
 		return err
 	}
-	defer db.Close()
 
-	// Save the username and favorited recipe's RecipeID
-	insertQuery := `
-		INSERT OR IGNORE INTO dbo.user_favorite_recipes (RecipeID, UserName)
-		VALUES (?, ?)`
-	_, err = db.Exec(insertQuery, recipeID, currUser.UserName)
-	if err != nil {
-		return err
-	}
-
+	AzureSQLCloseDatabase();
 	return nil
 }
 
