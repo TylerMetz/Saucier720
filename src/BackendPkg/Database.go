@@ -636,23 +636,37 @@ func (d *Database) WriteJSONRecipes() error {
 
 func (d *Database) ReadJSONRecipes() ([]Recipe, error) {
 	// Establish a connection to the Azure SQL Database
-	db, err := AzureOpenDatabase()
-	if err != nil {
-		return nil, err
-	}
-	defer db.Close()
+	var recipes []Recipe
+	var err error
+    db, err := AzureOpenDatabase()
 
-	// Execute a SELECT statement to retrieve all rows from the json_recipes table
-	rows, err := db.Query("SELECT recipeID, Title, Ingredients, Instructions FROM dbo.jason_recipes")
+    if db == nil {
+        fmt.Println("Failed to open database")
+        return recipes, err
+    }
+
+
+	tsql := fmt.Sprintf(`
+	"SELECT RecipeID, Title, Ingredients, Instructions 
+	FROM dbo.jason_recipes"
+	`)
+
+	ctx := context.Background()
+	
+	rows, err := db.QueryContext(
+		ctx,
+		tsql,
+	)
+
 	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
+        fmt.Println("error on user password query")
+        return recipes, err
+    }
 
 	// Iterate through the rows and create a slice of Recipe structs
-	var recipes []Recipe
 	for rows.Next() {
-		var recipeID, title, ingredientsStr, instructions string
+		var title, ingredientsStr, instructions string
+		var recipeID string //this needs to be an int
 		err := rows.Scan(&recipeID, &title, &ingredientsStr, &instructions)
 		if err != nil {
 			return nil, err
