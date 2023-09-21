@@ -50,6 +50,7 @@ func AzureSQLCloseDatabase() {
 	}
 }
 
+// SEAL OF APPROVAL
 func StoreUserDatabase(u User) error {
 	var err error
 	db, err := AzureOpenDatabase()
@@ -89,45 +90,7 @@ func StoreUserDatabase(u User) error {
 	return nil
 }
 
-func (d *Database) StoreUserPantry(u User) error {
-	var err error
-	db, err := AzureOpenDatabase()
-
-	ctx := context.Background()
-
-	if db == nil {
-		fmt.Println("Failed to open database")
-		return err
-	}
-
-	tsql := `
-		INSERT INTO dbo.user_ingredients (UserName, FoodName, FoodType, Quantity)
-		VALUES (@UserName, @FoodName, @FoodType, @Quantity);
-	`
-
-	stmt, err := db.Prepare(tsql)
-	if err != nil {
-		return err
-	}
-	defer stmt.Close()
-
-	for _, item := range u.UserPantry.FoodInPantry {
-		_, err = stmt.ExecContext(ctx,
-			sql.Named("UserName", u.UserName),
-			sql.Named("FoodName", item.Name),
-			sql.Named("FoodType", item.FoodType),
-			sql.Named("Quantity", item.Quantity),
-		)
-	}
-
-	if err != nil {
-		return err
-	}
-
-	AzureSQLCloseDatabase();
-	return nil
-}
-
+// SEAL OF APPROVAL
 func (d *Database) InsertPantryItemPost(currUser User, f FoodItem) error{
 	var err error
 	db, err := AzureOpenDatabase()
@@ -139,10 +102,10 @@ func (d *Database) InsertPantryItemPost(currUser User, f FoodItem) error{
 		return err
 	}
 
-	tsql := `
+	tsql := fmt.Sprintf(`
 		INSERT INTO dbo.user_ingredients (UserName, FoodName, FoodType, Quantity)
 		VALUES (@UserName, @FoodName, @FoodType, @Quantity);
-	`
+	`)
 
 	stmt, err := db.Prepare(tsql)
 	if err != nil {
@@ -152,7 +115,7 @@ func (d *Database) InsertPantryItemPost(currUser User, f FoodItem) error{
 
 	_, err = stmt.ExecContext(ctx,
 		sql.Named("UserName", currUser.UserName),
-		sql.Named("Name", f.Name),
+		sql.Named("FoodName", f.Name),
 		sql.Named("FoodType", f.FoodType),
 		sql.Named("Quantity", f.Quantity),
 	)
@@ -161,10 +124,10 @@ func (d *Database) InsertPantryItemPost(currUser User, f FoodItem) error{
 		return err
 	}
 
-	AzureSQLCloseDatabase();
 	return nil
 }
 
+// STORE OF APPROVAL
 func (d *Database) StoreCookie(username string, cookie string) error {
 	var err error
 	db, err := AzureOpenDatabase()
@@ -200,6 +163,7 @@ func (d *Database) StoreCookie(username string, cookie string) error {
 	return nil
 }
 
+// SEAL OF APPROVAL
 func (d *Database) ReadPublixDatabase() ([]FoodItem, error) {
 	var err error
 	db, err := AzureOpenDatabase()
@@ -241,6 +205,7 @@ func (d *Database) ReadPublixDatabase() ([]FoodItem, error) {
 	return items, nil
 }
 
+// SEAL OF APPROVAL
 func (d *Database) ReadWalmartDatabase() ([]FoodItem, error) {
 	var err error
 	db, err := AzureOpenDatabase()
@@ -336,8 +301,8 @@ func (d *Database) UpdatePantry(currUser User, f []FoodItem) error {
 	updateQuery := fmt.Sprintf(`
 		UPDATE dbo.user_ingredients
 		SET Quantity = @Quantity
-		WHERE @FoodName = @FoodName
-		AND @UserName = UserName;
+		WHERE FoodName = @FoodName
+		AND UserName = @UserName;
 		`)
 
 	stmt, err := db.Prepare(updateQuery)
@@ -415,73 +380,6 @@ func (d *Database) GetUserPantry(username string) (Pantry, error) {
 	return pantry, nil
 }
 
-func (d *Database) ReadPublixScrapedTime() (time.Time, error) {
-	var err error
-    db, err := AzureOpenDatabase()
-
-    if db == nil {
-        fmt.Println("Failed to open database")
-        return time.Time{}, err
-    }
-
-	var dealsLastScraped time.Time
-
-	tsql := fmt.Sprintf(`
-	SELECT MAX(CAST(SaleDetails AS DATETIME)) FROM dbo.deals_data 
-	WHERE Store = @Store;
-	`)
-	
-	ctx := context.Background()
-    // Execute query
-    rows, err := db.QueryContext(
-        ctx,
-        tsql,
-		sql.Named("Store", "Publix"),
-	)
-
-	if err != nil {
-		return time.Time{}, nil
-	}
-	for rows.Next() {
-		err = rows.Scan(&dealsLastScraped)
-	}
-
-	return dealsLastScraped, nil
-}
-
-func (d *Database) ReadWalmartScrapedTime() (time.Time, error) {
-	var err error
-    db, err := AzureOpenDatabase()
-
-    if db == nil {
-        fmt.Println("Failed to open database")
-        return time.Time{}, err
-    }
-
-	var dealsLastScraped time.Time
-
-	tsql := fmt.Sprintf(`
-	SELECT MAX(CAST(SaleDetails AS DATETIME)) FROM dbo.deals_data 
-	WHERE Store = @Store;
-	`)
-	
-	ctx := context.Background()
-    // Execute query
-    rows, err := db.QueryContext(
-        ctx,
-        tsql,
-		sql.Named("Store", "Walmart"),
-	)
-
-	if err != nil {
-		return time.Time{}, nil
-	}
-	for rows.Next() {
-		err = rows.Scan(&dealsLastScraped)
-	}
-
-	return dealsLastScraped, nil
-}
 
 // SEAL OF APPROVAL
 func (d *Database) WriteJSONRecipes() error {
