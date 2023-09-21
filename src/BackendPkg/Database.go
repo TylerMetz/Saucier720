@@ -1229,25 +1229,43 @@ func (d *Database) WriteList(newItem FoodItem, currUser User) error {
     return nil
 }
 
-func (d *Database) UpdateListItem(newItem FoodItem, currUser User) {
-	// Establish a connection to the Azure SQL Database
-	db, err := AzureOpenDatabase()
-	if err != nil {
-		// Handle error
-		return
-	}
-	defer db.Close()
+func (d *Database) UpdateListItem(newItem FoodItem, currUser User) error {
+	var err error
+    db, err := AzureOpenDatabase()
 
-	// Update the item in the "user_lists" table
-	statement, err := db.Prepare("UPDATE dbo.user_lists SET Quantity = ? WHERE UserName = ? AND FoodName = ?")
-	if err != nil {
-		// Handle error
-		return
-	}
+    ctx := context.Background()
 
-	_, err = statement.Exec(newItem.Quantity, currUser.UserName, newItem.Name)
-	if err != nil {
-		// Handle error
-		return
-	}
+    if db == nil {
+        fmt.Println("Failed to open database")
+        return err
+    }
+
+    tsql := fmt.Sprintf(`
+        UPDATE dbo.user_lists
+		SET Quantity = @Quantity
+		Where UserName = @UserName
+		AND FoodName = @FoodName;
+    `)
+
+	stmt, err := db.Prepare(tsql)
+    if err != nil {
+        
+        return err
+    }
+    defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx,
+        sql.Named("Quantity", newItem.Quantity),
+        sql.Named("UserName", currUser.UserName),
+        sql.Named("FoodName", newItem.Name),
+    )
+
+    if err != nil {
+        return err
+    }
+
+    AzureSQLCloseDatabase();
+    return nil
+
+
 }
