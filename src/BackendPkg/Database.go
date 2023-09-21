@@ -568,8 +568,9 @@ func (d *Database) DeleteUserRecipe(recipeID string) error {
 	return nil
 }
 
-
+// SEAL OF APPROVAL
 func (d *Database) ReadAllUserRecipes() ([]Recipe, error) {
+	fmt.Println("read all user recipes")
 	// Establish a connection to the Azure SQL Database
 	var err error
     db, err := AzureOpenDatabase()
@@ -580,7 +581,7 @@ func (d *Database) ReadAllUserRecipes() ([]Recipe, error) {
     }
 
     tsql := fmt.Sprintf(`
-    SELECT Title Ingredients, Instructions, RecipeID, UserName FROM dbo.recipes;
+    SELECT Title, Ingredients, Instructions, RecipeID, UserName FROM dbo.user_recipes;
     `)
 
 	ctx := context.Background()
@@ -590,7 +591,7 @@ func (d *Database) ReadAllUserRecipes() ([]Recipe, error) {
 	)
 
 	if err != nil {
-		fmt.Println("error on user recipe read")
+		fmt.Println("error on all user recipe read")
 		return []Recipe{}, err
 	}
 
@@ -601,6 +602,7 @@ func (d *Database) ReadAllUserRecipes() ([]Recipe, error) {
 		var title, ingredientsStr, instructions, recipeID, userName string
 		err := rows.Scan(&title, &ingredientsStr, &instructions, &recipeID, &userName)
 		if err != nil {
+			fmt.Println("row error")
 			return []Recipe{}, err
 		}
 
@@ -608,6 +610,7 @@ func (d *Database) ReadAllUserRecipes() ([]Recipe, error) {
 		var ingredients []string
 		err = json.Unmarshal([]byte(ingredientsStr), &ingredients)
 		if err != nil {
+			fmt.Println("Unmarshal failure")
 			return []Recipe{}, err
 		}
 
@@ -622,6 +625,7 @@ func (d *Database) ReadAllUserRecipes() ([]Recipe, error) {
 		recipes = append(recipes, recipe)
 	}
 
+	fmt.Println(recipes)
 	return recipes, nil
 }
 
