@@ -965,15 +965,25 @@ func (d *Database) getRecipeByID(recipeID string) (*Recipe, error) {
 }
 
 func (d *Database) getRecipeFromUserTable(recipeID string) (*Recipe, error) {
-	// Establish a connection to the Azure SQL Database
-	db, err := AzureOpenDatabase()
-	if err != nil {
-		return nil, err
-	}
-	defer db.Close()
+	var err error
+    db, err := AzureOpenDatabase()
 
-	query := "SELECT Title, Ingredients, Instructions FROM dbo.user_recipes WHERE RecipeID = ?"
-	row := db.QueryRow(query, recipeID)
+    if db == nil {
+        fmt.Println("Failed to open database")
+        return &Recipe{}, err
+    }
+
+	tsql := fmt.Sprintf(`
+	SELECT Title, Ingredients, Instructions FROM dbo.user_recipes
+	WHERE RecipeID = @RecipeID;
+	`)
+
+	ctx := context.Background()
+	row, err := db.QueryContext(
+        ctx,
+        tsql,
+        sql.Named("RecipeID", recipeID),
+	)
 
 	var title, ingredientsStr, instructions string
 	err = row.Scan(&title, &ingredientsStr, &instructions)
