@@ -8,7 +8,7 @@ import (
 	"log"
 	"sync"
 	"context"
-	_"fmt"
+	"fmt"
 )
 
 // GLOBAL VARIABLES
@@ -977,6 +977,9 @@ func UpdateRecipeData(){
 	currUserRecipes, _ := backendDatabase.ReadCurrUserRecipes(CurrentUser)
 	currUserFavRecipes, _ := backendDatabase.ReadFavoriteRecipes(CurrentUser)
 	
+
+	fmt.Println("username is: " + CurrentUser.UserName)
+
 	currUserPantry, _ := backendDatabase.GetUserPantry(CurrentUser.UserName)
 
 	// save all recipes data to global variable

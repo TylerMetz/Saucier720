@@ -302,8 +302,8 @@ func (d *Database) ReadUserDatabase(username string) (User, error) {
 	rows, err := db.QueryContext(
 		ctx,
 		tsql,
-		sql.Named("UserName", username,
-	))
+		sql.Named("UserName", username),
+	)
 
 	if err != nil {
         fmt.Println("error on user password query")
@@ -314,10 +314,14 @@ func (d *Database) ReadUserDatabase(username string) (User, error) {
         err = rows.Scan(&returnUser.FirstName, &returnUser.LastName, &returnUser.Email, &returnUser.UserName, &returnUser.Password)
     }
 
+	fmt.Println("passed in userfrom for db query:" + username)
+	fmt.Println("returned username from db query: " + returnUser.UserName)
 	return returnUser, nil
 }
 
+// SEAL OF APPROVAL
 func (d *Database) UpdatePantry(currUser User, f []FoodItem) error {
+	fmt.Println("updating Pantry")
 	var err error
     db, err := AzureOpenDatabase()
 
@@ -327,56 +331,38 @@ func (d *Database) UpdatePantry(currUser User, f []FoodItem) error {
         fmt.Println("Failed to open database")
         return err
     }
-	
-	// Clear all of the user's current pantry
-	queryDelete := fmt.Sprintf(`
-	DELETE FROM dbo.user_ingredients WHERE UserName = @UserName
-	`)
-
-	stmt, err := db.Prepare(queryDelete)
-	if err != nil {
-		return err
-	}
-	defer stmt.Close()
-
-	_, err = stmt.ExecContext(
-		ctx,
-		sql.Named("UserName", currUser.UserName,
-	))
-
-	if err != nil {
-        return err
-    }
 
 	// Insert all items in the received pantry to the user's pantry
-	queryInsert := fmt.Sprintf(`
-		INSERT INTO dbo.user_ingredients (UserName, FoodName, Foodtype, Quantity)
-		VALUES (@UserName, @FoodName, @FoodType, @Quantity,)
+	updateQuery := fmt.Sprintf(`
+		UPDATE dbo.user_ingredients
+		SET Quantity = @Quantity
+		WHERE @FoodName = @FoodName
+		AND @UserName = UserName;
 		`)
 
-	stmt, err = db.Prepare(queryInsert)
+	stmt, err := db.Prepare(updateQuery)
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
 
 	for _, item := range f {
+		fmt.Println("Updating Pantry with: " + item.Name)
 		_, err = stmt.ExecContext(
 			ctx,
 			sql.Named("UserName", currUser.UserName),
 			sql.Named("FoodName", item.Name),
-			sql.Named("FoodType", item.FoodType),
 			sql.Named("Quantity", item.Quantity),
 		)
 		if err != nil {
+			fmt.Println("Error on inserting user pantry")
 			return err
 		}
 	}
-
-	AzureSQLCloseDatabase();
 	return nil
 }
 
+// SEAL OF APPROVAL
 func (d *Database) GetUserPantry(username string) (Pantry, error) {
 	var err error
     db, err := AzureOpenDatabase()
@@ -392,7 +378,7 @@ func (d *Database) GetUserPantry(username string) (Pantry, error) {
 	}
 
 	tsql := fmt.Sprintf(`
-	SELECT UserName, FoodName, FoodType, Quantity, FROM dbo.user_ingredients 
+	SELECT UserName, FoodName, FoodType, Quantity FROM dbo.user_ingredients 
 	WHERE UserName = @UserName;
 	`)
 
@@ -403,24 +389,24 @@ func (d *Database) GetUserPantry(username string) (Pantry, error) {
 		sql.Named("UserName", username),
 	)
 	if err != nil {
-		fmt.Println("error on user pantry query")
+		fmt.Println("error on user pantry query, username was: " + username)
 		return Pantry{}, err
 	}
 
 	// Loop through each row and add the food item to the pantry
 	for rows.Next() {
-		var name, foodType, saleDetails string
+		var name, foodName, foodType string
 		var quantity int
 
-		err := rows.Scan(&name, &foodType, &saleDetails, &quantity)
+		err := rows.Scan(&name, &foodName, &foodType, &quantity)
 		if err != nil {
 			return Pantry{}, err
 		}
 
 		pantry.FoodInPantry = append(pantry.FoodInPantry, FoodItem{
-			Name:        name,
+			Name:        foodName,
 			FoodType: foodType,
-			SaleDetails: saleDetails,
+			SaleDetails: "",
 			Quantity: quantity,
 		})
 
@@ -497,6 +483,7 @@ func (d *Database) ReadWalmartScrapedTime() (time.Time, error) {
 	return dealsLastScraped, nil
 }
 
+// SEAL OF APPROVAL
 func (d *Database) WriteJSONRecipes() error {
 	fmt.Println("Writing Recipes")
 	// Read the recipes from the file
@@ -546,6 +533,7 @@ func (d *Database) WriteJSONRecipes() error {
 	AzureSQLCloseDatabase();
 	return nil
 }
+
 
 func (d *Database) ReadJSONRecipes() ([]Recipe, error) {
 	// Establish a connection to the Azure SQL Database
@@ -624,7 +612,7 @@ func (d *Database) WriteNewUserRecipe(currUser User, newRecipe Recipe) error {
 
 	stmt, err := db.Prepare(tsql)
     if err != nil {
-        
+        fmt.Println("error inserting user recipe")
         return err
     }
     defer stmt.Close()
@@ -1137,16 +1125,21 @@ func (d *Database) UserFromCookie(cookie string) (User, error) {
         sql.Named("Cookie", cookie),
 	)
 
+	fmt.Println("cookie used in query: " + cookie)
+	
 	if err != nil {
-        fmt.Println("error on user cookie query")
+		fmt.Println("error on user cookie query, cookie was: " + cookie)
         return User{}, err
     }
-
-	err = row.Scan(&userName)
+	for row.Next() {
+		err = row.Scan(&userName)
+	}
+	fmt.Println("username returned from cookie query: " + userName)
 
 	// Retrieve user details based on the username
 	returnUser, err = d.ReadUserDatabase(userName)
 
+	fmt.Println("returned username: " + returnUser.UserName)
 	return returnUser, nil
 }
 
