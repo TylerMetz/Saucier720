@@ -430,19 +430,34 @@ func (d *Database) GetUserPantry(username string) (Pantry, error) {
 }
 
 func (d *Database) ReadPublixScrapedTime() (time.Time, error) {
-	// Establish a connection to the Azure SQL Database
-	db, err := AzureOpenDatabase()
-	if err != nil {
-		return time.Time{}, err
-	}
-	defer db.Close()
+	var err error
+    db, err := AzureOpenDatabase()
 
-	// Make a query to return the last scrape time value for Publix
-	query := "SELECT MAX(CAST(saleDetails AS DATETIME)) FROM dbo.deals_data WHERE store = 'Publix'"
+    if db == nil {
+        fmt.Println("Failed to open database")
+        return time.Time{}, err
+    }
+
 	var dealsLastScraped time.Time
-	err = db.QueryRow(query).Scan(&dealsLastScraped)
+
+	tsql := fmt.Sprintf(`
+	SELECT MAX(CAST(SaleDetails AS DATETIME)) FROM dbo.deals_data 
+	WHERE Store = @Store;
+	`)
+	
+	ctx := context.Background()
+    // Execute query
+    rows, err := db.QueryContext(
+        ctx,
+        tsql,
+		sql.Named("Store", "Publix"),
+	)
+
 	if err != nil {
-		return time.Time{}, err
+		return time.Time{}, nil
+	}
+	for rows.Next() {
+		err = rows.Scan(&dealsLastScraped)
 	}
 
 	return dealsLastScraped, nil
