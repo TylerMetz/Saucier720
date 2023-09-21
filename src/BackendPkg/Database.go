@@ -128,7 +128,7 @@ func (d *Database) StoreUserPantry(u User) error {
 	return nil
 }
 
-func (d *Database) InsertPantryItemPost (currUser User, f FoodItem) error{
+func (d *Database) InsertPantryItemPost(currUser User, f FoodItem) error{
 	var err error
 	db, err := AzureOpenDatabase()
 
@@ -211,7 +211,13 @@ func (d *Database) ReadPublixDatabase() ([]FoodItem, error) {
 
 	var items []FoodItem
 
-	query := "SELECT foodName, saleDetails FROM dbo.deals_data WHERE store = 'Publix'"
+	tsql := `
+	SELECT foodName, saleDetails FROM dbo.deals_data 
+	WHERE store = 'Publix'"
+	`
+
+	SELECT foodName, saleDetails FROM dbo.deals_data 
+	WHERE store = 'Publix'"
 	rows, err := db.Query(query)
 
 	if err != nil {
