@@ -1012,11 +1012,26 @@ func (d *Database) FindFavoriteRecipes(currUser User, routingRecipes []Recommend
 		return routingRecipes // Return the original list if there's a database error
 	}
 	defer db.Close()
+	
+	var count int
+	tsql := fmt.Sprintf(`
+	SELECT COUNT(*) FROM dbo.user_favorite_recipes
+	WHERE RecipeID = @RecipeID
+	AND UserName = @UserName;
+	`)
+	ctx := context.Background()
 
 	// Iterate through the routingRecipes and check if each recipe is a favorite for the user
 	for i := range routingRecipes {
-		var count int
-		err := db.QueryRow("SELECT COUNT(*) FROM dbo.user_favorite_recipes WHERE RecipeID = ? AND UserName = ?", routingRecipes[i].R.RecipeID, currUser.UserName).Scan(&count)
+		rows, err := db.QueryContext(
+			ctx,
+			tsql,
+			sql.Named("RecipeID", routingRecipes[i].R.RecipeID),
+			sql.Named("UserName", currUser.UserName),
+		)
+		for rows.Next() {
+			err = rows.Scan(&count)
+		}
 		if err != nil {
 			count = 0
 		}
