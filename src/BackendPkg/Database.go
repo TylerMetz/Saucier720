@@ -377,34 +377,44 @@ func (d *Database) UpdatePantry(currUser User, f []FoodItem) error {
 	return nil
 }
 
-func (d *Database) GetUserPantry(userName string) Pantry {
-	// Establish a connection to the Azure SQL Database
-	db, err := AzureOpenDatabase()
-	if err != nil {
-		return Pantry{}
-	}
-	defer db.Close()
+func (d *Database) GetUserPantry(username string) (Pantry, error) {
+	var err error
+    db, err := AzureOpenDatabase()
+
+    if db == nil {
+        fmt.Println("Failed to open database")
+        return Pantry{}, err
+    }
 
 	// Create the pantry object
 	pantry := Pantry{
 		FoodInPantry:    []FoodItem{},
 	}
 
-	// Query the database for the pantry data
-	query := "SELECT UserName, FoodName, FoodType, Quantity, dbo.user_ingredients WHERE UserName = ?"
-	rows, err := db.Query(query, userName)
+	tsql := fmt.Sprintf(`
+	SELECT UserName, FoodName, FoodType, Quantity, FROM dbo.user_ingredients 
+	WHERE UserName = @UserName;
+	`)
+
+	ctx := context.Background()
+	rows, err := db.QueryContext(
+		ctx,
+		tsql,
+		sql.Named("UserName", username),
+	)
 	if err != nil {
-		return pantry
+		fmt.Println("error on user pantry query")
+		return Pantry{}, err
 	}
-	defer rows.Close()
 
 	// Loop through each row and add the food item to the pantry
 	for rows.Next() {
 		var name, foodType, saleDetails string
 		var quantity int
 
-		if err := rows.Scan(&name, &foodType, &saleDetails, &quantity); err != nil {
-			return Pantry{}
+		err := rows.Scan(&name, &foodType, &saleDetails, &quantity)
+		if err != nil {
+			return Pantry{}, err
 		}
 
 		pantry.FoodInPantry = append(pantry.FoodInPantry, FoodItem{
@@ -416,8 +426,7 @@ func (d *Database) GetUserPantry(userName string) Pantry {
 
 	}
 
-	AzureSQLCloseDatabase();
-	return pantry
+	return pantry, nil
 }
 
 func (d *Database) ReadPublixScrapedTime() (time.Time, error) {
