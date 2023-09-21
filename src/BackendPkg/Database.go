@@ -4,10 +4,10 @@ import (
 	"database/sql"
 	"time"
 	"encoding/json"
-	"strings"
+	// "strings"
 	_ "github.com/microsoft/go-mssqldb"
 	"log"
-	"strconv"
+	// "strconv"
 	"fmt"
 	"context"
 	_ "errors"
@@ -683,35 +683,44 @@ func (d *Database) DeleteUserRecipe(recipeID string) error {
 
 func (d *Database) ReadAllUserRecipes() ([]Recipe, error) {
 	// Establish a connection to the Azure SQL Database
-	db, err := AzureOpenDatabase()
-	if err != nil {
-		return nil, err
-	}
-	defer db.Close()
+	var err error
+    db, err := AzureOpenDatabase()
 
-	// Create the recipes return slice
+    if db == nil {
+        fmt.Println("Failed to open database")
+        return []Recipe{}, err
+    }
+
+    tsql := fmt.Sprintf(`
+    SELECT Title Ingredients, Instructions, RecipeID, UserName FROM dbo.recipes;
+    `)
+
+	ctx := context.Background()
+	rows, err := db.QueryContext(
+		ctx,
+		tsql,
+	)
+
+	if err != nil {
+		fmt.Println("error on user recipe read")
+		return []Recipe{}, err
+	}
+
 	var recipes []Recipe
-
-	// Execute a SELECT statement to retrieve all rows from the user_recipes table
-	rows, err := db.Query("SELECT Title, Ingredients, Instructions, RecipeID, UserName FROM dbo.user_recipes")
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
 
 	// Iterate through the rows and create a slice of Recipe structs
 	for rows.Next() {
 		var title, ingredientsStr, instructions, recipeID, userName string
 		err := rows.Scan(&title, &ingredientsStr, &instructions, &recipeID, &userName)
 		if err != nil {
-			return nil, err
+			return []Recipe{}, err
 		}
 
 		// Convert the JSON string of ingredients to a slice
 		var ingredients []string
 		err = json.Unmarshal([]byte(ingredientsStr), &ingredients)
 		if err != nil {
-			return nil, err
+			return []Recipe{}, err
 		}
 
 		// Create a new Recipe struct and append it to the slice
