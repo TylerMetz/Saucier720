@@ -532,7 +532,7 @@ func (d *Database) WriteNewUserRecipe(currUser User, newRecipe Recipe) error {
 	return nil
 }
 
-// no seal, just otter
+// SEAL OF APPROVAL
 func (d *Database) DeleteUserRecipe(recipeID string) error {
 	var err error
     db, err := AzureOpenDatabase()
@@ -564,7 +564,6 @@ func (d *Database) DeleteUserRecipe(recipeID string) error {
         return err
     }
 
-    AzureSQLCloseDatabase();
 	return nil
 }
 
