@@ -63,7 +63,6 @@ export class RecipeCardComponent implements OnInit {
             this.hasError = false; // Clear the error flag
             this.currentRecipe = this.recipes[this.currentRecipeIndex];
             this.currentIngredients = this.removeQuotesAndBrackets(this.currentRecipe.R.ingredients);
-            console.log(this.currentIngredients);
           }
           break;
       }
@@ -74,8 +73,8 @@ export class RecipeCardComponent implements OnInit {
 
   public getAuthorCredit(): string {
     // used to get recipe author from recipeID
-    const author = this.currentRecipe.R.recipeAuthor;
-    if (author === null) {
+    const author = this.currentRecipe.R['RecipeAuthor'];
+    if (author === "") {
       return 'MealDealz Classic Recipe';
     } else {
       return 'Created by ' + author;
@@ -113,7 +112,6 @@ export class RecipeCardComponent implements OnInit {
     }
     this.currentRecipe = this.recipes[this.currentRecipeIndex];
     this.currentIngredients = this.removeQuotesAndBrackets(this.currentRecipe.R.ingredients);
-    console.log(this.currentIngredients)
     console.log(this.currentRecipe.R.title)
   }
 
@@ -124,7 +122,6 @@ export class RecipeCardComponent implements OnInit {
     }
     this.currentRecipe = this.recipes[this.currentRecipeIndex];
     this.currentIngredients = this.removeQuotesAndBrackets(this.currentRecipe.R.ingredients);
-    console.log(this.currentIngredients)
     console.log(this.currentRecipe.R.title)
   }
 
