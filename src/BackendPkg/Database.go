@@ -42,7 +42,6 @@ func AzureOpenDatabase() (*sql.DB, error) {
 	return db, nil
 }
 
-
 // CloseDatabase closes the database connection
 func AzureSQLCloseDatabase() {
 	err := db.Close()
@@ -51,7 +50,6 @@ func AzureSQLCloseDatabase() {
 	}
 }
 
-//INSERTS
 func StoreUserDatabase(u User) error {
 	var err error
 	db, err := AzureOpenDatabase()
@@ -202,7 +200,6 @@ func (d *Database) StoreCookie(username string, cookie string) error {
 	return nil
 }
 
-//READS
 func (d *Database) ReadPublixDatabase() ([]FoodItem, error) {
 	var err error
 	db, err := AzureOpenDatabase()
