@@ -965,24 +965,28 @@ func (d *Database) getRecipeByID(recipeID string) (*Recipe, error) {
 }
 
 func (d *Database) getRecipeFromJSONTable(recipeID string) (*Recipe, error) {
-	// Establish a connection to the Azure SQL Database
-	db, err := AzureOpenDatabase()
-	if err != nil {
-		return nil, err
-	}
-	defer db.Close()
+	var err error
+    db, err := AzureOpenDatabase()
 
-	query := "SELECT Title, Ingredients, Instructions FROM dbo.jason_recipes WHERE recipeID = ?"
-	row := db.QueryRow(query, recipeID)
+    if db == nil {
+        fmt.Println("Failed to open database")
+        return &Recipe{}, err
+    }
 
+	tsql := fmt.Sprintf(`
+	SELECT Title, Ingreidents, Instructions from dbo.jason_recipes
+	WHERE RecipeID = @RecipeID;
+	`)
+	ctx := context.Background()
+	row, err := db.QueryContext(
+		ctx,
+		tsql,
+		sql.Named("RecipeID", recipeID),
+	)
+
+	//Create Recipe
 	var title, ingredientsStr, instructions string
 	err = row.Scan(&title, &ingredientsStr, &instructions)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, nil // Recipe not found in JSONRecipeData
-		}
-		return nil, err
-	}
 
 	// Convert the JSON string of ingredients to a slice
 	var ingredients []string
@@ -991,7 +995,6 @@ func (d *Database) getRecipeFromJSONTable(recipeID string) (*Recipe, error) {
 		return nil, err
 	}
 
-	// Define a Recipe object based on returned values
 	recipe := Recipe{
 		Title:        title,
 		Ingredients:  ingredients,
