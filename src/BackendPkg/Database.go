@@ -329,8 +329,11 @@ func (d *Database) UpdatePantry(currUser User, f []FoodItem) error {
     }
 	
 	// Clear all of the user's current pantry
-	queryDelete := "DELETE FROM dbo.user_ingredients WHERE UserName = @UserName"
-	stmt, err = db.Preapre(queryDelete)
+	queryDelete := fmt.Sprintf(`
+	DELETE FROM dbo.user_ingredients WHERE UserName = @UserName
+	`)
+
+	stmt, err := db.Prepare(queryDelete)
 	if err != nil {
 		return err
 	}
@@ -338,7 +341,7 @@ func (d *Database) UpdatePantry(currUser User, f []FoodItem) error {
 
 	_, err = stmt.ExecContext(
 		ctx,
-		sql.Named("UserName", username,
+		sql.Named("UserName", currUser.UserName,
 	))
 
 	if err != nil {
@@ -346,24 +349,25 @@ func (d *Database) UpdatePantry(currUser User, f []FoodItem) error {
     }
 
 	// Insert all items in the received pantry to the user's pantry
-	queryInsert := `
+	queryInsert := fmt.Sprintf(`
 		INSERT INTO dbo.user_ingredients (UserName, FoodName, Foodtype, Quantity)
-		VALUES (@UserName, @FoodName, @FoodType, @Quantity,)`
+		VALUES (@UserName, @FoodName, @FoodType, @Quantity,)
+		`)
 
-	stmt, err = db.Prepare(tsql)
+	stmt, err = db.Prepare(queryInsert)
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
 
 	for _, item := range f {
-		_, err = db.ExecContext(
+		_, err = stmt.ExecContext(
 			ctx,
 			sql.Named("UserName", currUser.UserName),
 			sql.Named("FoodName", item.Name),
-			sql.Named("FoodType", item.FoodType,
+			sql.Named("FoodType", item.FoodType),
 			sql.Named("Quantity", item.Quantity),
-		))
+		)
 		if err != nil {
 			return err
 		}
