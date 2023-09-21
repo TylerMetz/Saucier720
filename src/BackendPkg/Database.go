@@ -295,7 +295,7 @@ func (d *Database) ReadUserDatabase(username string) (User, error) {
 
 	tsql := fmt.Sprintf(`
 	SELECT FirstName, LastName, Email, UserName, Password FROM dbo.user_data 
-	WHERE UserName=@UserName;
+	WHERE UserName = @UserName;
 	`)
 
 	ctx := context.Background()
@@ -319,32 +319,51 @@ func (d *Database) ReadUserDatabase(username string) (User, error) {
 
 func (d *Database) UpdatePantry(currUser User, f []FoodItem) error {
 	var err error
-	db, err := AzureOpenDatabase()
+    db, err := AzureOpenDatabase()
 
-	if db == nil {
-		fmt.Println("Failed to open database")
-		return err
-	}
+    ctx := context.Background()
 
+    if db == nil {
+        fmt.Println("Failed to open database")
+        return err
+    }
+	
 	// Clear all of the user's current pantry
-	queryDelete := "DELETE FROM dbo.user_ingredients WHERE UserName = ?"
-	_, err = db.Exec(queryDelete, currUser.UserName)
+	queryDelete := "DELETE FROM dbo.user_ingredients WHERE UserName = @UserName"
+	stmt, err = db.Preapre(queryDelete)
 	if err != nil {
 		return err
 	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(
+		ctx,
+		sql.Named("UserName", username,
+	))
+
+	if err != nil {
+        return err
+    }
 
 	// Insert all items in the received pantry to the user's pantry
 	queryInsert := `
 		INSERT INTO dbo.user_ingredients (UserName, FoodName, Foodtype, Quantity)
 		VALUES (@UserName, @FoodName, @FoodType, @Quantity,)`
+
+	stmt, err = db.Prepare(tsql)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
 	for _, item := range f {
-		_, err = db.Exec(
-			queryInsert,
-			currUser.UserName,
-			item.Name,
-			item.FoodType,
-			item.Quantity,
-		)
+		_, err = db.ExecContext(
+			ctx,
+			sql.Named("UserName", currUser.UserName),
+			sql.Named("FoodName", item.Name),
+			sql.Named("FoodType", item.FoodType,
+			sql.Named("Quantity", item.Quantity),
+		))
 		if err != nil {
 			return err
 		}
