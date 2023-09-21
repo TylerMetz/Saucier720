@@ -2,7 +2,7 @@ package BackendPkg
 
 import (
 	"database/sql"
-	"time"
+	// "time"
 	"encoding/json"
 	// "strings"
 	_ "github.com/microsoft/go-mssqldb"
@@ -380,7 +380,6 @@ func (d *Database) GetUserPantry(username string) (Pantry, error) {
 	return pantry, nil
 }
 
-
 // SEAL OF APPROVAL
 func (d *Database) WriteJSONRecipes() error {
 	fmt.Println("Writing Recipes")
@@ -432,7 +431,7 @@ func (d *Database) WriteJSONRecipes() error {
 	return nil
 }
 
-
+// SEAL OF APPROVAL
 func (d *Database) ReadJSONRecipes() ([]Recipe, error) {
 	// Establish a connection to the Azure SQL Database
 	var recipes []Recipe
@@ -446,8 +445,8 @@ func (d *Database) ReadJSONRecipes() ([]Recipe, error) {
 
 
 	tsql := fmt.Sprintf(`
-	"SELECT RecipeID, Title, Ingredients, Instructions 
-	FROM dbo.jason_recipes"
+	SELECT RecipeID, Title, Ingredients, Instructions 
+	FROM dbo.jason_recipes;
 	`)
 
 	ctx := context.Background()
@@ -458,7 +457,7 @@ func (d *Database) ReadJSONRecipes() ([]Recipe, error) {
 	)
 
 	if err != nil {
-        fmt.Println("error on user password query")
+        fmt.Println("error on jason recipes query")
         return recipes, err
     }
 
@@ -492,7 +491,9 @@ func (d *Database) ReadJSONRecipes() ([]Recipe, error) {
 	return recipes, nil
 }
 
+// SEAL OF APPROVAL
 func (d *Database) WriteNewUserRecipe(currUser User, newRecipe Recipe) error {
+	fmt.Println("inserting new user recipe")
 	var err error
     db, err := AzureOpenDatabase()
 
@@ -520,7 +521,7 @@ func (d *Database) WriteNewUserRecipe(currUser User, newRecipe Recipe) error {
 	_, err = stmt.ExecContext(
 		ctx,
 		sql.Named("Title", newRecipe.Title),
-		sql.Named("Ingreidents", string(ingredientsJSON)),
+		sql.Named("Ingredients", ingredientsJSON),
 		sql.Named("Instructions", newRecipe.Instructions),
 		sql.Named("UserName", currUser.UserName),
 	)
@@ -528,10 +529,10 @@ func (d *Database) WriteNewUserRecipe(currUser User, newRecipe Recipe) error {
 		return err
 	}
 
-	AzureSQLCloseDatabase()
 	return nil
 }
 
+// no seal, just otter
 func (d *Database) DeleteUserRecipe(recipeID string) error {
 	var err error
     db, err := AzureOpenDatabase()
@@ -544,7 +545,7 @@ func (d *Database) DeleteUserRecipe(recipeID string) error {
     }
 
     tsql := fmt.Sprintf(`
-	Delete from dbo.user_recipes
+	DELETE from dbo.user_recipes
 	WHERE RecipeID = @RecipeID
 	`)
 
@@ -566,6 +567,7 @@ func (d *Database) DeleteUserRecipe(recipeID string) error {
     AzureSQLCloseDatabase();
 	return nil
 }
+
 
 func (d *Database) ReadAllUserRecipes() ([]Recipe, error) {
 	// Establish a connection to the Azure SQL Database
@@ -623,6 +625,7 @@ func (d *Database) ReadAllUserRecipes() ([]Recipe, error) {
 	return recipes, nil
 }
 
+// SEAL OF APPROVAL
 func (d *Database) ReadCurrUserRecipes(currUser User) ([]Recipe, error) {
 	// Establish a connection to the Azure SQL Database
 	var err error
@@ -634,7 +637,7 @@ func (d *Database) ReadCurrUserRecipes(currUser User) ([]Recipe, error) {
     }
 
     tsql := fmt.Sprintf(`
-    SELECT Title Ingredients, Instructions, RecipeID, UserName FROM dbo.recipes
+    SELECT Title, Ingredients, Instructions, RecipeID, UserName FROM dbo.user_recipes
 	WHERE UserName = @UserName;
     `)
 
@@ -647,7 +650,8 @@ func (d *Database) ReadCurrUserRecipes(currUser User) ([]Recipe, error) {
 
 	if err != nil {
 		fmt.Println("error on currUser recipe read")
-		return []Recipe{}, err
+		// return []Recipe{}, err
+		panic(err)
 	}
 
 	var recipes []Recipe
