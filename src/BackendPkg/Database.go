@@ -213,18 +213,21 @@ func (d *Database) ReadPublixDatabase() ([]FoodItem, error) {
 
 	tsql := `
 	SELECT foodName, saleDetails FROM dbo.deals_data 
-	WHERE store = 'Publix'"
+	WHERE Store = @Store
 	`
 
-	SELECT foodName, saleDetails FROM dbo.deals_data 
-	WHERE store = 'Publix'"
-	rows, err := db.Query(query)
+	ctx := context.Background()
+
+	rows, err := db.QueryContext(
+		ctx,
+		tsql,
+		sql.Named("Store", "Publix"),
+	)
 
 	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
+        fmt.Println("error on read publix query")
+        return nil, err
+    }
 
 	for rows.Next() {
 		var item FoodItem
@@ -235,11 +238,6 @@ func (d *Database) ReadPublixDatabase() ([]FoodItem, error) {
 		items = append(items, item)
 	}
 
-	if err := rows.Err(); err !=nil {
-		return nil, err
-	}
-
-	AzureSQLCloseDatabase();
 	return items, nil
 }
 
