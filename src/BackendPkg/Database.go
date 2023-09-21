@@ -213,7 +213,7 @@ func (d *Database) ReadPublixDatabase() ([]FoodItem, error) {
 
 	tsql := `
 	SELECT foodName, saleDetails FROM dbo.deals_data 
-	WHERE Store = @Store
+	WHERE Store = @Store;
 	`
 
 	ctx := context.Background()
@@ -250,15 +250,25 @@ func (d *Database) ReadWalmartDatabase() ([]FoodItem, error) {
 		return nil, err
 	}
 
-	query := "SELECT foodName, saleDetails FROM dbo.deals_data WHERE store = 'Walmart'"
-	rows, err := db.Query(query)
+	var items []FoodItem
+
+	tsql := `
+	SELECT foodName, saleDetails FROM dbo.deals_data 
+	WHERE Store = @Store;
+	`
+
+	ctx := context.Background()
+
+	rows, err := db.QueryContext(
+		ctx,
+		tsql,
+		sql.Named("Store", "Walmart"),
+	)
 
 	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	var items []FoodItem
+        fmt.Println("error on read walmart query")
+        return nil, err
+    }
 
 	for rows.Next() {
 		var item FoodItem
@@ -269,15 +279,10 @@ func (d *Database) ReadWalmartDatabase() ([]FoodItem, error) {
 		items = append(items, item)
 	}
 
-	if err := rows.Err(); err !=nil {
-		return nil, err
-	}
-
-	AzureSQLCloseDatabase();
 	return items, nil
 }
 
-func (d *Database) ReadUserDatabase(userName string) (User, error) {
+func (d *Database) ReadUserDatabase(username string) (User, error) {
 	var err error
 	db, err := AzureOpenDatabase()
 
@@ -288,20 +293,27 @@ func (d *Database) ReadUserDatabase(userName string) (User, error) {
 
 	var returnUser User
 
-	row := db.QueryRow("SELECT FirstName, LastName, Email, UserName, Password FROM dbo.user_data WHERE UserName=?", userName)
+	tsql := fmt.Sprintf(`
+	SELECT FirstName, LastName, Email, UserName, Password FROM dbo.user_data 
+	WHERE UserName=@UserName;
+	`)
 
-	err = row.Scan(&returnUser.FirstName, &returnUser.LastName, &returnUser.Email, &returnUser.UserName, &returnUser.Password)
+	ctx := context.Background()
+	rows, err := db.QueryContext(
+		ctx,
+		tsql,
+		sql.Named("UserName", username,
+	))
+
 	if err != nil {
-		if err == sql.ErrNoRows {
-			// Handle the case where no rows were found (user not found)
-			return User{}, err
-		}
-		// Handle other errors
-		fmt.Println("Failed to scan user data:", err)
-		return User{}, err
-	}
+        fmt.Println("error on user password query")
+        return User{}, err
+    }
 
-	AzureSQLCloseDatabase();
+	for rows.Next() {
+        err = rows.Scan(&returnUser.FirstName, &returnUser.LastName, &returnUser.Email, &returnUser.UserName, &returnUser.Password)
+    }
+
 	return returnUser, nil
 }
 
