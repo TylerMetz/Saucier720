@@ -607,49 +607,42 @@ func (d *Database) ReadJSONRecipes() ([]Recipe, error) {
 }
 
 func (d *Database) WriteNewUserRecipe(currUser User, newRecipe Recipe) error {
-	// Establish a connection to the Azure SQL Database
-	db, err := AzureOpenDatabase()
-	if err != nil {
-		return err
-	}
-	defer db.Close()
+	var err error
+    db, err := AzureOpenDatabase()
 
-	// Create a new table for the user recipes if it doesn't exist
-	createTableQuery := `
-		CREATE TABLE IF NOT EXISTS dbo.user_recipes (
-			RecipeID TEXT PRIMARY KEY,
-			Title TEXT,
-			Ingredients TEXT,
-			Instructions TEXT,
-			UserName TEXT
-		)`
-	_, err = db.Exec(createTableQuery)
-	if err != nil {
-		return err
-	}
+    ctx := context.Background()
 
-	// Prepare the INSERT statement
-	insertQuery := `
-		INSERT OR IGNORE INTO dbo.user_recipes (RecipeID, Title, Ingredients, Instructions, UserName)
-		VALUES (?, ?, ?, ?, ?)`
+    if db == nil {
+        fmt.Println("Failed to open database")
+        return err
+    }
 
-	// Generate a unique RecipeID based on the user's UserName
-	recipeID := currUser.UserName + strconv.Itoa(d.getNextRecipeID(currUser.UserName))
+    tsql := fmt.Sprintf(`
+        INSERT INTO dbo.user_recipes (Title, Ingredients, Instructions, UserName)
+        VALUES (@Title, @Ingredients, @Instructions, @UserName);
+    `)
+
+	stmt, err := db.Prepare(tsql)
+    if err != nil {
+        
+        return err
+    }
+    defer stmt.Close()
 
 	// Insert the new recipe into the table
 	ingredientsJSON, _ := json.Marshal(newRecipe.Ingredients)
-	_, err = db.Exec(
-		insertQuery,
-		recipeID,
-		newRecipe.Title,
-		string(ingredientsJSON),
-		newRecipe.Instructions,
-		currUser.UserName,
+	_, err = stmt.ExecContext(
+		ctx,
+		sql.Named("Title", newRecipe.Title),
+		sql.Named("Ingreidents", string(ingredientsJSON)),
+		sql.Named("Instructions", newRecipe.Instructions),
+		sql.Named("UserName", currUser.UserName),
 	)
 	if err != nil {
 		return err
 	}
 
+	AzureSQLCloseDatabase()
 	return nil
 }
 
