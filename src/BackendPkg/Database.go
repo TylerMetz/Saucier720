@@ -833,20 +833,39 @@ func (d *Database) FavoriteRecipe(currUser User, recipeID string) error {
 }
 
 func (d *Database) UnfavoriteRecipe(currUser User, recipeID string) error {
-	// Establish a connection to the Azure SQL Database
-	db, err := AzureOpenDatabase()
+	var err error
+    db, err := AzureOpenDatabase()
+
+    ctx := context.Background()
+
+    if db == nil {
+        fmt.Println("Failed to open database")
+        return err
+    }
+
+    tsql := fmt.Sprintf(`
+    	DELETE FROM dbo.user_favorite_recipes
+       	WHERE UserName = @UserName AND RecipeID = @RecipeID;
+    `)
+
+	stmt, err := db.Prepare(tsql)
+    if err != nil {
+        
+        return err
+    }
+    defer stmt.Close()
+
+	_, err = stmt.ExecContext(
+		ctx,
+		tsql, 
+		sql.Named("RecipeID", recipeID),
+		sql.Named("UserName", currUser.UserName),
+	)
 	if err != nil {
 		return err
 	}
-	defer db.Close()
 
-	// Delete the favorite recipe from the table
-	deleteQuery := "DELETE FROM dbo.user_favorite_recipes WHERE RecipeID = ? AND UserName = ?"
-	_, err = db.Exec(deleteQuery, recipeID, currUser.UserName)
-	if err != nil {
-		return err
-	}
-
+	AzureSQLCloseDatabase();
 	return nil
 }
 
