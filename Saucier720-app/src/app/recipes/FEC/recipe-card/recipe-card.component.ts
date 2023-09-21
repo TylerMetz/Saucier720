@@ -83,7 +83,7 @@ export class RecipeCardComponent implements OnInit {
 
   public isCurrentUserRecipe(): boolean {
     // used to check if current recipe is made my the current user
-    if (this.currentRecipe.R.recipeAuthor === this.cookieService.get("sessionID").replace(/\d+/g, '')){
+    if (this.currentRecipe.R['RecipeAuthor'] === this.cookieService.get("sessionID").replace(/\d+/g, '')){
       return true
     } else{
       return false;
