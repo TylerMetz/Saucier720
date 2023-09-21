@@ -647,20 +647,37 @@ func (d *Database) WriteNewUserRecipe(currUser User, newRecipe Recipe) error {
 }
 
 func (d *Database) DeleteUserRecipe(recipeID string) error {
-	// Establish a connection to the Azure SQL Database
-	db, err := AzureOpenDatabase()
-	if err != nil {
-		return err
-	}
-	defer db.Close()
+	var err error
+    db, err := AzureOpenDatabase()
 
-	// Prepare and execute the DELETE statement based on recipeID
-	deleteQuery := "DELETE FROM dbo.user_recipes WHERE RecipeID = ?"
-	_, err = db.Exec(deleteQuery, recipeID)
-	if err != nil {
-		return err
-	}
+    ctx := context.Background()
 
+    if db == nil {
+        fmt.Println("Failed to open database")
+        return err
+    }
+
+    tsql := fmt.Sprintf(`
+	Delete from dbo.user_recipes
+	WHERE RecipeID = @RecipeID
+	`)
+
+	stmt, err := db.Prepare(tsql)
+    if err != nil {
+        
+        return err
+    }
+    defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx,
+        sql.Named("RecipeID", recipeID),
+    )
+
+	if err != nil {
+        return err
+    }
+
+    AzureSQLCloseDatabase();
 	return nil
 }
 
