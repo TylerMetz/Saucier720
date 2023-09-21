@@ -646,42 +646,6 @@ func (d *Database) WriteNewUserRecipe(currUser User, newRecipe Recipe) error {
 	return nil
 }
 
-func (d *Database) getNextRecipeID(username string) int {
-	// Establish a connection to the Azure SQL Database
-	db, err := AzureOpenDatabase()
-	if err != nil {
-		return 0
-	}
-	defer db.Close()
-
-	// Construct the SQL query to find the last recipeID for the given username
-	query := `
-		SELECT RecipeID
-		FROM dbo.user_recipes
-		WHERE UserName = ?
-		ORDER BY RecipeID DESC
-		LIMIT 1`
-	var lastRecipeID string
-	err = db.QueryRow(query, username).Scan(&lastRecipeID)
-	if err != nil && err != sql.ErrNoRows {
-		return 0
-	}
-
-	// If no rows are found, return 1 as the starting RecipeID
-	if lastRecipeID == "" {
-		return 1
-	}
-
-	// Extract the numeric part of the last recipeID and increment it
-	lastIDNumStr := strings.TrimPrefix(lastRecipeID, username)
-	lastIDNum, err := strconv.Atoi(lastIDNumStr)
-	if err != nil {
-		return 0
-	}
-
-	return lastIDNum + 1
-}
-
 func (d *Database) DeleteUserRecipe(recipeID string) error {
 	// Establish a connection to the Azure SQL Database
 	db, err := AzureOpenDatabase()
