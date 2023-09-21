@@ -1113,31 +1113,36 @@ func (d *Database) ReadCookie(username string) (string, error) {
 }
 
 func (d *Database) UserFromCookie(cookie string) (User, error) {
-	// Establish a connection to the Azure SQL Database
-	db, err := AzureOpenDatabase()
-	if err != nil {
-		return User{}, err
-	}
-	defer db.Close()
+	var err error
+    db, err := AzureOpenDatabase()
+
+    if db == nil {
+        fmt.Println("Failed to open database")
+        return User{}, err
+    }
 
 	var returnUser User
 	var userName string
 
-	stmt, err := db.Prepare("SELECT UserName FROM dbo.user_cookies WHERE Cookie=?")
-	if err != nil {
-		return User{}, err
-	}
-	defer stmt.Close()
+	tsql := fmt.Sprintf(`
+	SELECT UserName FROM dbo.user_cookies
+	WHERE Cookie = @Cookie;
+	`)
 
-	row := stmt.QueryRow(cookie)
-	err = row.Scan(&userName)
+	ctx := context.Background()
+    // Execute query
+    row, err := db.QueryContext(
+        ctx,
+        tsql,
+        sql.Named("Cookie", cookie),
+	)
+
 	if err != nil {
-		if err == sql.ErrNoRows {
-			// Handle the case where the cookie is not found
-			return User{}, nil
-		}
-		return User{}, err
-	}
+        fmt.Println("error on user cookie query")
+        return User{}, err
+    }
+
+	err = row.Scan(&userName)
 
 	// Retrieve user details based on the username
 	returnUser, err = d.ReadUserDatabase(userName)
