@@ -559,7 +559,6 @@ func (d *Database) DeleteUserRecipe(recipeID string) error {
 	_, err = stmt.ExecContext(ctx,
         sql.Named("RecipeID", recipeID),
     )
-	
 
 	if err != nil {
         return err
