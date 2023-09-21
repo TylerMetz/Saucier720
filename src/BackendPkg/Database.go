@@ -630,50 +630,6 @@ func (d *Database) WriteJSONRecipes() error {
 		// }
 	}
 
-	// ctx = context.Background()
-
-	// tsql = fmt.Sprintf(`
-	// DELETE FROM dbo.jason_recipes
-	// WHERE Ingredients = @Ingredients;
-	// `)
-
-	// stmt, err = db.Prepare(tsql)
-	// if err != nil {
-	// 	return err
-	// }
-
-	// emptyIngredients := Recipe{
-
-	// }
-	// _, err = stmt.ExecContext(ctx,
-	// sql.Named("Ingredients", emptyIngredients),
-	// )
-	// if err != nil {
-	// 	return err
-	// }
-
-	// ctx = context.Background()
-
-	// tsql = fmt.Sprintf(`
-	// DELETE FROM dbo.jason_recipes
-	// WHERE Instructions = @Instructions;
-	// `)
-
-	// stmt, err = db.Prepare(tsql)
-	// if err != nil {
-	// 	return err
-	// }
-
-	// emptyInstructions := Recipe{
-
-	// }
-	// _, err = stmt.ExecContext(ctx,
-	// sql.Named("Instructions", emptyInstructions),
-	// )
-	// if err != nil {
-	// 	return err
-	// }
-
 	AzureSQLCloseDatabase();
 	return nil
 }
