@@ -1150,32 +1150,36 @@ func (d *Database) UserFromCookie(cookie string) (User, error) {
 	return returnUser, nil
 }
 
-func (d *Database) ReadList(currUser User) List {
+func (d *Database) ReadList(currUser User) (List, error) {
 	// Establish a connection to the Azure SQL Database
-	db, err := AzureOpenDatabase()
-	if err != nil {
-		return List{
-			ShoppingList: make([]FoodItem, 0),
-		}
-	}
-	defer db.Close()
+	var err error
+    db, err := AzureOpenDatabase()
+
+    if db == nil {
+        fmt.Println("Failed to open database")
+        return List{}, err
+    }
 
 	list := List{
 		ShoppingList: make([]FoodItem, 0),
 	}
 
-	rows, err := db.Query("SELECT FoodName, Quantity FROM dbo.user_lists WHERE UserName = ?", currUser.UserName)
-	if err != nil {
-		return list
-	}
+	tsql := fmt.Sprintf(`
+	SELECT FoodName, Quantity FROm dbo.user_lists
+	WHERE UserName = @UserName;
+	`)
+
+	ctx := context.Background()
+	rows, err := db.QueryContext(
+		ctx,
+		tsql,
+		sql.Named("UserName", currUser.UserName),
+	)
 
 	for rows.Next() {
 		var foodName string
 		var quantity int
-		err := rows.Scan(&foodName, &quantity)
-		if err != nil {
-			continue
-		}
+		err = rows.Scan(&foodName, &quantity)
 
 		foodItem := FoodItem{
 			Name:     foodName,
@@ -1184,7 +1188,7 @@ func (d *Database) ReadList(currUser User) List {
 		list.ShoppingList = append(list.ShoppingList, foodItem)
 	}
 
-	return list
+	return list, err
 }
 
 func (d *Database) WriteList(newItem FoodItem, currUser User) {
