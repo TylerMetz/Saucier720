@@ -288,6 +288,8 @@ func (d *Database) ReadPublixDatabase() ([]FoodItem, error) {
 		return nil, err
 	}
 
+	var items []FoodItem
+
 	query := "SELECT foodName, saleDetails FROM dbo.deals_data WHERE store = 'Publix'"
 	rows, err := db.Query(query)
 
@@ -296,7 +298,6 @@ func (d *Database) ReadPublixDatabase() ([]FoodItem, error) {
 	}
 	defer rows.Close()
 
-	var items []FoodItem
 
 	for rows.Next() {
 		var item FoodItem
@@ -584,66 +585,96 @@ func (d *Database) ReadWalmartScrapedTime() (time.Time, error) {
 }
 
 func (d *Database) WriteJSONRecipes() error {
+	fmt.Println("Writing Recipes")
 	// Read the recipes from the file
 	recipes, err := GetJSONRecipes()
-	//fmt.Println(recipes)
 	if err != nil {
+		fmt.Println("Jason Failed")
 		return err
 	}
 
-	// Establish a connection to the Azure SQL Database
 	db, err := AzureOpenDatabase()
-	if err != nil {
-		return err
-	}
-	defer db.Close()
+	
+	ctx := context.Background()
 
-	// Prepare the INSERT statement
-	// insertQuery := `
-	// 	INSERT INTO dbo.jason_recipes (Title, Ingredients, Instructions)
-	// 	VALUES (@Title, @Ingredients, @Instructions)`
+    if db == nil {
+        fmt.Println("Failed to open database")
+        return err
+    }
+
+	fmt.Println("Inserting")
+	tsql := (`
+	INSERT INTO dbo.jason_recipes (Title, Ingredients, Instructions)
+	VALUES (@Title, @Ingredients, @Instructions);
+	`)
+
+	stmt, err := db.Prepare(tsql)
+    if err != nil {
+        return err
+    }
+    defer stmt.Close()
 
 	// Insert each recipe into the table
-	
 	for _, recipe := range recipes {
 		ingredientsJSON, _ := json.Marshal(recipe.Ingredients)
-		fmt.Println(recipe.RecipeID, recipe.Title, ingredientsJSON, recipe.Instructions, recipe.Ingredients)
 		
-		// _, err = insertQuery.ExecContext(ctx,
-		// 	sql.Named("FirstName", u.FirstName),
-		// 	sql.Named("LastName", u.LastName),
-		// 	sql.Named("Email", u.Email),
-		// 	sql.Named("UserName", u.UserName),
-		// 	sql.Named("Password", u.Password),
-		// )
+		_, err = stmt.ExecContext(ctx,
+		sql.Named("Title", recipe.Title),
+		sql.Named("Ingredients", ingredientsJSON),
+		sql.Named("Instructions", recipe.Instructions),
+		)
 
-		// _, err := db.Exec(
-		// 	insertQuery,
-		// 	recipe.Title,
-		// 	string(ingredientsJSON),
-		// 	recipe.Instructions,
-		// )
-		
-		if err != nil {
-			panic(err)
-			return err
-		}
-		
-		
+		// if err != nil {
+		// 	fmt.Println("Query failure")
+		// 	return err
+		// }
 	}
 
-	// Delete rows where Ingredients are empty
-	_, err = db.Exec("DELETE FROM dbo.jason_recipes WHERE Ingredients = '[]'")
-	if err != nil {
-		return err
-	}
+	// ctx = context.Background()
 
-	// Delete rows where Instructions are empty
-	_, err = db.Exec("DELETE FROM dbo.jason_recipes WHERE Instructions = ''")
-	if err != nil {
-		return err
-	}
+	// tsql = fmt.Sprintf(`
+	// DELETE FROM dbo.jason_recipes
+	// WHERE Ingredients = @Ingredients;
+	// `)
 
+	// stmt, err = db.Prepare(tsql)
+	// if err != nil {
+	// 	return err
+	// }
+
+	// emptyIngredients := Recipe{
+
+	// }
+	// _, err = stmt.ExecContext(ctx,
+	// sql.Named("Ingredients", emptyIngredients),
+	// )
+	// if err != nil {
+	// 	return err
+	// }
+
+	// ctx = context.Background()
+
+	// tsql = fmt.Sprintf(`
+	// DELETE FROM dbo.jason_recipes
+	// WHERE Instructions = @Instructions;
+	// `)
+
+	// stmt, err = db.Prepare(tsql)
+	// if err != nil {
+	// 	return err
+	// }
+
+	// emptyInstructions := Recipe{
+
+	// }
+	// _, err = stmt.ExecContext(ctx,
+	// sql.Named("Instructions", emptyInstructions),
+	// )
+	// if err != nil {
+	// 	return err
+	// }
+
+	AzureSQLCloseDatabase();
 	return nil
 }
 

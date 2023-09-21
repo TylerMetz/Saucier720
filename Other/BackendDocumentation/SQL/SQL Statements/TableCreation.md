@@ -101,12 +101,12 @@ IF NOT EXISTS (SELECT * FROM dbo.tables WHERE name = 'user_recipes')
 ```SQL
 IF NOT EXISTS (SELECT * FROM dbo.tables WHERE name = 'jason_recipes')
                 BEGIN
-                    CREATE TABLE jason_recipes (
-                        RecipeID INT PRIMARY KEY IDENTITY(1,1),
-                        Title VARCHAR(25),
-                        Ingredients VARCHAR(255),
-                        Instructions VARCHAR(255),
-                    )
+                    CREATE TABLE dbo.jason_recipes (
+                    RecipeID int IDENTITY(1,1) PRIMARY KEY,  
+                    Title varchar (30),  
+                    Ingredients varchar(1500),  
+                    Instructions varchar(8000)
+                    );
                 END
 ```
 

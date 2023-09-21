@@ -2,7 +2,7 @@ package BackendPkg
 
 import (
     "encoding/json"
-    //"fmt"
+    "fmt"
     "io/ioutil"
     "strings"
     //"regexp"
@@ -40,6 +40,7 @@ func GetJSONRecipes() ([]Recipe, error) {
         result = append(result, recipe)
     }
 
+    fmt.Println("returning result")
     return result, nil
 }
 
