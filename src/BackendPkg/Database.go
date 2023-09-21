@@ -870,22 +870,32 @@ func (d *Database) UnfavoriteRecipe(currUser User, recipeID string) error {
 }
 
 func (d *Database) ReadFavoriteRecipes(currUser User) ([]Recipe, error) {
-	// Establish a connection to the Azure SQL Database
-	db, err := AzureOpenDatabase()
-	if err != nil {
-		return nil, err
-	}
-	defer db.Close()
+	var err error
+    db, err := AzureOpenDatabase()
+
+    if db == nil {
+        fmt.Println("Failed to open database")
+        return "", err
+    }
 
 	var recipes []Recipe
 
-	// Retrieve recipeIDs from UserFavoriteRecipes table based on the given username
-	query := "SELECT RecipeID FROM dbo.user_favorite_recipes WHERE UserName = ?"
-	rows, err := db.Query(query, currUser.UserName)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
+	tsql := fmt.Sprintf(`
+	SELECT RecipeID FROM dbo.user_favorite_recipes
+	WHERE UserName = @UserName;
+	`)
+
+	ctx := context.Background()
+    // Execute query
+    rows, err := db.QueryContext(
+        ctx,
+        tsql,
+        sql.Named("UserName", username))
+    
+    if err != nil {
+        fmt.Println("error on user password query")
+        return "", err
+    }
 
 	var recipeIDs []string
 
@@ -900,7 +910,7 @@ func (d *Database) ReadFavoriteRecipes(currUser User) ([]Recipe, error) {
 
 	for _, recipeID := range recipeIDs {
 		// Retrieve the recipe based on recipeID
-		recipe, err := d.getRecipeByID(db, recipeID)
+		recipe, err := d.getRecipeByID(recipeID)
 		if err != nil {
 			return nil, err
 		}
@@ -913,7 +923,7 @@ func (d *Database) ReadFavoriteRecipes(currUser User) ([]Recipe, error) {
 }
 
 // Helper function to get a recipe by RecipeID
-func (d *Database) getRecipeByID(db *sql.DB, recipeID string) (*Recipe, error) {
+func (d *Database) getRecipeByID(recipeID string) (*Recipe, error) {
 	query := "SELECT Title, Ingredients, Instructions FROM dbo.user_recipes WHERE RecipeID = ?"
 	row := db.QueryRow(query, recipeID)
 
