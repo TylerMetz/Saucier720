@@ -1191,35 +1191,42 @@ func (d *Database) ReadList(currUser User) (List, error) {
 	return list, err
 }
 
-func (d *Database) WriteList(newItem FoodItem, currUser User) {
-	// Establish a connection to the Azure SQL Database
-	db, err := AzureOpenDatabase()
-	if err != nil {
-		// Handle error
-		return
-	}
-	defer db.Close()
+func (d *Database) WriteList(newItem FoodItem, currUser User) error {
+	var err error
+    db, err := AzureOpenDatabase()
 
-	// Insert or update the item in the "user_lists" table
-	statement, err := db.Prepare("MERGE INTO user_lists AS target "+
-		"USING (SELECT ? AS UserName, ? AS FoodName, ? AS FoodType, ? AS Quantity) AS source "+
-		"ON (target.UserName = source.UserName AND target.FoodName = source.FoodName) "+
-		"WHEN MATCHED THEN "+
-		"UPDATE SET target.Quantity = source.Quantity "+
-		"WHEN NOT MATCHED THEN "+
-		"INSERT (UserName, FoodName, FoodType, Quantity) "+
-		"VALUES (source.UserName, source.FoodName, source.FoodType, source.Quantity);")
+    ctx := context.Background()
+
+    if db == nil {
+        fmt.Println("Failed to open database")
+        return nil
+    }
+
+    tsql := `
+        INSERT INTO dbo.user_lists (UserName, FoodName, FoodType, Quantity)
+        VALUES (@UserName, @FoodName, @FoodType, @Quantyty);
+    `
+
+    stmt, err := db.Prepare(tsql)
+    if err != nil {
+        return nil
+    }
+    defer stmt.Close()
+
+	_, err = stmt.ExecContext(
+		ctx,
+		sql.Named("UserName", currUser.UserName),
+		sql.Named("FoodName", newItem.Name),
+		sql.Named("FoodType", newItem.FoodType),
+		sql.Named("Quantity", newItem.Quantity),
+	)
 
 	if err != nil {
-		// Handle error
-		return
-	}
+        return err
+    }
 
-	_, err = statement.Exec(currUser.UserName, newItem.Name, newItem.FoodType, newItem.Quantity)
-	if err != nil {
-		// Handle error
-		return
-	}
+    AzureSQLCloseDatabase();
+    return nil
 }
 
 func (d *Database) UpdateListItem(newItem FoodItem, currUser User) {
@@ -1244,4 +1251,3 @@ func (d *Database) UpdateListItem(newItem FoodItem, currUser User) {
 		return
 	}
 }
-
