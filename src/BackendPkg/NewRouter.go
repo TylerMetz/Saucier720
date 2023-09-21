@@ -958,11 +958,13 @@ func UpdatePantryData(){
 	// lock the user pantry data
 	dataMutex.Lock()
 
+	currUserPantry, _ := backendDatabase.GetUserPantry(CurrentUser.UserName)
+
 	// save all user pantry data to global variable
 	var pantryInterfaceRefresh []interface{}
 	pantryInterface = pantryInterfaceRefresh
-	for i := 0; i < len(backendDatabase.GetUserPantry(CurrentUser.UserName).FoodInPantry); i++{
-		pantryInterface = append(pantryInterface, backendDatabase.GetUserPantry(CurrentUser.UserName).FoodInPantry[i])
+	for i := 0; i < len(currUserPantry.FoodInPantry); i++{
+		pantryInterface = append(pantryInterface, currUserPantry.FoodInPantry[i])
 	}
 
 	// unlock the data
@@ -975,13 +977,15 @@ func UpdateRecipeData(){
 	currUserRecipes, _ := backendDatabase.ReadCurrUserRecipes(CurrentUser)
 	currUserFavRecipes, _ := backendDatabase.ReadFavoriteRecipes(CurrentUser)
 	
+	currUserPantry, _ := backendDatabase.GetUserPantry(CurrentUser.UserName)
+
 	// save all recipes data to global variable
 	if RoutingRecipesType == RecommendedRecipes{
-		routingRecipes = BestRecipes(backendDatabase.GetUserPantry(CurrentUser.UserName), RecipesRecommendationPool, StoreDeals)
+		routingRecipes = BestRecipes(currUserPantry, RecipesRecommendationPool, StoreDeals)
 	} else if RoutingRecipesType == UserRecipes{
-		routingRecipes = AllRecipesWithRelatedItems(backendDatabase.GetUserPantry(CurrentUser.UserName), currUserRecipes, StoreDeals)
+		routingRecipes = AllRecipesWithRelatedItems(currUserPantry, currUserRecipes, StoreDeals)
 	} else if RoutingRecipesType == FavoriteRecipes {
-		routingRecipes = AllRecipesWithRelatedItems(backendDatabase.GetUserPantry(CurrentUser.UserName), currUserFavRecipes, StoreDeals)
+		routingRecipes = AllRecipesWithRelatedItems(currUserPantry, currUserFavRecipes, StoreDeals)
 	}
 	
 	// find which recipes are user favorites
@@ -1008,9 +1012,11 @@ func UpdateListData(){
 
 	var listInterfaceRefresh []interface{}
 	listInterface = listInterfaceRefresh
-	for i := 0; i < len(backendDatabase.ReadList(CurrentUser).ShoppingList); i++ {
+	userListOverall, _ := backendDatabase.ReadList(CurrentUser)
+	userList := userListOverall.ShoppingList
+	for i := 0; i < len(userList); i++ {
 		// sends shopping list food item slice, time last updated, and user connected to list
-		listInterface = append(listInterface, backendDatabase.ReadList(CurrentUser).ShoppingList[i])
+		listInterface = append(listInterface, userList[i])
 	}
 
 	// unlock the data
