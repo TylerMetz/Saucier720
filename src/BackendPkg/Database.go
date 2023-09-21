@@ -875,7 +875,7 @@ func (d *Database) ReadFavoriteRecipes(currUser User) ([]Recipe, error) {
 
     if db == nil {
         fmt.Println("Failed to open database")
-        return "", err
+        return []Recipe{}, err
     }
 
 	var recipes []Recipe
@@ -890,11 +890,11 @@ func (d *Database) ReadFavoriteRecipes(currUser User) ([]Recipe, error) {
     rows, err := db.QueryContext(
         ctx,
         tsql,
-        sql.Named("UserName", username))
+        sql.Named("UserName", currUser.UserName))
     
     if err != nil {
         fmt.Println("error on user password query")
-        return "", err
+        return []Recipe{}, err
     }
 
 	var recipeIDs []string
@@ -903,7 +903,7 @@ func (d *Database) ReadFavoriteRecipes(currUser User) ([]Recipe, error) {
 		var recipeID string
 		err := rows.Scan(&recipeID)
 		if err != nil {
-			return nil, err
+			return []Recipe{}, err
 		}
 		recipeIDs = append(recipeIDs, recipeID)
 	}
@@ -912,7 +912,7 @@ func (d *Database) ReadFavoriteRecipes(currUser User) ([]Recipe, error) {
 		// Retrieve the recipe based on recipeID
 		recipe, err := d.getRecipeByID(recipeID)
 		if err != nil {
-			return nil, err
+			return []Recipe{}, err
 		}
 		if recipe != nil {
 			recipes = append(recipes, *recipe)
@@ -924,18 +924,28 @@ func (d *Database) ReadFavoriteRecipes(currUser User) ([]Recipe, error) {
 
 // Helper function to get a recipe by RecipeID
 func (d *Database) getRecipeByID(recipeID string) (*Recipe, error) {
-	query := "SELECT Title, Ingredients, Instructions FROM dbo.user_recipes WHERE RecipeID = ?"
-	row := db.QueryRow(query, recipeID)
+	var err error
+    db, err := AzureOpenDatabase()
 
+    if db == nil {
+        fmt.Println("Failed to open database")
+        return &Recipe{}, err
+    }
+
+	tsql := fmt.Sprintf(`
+	SELECT Title, Ingreidents, Instructions from dbo.user_recipes
+	WHERE RecipeID = @RecipeID;
+	`)
+	ctx := context.Background()
+	row, err := db.QueryContext(
+		ctx,
+		tsql,
+		sql.Named("RecipeID", recipeID),
+	)
+
+	//Create Recipe
 	var title, ingredientsStr, instructions string
-	err := row.Scan(&title, &ingredientsStr, &instructions)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			// Recipe not found
-			return nil, nil
-		}
-		return nil, err
-	}
+	err = row.Scan(&title, &ingredientsStr, &instructions)
 
 	// Convert the JSON string of ingredients to a slice
 	var ingredients []string
