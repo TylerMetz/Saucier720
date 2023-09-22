@@ -18,6 +18,9 @@ export class FilterRecipeComponent implements OnInit{
 
   constructor(private recipeService: RecipeService) {}
 
+  // Update Recipe Card
+  @Output() refreshRecipeCard: EventEmitter<void> = new EventEmitter<void>();
+
   ngOnInit() {
     // Load the checkbox values from storage when the component initializes
     this.loadCheckboxValues();
@@ -58,7 +61,7 @@ export class FilterRecipeComponent implements OnInit{
       }
       const response = await lastValueFrom(this.recipeService.postFilterValues(filterValues));
       console.log(response);
-      window.location.reload(); // refresh page to show updated data
+      this.refreshRecipeCard.emit();
     } catch (error) {
       console.error(error);
     }

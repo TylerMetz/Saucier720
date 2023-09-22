@@ -19,6 +19,11 @@ export class NewRecipeComponent {
 
   constructor(private renderer: Renderer2, private recipeService: RecipeService, private cookieService: CookieService) {}
 
+  // No Refresh
+  @Output() refreshRecipeCard: EventEmitter<void> = new EventEmitter<void>(); 
+
+  constructor(private renderer: Renderer2, private recipeService: RecipeService) {}
+
   addIngredientTextbox() {
     const ingredientTextboxes = this.ingredientTextboxesRef.nativeElement;
     const newIngredientTextbox = this.renderer.createElement('input');
@@ -74,7 +79,7 @@ export class NewRecipeComponent {
       try {
         const response = await lastValueFrom(this.recipeService.postNewRecipe(recipe));
         console.log(response);
-        window.location.reload(); // refresh page to show updated data
+        this.refreshRecipeCard.emit()
       } catch (error) {
         console.error(error);
       }

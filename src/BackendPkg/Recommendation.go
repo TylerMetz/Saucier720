@@ -182,6 +182,52 @@ func AllRecipesWithRelatedItems(userPantry Pantry, allRecipes []Recipe, deals []
 	return returnRecommendations
 }
 
+func ReturnRecipesWithHighestPercentageOfOwnedIngredients(userPantry Pantry, recipesArr []Recipe, numRecipesToReturn int, deals []FoodItem) []Recommendation {
+	recipeRatios := make([]struct {
+		recipe      Recipe
+		ingredientRatio float64
+	}, 0)
+
+	for _, recipe := range recipesArr {
+		ownedIngredients := 0
+		for _, ingredient := range recipe.Ingredients {
+			for _, pantryItem := range userPantry.FoodInPantry {
+				if strings.Contains(ingredient, pantryItem.Name) {
+					ownedIngredients++
+					break
+				}
+			}
+		}
+
+		ingredientRatio := float64(ownedIngredients) / float64(len(recipe.Ingredients))
+		recipeRatios = append(recipeRatios, struct {
+			recipe         Recipe
+			ingredientRatio float64
+		}{recipe: recipe, ingredientRatio: ingredientRatio})
+	}
+
+	// Sort recipes by ingredient ratio in descending order
+	for i := 0; i < len(recipeRatios)-1; i++ {
+		for j := i + 1; j < len(recipeRatios); j++ {
+			if recipeRatios[i].ingredientRatio < recipeRatios[j].ingredientRatio {
+				recipeRatios[i], recipeRatios[j] = recipeRatios[j], recipeRatios[i]
+			}
+		}
+	}
+
+	// Select top numRecipesToReturn recipes
+	var resultRecipes []Recipe
+	for i := 0; i < numRecipesToReturn && i < len(recipeRatios); i++ {
+		resultRecipes = append(resultRecipes, recipeRatios[i].recipe)
+	}
+
+	// pass highest rated recipes into func to get related deals and pantry items
+	returnRecommendation := AllRecipesWithRelatedItems(userPantry, resultRecipes, deals)
+	
+	invertSlice(returnRecommendation)
+	return returnRecommendation
+}
+
 
 func min(a, b int) int {
 	if a < b {
@@ -205,7 +251,7 @@ func OutputRecommendations(r []Recommendation) {
 		for j := 0; j < len(r[i].ItemsInPantry); j++ {
 			fmt.Println(r[i].ItemsInPantry[j].Name)
 		}
-		fmt.Println("From Publix:")
+		fmt.Println("From Deals:")
 		for k := 0; k < len(r[i].ItemsOnSale); k++ {
 			fmt.Println(r[i].ItemsOnSale[k].Name)
 		}
