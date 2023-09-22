@@ -86,7 +86,6 @@ func StoreUserDatabase(u User) error {
 		return err
 	}
 
-	AzureSQLCloseDatabase();
 	return nil
 }
 
@@ -159,7 +158,6 @@ func (d *Database) StoreCookie(username string, cookie string) error {
 		return err
 	}
 
-	AzureSQLCloseDatabase();
 	return nil
 }
 
@@ -426,7 +424,6 @@ func (d *Database) WriteJSONRecipes() error {
 		// }
 	}
 
-	AzureSQLCloseDatabase();
 	return nil
 }
 
@@ -722,7 +719,6 @@ func (d *Database) FavoriteRecipe(currUser User, recipeID string) error {
 		return err
 	}
 
-	// AzureSQLCloseDatabase();
 	return nil
 }
 
@@ -1075,8 +1071,6 @@ func (d *Database) WriteList(newItem FoodItem, currUser User) error {
     }
     defer stmt.Close()
 
-	fmt.Println("insert user list")
-
 	_, err = stmt.ExecContext(
 		ctx,
 		sql.Named("UserName", currUser.UserName),
@@ -1129,8 +1123,5 @@ func (d *Database) UpdateListItem(newItem FoodItem, currUser User) error {
         return err
     }
 
-    AzureSQLCloseDatabase();
     return nil
-
-
 }

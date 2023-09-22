@@ -64,5 +64,5 @@ func main() {
 
 	// run infinitely
 	for{}
-	
+	BackendPkg.AzureSQLCloseDatabase();
 }
