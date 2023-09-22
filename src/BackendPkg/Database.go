@@ -489,7 +489,6 @@ func (d *Database) ReadJSONRecipes() ([]Recipe, error) {
 		recipes = append(recipes, recipe)
 	}
 
-	fmt.Println(recipes)
 	return recipes, nil
 }
 
@@ -626,7 +625,6 @@ func (d *Database) ReadAllUserRecipes() ([]Recipe, error) {
 		recipes = append(recipes, recipe)
 	}
 
-	fmt.Println(recipes)
 	return recipes, nil
 }
 
@@ -702,9 +700,11 @@ func (d *Database) FavoriteRecipe(currUser User, recipeID string) error {
         return err
     }
 
+	fmt.Println("favorite recipe")
+
     tsql := fmt.Sprintf(`
         INSERT INTO dbo.user_favorite_recipes (RecipeID, UserName)
-        VALUES (@RecipeID, UserName);
+        VALUES (@RecipeID, @UserName);
     `)
 
 	stmt, err := db.Prepare(tsql)
@@ -716,15 +716,15 @@ func (d *Database) FavoriteRecipe(currUser User, recipeID string) error {
 
 	_, err = stmt.ExecContext(
 		ctx,
-		tsql, 
 		sql.Named("RecipeID", recipeID),
 		sql.Named("UserName", currUser.UserName),
 	)
 	if err != nil {
+		fmt.Println("user fav recipes fail")
 		return err
 	}
 
-	AzureSQLCloseDatabase();
+	// AzureSQLCloseDatabase();
 	return nil
 }
 
@@ -739,9 +739,12 @@ func (d *Database) UnfavoriteRecipe(currUser User, recipeID string) error {
         return err
     }
 
+	fmt.Println("unfav recipe")
+
     tsql := fmt.Sprintf(`
     	DELETE FROM dbo.user_favorite_recipes
-       	WHERE UserName = @UserName AND RecipeID = @RecipeID;
+       	WHERE UserName = @UserName 
+		AND RecipeID = @RecipeID;
     `)
 
 	stmt, err := db.Prepare(tsql)
@@ -753,7 +756,6 @@ func (d *Database) UnfavoriteRecipe(currUser User, recipeID string) error {
 
 	_, err = stmt.ExecContext(
 		ctx,
-		tsql, 
 		sql.Named("RecipeID", recipeID),
 		sql.Named("UserName", currUser.UserName),
 	)
@@ -761,7 +763,6 @@ func (d *Database) UnfavoriteRecipe(currUser User, recipeID string) error {
 		return err
 	}
 
-	AzureSQLCloseDatabase();
 	return nil
 }
 
@@ -818,7 +819,7 @@ func (d *Database) ReadFavoriteRecipes(currUser User) ([]Recipe, error) {
 	return recipes, nil
 }
 
-// Helper function to get a recipe by RecipeID
+// SEAL OF APPROVAL
 func (d *Database) getRecipeByID(recipeID string) (*Recipe, error) {
 	var err error
     db, err := AzureOpenDatabase()
@@ -829,11 +830,11 @@ func (d *Database) getRecipeByID(recipeID string) (*Recipe, error) {
     }
 
 	tsql := fmt.Sprintf(`
-	SELECT Title, Ingreidents, Instructions from dbo.user_recipes
+	SELECT Title, Ingredients, Instructions from dbo.recipes
 	WHERE RecipeID = @RecipeID;
 	`)
 	ctx := context.Background()
-	row, err := db.QueryContext(
+	rows, err := db.QueryContext(
 		ctx,
 		tsql,
 		sql.Named("RecipeID", recipeID),
@@ -841,7 +842,9 @@ func (d *Database) getRecipeByID(recipeID string) (*Recipe, error) {
 
 	//Create Recipe
 	var title, ingredientsStr, instructions string
-	err = row.Scan(&title, &ingredientsStr, &instructions)
+	for rows.Next() {
+		err = rows.Scan(&title, &ingredientsStr, &instructions)
+	}
 
 	// Convert the JSON string of ingredients to a slice
 	var ingredients []string
@@ -860,6 +863,7 @@ func (d *Database) getRecipeByID(recipeID string) (*Recipe, error) {
 	return &recipe, nil
 }
 
+// SEAL OF APPROVAL
 func (d *Database) FindFavoriteRecipes(currUser User, routingRecipes []Recommendation) []Recommendation {
 	// Establish a connection to the Azure SQL Database
 	db, err := AzureOpenDatabase()
@@ -1060,16 +1064,18 @@ func (d *Database) WriteList(newItem FoodItem, currUser User) error {
         return nil
     }
 
-    tsql := `
+    tsql := fmt.Sprintf(`
         INSERT INTO dbo.user_lists (UserName, FoodName, FoodType, Quantity)
         VALUES (@UserName, @FoodName, @FoodType, @Quantity);
-    `
+    `)
 
     stmt, err := db.Prepare(tsql)
     if err != nil {
         return nil
     }
     defer stmt.Close()
+
+	fmt.Println("insert user list")
 
 	_, err = stmt.ExecContext(
 		ctx,
@@ -1080,7 +1086,8 @@ func (d *Database) WriteList(newItem FoodItem, currUser User) error {
 	)
 
 	if err != nil {
-        return err
+		fmt.Println("no insertion into user list")
+        panic(err)
     }
 
     return nil

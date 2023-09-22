@@ -47,7 +47,7 @@ IF NOT EXISTS (SELECT * FROM dbo.tables WHERE name = 'user_data')
 IF NOT EXISTS (SELECT * FROM dbo.tables WHERE name = 'user_lists')
                 BEGIN
                     CREATE TABLE user_lists (
-                        UserName VARCHAR(25) PRIMARY KEY,
+                        UserName VARCHAR(25),
                         FoodName VARCHAR(30),
                         FoodType VARCHAR(30),
                         Quantity INT,
@@ -115,7 +115,7 @@ IF NOT EXISTS (SELECT * FROM dbo.tables WHERE name = 'jason_recipes')
 IF NOT EXISTS (SELECT * FROM dbo.tables WHERE name = 'user_favorite_recipes')
                 BEGIN
                     CREATE TABLE user_favorite_recipes (
-                        RecipeID INT IDENTITY(1,1),
+                        RecipeID INT PRIMARY KEY,
                         UserName VARCHAR(25),
                         PRIMARY KEY (RecipeID, UserName)
                     )
