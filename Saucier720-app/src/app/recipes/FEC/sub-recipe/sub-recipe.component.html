@@ -4,7 +4,9 @@
   </div>
   <div class="sub-recipe-ingredients">
     <ul>
-      <li *ngFor="let ingredient of ingredients">{{ ingredient }}</li>
+      <li class="sub-ingredient" *ngFor="let ingredient of ingredients; let i = index">
+        <div title="Add {{ ingredient }} to your list!" class="sub-ingredient-wrapper"><button  class="not-in-list" [attr.id]="sanitizeHtmlId(headerText) + '-row' + i"(click)="addToList(ingredient)"><img src="/assets/images/addList.png"></button>{{ ingredient }}</div>
+      </li>
     </ul>
   </div>
 </div>

@@ -30,7 +30,7 @@
     "@types/faker": "^6.6.9",
     "@types/jasmine": "~4.3.0",
     "angular-cli-ghpages": "^1.0.5",
-    "cypress": "^12.10.0",
+    "cypress": "^13.1.0",
     "expect": "^29.4.3",
     "faker": "^5.5.3",
     "jasmine-core": "~4.5.0",

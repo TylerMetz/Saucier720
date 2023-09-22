@@ -11,4 +11,61 @@ table.table {
     overflow: hidden;
 }
 
+.ingredient-wrapper {
+    text-align: justify;
+  }
+
+.ingredient-wrapper > button {
+    width: 20px;
+    height: 20px;
+    transform:translateY(15%);
+    display: none;
+}
+
+.ingredient-wrapper:hover > button{
+  display: block;
+  float: left;
+  border: none;
+  border-radius: 5px;
+  margin-right: 7px;
+}
+
+img.list {
+  pointer-events: none;
+}
+.in-list {
+  background-color: var(--background-color);
+}
+.in-list:active {
+  pointer-events: none;
+}
+
+.not-in-list {
+  background-color: var(--primary-color);
+}
+
+.ingredient-wrapper > button.not-in-list:hover{
+    background-color: var(--text-color);
+  }
+
+.ingredient-wrapper > button.not-in-list:focus{
+    background-color: var(--background-color);
+  }  
+  
+button > img {
+    max-width: 12px;
+    transform: translateY(-50%)
+  }
+
+.in-list > img {
+  content: url("/assets/images/addListClick.png");
+  transform: translateY(-52%);
+}
+
+.not-in-list:hover > img {
+    content: url("/assets/images/addListHover.png");
+    transition: 0.2s ease-in-out;
+  }
+
+
 
