@@ -67,6 +67,9 @@ This web app scrapes weekly deals from groccery store websites, and gives users 
     $ go get -u github.com/rs/cors
     ```
     ```
+    $ go get -u github.com/microsoft/go-mssqldb
+    ```
+    ```
     $ go get -u golang.org/x/exp/slices
     ```
     ```

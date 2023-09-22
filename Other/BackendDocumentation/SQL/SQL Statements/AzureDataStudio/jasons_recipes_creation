@@ -1,0 +1,12 @@
+BEGIN
+DROP TABLE dbo.jason_recipes
+END
+
+BEGIN
+CREATE TABLE dbo.jason_recipes (
+    RecipeID int IDENTITY(1,1) PRIMARY KEY,  
+    Title varchar (30) NOT NULL,  
+    Ingredients varchar(1500) NOT NULL,  
+    Instructions varchar(8000) NOT NULL
+);
+END

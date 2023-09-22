@@ -1,0 +1,11 @@
+BEGIN
+DROP TABLE dbo.deals_data
+END
+
+BEGIN
+CREATE TABLE dbo.deals_data (
+    Store varchar(25) PRIMARY KEY,
+    FoodName varchar(100) NOT NULL,
+    SaleDetails varchar(255) NOT NULL
+)
+END

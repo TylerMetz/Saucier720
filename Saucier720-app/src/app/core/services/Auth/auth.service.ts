@@ -26,7 +26,6 @@ export class AuthService {
     const body = { username, password };
     return this.http.post(this.loginUrl, body, { observe: 'response', responseType: 'json', withCredentials: true });
   }
-  
 
   public logout(): Observable<any> {
     this.loggedIn = false;

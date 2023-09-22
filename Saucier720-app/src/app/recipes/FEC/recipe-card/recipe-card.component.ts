@@ -80,19 +80,20 @@ export class RecipeCardComponent implements OnInit {
     }
   }
 
-  public getAuthorCreditFromRecipeID(recipeID: string): string {
+  public getAuthorCredit(): string {
     // used to get recipe author from recipeID
-    const author = recipeID.replace(/\d+/g, '');
-    if (author === 'json') {
+    const author = this.currentRecipe.R['RecipeAuthor'];
+    if (author === 'MealDealz Classic Recipe' || author === '') {
       return 'MealDealz Classic Recipe';
-    } else {
+    } 
+    else {
       return 'Created by ' + author;
     }
   }
 
-  public isCurrentUserRecipe(recipeID: string): boolean {
+  public isCurrentUserRecipe(): boolean {
     // used to check if current recipe is made my the current user
-    if (recipeID.replace(/\d+/g, '') === this.cookieService.get("sessionID").replace(/\d+/g, '')){
+    if (this.currentRecipe.R['RecipeAuthor'] === this.cookieService.get("sessionID").replace(/\d+/g, '')){
       return true
     } else{
       return false;
@@ -121,7 +122,6 @@ export class RecipeCardComponent implements OnInit {
     }
     this.currentRecipe = this.recipes[this.currentRecipeIndex];
     this.currentIngredients = this.removeQuotesAndBrackets(this.currentRecipe.R.ingredients);
-    console.log(this.currentIngredients)
     console.log(this.currentRecipe.R.title)
     this.validteRecipeItems()
   }
@@ -133,7 +133,6 @@ export class RecipeCardComponent implements OnInit {
     }
     this.currentRecipe = this.recipes[this.currentRecipeIndex];
     this.currentIngredients = this.removeQuotesAndBrackets(this.currentRecipe.R.ingredients);
-    console.log(this.currentIngredients)
     console.log(this.currentRecipe.R.title)
     this.validteRecipeItems()
   }
@@ -267,10 +266,8 @@ export class RecipeCardComponent implements OnInit {
       tempIngredient = {
         Name: ingredient, // Necessary for check
         Quantity: 1, // Necessary for check
-        StoreCost: 0, // Filler
-        OnSale: false, // Filler
-        SalePrice: 0, // Filler
-        SaleDetails: '' // Filler
+        FoodType: '',
+        SaleDetails: '',
       }
 
       // Navs to list component function to check 

@@ -2,7 +2,7 @@ package BackendPkg
 
 import (
     "encoding/json"
-    //"fmt"
+    _"fmt"
     "io/ioutil"
     "strings"
     //"regexp"
@@ -14,7 +14,8 @@ type Recipe struct {
     Title          string   `json:"title"`
     PictureLink    *string  `json:"pictureLink"`
     RecipeID        string   `json:"recipeID"`
-    UserFavorite   bool     `json:"userFavorite"`
+    UserFavorite    bool     `json:"userFavorite"`
+    RecipeAuthor    string `json"recipeAuthor"`
 }
 
 func GetJSONRecipes() ([]Recipe, error) {
@@ -30,7 +31,15 @@ func GetJSONRecipes() ([]Recipe, error) {
 
     /*for _, recipe := range recipes {
         for i, ingredient := range recipe.Ingredients {
-            recipe.Ingredients[i] = strings.ReplaceAll(ingredient, ",", ";")
+            if strings.Contains(strings.ToLower(ingredient), "recipe follows") {
+                containsSubRecipe = true
+                break
+            } else {
+                recipe.Ingredients[i] = strings.ReplaceAll(ingredient, ",", ";")
+            }
+        }
+        if !containsSubRecipe {
+            filteredRecipes = append(filteredRecipes, recipe)
         }
     }
 

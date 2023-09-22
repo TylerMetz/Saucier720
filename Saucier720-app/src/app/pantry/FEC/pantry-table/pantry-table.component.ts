@@ -60,11 +60,9 @@ export class PantryTableComponent implements OnInit {
   addTempValue(name: string, quantity: number){
     const newIngredient: Ingredient = {
       Name: name, 
-      StoreCost: 0, 
-      OnSale: false,
-      SalePrice: 0, 
-      SaleDetails: '', 
-      Quantity: quantity
+      FoodType: '',
+      SaleDetails: '',
+      Quantity: quantity,
     };
     if(this.pantry === null){
       this.pantry = []

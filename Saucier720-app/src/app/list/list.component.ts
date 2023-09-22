@@ -70,11 +70,9 @@ export class ListComponent implements OnInit {
     if (typeof ingredient === 'string') {
       newIngredient = {
         Name: ingredient,
+        FoodType: '',
+        SaleDetails: '',
         Quantity: 1,
-        StoreCost: 0, // Example value, replace with actual value if needed
-        OnSale: false, // Example value, replace with actual value if needed
-        SalePrice: 0, // Example value, replace with actual value if needed
-        SaleDetails: '' // Example value, replace with actual value if needed
       };
     } else if(ingredient){
       newIngredient = ingredient;
@@ -85,10 +83,8 @@ export class ListComponent implements OnInit {
         newIngredient = {
           Name: this.newIngredientName,
           Quantity: this.newIngredientQuantity,
-          StoreCost: 0, // Example value, replace with actual value if needed
-          OnSale: false, // Example value, replace with actual value if needed
-          SalePrice: 0, // Example value, replace with actual value if needed
-          SaleDetails: '' // Example value, replace with actual value if needed
+          FoodType: '',
+          SaleDetails: '',
         };
 
       // Clear input fields
