@@ -14,7 +14,6 @@ var prevUser BackendPkg.User
 
 func main() {
 
-	// programDatabase.WriteJSONRecipes()
 
 	// Reads recipes dataset in not read in yet and stores in DB
 	// programDatabase.WriteJSONRecipes()

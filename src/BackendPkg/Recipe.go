@@ -2,7 +2,7 @@ package BackendPkg
 
 import (
     "encoding/json"
-    "fmt"
+    _"fmt"
     "io/ioutil"
     "strings"
     //"regexp"
@@ -29,19 +29,25 @@ func GetJSONRecipes() ([]Recipe, error) {
         return nil, err
     }
 
+    // Eliminate subrecipes
+    filteredRecipes := make([]Recipe, 0)
+
     for _, recipe := range recipes {
+        containsSubRecipe := false
+
         for i, ingredient := range recipe.Ingredients {
-            recipe.Ingredients[i] = strings.ReplaceAll(ingredient, ",", ";")
+            if strings.Contains(strings.ToLower(ingredient), "recipe follows") {
+                containsSubRecipe = true
+                break
+            } else {
+                recipe.Ingredients[i] = strings.ReplaceAll(ingredient, ",", ";")
+            }
+        }
+        if !containsSubRecipe {
+            filteredRecipes = append(filteredRecipes, recipe)
         }
     }
-
-    result := make([]Recipe, 0, len(recipes))
-    for _, recipe := range recipes {
-        result = append(result, recipe)
-    }
-
-    fmt.Println("returning result")
-    return result, nil
+    return filteredRecipes, nil
 }
 
 

@@ -401,8 +401,8 @@ func (d *Database) WriteJSONRecipes() error {
 
 	fmt.Println("Inserting")
 	tsql := (`
-	INSERT INTO dbo.jason_recipes (Title, Ingredients, Instructions)
-	VALUES (@Title, @Ingredients, @Instructions);
+	INSERT INTO dbo.recipes (Title, Ingredients, Instructions, UserName)
+	VALUES (@Title, @Ingredients, @Instructions, @UserName);
 	`)
 
 	stmt, err := db.Prepare(tsql)
@@ -419,6 +419,7 @@ func (d *Database) WriteJSONRecipes() error {
 		sql.Named("Title", recipe.Title),
 		sql.Named("Ingredients", ingredientsJSON),
 		sql.Named("Instructions", recipe.Instructions),
+		sql.Named("UserName", "MealDealz Classic Recipe"),
 		)
 
 		// if err != nil {
@@ -505,7 +506,7 @@ func (d *Database) WriteNewUserRecipe(currUser User, newRecipe Recipe) error {
     }
 
     tsql := fmt.Sprintf(`
-        INSERT INTO dbo.user_recipes (Title, Ingredients, Instructions, UserName)
+        INSERT INTO dbo.recipes (Title, Ingredients, Instructions, UserName)
         VALUES (@Title, @Ingredients, @Instructions, @UserName);
     `)
 
@@ -545,7 +546,7 @@ func (d *Database) DeleteUserRecipe(recipeID string) error {
     }
 
     tsql := fmt.Sprintf(`
-	DELETE from dbo.user_recipes
+	DELETE from dbo.recipes
 	WHERE RecipeID = @RecipeID
 	`)
 
@@ -580,7 +581,7 @@ func (d *Database) ReadAllUserRecipes() ([]Recipe, error) {
     }
 
     tsql := fmt.Sprintf(`
-    SELECT Title, Ingredients, Instructions, RecipeID, UserName FROM dbo.user_recipes;
+    SELECT Title, Ingredients, Instructions, RecipeID, UserName FROM dbo.recipes;
     `)
 
 	ctx := context.Background()
@@ -640,7 +641,7 @@ func (d *Database) ReadCurrUserRecipes(currUser User) ([]Recipe, error) {
     }
 
     tsql := fmt.Sprintf(`
-    SELECT Title, Ingredients, Instructions, RecipeID, UserName FROM dbo.user_recipes
+    SELECT Title, Ingredients, Instructions, RecipeID, UserName FROM dbo.recipes
 	WHERE UserName = @UserName;
     `)
 
@@ -688,6 +689,7 @@ func (d *Database) ReadCurrUserRecipes(currUser User) ([]Recipe, error) {
 	return recipes, nil
 }
 
+//waiting for jason and recipes combination
 func (d *Database) FavoriteRecipe(currUser User, recipeID string) error {
 	var err error
     db, err := AzureOpenDatabase()
@@ -935,6 +937,7 @@ func (d *Database) FindFavoriteRecipes(currUser User, routingRecipes []Recommend
 	return routingRecipes
 }
 
+// SEAL OF APPROVAL
 func (d *Database) GetUserPassword(username string) (string, error) {
 	// Establish a connection to the Azure SQL Database
 	var err error
@@ -970,6 +973,7 @@ func (d *Database) GetUserPassword(username string) (string, error) {
 	return password, nil
 }
 
+// SEAL OF APPROVAL
 func (d *Database) ReadCookie(username string) (string, error) {
 	var err error
     db, err := AzureOpenDatabase()
@@ -1005,6 +1009,7 @@ func (d *Database) ReadCookie(username string) (string, error) {
 	return cookie, nil
 }
 
+// SEAL OF APPROVAL
 func (d *Database) UserFromCookie(cookie string) (User, error) {
 	var err error
     db, err := AzureOpenDatabase()
@@ -1029,25 +1034,19 @@ func (d *Database) UserFromCookie(cookie string) (User, error) {
         tsql,
         sql.Named("Cookie", cookie),
 	)
-
-	fmt.Println("cookie used in query: " + cookie)
 	
 	if err != nil {
-		fmt.Println("error on user cookie query, cookie was: " + cookie)
         return User{}, err
     }
 	for row.Next() {
 		err = row.Scan(&userName)
 	}
-	fmt.Println("username returned from cookie query: " + userName)
-
 	// Retrieve user details based on the username
 	returnUser, err = d.ReadUserDatabase(userName)
-
-	fmt.Println("returned username: " + returnUser.UserName)
 	return returnUser, nil
 }
 
+// SEAL OF APPROVAL
 func (d *Database) ReadList(currUser User) (List, error) {
 	// Establish a connection to the Azure SQL Database
 	var err error
@@ -1063,7 +1062,7 @@ func (d *Database) ReadList(currUser User) (List, error) {
 	}
 
 	tsql := fmt.Sprintf(`
-	SELECT FoodName, Quantity FROm dbo.user_lists
+	SELECT FoodName, Quantity FROM dbo.user_lists
 	WHERE UserName = @UserName;
 	`)
 
@@ -1089,6 +1088,7 @@ func (d *Database) ReadList(currUser User) (List, error) {
 	return list, err
 }
 
+// SEAL OF APPROVAL
 func (d *Database) WriteList(newItem FoodItem, currUser User) error {
 	var err error
     db, err := AzureOpenDatabase()
@@ -1102,7 +1102,7 @@ func (d *Database) WriteList(newItem FoodItem, currUser User) error {
 
     tsql := `
         INSERT INTO dbo.user_lists (UserName, FoodName, FoodType, Quantity)
-        VALUES (@UserName, @FoodName, @FoodType, @Quantyty);
+        VALUES (@UserName, @FoodName, @FoodType, @Quantity);
     `
 
     stmt, err := db.Prepare(tsql)
@@ -1123,10 +1123,10 @@ func (d *Database) WriteList(newItem FoodItem, currUser User) error {
         return err
     }
 
-    AzureSQLCloseDatabase();
     return nil
 }
 
+// Return when list has updating functionality
 func (d *Database) UpdateListItem(newItem FoodItem, currUser User) error {
 	var err error
     db, err := AzureOpenDatabase()
