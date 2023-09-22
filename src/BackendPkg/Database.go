@@ -728,6 +728,7 @@ func (d *Database) FavoriteRecipe(currUser User, recipeID string) error {
 	return nil
 }
 
+// SEAL OF APPROVAL
 func (d *Database) UnfavoriteRecipe(currUser User, recipeID string) error {
 	var err error
     db, err := AzureOpenDatabase()
@@ -766,6 +767,7 @@ func (d *Database) UnfavoriteRecipe(currUser User, recipeID string) error {
 	return nil
 }
 
+// SEAL OF APPROVAL
 func (d *Database) ReadFavoriteRecipes(currUser User) ([]Recipe, error) {
 	var err error
     db, err := AzureOpenDatabase()
