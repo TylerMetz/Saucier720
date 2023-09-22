@@ -16,6 +16,8 @@ export class LoginFormComponent {
   type: string = "password";
   isText: boolean = false;
   eyeIcon: string = "fa-eye-slash";
+  isLoading: boolean = false;
+  failedLogin: boolean = false;
 
   username: string = '';
   sessionID: string = ' ';
@@ -29,17 +31,22 @@ export class LoginFormComponent {
     private cookieService: CookieService
     ) { }
 
-    async setSessionIDAndNavigateToPantry(sessionID: string): Promise<void> {
+    async setSessionIDAndNavigateToHome(sessionID: string): Promise<void> {
       await new Promise<void>((resolve) => {
         this.cookieService.set('sessionID', sessionID, 7, '/', 'localhost', false, 'Lax');
         resolve();
       });
+      
+      // time delay before going home
       setTimeout(() => {
-        this.router.navigate(['/Pantry']);
-      }, 4000);
+        this.isLoading = false;
+        this.router.navigate(['/Home']);
+      }, 1000);
     }
 
     async login() {
+      this.failedLogin = false;
+      this.isLoading = true;
       const user: User = {
         FirstName: "",
         LastName: "",
@@ -56,15 +63,19 @@ export class LoginFormComponent {
         console.log('response', response)
         const sessionID = response.body.value;
         console.log("cookie set ", sessionID);
-        this.setSessionIDAndNavigateToPantry(sessionID);
+        this.authService.loggedIn = true;
+        this.setSessionIDAndNavigateToHome(sessionID);
 
         // clear all button/checkbox states from session
         localStorage.removeItem('recipeNavBarButtonState');
         localStorage.removeItem('myRecipesValue');
         localStorage.removeItem('userRecipesValue');
         localStorage.removeItem('mdRecipesValue');
+
       } catch (error: any) {
+        this.failedLogin = true;
         this.errorMessage = error.message;
+        this.isLoading = false;
       }
     }
 

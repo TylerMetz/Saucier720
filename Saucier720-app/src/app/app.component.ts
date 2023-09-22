@@ -27,7 +27,6 @@ export class AppComponent implements OnInit {
   async logout() {
     try {
       const response = await lastValueFrom(this.authService.logout());
-      this.router.navigate(['/Login']);
       console.log('response', response);
 
       // clear button/checkbox states from session
@@ -36,12 +35,20 @@ export class AppComponent implements OnInit {
       localStorage.removeItem('userRecipesValue');
       localStorage.removeItem('mdRecipesValue');
 
+      if (this.router.url === '/Home'){
+        window.location.reload();
+      } else{
+        this.router.navigate(['/Home']);
+      }
+
     } catch (error: any) {
       console.log(error.message);
     }
   }
 
   getAuthService() {
+    const sessionId = this.cookieService.get('sessionID');
+    this.username = sessionId.slice(0, -3);
     return this.authService;
   }
 

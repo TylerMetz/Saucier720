@@ -1,6 +1,7 @@
 import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
 import { lastValueFrom } from 'rxjs';
 import { RecipeService } from 'src/app/core/services/recipes/recipe.service'; 
+import { RecipeCardComponent } from '../recipe-card/recipe-card.component';
 
 @Component({
   selector: 'app-recipe-nav-bar',
@@ -44,6 +45,9 @@ export class RecipeNavBarComponent implements OnInit {
   @Output() toggleNewRecipe: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() toggleFilterMenu: EventEmitter<boolean> = new EventEmitter<boolean>();
 
+  // For updating the recipe page with no refresh 
+  @Output() refreshRecipeCard: EventEmitter<void> = new EventEmitter<void>();
+
   toggleNewRecipeComponent() {
     this.isNewRecipeEnabled = !this.isNewRecipeEnabled;
     this.toggleNewRecipe.emit(this.isNewRecipeEnabled);
@@ -62,7 +66,7 @@ export class RecipeNavBarComponent implements OnInit {
     try {
       const response = await lastValueFrom(this.recipeService.postFavoriteRecipesSelect());
       console.log(response);
-      window.location.reload();
+      this.refreshRecipeCard.emit();
     } catch (error) {
       console.error(error);
     }
@@ -72,7 +76,7 @@ export class RecipeNavBarComponent implements OnInit {
     try {
       const response = await lastValueFrom(this.recipeService.postMyRecipesSelect());
       console.log(response);
-      window.location.reload();
+      this.refreshRecipeCard.emit();
     } catch (error) {
       console.error(error);
     }
@@ -82,7 +86,7 @@ export class RecipeNavBarComponent implements OnInit {
     try {
       const response = await lastValueFrom(this.recipeService.postRecommendedRecipesSelect());
       console.log(response);
-      window.location.reload();
+      this.refreshRecipeCard.emit();
     } catch (error) {
       console.error(error);
     }

@@ -18,36 +18,30 @@ type Recipe struct {
     RecipeAuthor    string `json"recipeAuthor"`
 }
 
-func GetJSONRecipes() ([]Recipe, error) {
-    file, err := ioutil.ReadFile("recipes.json")
-    if err != nil {
-        return nil, err
-    }
+// func GetJSONRecipes() ([]Recipe, error) {
+//     file, err := ioutil.ReadFile("recipes.json")
+//     if err != nil {
+//         return nil, err
+//     }
 
-    var recipes map[string]Recipe
-    if err := json.Unmarshal(file, &recipes); err != nil {
-        return nil, err
-    }
+//     var recipes map[string]Recipe
+//     if err := json.Unmarshal(file, &recipes); err != nil {
+//         return nil, err
+//     }
 
-    // Eliminate subrecipes
-    filteredRecipes := make([]Recipe, 0)
+//     /*for _, recipe := range recipes {
+//         for i, ingredient := range recipe.Ingredients {
+//             if strings.Contains(strings.ToLower(ingredient), "recipe follows") {
+//                 containsSubRecipe = true
+//                 break
+//             } else {
+//                 recipe.Ingredients[i] = strings.ReplaceAll(ingredient, ",", ";")
+//             }
+//         }
+//         if !containsSubRecipe {
+//             filteredRecipes = append(filteredRecipes, recipe)
+//         }
+//     }
 
-    for _, recipe := range recipes {
-        containsSubRecipe := false
-
-        for i, ingredient := range recipe.Ingredients {
-            if strings.Contains(strings.ToLower(ingredient), "recipe follows") {
-                containsSubRecipe = true
-                break
-            } else {
-                recipe.Ingredients[i] = strings.ReplaceAll(ingredient, ",", ";")
-            }
-        }
-        if !containsSubRecipe {
-            filteredRecipes = append(filteredRecipes, recipe)
-        }
-    }
-    return filteredRecipes, nil
-}
-
-
+//     return filteredRecipes, nil
+// }

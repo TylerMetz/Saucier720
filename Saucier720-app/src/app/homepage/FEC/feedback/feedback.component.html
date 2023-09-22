@@ -1,0 +1,27 @@
+<div class="popup">
+    <div class="form-container" *ngIf="showForm" [@fadeInOut]>
+        <div class="form-group">
+            <input type="text" id="name" name="name" [(ngModel)]="name" placeholder="Name">
+        </div>
+
+        <div class="form-group">
+            <input type="email" id="email" name="email" [(ngModel)]="email" placeholder="Email">
+        </div>
+
+        <div class="form-group">
+            <textarea id="message" name="message" [(ngModel)]="message" rows="3" placeholder="Message"></textarea>
+        </div>
+    </div>
+    <div class="message" *ngIf="showMessage" [@fadeInOut]>
+        Your feedback has been received by the developers! Thank you for helping improve MealDealz.
+    </div>
+    <div class="button-group">
+        <button (click)="onSubmit()" *ngIf="showForm" [@fadeInOut]>
+            Submit Feedback
+        </button>
+        <button (click)="onSubmit()" *ngIf="showMessage" [@fadeInOut]>
+            New Feedback Form
+        </button>
+    </div>
+</div>
+  

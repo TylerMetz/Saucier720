@@ -1,14 +1,19 @@
-import { Component, OnInit, Input, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectionStrategy, ChangeDetectorRef} from '@angular/core';
 import { HttpEvent, HttpEventType } from '@angular/common/http';
 import { RecipeService } from 'src/app/core/services/recipes/recipe.service';
 import { lastValueFrom } from 'rxjs';
-import { RecipePost } from 'src/app/core/interfaces/recipe';
+import { Recipe, RecipePost } from 'src/app/core/interfaces/recipe';
 import { CookieService } from 'ngx-cookie-service';
+import { ListComponent } from 'src/app/list/list.component';
+import { Ingredient } from 'src/app/core/interfaces/ingredient';
+import { SubRecipeComponent } from '../sub-recipe/sub-recipe.component';
+import { RecipesComponent } from '../../recipes.component';
 
 @Component({
   selector: 'app-recipe-card',
   templateUrl: './recipe-card.component.html',
   styleUrls: ['./recipe-card.component.scss'],
+  providers: [ListComponent, SubRecipeComponent],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RecipeCardComponent implements OnInit {
@@ -24,7 +29,9 @@ export class RecipeCardComponent implements OnInit {
   constructor(
     private recipeService: RecipeService,
     private cdRef: ChangeDetectorRef,
-    private cookieService: CookieService
+    private cookieService: CookieService,
+    private listComponent: ListComponent,
+    private subRecipeComponent: SubRecipeComponent,
   ) {}
 
   ngOnInit(): void {
@@ -63,6 +70,9 @@ export class RecipeCardComponent implements OnInit {
             this.hasError = false; // Clear the error flag
             this.currentRecipe = this.recipes[this.currentRecipeIndex];
             this.currentIngredients = this.removeQuotesAndBrackets(this.currentRecipe.R.ingredients);
+
+            console.log(this.currentIngredients);
+            this.validteRecipeItems();
           }
           break;
       }
@@ -113,6 +123,7 @@ export class RecipeCardComponent implements OnInit {
     this.currentRecipe = this.recipes[this.currentRecipeIndex];
     this.currentIngredients = this.removeQuotesAndBrackets(this.currentRecipe.R.ingredients);
     console.log(this.currentRecipe.R.title)
+    this.validteRecipeItems()
   }
 
   goToPrevRecipe() {
@@ -123,11 +134,12 @@ export class RecipeCardComponent implements OnInit {
     this.currentRecipe = this.recipes[this.currentRecipeIndex];
     this.currentIngredients = this.removeQuotesAndBrackets(this.currentRecipe.R.ingredients);
     console.log(this.currentRecipe.R.title)
+    this.validteRecipeItems()
   }
 
   checkForRecipeFollows(ingredient: string): boolean {
     const pattern = /\brecipe\s+follows\b/i;
-    console.log('recipe follows',pattern.test(ingredient))
+    //console.log('recipe follows',pattern.test(ingredient))
     return pattern.test(ingredient);
   }
 
@@ -239,5 +251,72 @@ export class RecipeCardComponent implements OnInit {
       console.error(error);
     }
   }
+
+  addToList(ingredient: string, event: Event) {
+    const addBtn = event.target as HTMLElement;
+    this.toggleInList(addBtn)
+    this.listComponent.addIngredient(ingredient);
+  }
+
+  // Creates temporary ingredients so we can check if they exsit in list 
+  async checkInList(ingredient: string, rowId: string, isSub: boolean) {
+    // Create a temporary variable to easily fill into the check 
+    let tempIngredient: Ingredient | null = null;
+    if(ingredient){
+      tempIngredient = {
+        Name: ingredient, // Necessary for check
+        Quantity: 1, // Necessary for check
+        StoreCost: 0, // Filler
+        OnSale: false, // Filler
+        SalePrice: 0, // Filler
+        SaleDetails: '' // Filler
+      }
+
+      // Navs to list component function to check 
+      const isValid = await this.listComponent.validateIngredient(tempIngredient)
+      if (isValid){
+
+        if(isSub){
+          this.subRecipeComponent.checkIngredient(rowId);
+        }
+        else {
+          const element = document.querySelector(rowId) as HTMLElement
+          if(element){
+            //console.log("Valid id: " + rowId)
+            this.toggleInList(element)
+          }
+        }
+      }
+    }
+  }
+
+  toggleInList(element: HTMLElement){
+    element.classList.remove("not-in-list")
+    element.classList.add("in-list");
+    element.title = "Already in list!"
+  }
+
+  // Checks for sub recipes
+  validteRecipeItems(){
+    var inSub:boolean = false; 
+    var inSubHeader:string = '';
+    var subIngredientIndex = 0;
+    for (var i = 0; i < this.currentIngredients.length; i++){
+      if(this.currentIngredients[i].includes('recipe follows')){
+        inSub = true; 
+        inSubHeader = "#" + this.subRecipeComponent.sanitizeHtmlId(this.currentIngredients[i]) + "-row";
+        subIngredientIndex = 0
+        continue;
+      }
+
+      if(inSub){
+        this.checkInList(this.currentIngredients[i], inSubHeader + subIngredientIndex, true)
+        ++subIngredientIndex
+      } else {
+        this.checkInList(this.currentIngredients[i], "#row" + i, false)
+      }
+      
+    }
+ }
 
 }

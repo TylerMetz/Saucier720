@@ -54,6 +54,7 @@ type Scraper struct {
 	
 // 	cmd := exec.Command(name, "-X", "utf8", "WalmartScraper.py")
 // 	output, _ := cmd.Output()
+
 	
 // 	// parse output into FoodItems
 // 	lines := strings.Split(string(output), "\n")

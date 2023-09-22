@@ -1,8 +1,8 @@
 <div class="page">
     <div class="page-body">
         <div class="pantry-wrapper">
-            <app-new-pantry-item-button></app-new-pantry-item-button>
-            <app-pantry-table></app-pantry-table>
+            <app-new-pantry-item-button (newItemAdded)="handleNewItemAdded($event)"></app-new-pantry-item-button>
+            <app-pantry-table #pantryTable></app-pantry-table>
         </div>
     </div>
 </div>
