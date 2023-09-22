@@ -1060,12 +1060,15 @@ func UpdateListData(){
 
 func UpdateUserDashboard(){
 
+	currUserFavRecipes, _ := backendDatabase.ReadFavoriteRecipes(CurrentUser)
+	currUserPantry, _ := backendDatabase.GetUserPantry(CurrentUser.UserName)
+
 	// selects what type of data to send to the user dashboard
 	if RoutingUserDashboardData == TopFiveFavoritesEasiestToMake{
-		
+
 		// get recipe recommendations
 		var routingUserDashboardRecipes []Recommendation
-		routingUserDashboardRecipes = ReturnRecipesWithHighestPercentageOfOwnedIngredients(backendDatabase.GetUserPantry(CurrentUser.UserName), backendDatabase.ReadFavoriteRecipes(CurrentUser), 5, StoreDeals)
+		routingUserDashboardRecipes = ReturnRecipesWithHighestPercentageOfOwnedIngredients(currUserPantry, currUserFavRecipes, 5, StoreDeals)
 		routingUserDashboardRecipes = backendDatabase.FindFavoriteRecipes(CurrentUser, routingUserDashboardRecipes) // used to determine if star is darkened in full recipe card
 
 		// lock the recipe data
@@ -1085,7 +1088,7 @@ func UpdateUserDashboard(){
 		
 		// get recipe recommendations
 		var routingUserDashboardRecipes []Recommendation
-		routingUserDashboardRecipes = ReturnRecipesWithHighestPercentageOfOwnedIngredients(backendDatabase.GetUserPantry(CurrentUser.UserName), backendDatabase.ReadFavoriteRecipes(CurrentUser), 10, StoreDeals)
+		routingUserDashboardRecipes = ReturnRecipesWithHighestPercentageOfOwnedIngredients(currUserPantry, currUserFavRecipes, 10, StoreDeals)
 		routingUserDashboardRecipes = backendDatabase.FindFavoriteRecipes(CurrentUser, routingUserDashboardRecipes) // used to determine if star is darkened in full recipe card
 
 		// lock the recipe data

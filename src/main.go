@@ -33,7 +33,7 @@ func main() {
 				// determine session user based on cookies
 				for(BackendPkg.CurrentUser.UserName == prevUser.UserName){
 					if sessionCookie != "" {
-						BackendPkg.CurrentUser = programDatabase.UserFromCookie(sessionCookie)
+						BackendPkg.CurrentUser, _ = programDatabase.UserFromCookie(sessionCookie)
 						BackendPkg.UpdateAllData()
 						if(prevCookie == sessionCookie){
 							break;
