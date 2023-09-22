@@ -83,9 +83,10 @@ export class RecipeCardComponent implements OnInit {
   public getAuthorCredit(): string {
     // used to get recipe author from recipeID
     const author = this.currentRecipe.R['RecipeAuthor'];
-    if (author === "") {
+    if (author === 'MealDealz Classic Recipe' || author === '') {
       return 'MealDealz Classic Recipe';
-    } else {
+    } 
+    else {
       return 'Created by ' + author;
     }
   }

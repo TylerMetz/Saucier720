@@ -156,16 +156,6 @@ const right = [
         }
       }
     }
-    
-    public getAuthorCreditFromRecipeID(recipeID: string): string {
-      // used to get recipe author from recipeID
-      const author = recipeID.replace(/\d+/g, '');
-      if (author === 'json') {
-        return 'MealDealz Classic Recipe';
-      } else {
-        return 'Created by ' + author;
-      }
-    }
 
     removeQuotesAndBrackets(arr: string[]): string[] {
       const regex = /["\[\]]/g; // Matches any occurrence of ", [, or ] globally

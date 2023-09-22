@@ -529,7 +529,10 @@ func (d *Database) WriteNewUserRecipe(currUser User, newRecipe Recipe) error {
 }
 
 // SEAL OF APPROVAL
-func (d *Database) DeleteUserRecipe(recipeID string) error {
+func (d *Database) DeleteUserRecipe(currUser User, recipeID string) error {
+	// Remove from fav recipes table so recipeID cannot still be found
+
+	d.UnfavoriteRecipe(currUser, recipeID)
 	var err error
     db, err := AzureOpenDatabase()
 
@@ -784,7 +787,7 @@ func (d *Database) ReadFavoriteRecipes(currUser User) ([]Recipe, error) {
         sql.Named("UserName", currUser.UserName))
     
     if err != nil {
-        fmt.Println("error on user password query")
+        fmt.Println("error on user fav recipe query")
         return []Recipe{}, err
     }
 
@@ -797,12 +800,14 @@ func (d *Database) ReadFavoriteRecipes(currUser User) ([]Recipe, error) {
 			return []Recipe{}, err
 		}
 		recipeIDs = append(recipeIDs, recipeID)
+
 	}
 
 	for _, recipeID := range recipeIDs {
 		// Retrieve the recipe based on recipeID
 		recipe, err := d.getRecipeByID(recipeID)
 		if err != nil {
+			fmt.Println("eror favs")
 			return []Recipe{}, err
 		}
 		if recipe != nil {
@@ -824,7 +829,7 @@ func (d *Database) getRecipeByID(recipeID string) (*Recipe, error) {
     }
 
 	tsql := fmt.Sprintf(`
-	SELECT Title, Ingredients, Instructions from dbo.recipes
+	SELECT Title, Ingredients, Instructions, UserName from dbo.recipes
 	WHERE RecipeID = @RecipeID;
 	`)
 	ctx := context.Background()
@@ -835,9 +840,9 @@ func (d *Database) getRecipeByID(recipeID string) (*Recipe, error) {
 	)
 
 	//Create Recipe
-	var title, ingredientsStr, instructions string
+	var title, ingredientsStr, instructions, userName string
 	for rows.Next() {
-		err = rows.Scan(&title, &ingredientsStr, &instructions)
+		err = rows.Scan(&title, &ingredientsStr, &instructions, &userName)
 	}
 
 	// Convert the JSON string of ingredients to a slice
@@ -852,6 +857,7 @@ func (d *Database) getRecipeByID(recipeID string) (*Recipe, error) {
 		Ingredients:  ingredients,
 		Instructions: instructions,
 		RecipeID:     recipeID,
+		RecipeAuthor: userName,
 	}
 
 	return &recipe, nil

@@ -889,7 +889,7 @@ func handleDeleteUserRecipe(w http.ResponseWriter, r *http.Request) {
 
 	// change store selection global var
 	UpdatingData = true;
-	backendDatabase.DeleteUserRecipe(recipeID)
+	backendDatabase.DeleteUserRecipe(CurrentUser, recipeID)
 	UpdatingData = false;
 
 	// write a successful header
