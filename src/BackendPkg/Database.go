@@ -446,7 +446,7 @@ func (d *Database) ReadJSONRecipes() ([]Recipe, error) {
 
 
 	tsql := fmt.Sprintf(`
-	SELECT RecipeID, Title, Ingredients, Instructions FROM dbo.recipes;
+	SELECT RecipeID, Title, Ingredients, Instructions FROM dbo.recipes
 	WHERE UserName = @UserName;
 	`)
 
@@ -459,7 +459,6 @@ func (d *Database) ReadJSONRecipes() ([]Recipe, error) {
 	)
 
 	if err != nil {
-        fmt.Println("error on jason recipes query")
         return recipes, err
     }
 
@@ -490,6 +489,7 @@ func (d *Database) ReadJSONRecipes() ([]Recipe, error) {
 		recipes = append(recipes, recipe)
 	}
 
+	fmt.Println(recipes)
 	return recipes, nil
 }
 
