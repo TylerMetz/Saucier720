@@ -279,8 +279,6 @@ func (d *Database) ReadUserDatabase(username string) (User, error) {
         err = rows.Scan(&returnUser.FirstName, &returnUser.LastName, &returnUser.Email, &returnUser.UserName, &returnUser.Password)
     }
 
-	fmt.Println("passed in userfrom for db query:" + username)
-	fmt.Println("returned username from db query: " + returnUser.UserName)
 	return returnUser, nil
 }
 
