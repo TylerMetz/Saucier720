@@ -446,8 +446,8 @@ func (d *Database) ReadJSONRecipes() ([]Recipe, error) {
 
 
 	tsql := fmt.Sprintf(`
-	SELECT RecipeID, Title, Ingredients, Instructions 
-	FROM dbo.jason_recipes;
+	SELECT RecipeID, Title, Ingredients, Instructions FROM dbo.recipes;
+	WHERE UserName = @UserName;
 	`)
 
 	ctx := context.Background()
@@ -455,6 +455,7 @@ func (d *Database) ReadJSONRecipes() ([]Recipe, error) {
 	rows, err := db.QueryContext(
 		ctx,
 		tsql,
+		sql.Named("UserName", "MealDealz Classic Recipe"),
 	)
 
 	if err != nil {
@@ -484,7 +485,7 @@ func (d *Database) ReadJSONRecipes() ([]Recipe, error) {
 			Title:        title,
 			Ingredients:  ingredients,
 			Instructions: instructions,
-			RecipeAuthor: "", // set to null for all recipes from the JSON file
+			RecipeAuthor: "MealDealz Classic Recipe", // set to null for all recipes from the JSON file
 		}
 		recipes = append(recipes, recipe)
 	}
@@ -829,47 +830,6 @@ func (d *Database) getRecipeByID(recipeID string) (*Recipe, error) {
 
 	tsql := fmt.Sprintf(`
 	SELECT Title, Ingreidents, Instructions from dbo.user_recipes
-	WHERE RecipeID = @RecipeID;
-	`)
-	ctx := context.Background()
-	row, err := db.QueryContext(
-		ctx,
-		tsql,
-		sql.Named("RecipeID", recipeID),
-	)
-
-	//Create Recipe
-	var title, ingredientsStr, instructions string
-	err = row.Scan(&title, &ingredientsStr, &instructions)
-
-	// Convert the JSON string of ingredients to a slice
-	var ingredients []string
-	err = json.Unmarshal([]byte(ingredientsStr), &ingredients)
-	if err != nil {
-		return nil, err
-	}
-
-	recipe := Recipe{
-		Title:        title,
-		Ingredients:  ingredients,
-		Instructions: instructions,
-		RecipeID:     recipeID,
-	}
-
-	return &recipe, nil
-}
-
-func (d *Database) getRecipeFromJSONTable(recipeID string) (*Recipe, error) {
-	var err error
-    db, err := AzureOpenDatabase()
-
-    if db == nil {
-        fmt.Println("Failed to open database")
-        return &Recipe{}, err
-    }
-
-	tsql := fmt.Sprintf(`
-	SELECT Title, Ingreidents, Instructions from dbo.jason_recipes
 	WHERE RecipeID = @RecipeID;
 	`)
 	ctx := context.Background()
