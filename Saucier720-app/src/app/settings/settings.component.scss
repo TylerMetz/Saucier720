@@ -1,4 +1,4 @@
-.page {
+.page-content {
   margin: 0 auto;
   padding: 0;
   width: 100%;
@@ -37,3 +37,11 @@ h2 {
   background-color: var(--text-color);
   color: var(--primary-color);
 }
+
+.back-button-wrapper {
+  position: fixed;
+  top: 75px; /* Adjust the top position as needed */
+  left: 30px; /* Adjust the left position as needed */
+  z-index: 1000; /* Set the z-index to ensure it appears above other content if necessary */
+}
+
