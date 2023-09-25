@@ -11,6 +11,7 @@ import { SettingsComponent } from './settings/settings.component';
 import { HttpClientModule } from '@angular/common/http';
 import { AuthGuard } from './core/services/Auth/auth.guard.service';
 import { AuthService } from './core/services/Auth/auth.service';
+import { UserProfileComponent } from './user-profile/user-profile.component';
 
 const routes: Routes = [
   { path: 'Home', component: HomePageComponent},
@@ -18,6 +19,7 @@ const routes: Routes = [
   { path: 'List', component: ListComponent, canActivate: [AuthGuard]},
   { path: 'Deals', component: DealsComponent, canActivate: [AuthGuard]},
   { path: 'Recipes', component: RecipesComponent, canActivate: [AuthGuard]},
+  { path: 'Profile', component: UserProfileComponent, canActivate: [AuthGuard]},
   { path: 'Settings', component: SettingsComponent, canActivate: [AuthGuard]},
   { path: 'Login', component: LoginComponent},
   { path: 'Signup', component: SignupComponent}

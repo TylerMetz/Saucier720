@@ -29,6 +29,7 @@ import { FaqsComponent } from './homepage/FEC/faqs/faqs.component';
 import { FeedbackComponent } from './homepage/FEC/feedback/feedback.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SettingsComponent } from './settings/settings.component';
+import { UserProfileComponent } from './user-profile/user-profile.component';
 
 @NgModule({
   declarations: [
@@ -57,7 +58,8 @@ import { SettingsComponent } from './settings/settings.component';
     DevelopersComponent,
     FaqsComponent,
     FeedbackComponent,
-    SettingsComponent
+    SettingsComponent,
+    UserProfileComponent
   ],
   imports: [
     AppRoutingModule,
