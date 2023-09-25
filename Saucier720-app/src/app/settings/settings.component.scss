@@ -43,3 +43,19 @@ h2 {
   top: 15vh; 
   left: 15vh; 
 }
+
+.back-button {
+  margin: 5px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.back-button:hover {
+  background-color: var(--text-color);
+  color: var(--primary-color);
+}
