@@ -1,5 +1,11 @@
 <div class="page">
-    <h1>Settings</h1>
+  <div class="page-content">
+  <div class="back-button-wrapper">
+    <button class="back-button" [routerLink]="['/Profile']">Back</button>
+  </div>
+  <div class="settings-title">
+    <h2>Settings</h2>
+  </div>
     
     <div class="theme-section">
       <h2>Themes</h2>
@@ -9,4 +15,5 @@
       <button class="theme-button" (click)="setThemeCustom3()">Set Custom Theme 3</button>
       <button class="theme-button" (click)="setThemeCustom4()">Set Custom Theme 4</button>
     </div>
+  </div>
 </div>
