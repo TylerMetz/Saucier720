@@ -14,14 +14,16 @@ var prevUser BackendPkg.User
 
 func main() {
 
+
 	// Reads recipes dataset in not read in yet and stores in DB
-	programDatabase.WriteJSONRecipes()
+	// programDatabase.WriteJSONRecipes()
 
 	// runs scraper if new deals at publix or walmart
-	programScraper.CheckIfScrapeNewDeals(programDatabase)
+	// programScraper.CheckIfScrapeNewDeals(programDatabase)
 
 	// listen for user in a separate goroutine, and wait for session cookie to be defined
 	go BackendPkg.ListenUserInfo(&sessionCookie, &cookieChanged)
+
 	for sessionCookie == "" && !cookieChanged {}
 	
 	// always check if cookie is changed
@@ -31,9 +33,9 @@ func main() {
 				// determine session user based on cookies
 				for(BackendPkg.CurrentUser.UserName == prevUser.UserName){
 					if sessionCookie != "" {
-						BackendPkg.CurrentUser = programDatabase.UserFromCookie(sessionCookie)
+						BackendPkg.CurrentUser, _ = programDatabase.UserFromCookie(sessionCookie)
+						BackendPkg.UpdateAllData()
 						if(prevCookie == sessionCookie){
-							BackendPkg.CurrentUser = programDatabase.UserFromCookie(sessionCookie)
 							break;
 						}
 					}
@@ -43,6 +45,7 @@ func main() {
 
 				// reset cookie change
 				cookieChanged = false
+				
 			}
 		}
 	}()
@@ -62,5 +65,5 @@ func main() {
 
 	// run infinitely
 	for{}
-	
+	BackendPkg.AzureSQLCloseDatabase();
 }

@@ -6,6 +6,76 @@
     background-color: var(--secondary-color);
     width: 100%;
   }
+
+  li.recipe-ingredient{
+    white-space: normal;
+    padding: 5px;
+  }
+
+  img.list {
+    pointer-events: none;
+  }
+
+  .ingredient-wrapper {
+    margin-right: 5px;
+  }
+
+  .ingredient-wrapper > button{
+    width: 20px;
+    height: 20px;
+    float: right;
+    margin-left: 10px;
+    transform: translateY(20%);
+    display: none;
+  }
+
+  .ingredient-wrapper:hover > button{
+    display: block;
+    border: none;
+    border-radius: 5px;
+  }
+
+  .in-list{
+    background-color: var(--background-color);
+  }
+
+  .in-list:active{
+    pointer-events: none;
+  }
+
+  .not-in-list {
+    background-color: var(--primary-color);
+  }
+  
+  .ingredient-wrapper > button.not-in-list:hover{
+    background-color: var(--text-color);
+  }
+
+  .ingredient-wrapper > button.not-in-list:focus{
+    background-color: var(--background-color);
+  }
+
+  button > img {
+    max-width: 12px;
+    transform: translateY(-50%)
+  }
+
+  .in-list > img {
+    content: url("/assets/images/addListClick.png");
+    transform: translateY(-52%);
+  }
+
+  .not-in-list:hover > img {
+    content: url("/assets/images/addListHover.png");
+    transition: 0.2s ease-in-out;
+  }
+
+  .not-in-list:focus > img {
+    content: url("/assets/images/addListClick.png");
+    transform: translateY(-52%);
+    transition: 0.2s ease-in-out;
+  }
+
   .card-container {
     display: flex;
     flex-direction: column;
@@ -52,7 +122,7 @@
     color: var(--header-color);
   }
 
-  .button{
+.button{
   display: inline-block;
   padding: 10px;
   margin: 10px;
@@ -87,17 +157,6 @@
   margin-top: 20px;
 }
 
-.error-message {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--secondary-color);
-  padding: 20px;
-  border-radius: 10px;
-  color: var(--text-color);
-  margin-top: 20px;
-}
-
 .error-icon {
   font-size: 36px;
   margin-right: 20px;
@@ -119,23 +178,49 @@
   font-size: 16px;
 }
 
+.delete-icon,
 .favorite-icon {
   position: absolute;
   top: 10px;
   left: 10px;
   width: 20px; /* Adjust the width as needed */
   height: 20px; /* Adjust the height as needed */
-  opacity: 0.5; /* Set the initial opacity for the transparent effect */
+  opacity: 1; /* Set the initial opacity for the transparent effect */
   cursor: pointer;
   transition: opacity 0.3s ease-in-out; /* Add a smooth transition effect */
 }
 
+.favorite-icon {
+  margin-top: 0.485px; // added to make them look more even
+}
+
+.delete-icon {
+  margin-left: 25px; /* Add some spacing between the icons */
+  width: 22px; /* Adjust the width as needed */
+  height: 22px; /* Adjust the height as needed */
+  opacity: 0.8;
+  transition: opacity 0.3s ease-in-out; /* Add a smooth transition effect */
+}
+
+
 .favorite-icon:hover {
-  opacity: 1; /* Increase the opacity on hover to make it more visible */
+  opacity: 0.5; /* Increase the opacity on hover to make it more visible */
+}
+
+.delete-icon:hover{
+  opacity: 0.1;
 }
 
 .favorite-icon.active {
   filter: brightness(0%) saturate(500%) hue-rotate(-30deg); /* Apply a red color effect */
 }
 
+
+.confirm-text {
+  font-size: 12px; /* Adjust font size as needed */
+  color: var(--text--color); /* Set the text color */
+  position: absolute; /* Position the "Hold to Confirm" text absolutely within the container */
+  top: 12px;
+  left: 65px; /* Adjust the left position as needed to place it to the right of the delete icon */
+}
 

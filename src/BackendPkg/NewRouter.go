@@ -8,6 +8,7 @@ import (
 	"log"
 	"sync"
 	"context"
+	_"fmt"
 )
 
 // GLOBAL VARIABLES
@@ -15,15 +16,17 @@ var pantryInterface []interface{}
 var dealsInterface []interface{}
 var recipesInterface []interface{}
 var listInterface []interface{}
+var userDashboardInterface []interface{}
 var backendDatabase Database
 var dataMutex sync.Mutex
 var NewServers []*http.Server
 var wait sync.WaitGroup
 var UpdatingData bool
 var CurrentUser User
-var StoreSelection string = "Walmart" // set to Walmart by default (temp)
+var StoreSelection string
 var StoreDeals []FoodItem
 var RoutingRecipesType RecipeType
+var RoutingUserDashboardData UserDashboardData
 var RecipesRecommendationPool []Recipe
 
 // RECIPE TYPE ENUM
@@ -32,6 +35,16 @@ const (
 	RecommendedRecipes RecipeType = iota
 	UserRecipes
 	FavoriteRecipes
+)
+
+// USER DASHBOARD DATA ENUM
+type UserDashboardData int
+const (
+	// making examples here for what we could output to user dashboard
+	TopFiveFavoritesEasiestToMake UserDashboardData = iota
+	TopTenFavoritesEasiestToMake
+	RecentRecipesViewed
+	RecentUsersViewed
 )
 
 // ROUTING FUNCTIONS
@@ -62,6 +75,7 @@ func handleRecipes(response http.ResponseWriter, request *http.Request) {
 	// Encode the items as JSON and send the response
 	json.NewEncoder(response).Encode(recipesInterface)
 }
+
 func handleListPage(response http.ResponseWriter, request *http.Request) {
 	// set header and encode items
 	response.Header().Set("Content-Type", "application/json")
@@ -70,14 +84,20 @@ func handleListPage(response http.ResponseWriter, request *http.Request) {
 	// Encode the items as JSON and send the response
 	json.NewEncoder(response).Encode(listInterface)
 }
+
+func handleUserDashboard(response http.ResponseWriter, request *http.Request) {
+	// set header and encode items
+	response.Header().Set("Content-Type", "application/json")
+	response.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200") 
+	response.Header().Set("Access-Control-Allow-Methods", "GET")
+	// Encode the items as JSON and send the response
+	json.NewEncoder(response).Encode(userDashboardInterface)
+}
+
 func RoutData(){
 
     // setup all global variables to be routed
-	go func(){
-		for{
-			if(!UpdatingData) { UpdateAllData() }
-		}
-	}()
+	UpdateAllData();
 	
     // create server
     server := &http.Server{
@@ -89,6 +109,7 @@ func RoutData(){
     http.HandleFunc("/api/Recipes", handleRecipes)
     http.HandleFunc("/api/Deals", handleDeals)
 	http.HandleFunc("/api/List", handleListPage)
+	http.HandleFunc("/api/UserDashboard", handleUserDashboard)	
 
     // append the server to the global list
 	NewServers = append(NewServers, server)
@@ -142,7 +163,7 @@ func handleSignup(w http.ResponseWriter, r *http.Request) {
 
 	// store the new user
 	UpdatingData = true;
-	backendDatabase.StoreUserDatabase(newUser.User)
+	StoreUserDatabase(newUser.User)
 	UpdatingData = false;
 
 }
@@ -190,7 +211,7 @@ func handleLogin(w http.ResponseWriter, r *http.Request, sessionCookie *string, 
 	}
 
 	// checks if validate user function returned an empty cookie, if not then setts the cookies
-	if ValidateUser(activeUser) == "" {
+	if ValidateUser(activeUser) == "" { // RILEY what is this validate user
 		http.Error(w, "Invalid login credentials", http.StatusUnauthorized)
 		return
 	} else {
@@ -208,6 +229,7 @@ func handleLogin(w http.ResponseWriter, r *http.Request, sessionCookie *string, 
 			SameSite: http.SameSiteLaxMode,
 			Domain: "localhost",
 		}
+
 
 		// sets cookie changed to true
 		*cookieChanged = true
@@ -233,11 +255,21 @@ func handleLogin(w http.ResponseWriter, r *http.Request, sessionCookie *string, 
 		// Get the new "sessionID" cookie value
 		*sessionCookie = cookie.Value
 
+		///////////////////////////////////////////////////////////////////////////////////// DEFAULTS /////////////////////////////////////////////////////////////////////////////////////////////////
+
 		// set recommended recipes to pull from MealDealz classsic recipes by default
-		RecipesRecommendationPool = backendDatabase.ReadJSONRecipes()
+		RecipesRecommendationPool, _ = backendDatabase.ReadJSONRecipes()
 
 		// set recipes that are routed to recommended by default
 		RoutingRecipesType = RecommendedRecipes
+
+		// set user dashboard default to be top 5 recipes
+		RoutingUserDashboardData = TopFiveFavoritesEasiestToMake
+
+		// set default deals to Publix 
+		StoreSelection = "Publix"
+
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		// allow data to be routed again
 		UpdatingData = false;
@@ -280,6 +312,8 @@ func handleLogout(w http.ResponseWriter, r *http.Request, sessionCookie *string)
 		pantryInterface = interfaceRefresh
 		dealsInterface = interfaceRefresh
 		recipesInterface = interfaceRefresh
+		listInterface = interfaceRefresh
+		userDashboardInterface = interfaceRefresh
 		
 	}
 
@@ -800,16 +834,63 @@ func handleRecipeFilters(w http.ResponseWriter, r *http.Request) {
 
 	//check each checkbox value and add accordingly
 	if newFilters.MyRecipesCheckbox {
-		RecipesRecommendationPool = append(RecipesRecommendationPool, backendDatabase.ReadCurrUserRecipes(CurrentUser)...)
+		temp, _ := backendDatabase.ReadCurrUserRecipes(CurrentUser)
+		RecipesRecommendationPool = append(RecipesRecommendationPool, temp...)
 	}
 	if newFilters.UserRecipesCheckbox {
-		RecipesRecommendationPool = append(RecipesRecommendationPool, backendDatabase.ReadAllUserRecipes()...)
+		temp, _ := backendDatabase.ReadAllUserRecipes()
+		RecipesRecommendationPool = append(RecipesRecommendationPool, temp...)
 	}
 	if newFilters.MdRecipesCheckbox {
-		RecipesRecommendationPool = append(RecipesRecommendationPool, backendDatabase.ReadJSONRecipes()...)
+		temp, _ := backendDatabase.ReadJSONRecipes()
+		RecipesRecommendationPool = append(RecipesRecommendationPool, temp...)
 	}
 
 	UpdatingData = false
+
+	// write a successful header
+	w.WriteHeader(http.StatusOK)
+
+	// if the header was successful, change the recipe data
+	if http.StatusOK == 200 {
+		// get new data for routing
+		UpdateAllData()
+	}
+
+}
+
+func handleDeleteUserRecipe(w http.ResponseWriter, r *http.Request) {
+
+	// verify POST request from frontend
+    if r.Method == "OPTIONS" {
+        w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+        w.Header().Set("Access-Control-Allow-Methods", "POST")
+        w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+        w.Header().Set("Access-Control-Allow-Credentials", "true")
+        w.WriteHeader(http.StatusOK)
+        return
+    }
+
+	// set correct headers
+    w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+    w.Header().Set("Access-Control-Allow-Methods", "POST")
+    w.Header().Set("Access-Control-Allow-Credentials", "true")
+
+	// translate POST data to ASCII
+	body, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// save ASCII as string
+	recipeID := string(body)
+
+	// change store selection global var
+	UpdatingData = true;
+	backendDatabase.DeleteUserRecipe(CurrentUser, recipeID)
+	UpdatingData = false;
 
 	// write a successful header
 	w.WriteHeader(http.StatusOK)
@@ -858,6 +939,10 @@ func ListenForData(){
 	http.HandleFunc("/api/RecommendedRecipesFilters", func(response http.ResponseWriter, request *http.Request) {
         handleRecipeFilters(response, request)
     })
+	http.HandleFunc("/api/DeleteUserRecipe", func(response http.ResponseWriter, request *http.Request) {
+        handleDeleteUserRecipe(response, request)
+    })
+	
 
 	// create server
 	server := &http.Server{Addr: ":8082"}
@@ -882,9 +967,9 @@ func ListenForData(){
 func UpdateDealsData(){
 	// determine which store to take deals from
 	if StoreSelection == "Publix"{
-		StoreDeals = backendDatabase.ReadPublixDatabase() 
+		StoreDeals, _ = backendDatabase.ReadPublixDatabase() 
 	} else if StoreSelection == "Walmart"{
-		StoreDeals = backendDatabase.ReadWalmartDatabase()
+		StoreDeals, _ = backendDatabase.ReadWalmartDatabase()
 	}
 
 	// lock the deals data
@@ -893,6 +978,10 @@ func UpdateDealsData(){
 	// set all deals to global variable
 	var dealsInterfaceRefresh []interface{}
 	dealsInterface = dealsInterfaceRefresh
+
+	// Create a temp food item to store the name of the store
+	storeItem := FoodItem{Name: StoreSelection}
+	dealsInterface = append(dealsInterface, storeItem)
 	for i := 0; i < len(StoreDeals); i++{
 		dealsInterface = append(dealsInterface, StoreDeals[i])
 	}
@@ -905,11 +994,13 @@ func UpdatePantryData(){
 	// lock the user pantry data
 	dataMutex.Lock()
 
+	currUserPantry, _ := backendDatabase.GetUserPantry(CurrentUser.UserName)
+
 	// save all user pantry data to global variable
 	var pantryInterfaceRefresh []interface{}
 	pantryInterface = pantryInterfaceRefresh
-	for i := 0; i < len(backendDatabase.GetUserPantry(CurrentUser.UserName).FoodInPantry); i++{
-		pantryInterface = append(pantryInterface, backendDatabase.GetUserPantry(CurrentUser.UserName).FoodInPantry[i])
+	for i := 0; i < len(currUserPantry.FoodInPantry); i++{
+		pantryInterface = append(pantryInterface, currUserPantry.FoodInPantry[i])
 	}
 
 	// unlock the data
@@ -918,14 +1009,18 @@ func UpdatePantryData(){
 
 func UpdateRecipeData(){
 	var routingRecipes []Recommendation
-	
+
+	currUserRecipes, _ := backendDatabase.ReadCurrUserRecipes(CurrentUser)
+	currUserFavRecipes, _ := backendDatabase.ReadFavoriteRecipes(CurrentUser)
+	currUserPantry, _ := backendDatabase.GetUserPantry(CurrentUser.UserName)
+
 	// save all recipes data to global variable
 	if RoutingRecipesType == RecommendedRecipes{
-		routingRecipes = BestRecipes(backendDatabase.GetUserPantry(CurrentUser.UserName), RecipesRecommendationPool, StoreDeals)
+		routingRecipes = BestRecipes(currUserPantry, RecipesRecommendationPool, StoreDeals)
 	} else if RoutingRecipesType == UserRecipes{
-		routingRecipes = AllRecipesWithRelatedItems(backendDatabase.GetUserPantry(CurrentUser.UserName), backendDatabase.ReadCurrUserRecipes(CurrentUser), StoreDeals)
+		routingRecipes = AllRecipesWithRelatedItems(currUserPantry, currUserRecipes, StoreDeals)
 	} else if RoutingRecipesType == FavoriteRecipes {
-		routingRecipes = AllRecipesWithRelatedItems(backendDatabase.GetUserPantry(CurrentUser.UserName), backendDatabase.ReadFavoriteRecipes(CurrentUser), StoreDeals)
+		routingRecipes = AllRecipesWithRelatedItems(currUserPantry, currUserFavRecipes, StoreDeals)
 	}
 	
 	// find which recipes are user favorites
@@ -952,13 +1047,64 @@ func UpdateListData(){
 
 	var listInterfaceRefresh []interface{}
 	listInterface = listInterfaceRefresh
-	for i := 0; i < len(backendDatabase.ReadList(CurrentUser).ShoppingList); i++ {
+	userListOverall, _ := backendDatabase.ReadList(CurrentUser)
+	userList := userListOverall.ShoppingList
+	for i := 0; i < len(userList); i++ {
 		// sends shopping list food item slice, time last updated, and user connected to list
-		listInterface = append(listInterface, backendDatabase.ReadList(CurrentUser).ShoppingList[i])
+		listInterface = append(listInterface, userList[i])
 	}
 
 	// unlock the data
 	dataMutex.Unlock()
+}
+
+func UpdateUserDashboard(){
+
+	currUserFavRecipes, _ := backendDatabase.ReadFavoriteRecipes(CurrentUser)
+	currUserPantry, _ := backendDatabase.GetUserPantry(CurrentUser.UserName)
+
+	// selects what type of data to send to the user dashboard
+	if RoutingUserDashboardData == TopFiveFavoritesEasiestToMake{
+
+		// get recipe recommendations
+		var routingUserDashboardRecipes []Recommendation
+		routingUserDashboardRecipes = ReturnRecipesWithHighestPercentageOfOwnedIngredients(currUserPantry, currUserFavRecipes, 5, StoreDeals)
+		routingUserDashboardRecipes = backendDatabase.FindFavoriteRecipes(CurrentUser, routingUserDashboardRecipes) // used to determine if star is darkened in full recipe card
+
+		// lock the recipe data
+		dataMutex.Lock()
+
+		var userDashboardInterfaceRefresh []interface{}
+		userDashboardInterface = userDashboardInterfaceRefresh
+		for i := 0; i < len(routingUserDashboardRecipes); i++ {
+			// sends recipes, items in recipe, and deals related 
+			userDashboardInterface = append(userDashboardInterface, routingUserDashboardRecipes[i])
+		}
+
+		// unlock the data
+		dataMutex.Unlock()
+
+	} else if RoutingUserDashboardData == TopTenFavoritesEasiestToMake{
+		
+		// get recipe recommendations
+		var routingUserDashboardRecipes []Recommendation
+		routingUserDashboardRecipes = ReturnRecipesWithHighestPercentageOfOwnedIngredients(currUserPantry, currUserFavRecipes, 10, StoreDeals)
+		routingUserDashboardRecipes = backendDatabase.FindFavoriteRecipes(CurrentUser, routingUserDashboardRecipes) // used to determine if star is darkened in full recipe card
+
+		// lock the recipe data
+		dataMutex.Lock()
+
+		var userDashboardInterfaceRefresh []interface{}
+		userDashboardInterface = userDashboardInterfaceRefresh
+		for i := 0; i < len(routingUserDashboardRecipes); i++ {
+			// sends recipes, items in recipe, and deals related 
+			userDashboardInterface = append(userDashboardInterface, routingUserDashboardRecipes[i])
+		}
+
+		// unlock the data
+		dataMutex.Unlock()
+	}
+	
 }
 
 
@@ -967,10 +1113,12 @@ func UpdateAllData(){
 	for UpdatingData {}
 
 	// updates all data that's being routed
+	UpdateUserDashboard() // first because loaded first
 	UpdatePantryData()
 	UpdateRecipeData()
 	UpdateDealsData()
 	UpdateListData()
+		
 }
 
 // SHUTDOWN FUNCTIONS

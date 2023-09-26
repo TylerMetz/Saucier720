@@ -1,11 +1,26 @@
 <ng-container *ngIf="!hasError; else errorMessage">
   <div class="card-container">
     <div class="card">
-      <img class="favorite-icon" src="assets/images/favoriteIcon.png" alt="Favorite Icon" [class.active]="this.recipes[this.currentRecipeIndex].R.userFavorite" (click)="toggleFavorite()">
+      <div class="icon-container">
+        <img class="favorite-icon" src="assets/images/favoriteIcon.png" alt="Favorite Icon" [class.active]="this.recipes[this.currentRecipeIndex].R.userFavorite" (click)="toggleFavorite()">
+        <img *ngIf="isCurrentUserRecipe()"
+          class="delete-icon"
+          src="assets/images/deleteIcon.png"
+          alt="Delete Icon"
+          (mouseenter)="showHoldToConfirm = true; deleteIconOpacity = 0.1"
+          (mouseleave)="showHoldToConfirm = false; clearHoldTimer()"
+          (mousedown)="startHoldTimer()"
+          (mouseup)="endHoldTimer()"
+          [style.opacity]="deleteIconOpacity"
+          [class.hover]="showHoldToConfirm"
+        >
+        <span *ngIf="showHoldToConfirm" class="confirm-text">Hold to Confirm</span>
+      </div>
       <div class="recipe-title">
         <h1 *ngIf="recipes && recipes.length > 0" class="recipe-title">
           {{ recipes[currentRecipeIndex].R.title }}
         </h1>
+        <p>{{ getAuthorCredit() }}</p>
       </div>
       <div class="recipe-body">
           <div class="recipe-ingredients">
@@ -17,7 +32,9 @@
                 <ul>
                   <ng-container *ngFor="let ingredient of currentIngredients; let i = index">
                     <ng-container *ngIf="!checkForRecipeFollows(ingredient)">
-                      <li *ngIf="!printedSubRecipeLines.includes(ingredient)">{{ ingredient }}</li>
+                      <li class="recipe-ingredient" *ngIf="!printedSubRecipeLines.includes(ingredient)">
+                        <div title="Click to add {{ ingredient }} to your list!" class="ingredient-wrapper"><button  class="not-in-list" [attr.id]="'row' + i" (click)="addToList(ingredient, $event)"><img class="list"src="/assets/images/addList.png"></button>{{ ingredient }}</div>
+                      </li>
                     </ng-container>
                     <ng-container *ngIf="checkForRecipeFollows(ingredient)">
                         <app-sub-recipe [recipe]="ingredient" [ingredients]="currentIngredients.slice(i + 1)" [headerText]="ingredient"></app-sub-recipe>

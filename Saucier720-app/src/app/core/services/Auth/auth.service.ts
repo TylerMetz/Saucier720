@@ -6,7 +6,7 @@ import { CookieService } from 'ngx-cookie-service';
 @Injectable()
 export class AuthService {
 
-  private loggedIn: boolean = false;
+  public loggedIn: boolean = false;
   private validCookie: boolean = false;
 
 
@@ -23,11 +23,9 @@ export class AuthService {
    
 
   public login(username: string, password: string): Observable<any> {
-    this.loggedIn = true;
     const body = { username, password };
     return this.http.post(this.loginUrl, body, { observe: 'response', responseType: 'json', withCredentials: true });
   }
-  
 
   public logout(): Observable<any> {
     this.loggedIn = false;
