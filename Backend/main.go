@@ -9,7 +9,7 @@ var sessionCookie string
 var prevCookie string
 var cookieChanged bool
 var programDatabase BackendPkg.Database
-var programScraper BackendPkg.Scraper
+// var programScraper BackendPkg.Scraper
 var prevUser BackendPkg.User
 
 func main() {
@@ -23,8 +23,6 @@ func main() {
 
 	// listen for user in a separate goroutine, and wait for session cookie to be defined
 	go BackendPkg.ListenUserInfo(&sessionCookie, &cookieChanged)
-
-	for sessionCookie == "" && !cookieChanged {}
 	
 	// always check if cookie is changed
 	go func(){
@@ -65,5 +63,4 @@ func main() {
 
 	// run infinitely
 	for{}
-	BackendPkg.AzureSQLCloseDatabase();
 }

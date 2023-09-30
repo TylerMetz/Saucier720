@@ -11,14 +11,15 @@ import (
 	"fmt"
 	"context"
 	_ "errors"
+	"os"
 )
 
 var db *sql.DB
-var server = "mealdealz.database.windows.net"
+var server = os.Getenv("AZURE_SQL_SERVER")
 var port = 1433
-var user = "mealdealz-dev"
-var password = "Babayaga720"
-var database = "MealDealz-db"
+var user = os.Getenv("AZURE_SQL_USERNAME")
+var password = os.Getenv("AZUER_SQL_PASSWORD")
+var database = os.Getenv("AZUER_SQL_DATABASE")
 
 type Database struct {
 	Name string
