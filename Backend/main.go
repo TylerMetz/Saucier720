@@ -1,7 +1,7 @@
 package main
 
 import (
-	"Backend/BackendPkg"
+	"MealDealz-Backend/BackendPkg"
 )
 
 // global vars
