@@ -1,0 +1,31 @@
+{
+    "recipe1": {
+        "instructions": "Fake instructions 1",
+        "ingredients": [
+            "spaghetti",
+            "eggs",
+            "bacon",
+            "parmesan cheese",
+            "salt",
+            "black pepper"
+        ],
+        "title": "Spaghetti Carbonara",
+        "picture_link": null
+    },
+    "recipe2": {
+        "instructions": "Fake instruction 2",
+        "ingredients": [
+            "romaine lettuce",
+            "croutons",
+            "parmesan cheese",
+            "lemon juice",
+            "garlic",
+            "anchovy paste",
+            "olive oil",
+            "salt",
+            "black pepper"
+        ],
+        "title": "Caesar Salad",
+        "picture_link": null
+    }
+}
