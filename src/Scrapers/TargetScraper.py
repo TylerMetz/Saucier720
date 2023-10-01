@@ -16,6 +16,8 @@ def scrape_target():
     
     # Set up Selenium options 
     options = Options()
+    options.page_load_strategy = 'eager' # might have to delete bc lazy loading
+
     options.add_argument("--headless")
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
@@ -24,8 +26,8 @@ def scrape_target():
     options.add_experimental_option("prefs", {"profile.default_content_setting_values.geolocation": 2})
 
     # Installs driver depending on browser
-    driver=webdriver.Chrome(service=Service(ChromeDriverManager(version='114.0.5735.90').install()),options=options)
-
+    driver = webdriver.Chrome(options=options)
+    
     # Open page
     wait = WebDriverWait(driver, 10)
     driver.maximize_window()
