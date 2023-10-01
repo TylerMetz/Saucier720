@@ -17,7 +17,7 @@ def scrape_walmart():
     options = Options()
     options.page_load_strategy = 'eager'
 
-    options.add_argument("--headless")  # Run Chrome in headless mode
+    # options.add_argument("--headless")  # Run Chrome in headless mode
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-geolocation")
@@ -83,17 +83,17 @@ def scrape_walmart():
 
         # Page instances when the search bar is different sizes
         if page_count < 3:
-            next_button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "#maincontent > main > div > div:nth-child(3) > div > div > div:nth-child(2) > nav > ul > li:nth-child(7) > a")))
+            next_button = driver.find_element(By.CSS_SELECTOR, "#maincontent > main > div > div:nth-child(3) > div > div > div:nth-child(2) > nav > ul > li:nth-child(7) > a")
             next_button.click()
             page_count += 1
         elif page_count == total_pages:
             driver.close()
         elif page_count < 4 or page_count == total_pages - 2 or page_count == total_pages - 1:
-            next_button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "#maincontent > main > div > div:nth-child(3) > div > div > div:nth-child(2) > nav > ul > li:nth-child(8) > a")))
+            next_button = driver.find_element(By.CSS_SELECTOR, "#maincontent > main > div > div:nth-child(3) > div > div > div:nth-child(2) > nav > ul > li:nth-child(8) > a")
             next_button.click()
             page_count += 1
         elif page_count >= 4: 
-            next_button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "#maincontent > main > div > div:nth-child(3) > div > div > div:nth-child(2) > nav > ul > li:nth-child(9) > a")))
+            next_button = driver.find_element(By.CSS_SELECTOR, "#maincontent > main > div > div:nth-child(3) > div > div > div:nth-child(2) > nav > ul > li:nth-child(9) > a")
             next_button.click()
             page_count += 1
 

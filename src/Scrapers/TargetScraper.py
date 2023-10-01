@@ -16,9 +16,9 @@ def scrape_target():
     
     # Set up Selenium options 
     options = Options()
-    options.page_load_strategy = 'eager' # might have to delete bc lazy loading
+    # options.page_load_strategy = 'eager' # might have to delete bc lazy loading
 
-    options.add_argument("--headless")
+    # options.add_argument("--headless")
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
     options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36")
@@ -42,7 +42,7 @@ def scrape_target():
     # Get every other set of deals, stop when page not clickable
     while True:
         try:                                                                                        
-            load_more = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR,"#pageBodyContainer > div > div:nth-child(1) > div > div:nth-child(10) > div > div > div > div > div.styles__ProductListGridFadedLoading-sc-u8zdb1-0 > div.styles__StyledRow-sc-wmoju4-0.cbPxiq > div > div.Pagination__RootDiv-sc-sq3l8r-4.bdkChJ > div:nth-child(3) > button")))
+            load_more = driver.find_element(By.CSS_SELECTOR,"#pageBodyContainer > div > div:nth-child(1) > div > div:nth-child(10) > div > div > div > div > div.styles__ProductListGridFadedLoading-sc-u8zdb1-0 > div.styles__StyledRow-sc-wmoju4-0.cbPxiq > div > div.Pagination__RootDiv-sc-sq3l8r-4.bdkChJ > div:nth-child(3) > button")
             load_more.click()
             time.sleep(1)
             scrape_page(driver, False)
