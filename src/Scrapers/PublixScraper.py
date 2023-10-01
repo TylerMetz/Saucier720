@@ -25,6 +25,7 @@ def scrape_publix():
     options.add_argument("--disable-geolocation")
     options.add_experimental_option("prefs", {"profile.default_content_setting_values.geolocation": 2})
 
+    # Installs driver depending on browser
     driver = webdriver.Chrome(options=options)
     
     # Open page
