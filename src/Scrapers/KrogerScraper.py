@@ -13,7 +13,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 def scrape_kroger():
     # Get to test website 
-    url = "https://www.kroger.com/d/ship#promos"
+    url = "https://www.kroger.com/weeklyad/shoppable"
 
     # Set up Selenium options 
     options = Options()
@@ -33,41 +33,39 @@ def scrape_kroger():
     # Open page
     wait = WebDriverWait(driver, 5)
     driver.get(url)
-    time.sleep(5)
 
-    """
-    # Add cookies for location
-    cookie = {
-        "domain": ".kroger.com",
-        "hostOnly": False,
-        "httpOnly": True,
-        "name": "x-active-modality",
-        "path": "/",
-        "sameSite": "None",
-        "secure": True,
-        "session": True,
-        "storeId": "1",
-        "value": "{\"postalCode\":\"75080\",\"type\":\"DELIVERY\",\"lat\":32.96491600,\"lng\":-96.73026500,\"source\":\"FALLBACK_ACTIVE_MODALITY_COOKIE\",\"createdDate\":1696202473872}",
-        "id": 25
-    }
-    
-    # Delete an existing cookie with the same name, if it exists
-    loc_cookie = driver.get_cookie('x-active-modality')
-    if loc_cookie: 
-        loc_cookie['value'] = cookie['value']
-        driver.add_cookie(loc_cookie)
+    # Let page load
+    time.sleep(8)
 
-    """
-    
     # close pop-up
     try:
         popup = driver.find_element(By.CSS_SELECTOR, "#kds-Modal-ln80cktr > button")
         popup.click()
     except:
         print("no popup")
-    
-    # wait for deals to load
+
+    # click location menu
+    open_loc = driver.find_element(By.CSS_SELECTOR, "#QuickLinksContainerv2 > div > div.KrogerHeader-ItemV2.KrogerHeader-ModalitySelectorV2.flex.self-center.h-full > div > span > button")
+    open_loc.click()
     time.sleep(5)
+    # click zipcode
+    open_zip = driver.find_element(By.CSS_SELECTOR, "#root > div > div.Page-outer-block.stack-base > div.ReactModalPortal > div > div > div:nth-child(2) > div > div > button")
+    open_zip.click()
+    time.sleep(5)
+    # enter zipcode
+    search_bar = driver.find_element(By.CSS_SELECTOR,"#root > div > div.Page-outer-block.stack-base > div.ReactModalPortal > div > div > div:nth-child(2) > form > div > div.PostalCodeSearchBox-inputWrapper.PostalCodeSearchBox-wrapperNew.flex-1 > label > div > input")
+    search_bar.click()
+    search_bar.send_keys(Keys.BACKSPACE * 6)
+    search_bar.send_keys("75080")
+    search_button = driver.find_element(By.CSS_SELECTOR,"#root > div > div.Page-outer-block.stack-base > div.ReactModalPortal > div > div > div:nth-child(2) > form > div > div.PostalCodeSearchBox-inputWrapper.PostalCodeSearchBox-wrapperNew.flex-1 > label > div > button")
+    search_button.click()
+    time.sleep(5)
+    # select store
+    change_store = driver.find_element(By.CSS_SELECTOR, "#root > div > div.Page-outer-block.stack-base > div.ReactModalPortal > div > div > div.pb-8 > div:nth-child(5) > div > div > div:nth-child(2) > div.flex.flex-col > div > button")
+    change_store.click()
+    select_store = driver.find_element(By.CSS_SELECTOR, "#root > div > div.Page-outer-block.stack-base > div.ReactModalPortal > div > div > div.ModalitySelector--StoreSelectionMenu.overflow-y-scroll > div > div:nth-child(1) > div.StoreSelectionMenu-StoreButtonWrapper.flex.flex-row.sm\:flex-col.justify-between.sm\:self-end.mb-auto > div.StoreSelectionMenu-StartButton.text-right.flex.flex-col.sm\:mt-4.self-end.-mt-32 > button")
+    select_store.click()
+    time.sleep(8)
 
     # Create a Beautiful Soup object from HTML
     soup = BeautifulSoup(driver.page_source, 'html.parser')
