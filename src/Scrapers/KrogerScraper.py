@@ -30,6 +30,25 @@ def scrape_kroger():
     # Installs driver depending on browser
     driver = webdriver.Chrome(options=options)
 
+    # Add cookies for location
+    cookies = [
+        {
+            "domain": ".kroger.com",
+            "hostOnly": False,
+            "httpOnly": True,
+            "name": "x-active-modality",
+            "path": "/",
+            "sameSite": "unspecified",
+            "secure": True,
+            "session": True,
+            "storeId": "1",
+            "value": "{\"type\":\"IN_STORE\",\"locationId\":\"03500517\",\"source\":\"MODALITY_OPTIONS\",\"createdDate\":1696200148158}",
+            "id": 25
+        }
+    ]
+    for cookie in cookies:
+        driver.add_cookie(cookie)
+
     # Open page
     wait = WebDriverWait(driver, 5)
     driver.get(url)
