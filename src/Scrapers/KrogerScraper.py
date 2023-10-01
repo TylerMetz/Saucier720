@@ -13,7 +13,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 def scrape_kroger():
     # Get to test website 
-    url = "https://www.kroger.com/weeklyad/shoppable"
+    url = "https://www.kroger.com/d/ship#promos"
 
     # Set up Selenium options 
     options = Options()
@@ -30,32 +30,35 @@ def scrape_kroger():
     # Installs driver depending on browser
     driver = webdriver.Chrome(options=options)
 
-    # Add cookies for location
-    cookies = [
-        {
-            "domain": ".kroger.com",
-            "hostOnly": False,
-            "httpOnly": True,
-            "name": "x-active-modality",
-            "path": "/",
-            "sameSite": "unspecified",
-            "secure": True,
-            "session": True,
-            "storeId": "1",
-            "value": "{\"type\":\"IN_STORE\",\"locationId\":\"03500517\",\"source\":\"MODALITY_OPTIONS\",\"createdDate\":1696200148158}",
-            "id": 25
-        }
-    ]
-    for cookie in cookies:
-        driver.add_cookie(cookie)
-
     # Open page
     wait = WebDriverWait(driver, 5)
     driver.get(url)
+    time.sleep(5)
 
-    # Let page load
-    time.sleep(8)
+    """
+    # Add cookies for location
+    cookie = {
+        "domain": ".kroger.com",
+        "hostOnly": False,
+        "httpOnly": True,
+        "name": "x-active-modality",
+        "path": "/",
+        "sameSite": "None",
+        "secure": True,
+        "session": True,
+        "storeId": "1",
+        "value": "{\"postalCode\":\"75080\",\"type\":\"DELIVERY\",\"lat\":32.96491600,\"lng\":-96.73026500,\"source\":\"FALLBACK_ACTIVE_MODALITY_COOKIE\",\"createdDate\":1696202473872}",
+        "id": 25
+    }
+    
+    # Delete an existing cookie with the same name, if it exists
+    loc_cookie = driver.get_cookie('x-active-modality')
+    if loc_cookie: 
+        loc_cookie['value'] = cookie['value']
+        driver.add_cookie(loc_cookie)
 
+    """
+    
     # close pop-up
     try:
         popup = driver.find_element(By.CSS_SELECTOR, "#kds-Modal-ln80cktr > button")
