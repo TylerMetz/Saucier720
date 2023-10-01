@@ -19,7 +19,7 @@ def scrape_kroger():
     options = Options()
     options.page_load_strategy = 'eager'
 
-    options.add_argument("--headless")
+    # options.add_argument("--headless")
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
     options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36")
@@ -35,6 +35,30 @@ def scrape_kroger():
     driver.get(url)
 
     # Let page load
+    time.sleep(8)
+
+    # close pop-up
+    popup = driver.find_element(By.CSS_SELECTOR, "#kds-Modal-ln80cktr > button")
+    popup.click()
+
+    # click location menu
+    open_loc = driver.find_element(By.CSS_SELECTOR, "#QuickLinksContainerv2 > div > div.KrogerHeader-ItemV2.KrogerHeader-ModalitySelectorV2.flex.self-center.h-full > div > span > button")
+    open_loc.click()
+    # click zipcode
+    open_zip = driver.find_element(By.CSS_SELECTOR, "#root > div > div.Page-outer-block.stack-base > div.ReactModalPortal > div > div > div:nth-child(2) > div > div > button")
+    open_zip.click()
+    # enter zipcode
+    search_bar = driver.find_element(By.CSS_SELECTOR,"#root > div > div.Page-outer-block.stack-base > div.ReactModalPortal > div > div > div:nth-child(2) > form > div > div.PostalCodeSearchBox-inputWrapper.PostalCodeSearchBox-wrapperNew.flex-1 > label > div > input")
+    search_bar.click()
+    search_bar.send_keys("75080")
+    search_bar.send_keys(Keys.ENTER)
+    # select store
+    change_store = driver.find_element(By.CSS_SELECTOR, "#root > div > div.Page-outer-block.stack-base > div.ReactModalPortal > div > div > div.pb-8 > div:nth-child(5) > div > div > div:nth-child(2) > div.ml-auto > button")
+    change_store.click()
+    select_store = driver.find_element(By.CSS_SELECTOR, "#root > div > div.Page-outer-block.stack-base > div.ReactModalPortal > div > div > div.ModalitySelector--StoreSelectionMenu.overflow-y-scroll > div > div:nth-child(2) > div.StoreSelectionMenu-StoreButtonWrapper.flex.flex-row.sm\:flex-col.justify-between.sm\:self-end.mb-auto > div.StoreSelectionMenu-StartButton.text-right.flex.flex-col.sm\:mt-4.self-end.-mt-32 > button")
+    select_store.click()
+    
+    # wait for deals to load
     time.sleep(5)
 
     # Create a Beautiful Soup object from HTML
