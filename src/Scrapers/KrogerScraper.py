@@ -38,25 +38,11 @@ def scrape_kroger():
     time.sleep(8)
 
     # close pop-up
-    popup = driver.find_element(By.CSS_SELECTOR, "#kds-Modal-ln80cktr > button")
-    popup.click()
-
-    # click location menu
-    open_loc = driver.find_element(By.CSS_SELECTOR, "#QuickLinksContainerv2 > div > div.KrogerHeader-ItemV2.KrogerHeader-ModalitySelectorV2.flex.self-center.h-full > div > span > button")
-    open_loc.click()
-    # click zipcode
-    open_zip = driver.find_element(By.CSS_SELECTOR, "#root > div > div.Page-outer-block.stack-base > div.ReactModalPortal > div > div > div:nth-child(2) > div > div > button")
-    open_zip.click()
-    # enter zipcode
-    search_bar = driver.find_element(By.CSS_SELECTOR,"#root > div > div.Page-outer-block.stack-base > div.ReactModalPortal > div > div > div:nth-child(2) > form > div > div.PostalCodeSearchBox-inputWrapper.PostalCodeSearchBox-wrapperNew.flex-1 > label > div > input")
-    search_bar.click()
-    search_bar.send_keys("75080")
-    search_bar.send_keys(Keys.ENTER)
-    # select store
-    change_store = driver.find_element(By.CSS_SELECTOR, "#root > div > div.Page-outer-block.stack-base > div.ReactModalPortal > div > div > div.pb-8 > div:nth-child(5) > div > div > div:nth-child(2) > div.ml-auto > button")
-    change_store.click()
-    select_store = driver.find_element(By.CSS_SELECTOR, "#root > div > div.Page-outer-block.stack-base > div.ReactModalPortal > div > div > div.ModalitySelector--StoreSelectionMenu.overflow-y-scroll > div > div:nth-child(2) > div.StoreSelectionMenu-StoreButtonWrapper.flex.flex-row.sm\:flex-col.justify-between.sm\:self-end.mb-auto > div.StoreSelectionMenu-StartButton.text-right.flex.flex-col.sm\:mt-4.self-end.-mt-32 > button")
-    select_store.click()
+    try:
+        popup = driver.find_element(By.CSS_SELECTOR, "#kds-Modal-ln80cktr > button")
+        popup.click()
+    except:
+        print("no popup")
     
     # wait for deals to load
     time.sleep(5)
