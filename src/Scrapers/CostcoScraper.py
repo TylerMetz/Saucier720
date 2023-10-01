@@ -44,7 +44,7 @@ def scrape_costco():
         # Wait for the "Next Page" button to be clickable
         
         try:
-            next_button = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.CSS_SELECTOR, '#search-results > div.product-list.grid > nav > div > div.paging.col-xs-12 > ul > li.forward > a')))
+            next_button = driver.find_element(By.CSS_SELECTOR, "#search-results > div.product-list.grid > nav > div > div.paging.col-xs-12 > ul > li.forward > a")
             
             # get page html
             all_html += driver.page_source
@@ -53,7 +53,7 @@ def scrape_costco():
             next_button.click()
 
             # Re-locate the next_button element after the page navigation
-            next_button = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, '#search-results > div.product-list.grid > nav > div > div.paging.col-xs-12 > ul > li.forward > a')))
+            next_button = driver.find_element(By.CSS_SELECTOR, "#search-results > div.product-list.grid > nav > div > div.paging.col-xs-12 > ul > li.forward > a")
             
         except Exception as e:
             # Break the loop if the "Next Page" button is not clickable (end of pagination)
