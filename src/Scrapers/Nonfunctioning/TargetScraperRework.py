@@ -65,8 +65,8 @@ def scrape_costco():
     soup = BeautifulSoup(all_html, 'html.parser')
 
     # Extract the data and remove white space
-    products = [a.get_text(strip=True) for span in soup.find_all("span", class_="description") for a in span.find_all('a')]
-    prices = [price.get_text(strip=True) for price in soup.find_all("div", class_="price")]
+    products = [product.get_text(strip=True) for product in soup.find_all("a", class_="styles__StyledLink-sc-vpsldm-0 styles__StyledTitleLink-sc-14ktig2-1 cbOry csOImU h-display-block h-text-bold h-text-bs")]
+    prices = [price.get_text(strip=True) for price in soup.find_all("div", class_="h-padding-r-tiny")]
 
     # Print the extracted data
     for product, price in zip(products, prices):
