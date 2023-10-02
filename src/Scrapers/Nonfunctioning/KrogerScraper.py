@@ -37,14 +37,12 @@ def scrape_kroger():
     # Let page load
     time.sleep(8)
 
-    """
     # close pop-up
     try:
         popup = driver.find_element(By.CSS_SELECTOR, "#kds-Modal-ln80cktr > button")
         popup.click()
     except:
         print("no popup")
-    """
         
     # click location menu
     open_loc = driver.find_element(By.CSS_SELECTOR, "#QuickLinksContainerv2 > div > div.KrogerHeader-ItemV2.KrogerHeader-ModalitySelectorV2.flex.self-center.h-full > div > span > button")
@@ -60,9 +58,8 @@ def scrape_kroger():
     search_bar.send_keys(Keys.BACKSPACE * 6)
     search_bar.send_keys("75080")
     search_button = driver.find_element(By.CSS_SELECTOR,"#root > div > div.Page-outer-block.stack-base > div.ReactModalPortal > div > div > div:nth-child(2) > form > div > div.PostalCodeSearchBox-inputWrapper.PostalCodeSearchBox-wrapperNew.flex-1 > label > div > button")
-    time.sleep(100)
     search_button.click()
-    time.sleep(10)
+    time.sleep(100)
     # select store
     change_store = driver.find_element(By.CSS_SELECTOR, "#root > div > div.Page-outer-block.stack-base > div.ReactModalPortal > div > div > div.pb-8 > div:nth-child(5) > div > div > div:nth-child(2) > div.flex.flex-col > div > button")
     change_store.click()
