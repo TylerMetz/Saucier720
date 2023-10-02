@@ -17,7 +17,7 @@ def scrape_walmart():
     options = Options()
     options.page_load_strategy = 'eager'
 
-    # options.add_argument("--headless")  # Run Chrome in headless mode
+    options.add_argument("--headless")  # Run Chrome in headless mode
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-geolocation")
