@@ -16,6 +16,8 @@ def scrape_aldi():
     
     # Set up Selenium options 
     options = Options()
+    options.page_load_strategy = 'eager' 
+    
     options.add_argument("--headless")
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
@@ -25,7 +27,7 @@ def scrape_aldi():
     options.add_experimental_option("prefs", {"profile.default_content_setting_values.geolocation": 2})
 
     # Installs driver depending on browser
-    driver=webdriver.Chrome(service=Service(ChromeDriverManager(version='114.0.5735.90').install()),options=options)
+    driver = webdriver.Chrome(options=options)
 
     # Open page
     wait = WebDriverWait(driver, 5)
@@ -39,7 +41,7 @@ def scrape_aldi():
     driver.switch_to.frame(iframe)
 
     # Click search bar 
-    iframe_search_bar = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR,'#locationInput')))
+    iframe_search_bar = driver.find_element(By.CSS_SELECTOR,'#locationInput')
     iframe_search_bar.click()
     iframe_search_bar.send_keys("32601")
     iframe_search_bar.send_keys(Keys.ENTER)
@@ -47,19 +49,19 @@ def scrape_aldi():
     time.sleep(2)
 
     # Select store
-    iframe_select = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "#StoreListContainer > div:nth-child(1) > div.Nuep__ButtonsContainer-sc-16nxgew-10.iTUGQX > button")))
+    iframe_select = driver.find_element(By.CSS_SELECTOR, "#StoreListContainer > div:nth-child(1) > div.Nuep__ButtonsContainer-sc-16nxgew-10.iTUGQX > button")
     iframe_select.click()
 
     # Allow load & switch back out of iframe
     time.sleep(3)
 
     # Select the 'Categories' Button
-    select_categories = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR,"#StyledMenu > a.nav_cat.sc-16w2z54-1-Menu__MenuItem-bfxgCG.XJcnJ")))
+    select_categories = driver.find_element(By.CSS_SELECTOR,"#StyledMenu > a.nav_cat.sc-16w2z54-1-Menu__MenuItem-bfxgCG.JMikp")
     select_categories.click()
     time.sleep(2)
 
     # Select the 'Chilled' Button to make list appear and first set of deals load
-    select_chilled = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "#FusionApp > div.sc-1jkt2oq-0-content__BaseContentPage-gVrcAy.kkrzRm > div > div > div > div:nth-child(1) > a > div.RootList__Title-sc-11zih5d-6.bXcopH")))
+    select_chilled = driver.find_element(By.CSS_SELECTOR, "#FusionApp > div.sc-1jkt2oq-0-content__BaseContentPage-gVrcAy.kkrzRm > div > div > div > div:nth-child(1) > a")
     select_chilled.click()
     scrape_page(driver, 1)
     time.sleep(1)
@@ -78,7 +80,7 @@ def scrape_page(driver: webdriver.Chrome, tab: int):
     # Different conditions for anything not the first page
     if tab != 1:
         wait = WebDriverWait(driver, 5)
-        select_page = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "#DeptNaviLeft > ul > li:nth-child(" + str(tab) + ") > a > div")))
+        select_page = driver.find_element(By.CSS_SELECTOR, "#DeptNaviLeft > ul > li:nth-child(" + str(tab) + ") > a > div")
         select_page.click()
 
     time.sleep(1)
