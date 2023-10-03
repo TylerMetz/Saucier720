@@ -11,7 +11,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import TimeoutException
 from webdriver_manager.chrome import ChromeDriverManager
 
-def scrape_costco():
+def scrape_target():
     # Get to test website 
     url = "https://www.target.com/c/grocery-deals/-/N-k4uyq"
         
@@ -42,21 +42,24 @@ def scrape_costco():
 
     while True:
         # Wait for the "Next Page" button to be clickable
-        
-        try:
-            next_button = driver.find_element(By.CSS_SELECTOR, "#pageBodyContainer > div > div:nth-child(1) > div > div:nth-child(13) > div > div.styles__ProductListGridFadedLoading-sc-u8zdb1-0 > div.styles__StyledRow-sc-wmoju4-0.ftXYPI > div > div.styles__RootDiv-sc-l17a0m-5.hgWYOr > div:nth-child(3) > button")
-            
-            # get page html
-            all_html += driver.page_source
+        next_button = driver.find_element(By.CSS_SELECTOR, "#pageBodyContainer > div > div:nth-child(1) > div > div:nth-child(13) > div > div.styles__ProductListGridFadedLoading-sc-u8zdb1-0 > div.styles__StyledRow-sc-wmoju4-0.ftXYPI > div > div.styles__RootDiv-sc-l17a0m-5.hgWYOr > div:nth-child(3) > button")
+        WebDriverWait(driver, timeout=10).until(lambda d : next_button.is_displayed())
 
-            # Find the "Next Page" button and click it
-            next_button.click()
-            time.sleep(5) # next page loads
+        # If the "Next Page" button is disabled, stop the loop
+        if not next_button.is_enabled():
+            break
+
+        # get page html
+        all_html += driver.page_source
+
+        # click the next page button
+        next_button.click()
+        next_button = None
+        print("clicked next page")
+        time.sleep(5)
+
+        
             
-        except Exception as e:
-            # Break the loop if the "Next Page" button is not clickable (end of pagination)
-            print("no button mf")
-            break  
 
 
     # Close the WebDriver
@@ -76,7 +79,7 @@ def scrape_costco():
         print()
 
 def main():
-    scrape_costco()
+    scrape_target()
 
 if __name__ == "__main__":
     main()
