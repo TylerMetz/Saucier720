@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "Scraping..."
+echo "scraping..."
 python AldiScraper.py
 python CostcoScraper.py
 python PublixScraper.py
