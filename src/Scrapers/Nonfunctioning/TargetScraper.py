@@ -31,19 +31,21 @@ def scrape_target():
     driver = webdriver.Chrome(options=options)
 
     # Open page
-    wait = WebDriverWait(driver, 5)
     driver.get(url)
 
     # Let initial page load
-    time.sleep(10)
+    time.sleep(15)
     
     # Accumulate all page HTML
     all_html = ""
 
     while True:
         # Wait for the "Next Page" button to be clickable
-        next_button = driver.find_element(By.CSS_SELECTOR, "#pageBodyContainer > div > div:nth-child(1) > div > div:nth-child(13) > div > div.styles__ProductListGridFadedLoading-sc-u8zdb1-0 > div.styles__StyledRow-sc-wmoju4-0.ftXYPI > div > div.styles__RootDiv-sc-l17a0m-5.hgWYOr > div:nth-child(3) > button")
-        WebDriverWait(driver, timeout=10).until(lambda d : next_button.is_displayed())
+        try:
+            next_button = driver.find_element(By.CSS_SELECTOR, "#pageBodyContainer > div > div:nth-child(1) > div > div:nth-child(13) > div > div.styles__ProductListGridFadedLoading-sc-u8zdb1-0 > div.styles__StyledRow-sc-wmoju4-0.ftXYPI > div > div.styles__RootDiv-sc-l17a0m-5.hgWYOr > div:nth-child(3) > button")
+            WebDriverWait(driver, timeout=10).until(lambda d : next_button.is_displayed())
+        except:
+            break
 
         # If the "Next Page" button is disabled, stop the loop
         if not next_button.is_enabled():
@@ -53,9 +55,14 @@ def scrape_target():
         all_html += driver.page_source
 
         # click the next page button
-        next_button.click()
+        try:
+            next_button.click()
+        except:
+            time.sleep(5)
+            next_button.click()
+
         next_button = None
-        time.sleep(2) # let next page load
+        time.sleep(3) # let next page load
 
     # Close the WebDriver
     driver.quit()
