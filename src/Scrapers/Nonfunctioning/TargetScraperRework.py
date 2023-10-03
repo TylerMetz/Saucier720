@@ -19,7 +19,7 @@ def scrape_costco():
     options = Options()
     options.page_load_strategy = 'eager' 
 
-    options.add_argument("--headless")
+    # options.add_argument("--headless")
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
     options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36")
@@ -35,7 +35,7 @@ def scrape_costco():
     driver.get(url)
 
     # Let page load
-    time.sleep(3)
+    time.sleep(10)
     
     # Accumulate all page HTML
     all_html = ""
@@ -44,7 +44,7 @@ def scrape_costco():
         # Wait for the "Next Page" button to be clickable
         
         try:
-            next_button = driver.find_element(By.CSS_SELECTOR, "#pageBodyContainer > div > div:nth-child(1) > div > div:nth-child(12) > div > div.styles__ProductListGridFadedLoading-sc-u8zdb1-0 > div.styles__StyledRow-sc-wmoju4-0.ftXYPI > div > div.styles__RootDiv-sc-l17a0m-5.hgWYOr > div:nth-child(3) > button")
+            next_button = driver.find_element(By.CSS_SELECTOR, "#pageBodyContainer > div > div:nth-child(1) > div > div:nth-child(13) > div > div.styles__ProductListGridFadedLoading-sc-u8zdb1-0 > div.styles__StyledRow-sc-wmoju4-0.ftXYPI > div > div.styles__RootDiv-sc-l17a0m-5.hgWYOr > div:nth-child(3) > button")
             
             # get page html
             all_html += driver.page_source
@@ -55,6 +55,7 @@ def scrape_costco():
             
         except Exception as e:
             # Break the loop if the "Next Page" button is not clickable (end of pagination)
+            print("no button mf")
             break  
 
 
