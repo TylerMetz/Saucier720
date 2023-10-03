@@ -34,7 +34,7 @@ def scrape_target():
     wait = WebDriverWait(driver, 5)
     driver.get(url)
 
-    # Let page load
+    # Let initial page load
     time.sleep(10)
     
     # Accumulate all page HTML
@@ -55,12 +55,7 @@ def scrape_target():
         # click the next page button
         next_button.click()
         next_button = None
-        print("clicked next page")
-        time.sleep(5)
-
-        
-            
-
+        time.sleep(2) # let next page load
 
     # Close the WebDriver
     driver.quit()
