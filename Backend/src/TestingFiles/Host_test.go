@@ -5,7 +5,6 @@ import (
     "net/http/httptest"
     "testing"
 	"fmt"
-    "github.com/gorilla/mux"
 )
 
 func TestGetHandler(t *testing.T) {
