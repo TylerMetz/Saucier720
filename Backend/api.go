@@ -23,6 +23,7 @@ func (s *APIServer) Run() {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/Signup", makeHTTPHandleFunc(s.handleSignup))
+	//router.HandleFunc("/Login", )
 	router.HandleFunc("/Pantry", makeHTTPHandleFunc(s.handleGetPantry))
 	
 
@@ -43,7 +44,11 @@ func (s *APIServer) handleSignup(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	return WriteJSON(w, http.StatusOK, account)
+	resp := SignupResponse{
+		Response: "User Successfully Created!",
+	}
+
+	return WriteJSON(w, http.StatusOK, resp)
 }
 
 func (s *APIServer) handleGetPantry(w http.ResponseWriter, r *http.Request) error {
