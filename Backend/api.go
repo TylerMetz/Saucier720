@@ -23,6 +23,7 @@ func (s *APIServer) Run() {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/Pantry", makeHTTPHandleFunc(s.handleGetPantry))
+	router.HandleFunc("/Signup", makeHTTPHandleFunc(s.handleSignup))
 
 	http.ListenAndServe(s.listenAddr, router)
 }
