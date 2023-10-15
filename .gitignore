@@ -2,7 +2,6 @@
 .angular
 node_modules/*
 pkg/mod/*
-/bin/
-/pkg/
-/src/
-Backend/MealDealz-Backend
+Backend/bin/
+Backend/pkg/
+Backend/src/
