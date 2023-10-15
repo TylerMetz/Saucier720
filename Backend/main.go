@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"log"
+	_"log"
 )
 
 func main() {
@@ -11,7 +11,10 @@ func main() {
 
 	db, err := NewAzureDatabase()
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("Hi")
 	}
-
+	
+	if err := db.Init(); err !=nil {
+		fmt.Println("Hello")
+	}
 }
