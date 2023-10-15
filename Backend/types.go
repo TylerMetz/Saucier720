@@ -3,7 +3,7 @@ package main
 import "time"
 
 type Account struct {
-	UserName   	string `json:"UserName`
+	UserName   	string `json:"UserName"`
 	FirstName  	string `json:"FirstName"`
 	LastName   	string `json:"LastName"`
 	Email      	string `json:"Email"`
@@ -12,7 +12,7 @@ type Account struct {
 }
 
 type SignupRequest struct {
-	UserName   	string `json:"UserName`
+	UserName   	string `json:"UserName"`
 	FirstName  	string `json:"FirstName"`
 	LastName   	string `json:"LastName"`
 	Email      	string `json:"Email"`
@@ -30,4 +30,15 @@ type LoginRequest struct{
 
 type LoginResponse struct {
 	Cookie		string `json:"Cookie"`
+}
+
+func NewAccount(userName, firstName, lastName, email, password string) (*Account, error){
+	return &Account{
+		UserName: userName,
+		FirstName: firstName,
+		LastName: lastName,
+		Email: email,
+		Password: password,
+		DateJoined: time.Now(),
+	}, nil
 }

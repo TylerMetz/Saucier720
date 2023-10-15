@@ -22,10 +22,28 @@ func NewMealDealzServer(listenAddr string, store Storage) *APIServer{
 func (s *APIServer) Run() {
 	router := mux.NewRouter()
 
-	router.HandleFunc("/Pantry", makeHTTPHandleFunc(s.handleGetPantry))
 	router.HandleFunc("/Signup", makeHTTPHandleFunc(s.handleSignup))
+	router.HandleFunc("/Pantry", makeHTTPHandleFunc(s.handleGetPantry))
+	
 
 	http.ListenAndServe(s.listenAddr, router)
+}
+
+func (s *APIServer) handleSignup(w http.ResponseWriter, r *http.Request) error {
+	req := new(SignupRequest)
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil{
+		return err
+	}
+
+	account, err := NewAccount(req.UserName, req.FirstName, req.LastName, req.Email, req.Password)
+	if err != nil{
+		return err
+	}
+	if err := s.store.PostSignup(account); err != nil {
+		return err
+	}
+
+	return WriteJSON(w, http.StatusOK, account)
 }
 
 func (s *APIServer) handleGetPantry(w http.ResponseWriter, r *http.Request) error {

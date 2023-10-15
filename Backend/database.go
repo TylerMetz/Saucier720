@@ -18,6 +18,7 @@ var database = "MealDealz-db"
 
 type Storage interface {
 	GetPantry() (Pantry, error)
+	PostSignup(*Account) error
 }
 
 type AzureDatabase struct {
@@ -89,3 +90,29 @@ func (s *AzureDatabase) GetPantry() (Pantry, error) {
 	
 		return pantry, nil
 	}
+
+func (s *AzureDatabase) PostSignup(user *Account) error{
+	ctx := context.Background()
+
+	tsql := `
+		INSERT INTO dbo.user_data (FirstName, LastName, Email, UserName, Password)
+		VALUES (@FirstName, @LastName, @Email, @UserName, @Password);
+	`
+
+	stmt, err := s.db.Prepare(tsql)
+	if err != nil {
+		
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx,
+		sql.Named("FirstName", user.FirstName),
+		sql.Named("LastName", user.LastName),
+		sql.Named("Email", user.Email),
+		sql.Named("UserName", user.UserName),
+		sql.Named("Password", user.Password),
+	)
+
+	return nil
+}

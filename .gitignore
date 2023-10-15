@@ -5,3 +5,4 @@ pkg/mod/*
 Backend/bin/
 Backend/pkg/
 Backend/src/
+pkg
