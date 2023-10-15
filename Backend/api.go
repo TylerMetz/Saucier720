@@ -23,7 +23,7 @@ func (s *APIServer) Run() {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/Signup", makeHTTPHandleFunc(s.handleSignup))
-	//router.HandleFunc("/Login", )
+	router.HandleFunc("/Login", makeHTTPHandleFunc(s.handleLogin))
 	router.HandleFunc("/Pantry", makeHTTPHandleFunc(s.handleGetPantry))
 	
 
@@ -49,6 +49,24 @@ func (s *APIServer) handleSignup(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	return WriteJSON(w, http.StatusOK, resp)
+}
+
+func (s *APIServer) handleLogin(w http.ResponseWriter, r *http.Request) error {
+	req := new(LoginRequest)
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil{
+		return err
+	}
+
+	verify := s.store.CheckPassword(req.UserName, req.Password)
+	if(verify){
+		resp := LoginResponse{
+			// WE ACTUALLY NEED TO GENERATE A COOKIE
+			Cookie: "GeneratedCookie",
+		}
+		return WriteJSON(w, http.StatusOK, resp)
+	}
+
+	return WriteJSON(w, http.StatusBadRequest, 0)
 }
 
 func (s *APIServer) handleGetPantry(w http.ResponseWriter, r *http.Request) error {

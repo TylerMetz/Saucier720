@@ -19,6 +19,8 @@ var database = "MealDealz-db"
 type Storage interface {
 	GetPantry() (Pantry, error)
 	PostSignup(*Account) error
+	GetPasswordByUserName(string) (string, error)
+	CheckPassword(string, string) bool
 }
 
 type AzureDatabase struct {
@@ -115,4 +117,38 @@ func (s *AzureDatabase) PostSignup(user *Account) error{
 	)
 
 	return nil
+}
+
+func (s *AzureDatabase) GetPasswordByUserName(userName string) (string, error){
+	var password string
+
+	tsql := fmt.Sprintf(`
+	SELECT Password FROM dbo.user_data
+	WHERE UserName = @UserName;
+	`)
+
+	ctx := context.Background()
+    // Execute query
+    rows, err := s.db.QueryContext(
+		ctx,
+		tsql,
+		sql.Named("UserName", userName))
+	
+    if err != nil {
+		fmt.Println("error on user password query")
+        return "", err
+    }
+	for rows.Next() {
+		err = rows.Scan(&password)
+	}
+
+	return password, nil
+}
+
+func (s *AzureDatabase) CheckPassword(username, password string) bool {
+	dbPassword, _ := s.GetPasswordByUserName(username)
+	if(password == dbPassword){
+		return true
+	}
+	return false
 }
