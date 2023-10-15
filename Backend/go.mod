@@ -2,7 +2,10 @@ module github.com/TylerMetz/Saucier720/Backend
 
 go 1.19
 
-require github.com/microsoft/go-mssqldb v1.6.0
+require (
+	github.com/gorilla/mux v1.8.0
+	github.com/microsoft/go-mssqldb v1.6.0
+)
 
 require (
 	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.7.1 // indirect

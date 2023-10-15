@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	_"log"
+	"log"
 )
 
 func main() {
@@ -11,10 +11,9 @@ func main() {
 
 	db, err := NewAzureDatabase()
 	if err != nil {
-		fmt.Println("Hi")
+		log.Fatal(err)
 	}
 	
-	if err := db.Init(); err !=nil {
-		fmt.Println("Hello")
-	}
+	server := NewMealDealzServer(":1433", db)
+	server.Run()
 }

@@ -16,6 +16,10 @@ var user = "mealdealz-dev"
 var password = "Babayaga720"
 var database = "MealDealz-db"
 
+type Storage interface {
+	GetPantry() (Pantry, error)
+}
+
 type AzureDatabase struct {
 	db *sql.DB
 }
@@ -43,6 +47,45 @@ func NewAzureDatabase() (*AzureDatabase, error) {
 	}, nil
 }
 
-func (s *AzureDatabase) Init() error {
-	return nil
-}
+func (s *AzureDatabase) GetPantry() (Pantry, error) {	
+		// Create the pantry object
+		pantry := Pantry{
+			Ingredients:    []Ingredient{},
+		}
+	
+		tsql := fmt.Sprintf(`
+		SELECT UserName, FoodName, FoodType, Quantity FROM dbo.user_ingredients
+		`)
+	
+		ctx := context.Background()
+		rows, err := s.db.QueryContext(
+			ctx,
+			tsql,
+		)
+		if err != nil {
+			log.Fatal(err)
+		}
+	
+		// Loop through each row and add the food item to the pantry
+		for rows.Next() {
+			var name, foodName, foodType string
+			var quantity int
+	
+			err := rows.Scan(&name, &foodName, &foodType, &quantity)
+			if err != nil {
+				return Pantry{}, err
+			}
+
+			fmt.Println(foodName)
+	
+			pantry.Ingredients = append(pantry.Ingredients, Ingredient{
+				Name:        foodName,
+				FoodType: foodType,
+				SaleDetails: "",
+				Quantity: quantity,
+			})
+	
+		}
+	
+		return pantry, nil
+	}
