@@ -152,3 +152,7 @@ func (s *AzureDatabase) CheckPassword(username, password string) bool {
 	}
 	return false
 }
+
+// func (s *AzureDatabase) GetRecipes() ([]Recipe, error){
+// 	return 
+// }
