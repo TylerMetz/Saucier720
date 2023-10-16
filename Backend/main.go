@@ -14,6 +14,6 @@ func main() {
 		log.Fatal(err)
 	}
 	
-	server := NewMealDealzServer(":1433", db)
+	server := NewMealDealzServer(":8080", db)
 	server.Run()
 }

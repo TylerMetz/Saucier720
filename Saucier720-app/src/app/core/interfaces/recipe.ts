@@ -16,3 +16,7 @@ export interface RecipePost {
     ItemsInPantry: Ingredient[];
     ItemsOnSale: Ingredient[];
 }
+
+export interface RecipesResponse {
+    RecipeToPost: RecipePost[];
+}

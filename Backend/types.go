@@ -32,12 +32,23 @@ type LoginResponse struct {
 	Cookie		string `json:"Cookie"`
 }
 
-type Recipe struct {
-	RecipeId	string `json:"RecipeId"`
-	Title		string `json:"Title"`
-	Ingredients []string `json:"Ingredients"`
-	Instructions []string `json:"Instructions"`
-	UserName	string	`json:"UserName"`
+type RecipesRequest struct {
+	UserName   	string `json:"UserName"`
+}
+
+type RecipesResponse struct {
+	R RecomendedRecipes `json"RecomendedRecipes"`
+}
+
+type Ingredient struct {
+	Name 		string 	`json:"Name"`
+	FoodType 	string 	`json:"FoodType"`
+	SaleDetails string 	`json:"SaleDetails"`
+	Quantity 	int 	`json:"Quantity"`
+}
+
+type Pantry struct {
+	Ingredients []Ingredient
 }
 
 func NewAccount(userName, firstName, lastName, email, password string) (*Account, error){

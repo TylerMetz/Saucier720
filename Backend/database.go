@@ -18,6 +18,7 @@ var database = "MealDealz-db"
 
 type Storage interface {
 	GetPantry() (Pantry, error)
+	GetRecipes() (RecomendedRecipes, error)
 	PostSignup(*Account) error
 	GetPasswordByUserName(string) (string, error)
 	CheckPassword(string, string) bool
@@ -153,6 +154,7 @@ func (s *AzureDatabase) CheckPassword(username, password string) bool {
 	return false
 }
 
-// func (s *AzureDatabase) GetRecipes() ([]Recipe, error){
-// 	return 
-// }
+func (s *AzureDatabase) GetRecipes() (RecomendedRecipes, error){
+	
+	return RecomendedRecipes{}, nil
+}

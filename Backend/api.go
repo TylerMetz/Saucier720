@@ -25,7 +25,7 @@ func (s *APIServer) Run() {
 	router.HandleFunc("/Signup", makeHTTPHandleFunc(s.handleSignup))
 	router.HandleFunc("/Login", makeHTTPHandleFunc(s.handleLogin))
 	router.HandleFunc("/Pantry", makeHTTPHandleFunc(s.handleGetPantry))
-	//router.HandleFunc("/Recipes", makeHTTPHandleFunc(s.handleGetRecipes))
+	router.HandleFunc("/Recipes", makeHTTPHandleFunc(s.handleGetRecipes))
 	
 
 	http.ListenAndServe(s.listenAddr, router)
@@ -79,9 +79,23 @@ func (s *APIServer) handleGetPantry(w http.ResponseWriter, r *http.Request) erro
 	return WriteJSON(w, http.StatusOK, pantry)
 }
 
-// func (s *APIServer) handleGetRecipes(w http.ResponseWriter, r *http.Request) error{
+func (s *APIServer) handleGetRecipes(w http.ResponseWriter, r *http.Request) error{
+	req := new(RecipesRequest)
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil{
+		return err
+	}
 
-// }
+	recipes, err := s.store.GetRecipes() //get recipes
+	if err != nil {
+		return err
+	}
+
+	//rate them based on recomendation funcs
+	
+	//return recipes request
+
+	return WriteJSON(w, http.StatusOK, recipes)
+}
 
 func WriteJSON(w http.ResponseWriter, status int, v any) error {
 	w.Header().Add("Content-Type", "application/json")
