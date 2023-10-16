@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"sort"
+	// "sort"
 	"strings"
 	"golang.org/x/exp/slices"
 )
@@ -14,9 +14,7 @@ type Recommendation struct {
 }
 
 type RecomendedRecipes struct {
-	Recipes 		[]Recipe 		`json:"R"`
-	ItemsInPantry	[]Ingredient 	`json:"ItemsInPantry"`
-	ItemsOnSale		[]Ingredient 	`json:"ItemsOnSale"`
+	Recommendations []Recommendation
 }
 
 type Recipe struct {
@@ -24,7 +22,7 @@ type Recipe struct {
     Title          	string   	`json:"title"`
     Ingredients    	[]string 	`json:"ingredients"`
     Instructions   	string   	`json:"instructions"`
-    RecipeAuthor   	string 		`json"recipeAuthor"`
+    RecipeAuthor   	string 		`json:"recipeAuthor"`
 }
 
 func GetRecomendedRecipes(username string) (RecomendedRecipes, error) {
@@ -141,12 +139,12 @@ func ReturnRecipesWithHighestPercentageOfOwnedIngredients(userPantry Pantry, rec
 	return returnRecommendation
 }
 
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
+// func min(a, b int) int {
+// 	if a < b {
+// 		return a
+// 	}
+// 	return b
+// }
 
 // flip the slice
 func invertSlice(s []Recommendation) {

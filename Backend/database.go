@@ -6,6 +6,8 @@ import (
 	"context"
     "log"
     "fmt"
+	"time"
+	"encoding/json"
     _"errors"
 
 )
@@ -18,7 +20,8 @@ var database = "MealDealz-db"
 
 type Storage interface {
 	GetPantry() (Pantry, error)
-	GetRecipes() (RecomendedRecipes, error)
+	GetPantryByUser(string) (Pantry, error)
+	GetRecipes() ([]Recipe, error)
 	PostSignup(*Account) error
 	GetPasswordByUserName(string) (string, error)
 	CheckPassword(string, string) bool
@@ -79,8 +82,6 @@ func (s *AzureDatabase) GetPantry() (Pantry, error) {
 			if err != nil {
 				return Pantry{}, err
 			}
-
-			fmt.Println(foodName)
 	
 			pantry.Ingredients = append(pantry.Ingredients, Ingredient{
 				Name:        foodName,
@@ -92,14 +93,57 @@ func (s *AzureDatabase) GetPantry() (Pantry, error) {
 		}
 	
 		return pantry, nil
+}
+
+func (s *AzureDatabase) GetPantryByUser(username string) (Pantry, error) {	
+	// Create the pantry object
+	pantry := Pantry{
+		Ingredients:    []Ingredient{},
 	}
+
+	tsql := fmt.Sprintf(`
+	SELECT UserName, FoodName, FoodType, Quantity FROM dbo.user_ingredients
+	WHERE UserName = @UserName;
+	`)
+
+	ctx := context.Background()
+	rows, err := s.db.QueryContext(
+		ctx,
+		tsql,
+		sql.Named("UserName", username),
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Loop through each row and add the food item to the pantry
+	for rows.Next() {
+		var name, foodName, foodType string
+		var quantity int
+
+		err := rows.Scan(&name, &foodName, &foodType, &quantity)
+		if err != nil {
+			return Pantry{}, err
+		}
+
+		pantry.Ingredients = append(pantry.Ingredients, Ingredient{
+			Name:        foodName,
+			FoodType: foodType,
+			SaleDetails: "",
+			Quantity: quantity,
+		})
+
+	}
+
+	return pantry, nil
+}
 
 func (s *AzureDatabase) PostSignup(user *Account) error{
 	ctx := context.Background()
 
 	tsql := `
-		INSERT INTO dbo.user_data (FirstName, LastName, Email, UserName, Password)
-		VALUES (@FirstName, @LastName, @Email, @UserName, @Password);
+		INSERT INTO dbo.user_data (FirstName, LastName, Email, UserName, Password, DateJoined)
+		VALUES (@FirstName, @LastName, @Email, @UserName, @Password, @DateJoined);
 	`
 
 	stmt, err := s.db.Prepare(tsql)
@@ -115,6 +159,7 @@ func (s *AzureDatabase) PostSignup(user *Account) error{
 		sql.Named("Email", user.Email),
 		sql.Named("UserName", user.UserName),
 		sql.Named("Password", user.Password),
+		sql.Named("DateJoined", time.Now()),
 	)
 
 	return nil
@@ -154,7 +199,48 @@ func (s *AzureDatabase) CheckPassword(username, password string) bool {
 	return false
 }
 
-func (s *AzureDatabase) GetRecipes() (RecomendedRecipes, error){
-	
-	return RecomendedRecipes{}, nil
+func (s *AzureDatabase) GetRecipes() ([]Recipe, error){
+
+	recipes := []Recipe{
+	}
+
+	tsql := fmt.Sprintf(`
+	SELECT Title, Ingredients, Instructions, UserName from dbo.recipes;
+	`)
+
+
+	ctx := context.Background()
+	rows, err := s.db.QueryContext(
+		ctx,
+		tsql,
+	)
+
+	//Create Recipe
+	var title, ingredientsStr, instructions, userName string
+	for rows.Next() {
+		//append to recipe to get all
+		err = rows.Scan(&title, &ingredientsStr, &instructions, &userName)
+		if err != nil {
+			return []Recipe{}, err
+		}
+
+		var ingredients []string
+		err = json.Unmarshal([]byte(ingredientsStr), &ingredients)
+		if err != nil {
+			return []Recipe{}, err
+		}
+
+		recipe := Recipe{
+			Title:        title,
+			Ingredients:  ingredients,
+			Instructions: instructions,
+			RecipeID:     "1",
+			RecipeAuthor: userName,
+		}
+
+		recipes = append(recipes, recipe)
+	}
+
+	// return recipes
+	return recipes, nil
 }

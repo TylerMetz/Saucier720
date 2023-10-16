@@ -2,8 +2,10 @@ package main
 
 import (
 	"encoding/json"
-	_"fmt"
+	"fmt"
+	_ "fmt"
 	"net/http"
+
 	"github.com/gorilla/mux"
 )
 
@@ -87,14 +89,26 @@ func (s *APIServer) handleGetRecipes(w http.ResponseWriter, r *http.Request) err
 
 	recipes, err := s.store.GetRecipes() //get recipes
 	if err != nil {
+		fmt.Println("error getting recipes")
 		return err
 	}
 
+	//Get User Pantry
+	pantry, err := s.store.GetPantryByUser(req.UserName)
+
 	//rate them based on recomendation funcs
-	
+
+	recomendedRecipes := ReturnRecipesWithHighestPercentageOfOwnedIngredients(pantry, recipes, 50, []Ingredient{})
+
 	//return recipes request
 
-	return WriteJSON(w, http.StatusOK, recipes)
+	resp := new(RecipesResponse)
+
+	resp.R = RecomendedRecipes{ 
+		Recommendations: recomendedRecipes,
+	}
+
+	return WriteJSON(w, http.StatusOK, resp)
 }
 
 func WriteJSON(w http.ResponseWriter, status int, v any) error {

@@ -37,7 +37,7 @@ type RecipesRequest struct {
 }
 
 type RecipesResponse struct {
-	R RecomendedRecipes `json"RecomendedRecipes"`
+	R RecomendedRecipes `json:"RecomendedRecipes"`
 }
 
 type Ingredient struct {
