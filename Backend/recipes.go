@@ -18,7 +18,7 @@ type RecomendedRecipes struct {
 }
 
 type Recipe struct {
-    RecipeID        string   	`json:"recipeID"`
+    RecipeID        int   		`json:"recipeID"`
     Title          	string   	`json:"title"`
     Ingredients    	[]string 	`json:"ingredients"`
     Instructions   	string   	`json:"instructions"`

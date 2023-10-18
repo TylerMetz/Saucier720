@@ -19,12 +19,17 @@ var password = "Babayaga720"
 var database = "MealDealz-db"
 
 type Storage interface {
-	GetPantry() (Pantry, error)
-	GetPantryByUser(string) (Pantry, error)
-	GetRecipes() ([]Recipe, error)
+	// Signup / Login
 	PostSignup(*Account) error
 	GetPasswordByUserName(string) (string, error)
-	CheckPassword(string, string) bool
+	// Pantry
+	GetPantry() (Pantry, error)
+	GetPantryByUser(string) (Pantry, error)
+	// Recipes
+	GetRecipes() ([]Recipe, error)
+	GetUserCreatedRecipes() ([]Recipe, error)
+	GetMealDealzClassicRecipes() ([]Recipe, error)
+	CheckPassword(string, string) bool // remove this sam is a silly goose
 }
 
 type AzureDatabase struct {
@@ -205,7 +210,7 @@ func (s *AzureDatabase) GetRecipes() ([]Recipe, error){
 	}
 
 	tsql := fmt.Sprintf(`
-	SELECT Title, Ingredients, Instructions, UserName from dbo.recipes;
+	SELECT RecipeID, Title, Ingredients, Instructions, UserName from dbo.recipes;
 	`)
 
 
@@ -217,9 +222,10 @@ func (s *AzureDatabase) GetRecipes() ([]Recipe, error){
 
 	//Create Recipe
 	var title, ingredientsStr, instructions, userName string
+	var recipeID int
 	for rows.Next() {
 		//append to recipe to get all
-		err = rows.Scan(&title, &ingredientsStr, &instructions, &userName)
+		err = rows.Scan(&recipeID, &title, &ingredientsStr, &instructions, &userName)
 		if err != nil {
 			return []Recipe{}, err
 		}
@@ -234,7 +240,105 @@ func (s *AzureDatabase) GetRecipes() ([]Recipe, error){
 			Title:        title,
 			Ingredients:  ingredients,
 			Instructions: instructions,
-			RecipeID:     "1",
+			RecipeID:     recipeID,
+			RecipeAuthor: userName,
+		}
+
+		recipes = append(recipes, recipe)
+	}
+
+	// return recipes
+	return recipes, nil
+}
+
+func (s *AzureDatabase) GetUserCreatedRecipes() ([]Recipe, error){
+
+	recipes := []Recipe{
+	}
+
+	tsql := fmt.Sprintf(`
+	SELECT RecipeID, Title, Ingredients, Instructions, UserName from dbo.recipes
+	WHERE UserName != @UserName;
+	`)
+
+
+	ctx := context.Background()
+	rows, err := s.db.QueryContext(
+		ctx,
+		tsql,
+		sql.Named("UserName", "MealDealz Classic Recipes"),
+	)
+
+	//Create Recipe
+	var title, ingredientsStr, instructions, userName string
+	var recipeID int
+	for rows.Next() {
+		//append to recipe to get all
+		err = rows.Scan(&recipeID, &title, &ingredientsStr, &instructions, &userName)
+		if err != nil {
+			return []Recipe{}, err
+		}
+
+		var ingredients []string
+		err = json.Unmarshal([]byte(ingredientsStr), &ingredients)
+		if err != nil {
+			return []Recipe{}, err
+		}
+
+		recipe := Recipe{
+			Title:        title,
+			Ingredients:  ingredients,
+			Instructions: instructions,
+			RecipeID:     recipeID,
+			RecipeAuthor: userName,
+		}
+
+		recipes = append(recipes, recipe)
+	}
+
+	// return recipes
+	return recipes, nil
+}
+
+func (s *AzureDatabase) GetMealDealzClassicRecipes() ([]Recipe, error){
+
+	recipes := []Recipe{
+	}
+
+	tsql := fmt.Sprintf(`
+	SELECT RecipeID, Title, Ingredients, Instructions, UserName from dbo.recipes
+	WHERE UserName = @UserName;
+	`)
+
+
+	ctx := context.Background()
+	rows, err := s.db.QueryContext(
+		ctx,
+		tsql,
+		sql.Named("UserName", "MealDealz Classic Recipes"),
+	)
+
+	//Create Recipe
+	var title, ingredientsStr, instructions, userName string
+	var recipeID int
+	for rows.Next() {
+		//append to recipe to get all
+		err = rows.Scan(&recipeID, &title, &ingredientsStr, &instructions, &userName)
+		if err != nil {
+			return []Recipe{}, err
+		}
+
+		var ingredients []string
+		err = json.Unmarshal([]byte(ingredientsStr), &ingredients)
+		if err != nil {
+			return []Recipe{}, err
+		}
+
+		recipe := Recipe{
+			Title:        title,
+			Ingredients:  ingredients,
+			Instructions: instructions,
+			RecipeID:     recipeID,
 			RecipeAuthor: userName,
 		}
 

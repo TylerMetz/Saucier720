@@ -87,10 +87,38 @@ func (s *APIServer) handleGetRecipes(w http.ResponseWriter, r *http.Request) err
 		return err
 	}
 
+	var recipes []Recipe
+
+	// recipes, err := s.store.GetRecipes() //get recipes
 	//get recipes based on filters
+	if req.RecipeFilter.UserCreatedRecipes {
+		//get user created recipes
+		userCreatedRecipes, err := s.store.GetUserCreatedRecipes()
+		if err != nil { 
+			fmt.Println("error getting user created recipes")
+			return err
+		}
+		// add to recipes array
+		recipes = append(recipes, userCreatedRecipes...)
+	}
+	if req.RecipeFilter.MealDealzRecipes {
+		//get meal dealz recipes
+		mealDealzRecipes, err := s.store.GetMealDealzClassicRecipes()
+		if err != nil { 
+			fmt.Println("error getting mealdealz classic recipes")
+			return err
+		}
+		// add to recipes array
+		recipes = append(recipes, mealDealzRecipes...)
+	}
+	if req.RecipeFilter.SelfCreatedRecipes {	
+		//get self created recipes
+
+		// add to recipes array
+	}
+
 
 	
-	recipes, err := s.store.GetRecipes() //get recipes
 	if err != nil {
 		fmt.Println("error getting recipes")
 		return err
@@ -98,6 +126,9 @@ func (s *APIServer) handleGetRecipes(w http.ResponseWriter, r *http.Request) err
 
 	//Get User Pantry
 	pantry, err := s.store.GetPantryByUser(req.UserName)
+	if err != nil {
+		fmt.Println("error getting pantry")
+	}
 
 	//rate them based on recomendation funcs
 
