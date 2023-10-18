@@ -28,6 +28,7 @@ func (s *APIServer) Run() {
 	router.HandleFunc("/Login", makeHTTPHandleFunc(s.handleLogin))
 	router.HandleFunc("/Pantry", makeHTTPHandleFunc(s.handleGetPantry))
 	router.HandleFunc("/Recipes", makeHTTPHandleFunc(s.handleGetRecipes))
+	router.HandleFunc("/Recipes/Favorite", makeHTTPHandleFunc((s.handleGetFavRecipes)))
 	
 
 	http.ListenAndServe(s.listenAddr, router)
