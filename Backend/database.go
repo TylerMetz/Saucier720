@@ -29,6 +29,8 @@ type Storage interface {
 	GetRecipes() ([]Recipe, error)
 	GetUserCreatedRecipes() ([]Recipe, error)
 	GetRecipesByUserName(string) ([]Recipe, error)
+	GetRecipesByRecipeID(int) (Recipe, error)
+	GetFavoriteRecipes(string) ([]Recipe, error)
 }
 
 type AzureDatabase struct {
@@ -348,4 +350,101 @@ func (s *AzureDatabase) GetRecipesByUserName(username string) ([]Recipe, error) 
 
 	// return recipes
 	return recipes, nil
+}
+
+func (s *AzureDatabase) GetRecipesByRecipeID(id int) (Recipe, error) {
+	recipe := Recipe{}
+
+	tsql := fmt.Sprintf(`
+	SELECT Title, Ingredients, Instructions, UserName from dbo.recipes
+	WHERE RecipeID = @RecipeID;
+	`)
+
+	ctx := context.Background()
+	rows, err := s.db.QueryContext(
+		ctx,
+		tsql,
+		sql.Named("RecipeID", id),
+	)
+
+	//Create Recipe
+	var title, ingredientsStr, instructions, userName string
+	for rows.Next() {
+		//append to recipe to get all
+		err = rows.Scan(&title, &ingredientsStr, &instructions, &userName)
+		if err != nil {
+			return Recipe{}, err
+		}
+
+		var ingredients []string
+		err = json.Unmarshal([]byte(ingredientsStr), &ingredients)
+		if err != nil {
+			return Recipe{}, err
+		}
+
+		recipe = Recipe{
+			Title:        title,
+			Ingredients:  ingredients,
+			Instructions: instructions,
+			RecipeID:     id,
+			RecipeAuthor: userName,
+		}
+	}
+
+	// return recipes
+	return recipe, nil
+}
+
+func (s *AzureDatabase) GetFavoriteRecipes(username string) ([]Recipe, error) {
+	recipes := []Recipe{
+	}
+
+	tsql := fmt.Sprintf(`
+	SELECT RecipeID, Title, Ingredients, Instructions, UserName from dbo.recipes
+	WHERE RecipeID IN (
+		SELECT RecipeID FROM dbo.user_favorite_recipes
+		WHERE UserName = @UserName
+	);
+	`)
+
+	ctx := context.Background()
+	rows, err := s.db.QueryContext(
+		ctx,
+		tsql,
+		sql.Named("UserName", username),
+	)
+	if err != nil {
+		fmt.Println("error on favorite recipe query")
+		return []Recipe{}, err
+	}
+
+	var title, ingredientsStr, instructions, userName string
+	var recipeID int
+	for rows.Next() {
+		//append to recipe to get all
+		err = rows.Scan(&recipeID, &title, &ingredientsStr, &instructions, &userName)
+		if err != nil {
+			return []Recipe{}, err
+		}
+
+		var ingredients []string
+		err = json.Unmarshal([]byte(ingredientsStr), &ingredients)
+		if err != nil {
+			return []Recipe{}, err
+		}
+
+		recipe := Recipe{
+			Title:        title,
+			Ingredients:  ingredients,
+			Instructions: instructions,
+			RecipeID:     recipeID,
+			RecipeAuthor: userName,
+		}
+
+		recipes = append(recipes, recipe)
+	}
+
+	// return recipes
+	return recipes, nil
+
 }

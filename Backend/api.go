@@ -60,7 +60,7 @@ func (s *APIServer) handleLogin(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	verify := CheckPassword(s, req.UserName, req.Password)
+	verify := CheckPassword(s.store, req.UserName, req.Password)
 	if(verify){
 		resp := LoginResponse{
 			// WE ACTUALLY NEED TO GENERATE A COOKIE
