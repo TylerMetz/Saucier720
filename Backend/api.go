@@ -24,6 +24,7 @@ func NewMealDealzServer(listenAddr string, store Storage) *APIServer{
 func (s *APIServer) Run() {
 	router := mux.NewRouter()
 
+	//GETS
 	router.HandleFunc("/Signup", makeHTTPHandleFunc(s.handleSignup))
 	router.HandleFunc("/Login", makeHTTPHandleFunc(s.handleLogin))
 	router.HandleFunc("/Pantry", makeHTTPHandleFunc(s.handleGetPantry))
@@ -32,6 +33,10 @@ func (s *APIServer) Run() {
 	router.HandleFunc("/Deals", makeHTTPHandleFunc((s.handleGetDeals)))
 	router.HandleFunc("/Deals/Store", makeHTTPHandleFunc((s.handleGetDealsByStore)))
 	router.HandleFunc("/List", makeHTTPHandleFunc((s.handleGetList)))
+	// PUTS WILL BE NEXT
+	// THEN DELETE
+	// (UPDATES WILL PROB HAPPEN WITH PUTS)
+
 	
 
 	http.ListenAndServe(s.listenAddr, router)
