@@ -29,7 +29,6 @@ type Storage interface {
 	GetRecipes() ([]Recipe, error)
 	GetUserCreatedRecipes() ([]Recipe, error)
 	GetRecipesByUserName(string) ([]Recipe, error)
-	CheckPassword(string, string) bool // remove this sam is a silly goose
 }
 
 type AzureDatabase struct {
@@ -196,7 +195,7 @@ func (s *AzureDatabase) GetPasswordByUserName(userName string) (string, error){
 	return password, nil
 }
 
-func (s *AzureDatabase) CheckPassword(username, password string) bool {
+func CheckPassword(s *AzureDatabase, username, password string) bool {
 	dbPassword, _ := s.GetPasswordByUserName(username)
 	if(password == dbPassword){
 		return true
@@ -219,6 +218,10 @@ func (s *AzureDatabase) GetRecipes() ([]Recipe, error){
 		ctx,
 		tsql,
 	)
+	if err != nil {
+		fmt.Println("error on recipe query")
+		return []Recipe{}, err
+	}
 
 	//Create Recipe
 	var title, ingredientsStr, instructions, userName string
