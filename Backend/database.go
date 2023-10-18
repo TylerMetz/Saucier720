@@ -28,7 +28,7 @@ type Storage interface {
 	// Recipes
 	GetRecipes() ([]Recipe, error)
 	GetUserCreatedRecipes() ([]Recipe, error)
-	GetMealDealzClassicRecipes() ([]Recipe, error)
+	GetRecipesByUserName(string) ([]Recipe, error)
 	CheckPassword(string, string) bool // remove this sam is a silly goose
 }
 
@@ -252,7 +252,6 @@ func (s *AzureDatabase) GetRecipes() ([]Recipe, error){
 }
 
 func (s *AzureDatabase) GetUserCreatedRecipes() ([]Recipe, error){
-
 	recipes := []Recipe{
 	}
 
@@ -300,8 +299,7 @@ func (s *AzureDatabase) GetUserCreatedRecipes() ([]Recipe, error){
 	return recipes, nil
 }
 
-func (s *AzureDatabase) GetMealDealzClassicRecipes() ([]Recipe, error){
-
+func (s *AzureDatabase) GetRecipesByUserName(username string) ([]Recipe, error) {
 	recipes := []Recipe{
 	}
 
@@ -315,7 +313,7 @@ func (s *AzureDatabase) GetMealDealzClassicRecipes() ([]Recipe, error){
 	rows, err := s.db.QueryContext(
 		ctx,
 		tsql,
-		sql.Named("UserName", "MealDealz Classic Recipes"),
+		sql.Named("UserName", username),
 	)
 
 	//Create Recipe
