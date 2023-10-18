@@ -35,7 +35,7 @@ type Storage interface {
 	GetDeals() ([]Ingredient, error)
 	GetDealsByStore(string) ([]Ingredient, error)
 	// Cookies
-	GetCookie()
+	GetCookieByUserName() (string, error)
 }
 
 type AzureDatabase struct {
@@ -443,4 +443,42 @@ func (s *AzureDatabase) GetFavoriteRecipes(username string) ([]Recipe, error) {
 
 	// return recipes
 	return recipes, nil
+}
+
+func (s *AzureDatabase) GetDeals() ([]Ingredient, error) {
+	deals := []Ingredient{}
+
+	tsql := fmt.Sprintf(`
+	SELECT FoodName, SaleDetails from dbo.deals_data;
+	`)
+
+	ctx := context.Background()
+	rows, err := s.db.QueryContext(
+		ctx,
+		tsql,
+	)
+	if err != nil {
+		fmt.Println("error on deals query")
+		return []Ingredient{}, err
+	}
+
+	var foodName, saleDetails string
+	for rows.Next() {
+		//append to recipe to get all
+		err = rows.Scan(&foodName, &saleDetails)
+		if err != nil {
+			return []Ingredient{}, err
+		}
+
+		ingredient := Ingredient{
+			Name: 	  foodName,
+			SaleDetails: saleDetails,
+			FoodType: "Food", // will need to be updated when food typing introduced
+			Quantity: 1,
+		}
+
+		deals = append(deals, ingredient)
+	}
+
+	return []Ingredient{}, nil
 }
