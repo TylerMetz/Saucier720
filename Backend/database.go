@@ -31,6 +31,11 @@ type Storage interface {
 	GetRecipesByUserName(string) ([]Recipe, error)
 	GetRecipesByRecipeID(int) (Recipe, error)
 	GetFavoriteRecipes(string) ([]Recipe, error)
+	// Deals
+	GetDeals() ([]Ingredient, error)
+	GetDealsByStore(string) ([]Ingredient, error)
+	// Cookies
+	GetCookie()
 }
 
 type AzureDatabase struct {
@@ -195,14 +200,6 @@ func (s *AzureDatabase) GetPasswordByUserName(userName string) (string, error){
 	}
 
 	return password, nil
-}
-
-func CheckPassword(s *AzureDatabase, username, password string) bool {
-	dbPassword, _ := s.GetPasswordByUserName(username)
-	if(password == dbPassword){
-		return true
-	}
-	return false
 }
 
 func (s *AzureDatabase) GetRecipes() ([]Recipe, error){
@@ -446,5 +443,4 @@ func (s *AzureDatabase) GetFavoriteRecipes(username string) ([]Recipe, error) {
 
 	// return recipes
 	return recipes, nil
-
 }

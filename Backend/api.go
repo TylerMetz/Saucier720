@@ -143,6 +143,14 @@ func (s *APIServer) handleGetRecipes(w http.ResponseWriter, r *http.Request) err
 	return WriteJSON(w, http.StatusOK, resp)
 }
 
+func CheckPassword(s Storage, username, password string) bool {
+	dbPassword, _ := s.GetPasswordByUserName(username)
+	if(password == dbPassword){
+		return true
+	}
+	return false
+}
+
 func WriteJSON(w http.ResponseWriter, status int, v any) error {
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(status)
