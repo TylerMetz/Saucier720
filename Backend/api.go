@@ -31,6 +31,7 @@ func (s *APIServer) Run() {
 	router.HandleFunc("/Recipes/Favorite", makeHTTPHandleFunc((s.handleGetFavRecipes)))
 	router.HandleFunc("/Deals", makeHTTPHandleFunc((s.handleGetDeals)))
 	router.HandleFunc("/Deals/Store", makeHTTPHandleFunc((s.handleGetDealsByStore)))
+	router.HandleFunc("/List", makeHTTPHandleFunc((s.handleGetList)))
 	
 
 	http.ListenAndServe(s.listenAddr, router)
@@ -231,7 +232,7 @@ func (s *APIServer) handleGetList(w http.ResponseWriter, r *http.Request) error 
 	}
 
 	resp := new(ListResponse)
-	resp.Deals = deals
+	resp.List = deals
 
 	return WriteJSON(w, http.StatusOK, resp)
 }
