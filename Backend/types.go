@@ -44,11 +44,11 @@ type RecipesRequest struct {
 }
 
 type FavoriteRecipesRequest struct {
-	UserName   		string `json:"UserName"`
+	UserName   	string `json:"UserName"`
 }
 
 type RecipesResponse struct {
-	R 				RecomendedRecipes `json:"RecomendedRecipes"`
+	R 			RecomendedRecipes `json:"RecomendedRecipes"`
 }
 
 type DealsRequest struct { 
@@ -61,7 +61,15 @@ type DealsByStoreRequest struct {
 }
 
 type DealsResponse struct {
-	Deals []Ingredient `json:"Deals"`
+	Deals 		[]Ingredient `json:"Deals"`
+}
+
+type ListRequest struct {
+	UserName 	string 	`json:"UserName"`
+}
+
+type ListResponse struct {
+	List 		[]Ingredient `json:"List"`
 }
 
 type Ingredient struct {

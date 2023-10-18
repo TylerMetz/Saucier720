@@ -218,6 +218,24 @@ func (s *APIServer) handleGetDealsByStore(w http.ResponseWriter, r *http.Request
 }
 
 // handleGetList
+func (s *APIServer) handleGetList(w http.ResponseWriter, r *http.Request) error {
+	req := new(ListRequest)
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil{
+		return err
+	}
+
+	deals, err := s.store.GetShoppingListByUserName(req.UserName)
+	if err != nil { 
+		fmt.Println("error getting deals")
+		return err
+	}
+
+	resp := new(ListResponse)
+	resp.Deals = deals
+
+	return WriteJSON(w, http.StatusOK, resp)
+}
+
 
 func CheckPassword(s Storage, username, password string) bool {
 	dbPassword, _ := s.GetPasswordByUserName(username)
