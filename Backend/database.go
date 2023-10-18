@@ -449,7 +449,7 @@ func (s *AzureDatabase) GetDeals() ([]Ingredient, error) {
 	deals := []Ingredient{}
 
 	tsql := fmt.Sprintf(`
-	SELECT FoodName, SaleDetails from dbo.deals_data;
+	SELECT Store, FoodName, SaleDetails from dbo.deals_data;
 	`)
 
 	ctx := context.Background()
@@ -462,10 +462,50 @@ func (s *AzureDatabase) GetDeals() ([]Ingredient, error) {
 		return []Ingredient{}, err
 	}
 
-	var foodName, saleDetails string
+	var store, foodName, saleDetails string
 	for rows.Next() {
 		//append to recipe to get all
-		err = rows.Scan(&foodName, &saleDetails)
+		err = rows.Scan(&store, &foodName, &saleDetails)
+		if err != nil {
+			return []Ingredient{}, err
+		}
+
+		ingredient := Ingredient{
+			Name: 	  foodName,
+			SaleDetails: saleDetails,
+			FoodType: "Food", // will need to be updated when food typing introduced
+			Quantity: 1,
+		}
+
+		deals = append(deals, ingredient)
+	}
+
+	return []Ingredient{}, nil
+}
+
+func (s *AzureDatabase) GetDealsByStore(storeName string) ([]Ingredient, error) {
+	deals := []Ingredient{}
+
+	tsql := fmt.Sprintf(`
+	SELECT Store, FoodName, SaleDetails from dbo.deals_data
+	WHERE Store = @Store;
+	`)
+
+	ctx := context.Background()
+	rows, err := s.db.QueryContext(
+		ctx,
+		tsql,
+		sql.Named("Store", storeName),
+	)
+	if err != nil {
+		fmt.Println("error on deals by store query")
+		return []Ingredient{}, err
+	}
+
+	var store, foodName, saleDetails string
+	for rows.Next() {
+		//append to recipe to get all
+		err = rows.Scan(&store, &foodName, &saleDetails)
 		if err != nil {
 			return []Ingredient{}, err
 		}
