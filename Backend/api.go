@@ -144,6 +144,37 @@ func (s *APIServer) handleGetRecipes(w http.ResponseWriter, r *http.Request) err
 }
 
 // handleGetFavRecipes
+func (s *APIServer) handleGetFavRecipes(w http.ResponseWriter, r *http.Request) error{ 
+	req := new(FavoriteRecipesRequest)
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil{
+		return err
+	}
+
+	//get fav recipes
+	favRecipes, err := s.store.GetFavoriteRecipes(req.UserName)
+	if err != nil { 
+		fmt.Println("error getting fav recipes")
+		return err
+	}
+	//Get User Pantry
+	pantry, err := s.store.GetPantryByUser(req.UserName)
+	if err != nil {
+		fmt.Println("error getting pantry")
+	}
+
+	//getting deals to pass in, i think we could make all of these go func things and have them run concurrently?
+	deals, err := s.store.GetDeals()
+	if err != nil { 
+		fmt.Println("error getting deals")
+		return err
+	}
+
+	resp := new(RecipesResponse)
+
+	resp.R.Recommendations = ReturnRecipesWithHighestPercentageOfOwnedIngredients(pantry, favRecipes, len(favRecipes), deals)
+
+	return WriteJSON(w, http.StatusOK, resp)
+}
 
 // handleGetDeals - we should add a zipcode type to this? or go off the current user's zipcode setting (we also need to implement settings)
 

@@ -43,6 +43,10 @@ type RecipesRequest struct {
 	RecipeFilter 	RecipeFilter `json:"RecipeFilter"`
 }
 
+type FavoriteRecipesRequest struct {
+	UserName   		string `json:"UserName"`
+}
+
 type RecipesResponse struct {
 	R RecomendedRecipes `json:"RecomendedRecipes"`
 }
