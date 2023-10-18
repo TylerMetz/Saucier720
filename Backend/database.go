@@ -34,6 +34,8 @@ type Storage interface {
 	// Deals
 	GetDeals() ([]Ingredient, error)
 	GetDealsByStore(string) ([]Ingredient, error)
+	//List
+	GetShoppingListByUserName(string) ([]Ingredient, error)
 	// Cookies
 	GetCookieByUserName() (string, error)
 }
@@ -521,4 +523,74 @@ func (s *AzureDatabase) GetDealsByStore(storeName string) ([]Ingredient, error) 
 	}
 
 	return []Ingredient{}, nil
+}
+
+func (s *AzureDatabase) GetShoppingListByUserName(username string) ([]Ingredient, error) {
+	shoppingList := []Ingredient{}
+
+	tsql := fmt.Sprintf(`
+	SELECT UserName, FoodName, FoodType, Quantity FROM dbo.list
+	WHERE UserName = @UserName;
+	`)
+
+	ctx := context.Background()
+	rows, err := s.db.QueryContext(
+		ctx,
+		tsql,
+		sql.Named("UserName", username),
+	)
+	if err != nil {
+		fmt.Println("error on shopping list query")
+		return []Ingredient{}, err
+	}
+
+	var name, foodName, foodType string
+	var quantity int
+	for rows.Next() {
+		//append to recipe to get all
+		err = rows.Scan(&name, &foodName, &foodType, &quantity)
+		if err != nil {
+			return []Ingredient{}, err
+		}
+
+		ingredient := Ingredient{
+			Name: 	  foodName,
+			FoodType: foodType,
+			Quantity: quantity,
+			SaleDetails: "",
+		}
+
+		shoppingList = append(shoppingList, ingredient)
+	}
+
+	return shoppingList, nil
+}
+
+func (s *AzureDatabase) GetCookieByUserName(username string) (string, error) {
+	var cookie string
+
+	tsql := fmt.Sprintf(`
+	SELECT Cookie from dbo.deals_data
+	WHERE UserName = @UserName;
+	`)
+
+	ctx := context.Background()
+	rows, err := s.db.QueryContext(
+		ctx,
+		tsql,
+		sql.Named("UserName", username),
+	)
+	if err != nil {
+		fmt.Println("error on cookie query")
+		return "", err
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&cookie)
+		if err != nil {
+			return "", err
+		}
+	}
+
+	return cookie, nil
 }
