@@ -51,6 +51,14 @@ type RecipesResponse struct {
 	R RecomendedRecipes `json:"RecomendedRecipes"`
 }
 
+type DealsRequest struct { 
+	zipcode 		int `json:"Zipcode"`
+}
+
+type DealsResponse struct {
+	Deals []Ingredient `json:"Deals"`
+}
+
 type Ingredient struct {
 	Name 		string 	`json:"Name"`
 	FoodType 	string 	`json:"FoodType"`

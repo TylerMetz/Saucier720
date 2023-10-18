@@ -180,6 +180,11 @@ func (s *APIServer) handleGetFavRecipes(w http.ResponseWriter, r *http.Request) 
 
 // handleGetDeals - we should add a zipcode type to this? or go off the current user's zipcode setting (we also need to implement settings)
 func (s *APIServer) handleGetDeals(w http.ResponseWriter, r *http.Request) error { 
+	req := new(DealsRequest)
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil{
+		return err
+	}
+
 	deals, err := s.store.GetDeals()
 	if err != nil { 
 		fmt.Println("error getting deals")
@@ -190,6 +195,9 @@ func (s *APIServer) handleGetDeals(w http.ResponseWriter, r *http.Request) error
 }
 
 //handleGetDealsByStore
+func (s *APIServer) handleGetDealsByStore(w http.ResponseWriter, r *http.Request) error { 
+
+}
 
 // handleGetList
 
