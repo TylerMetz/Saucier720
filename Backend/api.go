@@ -30,6 +30,7 @@ func (s *APIServer) Run() {
 	router.HandleFunc("/Recipes", makeHTTPHandleFunc(s.handleGetRecipes))
 	router.HandleFunc("/Recipes/Favorite", makeHTTPHandleFunc((s.handleGetFavRecipes)))
 	router.HandleFunc("/Deals", makeHTTPHandleFunc((s.handleGetDeals)))
+	router.HandleFunc("/Deals/Store", makeHTTPHandleFunc((s.handleGetDealsByStore)))
 	
 
 	http.ListenAndServe(s.listenAddr, router)
@@ -191,12 +192,29 @@ func (s *APIServer) handleGetDeals(w http.ResponseWriter, r *http.Request) error
 		return err
 	}
 
-	return WriteJSON(w, http.StatusOK, deals)
+	resp := new(DealsResponse)
+	resp.Deals = deals
+
+	return WriteJSON(w, http.StatusOK, resp)
 }
 
 //handleGetDealsByStore
 func (s *APIServer) handleGetDealsByStore(w http.ResponseWriter, r *http.Request) error { 
+	req := new(DealsByStoreRequest)
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil{
+		return err
+	}
 
+	deals, err := s.store.GetDealsByStore(req.StoreName)
+	if err != nil { 
+		fmt.Println("error getting deals")
+		return err
+	}
+
+	resp := new(DealsResponse)
+	resp.Deals = deals
+
+	return WriteJSON(w, http.StatusOK, resp)
 }
 
 // handleGetList

@@ -48,11 +48,16 @@ type FavoriteRecipesRequest struct {
 }
 
 type RecipesResponse struct {
-	R RecomendedRecipes `json:"RecomendedRecipes"`
+	R 				RecomendedRecipes `json:"RecomendedRecipes"`
 }
 
 type DealsRequest struct { 
-	zipcode 		int `json:"Zipcode"`
+	Zipcode 	int 	`json:"Zipcode"`
+}
+
+type DealsByStoreRequest struct { 
+	StoreName 	string 	`json:"StoreName"`
+	Zipcode 	int 	`json:"Zipcode"`
 }
 
 type DealsResponse struct {
