@@ -29,6 +29,7 @@ func (s *APIServer) Run() {
 	router.HandleFunc("/Pantry", makeHTTPHandleFunc(s.handleGetPantry))
 	router.HandleFunc("/Recipes", makeHTTPHandleFunc(s.handleGetRecipes))
 	router.HandleFunc("/Recipes/Favorite", makeHTTPHandleFunc((s.handleGetFavRecipes)))
+	router.HandleFunc("/Deals", makeHTTPHandleFunc((s.handleGetDeals)))
 	
 
 	http.ListenAndServe(s.listenAddr, router)
@@ -178,6 +179,15 @@ func (s *APIServer) handleGetFavRecipes(w http.ResponseWriter, r *http.Request) 
 }
 
 // handleGetDeals - we should add a zipcode type to this? or go off the current user's zipcode setting (we also need to implement settings)
+func (s *APIServer) handleGetDeals(w http.ResponseWriter, r *http.Request) error { 
+	deals, err := s.store.GetDeals()
+	if err != nil { 
+		fmt.Println("error getting deals")
+		return err
+	}
+
+	return WriteJSON(w, http.StatusOK, deals)
+}
 
 //handleGetDealsByStore
 
