@@ -32,8 +32,15 @@ type LoginResponse struct {
 	Cookie		string `json:"Cookie"`
 }
 
+type RecipeFilter struct {
+	UserCreatedRecipes 	bool `json:"UserCreatedRecipes"`
+	MealDealzRecipes 	bool `json:"MealDealzRecipes"`
+	SelfCreatedRecipes 	bool `json:"SelfCreatedRecipes"` 	
+}
+
 type RecipesRequest struct {
-	UserName   	string `json:"UserName"`
+	UserName   		string `json:"UserName"`
+	RecipeFilter 	RecipeFilter `json:"RecipeFilter"`
 }
 
 type RecipesResponse struct {

@@ -87,6 +87,9 @@ func (s *APIServer) handleGetRecipes(w http.ResponseWriter, r *http.Request) err
 		return err
 	}
 
+	//get recipes based on filters
+
+	
 	recipes, err := s.store.GetRecipes() //get recipes
 	if err != nil {
 		fmt.Println("error getting recipes")
