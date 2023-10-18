@@ -143,6 +143,14 @@ func (s *APIServer) handleGetRecipes(w http.ResponseWriter, r *http.Request) err
 	return WriteJSON(w, http.StatusOK, resp)
 }
 
+// handleGetFavRecipes
+
+// handleGetDeals - we should add a zipcode type to this? or go off the current user's zipcode setting (we also need to implement settings)
+
+//handleGetDealsByStore
+
+// handleGetList
+
 func CheckPassword(s Storage, username, password string) bool {
 	dbPassword, _ := s.GetPasswordByUserName(username)
 	if(password == dbPassword){

@@ -37,7 +37,7 @@ type Storage interface {
 	//List
 	GetShoppingListByUserName(string) ([]Ingredient, error)
 	// Cookies
-	GetCookieByUserName() (string, error)
+	GetCookieByUserName(string) (string, error)
 }
 
 type AzureDatabase struct {
