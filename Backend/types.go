@@ -81,6 +81,15 @@ type PostPantryResponse struct {
 	Response 	string 		`json:"Response"`
 }
 
+type PostRecipeRequest struct {
+	UserName 	string 		`json:"UserName"`
+	Recipe 		Recipe 		`json:"Recipe"`
+}
+
+type PostRecipeResponse struct {
+	Response 	string 		`json:"Response"`
+}
+
 type Ingredient struct {
 	Name 		string 		`json:"Name"`
 	FoodType 	string 		`json:"FoodType"`

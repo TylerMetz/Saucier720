@@ -25,13 +25,14 @@ type Storage interface {
 	// Pantry
 	GetPantry() (Pantry, error)
 	GetPantryByUser(string) (Pantry, error)
+	PostPantryIngredient(string, Ingredient) error
 	// Recipes
 	GetRecipes() ([]Recipe, error)
 	GetUserCreatedRecipes() ([]Recipe, error)
 	GetRecipesByUserName(string) ([]Recipe, error)
 	GetRecipesByRecipeID(int) (Recipe, error)
 	GetFavoriteRecipes(string) ([]Recipe, error)
-	PostPantryIngredient(string, Ingredient) error
+	PostRecipe(string, Recipe) error
 	// Deals
 	GetDeals() ([]Ingredient, error)
 	GetDealsByStore(string) ([]Ingredient, error)
@@ -618,6 +619,35 @@ func (s *AzureDatabase) PostPantryIngredient(username string, newPantryItem Ingr
 		sql.Named("Quantity", newPantryItem.Quantity),
 	)
 	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *AzureDatabase) PostRecipe(username string, recipe Recipe) error {
+	ctx := context.Background()
+
+	tsql := fmt.Sprintf(`
+	INSERT INTO dbo.recipes (Title, Ingredients, Instructions, UserName)
+	VALUES (@Title, @Ingredients, @Instructions, @UserName);
+	`)
+
+	stmt, err := s.db.Prepare(tsql)
+	if err != nil {
+		
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx,
+		sql.Named("Title", recipe.Title),
+		sql.Named("Ingredients", recipe.Ingredients),
+		sql.Named("Instructions", recipe.Ingredients),
+		sql.Named("UserName", username),
+	)
+	if err != nil {
+		fmt.Println("error on recipe post")
 		return err
 	}
 
