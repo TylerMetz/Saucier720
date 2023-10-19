@@ -36,6 +36,7 @@ func (s *APIServer) Run() {
 	router.HandleFunc("/Signup", makeHTTPHandleFunc(s.handleSignup))
 	router.HandleFunc("/NewPantryItem", makeHTTPHandleFunc(s.handlePostPantryIngredient))
 	router.HandleFunc("/NewRecipe", makeHTTPHandleFunc(s.handlePostRecipe))
+	router.HandleFunc("/NewListIngredient", makeHTTPHandleFunc(s.handlePostList))
 	// THEN DELETE
 	// (UPDATES WILL PROB HAPPEN WITH PUTS)
 
@@ -275,6 +276,19 @@ func (s *APIServer) handlePostRecipe(w http.ResponseWriter, r *http.Request) err
 		Response: "Recipe Successfully Posted!",
 	}
 
+	return WriteJSON(w, http.StatusOK, resp)
+}
+
+func (s *APIServer) handlePostList(w http.ResponseWriter, r *http.Request) error { 
+	req := new(PostListRequest)
+
+	if err := s.store.PostListIngredient(req.UserName, req.Ingredient); err != nil {
+		return err
+	}
+
+	resp := PostListResponse {
+		Response: "Ingredient Successfully Posted!",
+	}
 	return WriteJSON(w, http.StatusOK, resp)
 }
 

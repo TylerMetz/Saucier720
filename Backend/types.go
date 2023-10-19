@@ -90,6 +90,15 @@ type PostRecipeResponse struct {
 	Response 	string 		`json:"Response"`
 }
 
+type PostListRequest struct {
+	UserName 	string 		`json:"UserName"`
+	Ingredient 	Ingredient 	`json:"Ingredient"`
+}
+
+type PostListResponse struct { 
+	Response 	string 		`json:"Response"`
+}
+
 type Ingredient struct {
 	Name 		string 		`json:"Name"`
 	FoodType 	string 		`json:"FoodType"`

@@ -38,6 +38,7 @@ type Storage interface {
 	GetDealsByStore(string) ([]Ingredient, error)
 	//List
 	GetShoppingListByUserName(string) ([]Ingredient, error)
+	PostListIngredient(string, Ingredient) error
 	// Cookies
 	GetCookieByUserName(string) (string, error)
 }
@@ -648,6 +649,35 @@ func (s *AzureDatabase) PostRecipe(username string, recipe Recipe) error {
 	)
 	if err != nil {
 		fmt.Println("error on recipe post")
+		return err
+	}
+
+	return nil
+}
+
+func (s *AzureDatabase) PostListIngredient(username string, ingredient Ingredient) error {
+	ctx := context.Background()
+
+	tsql := fmt.Sprintf(`
+	INSERT INTO dbo.user_lists (UserName, FoodName, FoodType, Quantity)
+	VALUES (@UserName, @FoodName, @FoodType, @Quantity);
+	`)
+
+	stmt, err := s.db.Prepare(tsql)
+	if err != nil {
+		
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx,
+		sql.Named("UserName", username),
+		sql.Named("FoodName", ingredient.Name),
+		sql.Named("FoodType", ingredient.FoodType),
+		sql.Named("Quantity", ingredient.Quantity),
+	)
+	if err != nil {
+		fmt.Println("error on list post")
 		return err
 	}
 
