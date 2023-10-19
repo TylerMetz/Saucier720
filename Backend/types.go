@@ -32,12 +32,44 @@ type LoginResponse struct {
 	Cookie		string `json:"Cookie"`
 }
 
+type RecipeFilter struct {
+	UserCreatedRecipes 	bool `json:"UserCreatedRecipes"`
+	MealDealzRecipes 	bool `json:"MealDealzRecipes"`
+	SelfCreatedRecipes 	bool `json:"SelfCreatedRecipes"` 	
+}
+
 type RecipesRequest struct {
+	UserName   		string `json:"UserName"`
+	RecipeFilter 	RecipeFilter `json:"RecipeFilter"`
+}
+
+type FavoriteRecipesRequest struct {
 	UserName   	string `json:"UserName"`
 }
 
 type RecipesResponse struct {
-	R RecomendedRecipes `json:"RecomendedRecipes"`
+	R 			RecomendedRecipes `json:"RecomendedRecipes"`
+}
+
+type DealsRequest struct { 
+	Zipcode 	int 	`json:"Zipcode"`
+}
+
+type DealsByStoreRequest struct { 
+	StoreName 	string 	`json:"StoreName"`
+	Zipcode 	int 	`json:"Zipcode"`
+}
+
+type DealsResponse struct {
+	Deals 		[]Ingredient `json:"Deals"`
+}
+
+type ListRequest struct {
+	UserName 	string 	`json:"UserName"`
+}
+
+type ListResponse struct {
+	List 		[]Ingredient `json:"List"`
 }
 
 type Ingredient struct {

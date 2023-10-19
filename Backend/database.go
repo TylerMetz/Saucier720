@@ -19,12 +19,25 @@ var password = "Babayaga720"
 var database = "MealDealz-db"
 
 type Storage interface {
-	GetPantry() (Pantry, error)
-	GetPantryByUser(string) (Pantry, error)
-	GetRecipes() ([]Recipe, error)
+	// Signup / Login
 	PostSignup(*Account) error
 	GetPasswordByUserName(string) (string, error)
-	CheckPassword(string, string) bool
+	// Pantry
+	GetPantry() (Pantry, error)
+	GetPantryByUser(string) (Pantry, error)
+	// Recipes
+	GetRecipes() ([]Recipe, error)
+	GetUserCreatedRecipes() ([]Recipe, error)
+	GetRecipesByUserName(string) ([]Recipe, error)
+	GetRecipesByRecipeID(int) (Recipe, error)
+	GetFavoriteRecipes(string) ([]Recipe, error)
+	// Deals
+	GetDeals() ([]Ingredient, error)
+	GetDealsByStore(string) ([]Ingredient, error)
+	//List
+	GetShoppingListByUserName(string) ([]Ingredient, error)
+	// Cookies
+	GetCookieByUserName(string) (string, error)
 }
 
 type AzureDatabase struct {
@@ -191,21 +204,13 @@ func (s *AzureDatabase) GetPasswordByUserName(userName string) (string, error){
 	return password, nil
 }
 
-func (s *AzureDatabase) CheckPassword(username, password string) bool {
-	dbPassword, _ := s.GetPasswordByUserName(username)
-	if(password == dbPassword){
-		return true
-	}
-	return false
-}
-
 func (s *AzureDatabase) GetRecipes() ([]Recipe, error){
 
 	recipes := []Recipe{
 	}
 
 	tsql := fmt.Sprintf(`
-	SELECT Title, Ingredients, Instructions, UserName from dbo.recipes;
+	SELECT RecipeID, Title, Ingredients, Instructions, UserName from dbo.recipes;
 	`)
 
 
@@ -214,12 +219,17 @@ func (s *AzureDatabase) GetRecipes() ([]Recipe, error){
 		ctx,
 		tsql,
 	)
+	if err != nil {
+		fmt.Println("error on recipe query")
+		return []Recipe{}, err
+	}
 
 	//Create Recipe
 	var title, ingredientsStr, instructions, userName string
+	var recipeID int
 	for rows.Next() {
 		//append to recipe to get all
-		err = rows.Scan(&title, &ingredientsStr, &instructions, &userName)
+		err = rows.Scan(&recipeID, &title, &ingredientsStr, &instructions, &userName)
 		if err != nil {
 			return []Recipe{}, err
 		}
@@ -234,7 +244,7 @@ func (s *AzureDatabase) GetRecipes() ([]Recipe, error){
 			Title:        title,
 			Ingredients:  ingredients,
 			Instructions: instructions,
-			RecipeID:     "1",
+			RecipeID:     recipeID,
 			RecipeAuthor: userName,
 		}
 
@@ -243,4 +253,344 @@ func (s *AzureDatabase) GetRecipes() ([]Recipe, error){
 
 	// return recipes
 	return recipes, nil
+}
+
+func (s *AzureDatabase) GetUserCreatedRecipes() ([]Recipe, error){
+	recipes := []Recipe{
+	}
+
+	tsql := fmt.Sprintf(`
+	SELECT RecipeID, Title, Ingredients, Instructions, UserName from dbo.recipes
+	WHERE UserName != @UserName;
+	`)
+
+
+	ctx := context.Background()
+	rows, err := s.db.QueryContext(
+		ctx,
+		tsql,
+		sql.Named("UserName", "MealDealz Classic Recipes"),
+	)
+
+	//Create Recipe
+	var title, ingredientsStr, instructions, userName string
+	var recipeID int
+	for rows.Next() {
+		//append to recipe to get all
+		err = rows.Scan(&recipeID, &title, &ingredientsStr, &instructions, &userName)
+		if err != nil {
+			return []Recipe{}, err
+		}
+
+		var ingredients []string
+		err = json.Unmarshal([]byte(ingredientsStr), &ingredients)
+		if err != nil {
+			return []Recipe{}, err
+		}
+
+		recipe := Recipe{
+			Title:        title,
+			Ingredients:  ingredients,
+			Instructions: instructions,
+			RecipeID:     recipeID,
+			RecipeAuthor: userName,
+		}
+
+		recipes = append(recipes, recipe)
+	}
+
+	// return recipes
+	return recipes, nil
+}
+
+func (s *AzureDatabase) GetRecipesByUserName(username string) ([]Recipe, error) {
+	recipes := []Recipe{
+	}
+
+	tsql := fmt.Sprintf(`
+	SELECT RecipeID, Title, Ingredients, Instructions, UserName from dbo.recipes
+	WHERE UserName = @UserName;
+	`)
+
+
+	ctx := context.Background()
+	rows, err := s.db.QueryContext(
+		ctx,
+		tsql,
+		sql.Named("UserName", username),
+	)
+
+	//Create Recipe
+	var title, ingredientsStr, instructions, userName string
+	var recipeID int
+	for rows.Next() {
+		//append to recipe to get all
+		err = rows.Scan(&recipeID, &title, &ingredientsStr, &instructions, &userName)
+		if err != nil {
+			return []Recipe{}, err
+		}
+
+		var ingredients []string
+		err = json.Unmarshal([]byte(ingredientsStr), &ingredients)
+		if err != nil {
+			return []Recipe{}, err
+		}
+
+		recipe := Recipe{
+			Title:        title,
+			Ingredients:  ingredients,
+			Instructions: instructions,
+			RecipeID:     recipeID,
+			RecipeAuthor: userName,
+		}
+
+		recipes = append(recipes, recipe)
+	}
+
+	// return recipes
+	return recipes, nil
+}
+
+func (s *AzureDatabase) GetRecipesByRecipeID(id int) (Recipe, error) {
+	recipe := Recipe{}
+
+	tsql := fmt.Sprintf(`
+	SELECT Title, Ingredients, Instructions, UserName from dbo.recipes
+	WHERE RecipeID = @RecipeID;
+	`)
+
+	ctx := context.Background()
+	rows, err := s.db.QueryContext(
+		ctx,
+		tsql,
+		sql.Named("RecipeID", id),
+	)
+
+	//Create Recipe
+	var title, ingredientsStr, instructions, userName string
+	for rows.Next() {
+		//append to recipe to get all
+		err = rows.Scan(&title, &ingredientsStr, &instructions, &userName)
+		if err != nil {
+			return Recipe{}, err
+		}
+
+		var ingredients []string
+		err = json.Unmarshal([]byte(ingredientsStr), &ingredients)
+		if err != nil {
+			return Recipe{}, err
+		}
+
+		recipe = Recipe{
+			Title:        title,
+			Ingredients:  ingredients,
+			Instructions: instructions,
+			RecipeID:     id,
+			RecipeAuthor: userName,
+		}
+	}
+
+	// return recipes
+	return recipe, nil
+}
+
+func (s *AzureDatabase) GetFavoriteRecipes(username string) ([]Recipe, error) {
+	recipes := []Recipe{
+	}
+
+	tsql := fmt.Sprintf(`
+	SELECT RecipeID, Title, Ingredients, Instructions, UserName from dbo.recipes
+	WHERE RecipeID IN (
+		SELECT RecipeID FROM dbo.user_favorite_recipes
+		WHERE UserName = @UserName
+	);
+	`)
+
+	ctx := context.Background()
+	rows, err := s.db.QueryContext(
+		ctx,
+		tsql,
+		sql.Named("UserName", username),
+	)
+	if err != nil {
+		fmt.Println("error on favorite recipe query")
+		return []Recipe{}, err
+	}
+
+	var title, ingredientsStr, instructions, userName string
+	var recipeID int
+	for rows.Next() {
+		//append to recipe to get all
+		err = rows.Scan(&recipeID, &title, &ingredientsStr, &instructions, &userName)
+		if err != nil {
+			return []Recipe{}, err
+		}
+
+		var ingredients []string
+		err = json.Unmarshal([]byte(ingredientsStr), &ingredients)
+		if err != nil {
+			return []Recipe{}, err
+		}
+
+		recipe := Recipe{
+			Title:        title,
+			Ingredients:  ingredients,
+			Instructions: instructions,
+			RecipeID:     recipeID,
+			RecipeAuthor: userName,
+		}
+
+		recipes = append(recipes, recipe)
+	}
+
+	// return recipes
+	return recipes, nil
+}
+
+func (s *AzureDatabase) GetDeals() ([]Ingredient, error) {
+	deals := []Ingredient{}
+
+	tsql := fmt.Sprintf(`
+	SELECT Store, FoodName, SaleDetails from dbo.deals_data;
+	`)
+
+	ctx := context.Background()
+	rows, err := s.db.QueryContext(
+		ctx,
+		tsql,
+	)
+	if err != nil {
+		fmt.Println("error on deals query")
+		return []Ingredient{}, err
+	}
+
+	var store, foodName, saleDetails string
+	for rows.Next() {
+		//append to recipe to get all
+		err = rows.Scan(&store, &foodName, &saleDetails)
+		if err != nil {
+			return []Ingredient{}, err
+		}
+
+		ingredient := Ingredient{
+			Name: 	  foodName,
+			SaleDetails: saleDetails,
+			FoodType: "Food", // will need to be updated when food typing introduced
+			Quantity: 1,
+		}
+
+		deals = append(deals, ingredient)
+	}
+
+	return []Ingredient{}, nil
+}
+
+func (s *AzureDatabase) GetDealsByStore(storeName string) ([]Ingredient, error) {
+	deals := []Ingredient{}
+
+	tsql := fmt.Sprintf(`
+	SELECT Store, FoodName, SaleDetails from dbo.deals_data
+	WHERE Store = @Store;
+	`)
+
+	ctx := context.Background()
+	rows, err := s.db.QueryContext(
+		ctx,
+		tsql,
+		sql.Named("Store", storeName),
+	)
+	if err != nil {
+		fmt.Println("error on deals by store query")
+		return []Ingredient{}, err
+	}
+
+	var store, foodName, saleDetails string
+	for rows.Next() {
+		//append to recipe to get all
+		err = rows.Scan(&store, &foodName, &saleDetails)
+		if err != nil {
+			return []Ingredient{}, err
+		}
+
+		ingredient := Ingredient{
+			Name: 	  foodName,
+			SaleDetails: saleDetails,
+			FoodType: "Food", // will need to be updated when food typing introduced
+			Quantity: 1,
+		}
+
+		deals = append(deals, ingredient)
+	}
+
+	return []Ingredient{}, nil
+}
+
+func (s *AzureDatabase) GetShoppingListByUserName(username string) ([]Ingredient, error) {
+	shoppingList := []Ingredient{}
+
+	tsql := fmt.Sprintf(`
+	SELECT UserName, FoodName, FoodType, Quantity FROM dbo.list
+	WHERE UserName = @UserName;
+	`)
+
+	ctx := context.Background()
+	rows, err := s.db.QueryContext(
+		ctx,
+		tsql,
+		sql.Named("UserName", username),
+	)
+	if err != nil {
+		fmt.Println("error on shopping list query")
+		return []Ingredient{}, err
+	}
+
+	var name, foodName, foodType string
+	var quantity int
+	for rows.Next() {
+		//append to recipe to get all
+		err = rows.Scan(&name, &foodName, &foodType, &quantity)
+		if err != nil {
+			return []Ingredient{}, err
+		}
+
+		ingredient := Ingredient{
+			Name: 	  foodName,
+			FoodType: foodType,
+			Quantity: quantity,
+			SaleDetails: "",
+		}
+
+		shoppingList = append(shoppingList, ingredient)
+	}
+
+	return shoppingList, nil
+}
+
+func (s *AzureDatabase) GetCookieByUserName(username string) (string, error) {
+	var cookie string
+
+	tsql := fmt.Sprintf(`
+	SELECT Cookie from dbo.deals_data
+	WHERE UserName = @UserName;
+	`)
+
+	ctx := context.Background()
+	rows, err := s.db.QueryContext(
+		ctx,
+		tsql,
+		sql.Named("UserName", username),
+	)
+	if err != nil {
+		fmt.Println("error on cookie query")
+		return "", err
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&cookie)
+		if err != nil {
+			return "", err
+		}
+	}
+
+	return cookie, nil
 }
