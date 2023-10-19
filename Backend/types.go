@@ -72,6 +72,11 @@ type ListResponse struct {
 	List 		[]Ingredient `json:"List"`
 }
 
+type PostPantryRequest struct {
+	UserName 	string 	`json:"UserName"`
+	Ingredient 	Ingredient `json:"Ingredient"`
+}
+
 type Ingredient struct {
 	Name 		string 	`json:"Name"`
 	FoodType 	string 	`json:"FoodType"`

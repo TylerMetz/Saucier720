@@ -25,7 +25,6 @@ func (s *APIServer) Run() {
 	router := mux.NewRouter()
 
 	//GETS
-	router.HandleFunc("/Signup", makeHTTPHandleFunc(s.handleSignup))
 	router.HandleFunc("/Login", makeHTTPHandleFunc(s.handleLogin))
 	router.HandleFunc("/Pantry", makeHTTPHandleFunc(s.handleGetPantry))
 	router.HandleFunc("/Recipes", makeHTTPHandleFunc(s.handleGetRecipes))
@@ -34,6 +33,8 @@ func (s *APIServer) Run() {
 	router.HandleFunc("/Deals/Store", makeHTTPHandleFunc((s.handleGetDealsByStore)))
 	router.HandleFunc("/List", makeHTTPHandleFunc((s.handleGetList)))
 	// PUTS WILL BE NEXT
+	router.HandleFunc("/Signup", makeHTTPHandleFunc(s.handleSignup))
+	router.HandleFunc("/NewPantryItem", makeHTTPHandleFunc(s.handlePostPantryIngredient))
 	// THEN DELETE
 	// (UPDATES WILL PROB HAPPEN WITH PUTS)
 
@@ -242,6 +243,22 @@ func (s *APIServer) handleGetList(w http.ResponseWriter, r *http.Request) error 
 	return WriteJSON(w, http.StatusOK, resp)
 }
 
+func (s *APIServer) handlePostPantryIngredient(w http.ResponseWriter, r *http.Request) error { 
+	req := new(PostPantryRequest)
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil{
+		return err
+	}
+
+	if err := s.store.PostPantryIngredient(account); err != nil {
+		return err
+	}
+
+	resp := SignupResponse{
+		Response: "User Successfully Created!",
+	}
+
+	return WriteJSON(w, http.StatusOK, resp)
+}
 
 func CheckPassword(s Storage, username, password string) bool {
 	dbPassword, _ := s.GetPasswordByUserName(username)

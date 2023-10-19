@@ -594,3 +594,31 @@ func (s *AzureDatabase) GetCookieByUserName(username string) (string, error) {
 
 	return cookie, nil
 }
+
+func (s *AzureDatabase) PostPantryIngredient(username string, newPantryItem Ingredient) error {
+	ctx := context.Background()
+
+	tsql := fmt.Sprintf(`
+		INSERT INTO dbo.user_ingredients (UserName, FoodName, FoodType, Quantity)
+		VALUES (@UserName, @FoodName, @FoodType, @Quantity);
+	`)
+
+	stmt, err := s.db.Prepare(tsql)
+	if err != nil {
+		
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx,
+		sql.Named("UserName", username),
+		sql.Named("FoodName", newPantryItem.Name),
+		sql.Named("FoodType", newPantryItem.FoodType),
+		sql.Named("Quantity", newPantryItem.Quantity),
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
