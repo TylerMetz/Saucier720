@@ -31,6 +31,7 @@ type Storage interface {
 	GetRecipesByUserName(string) ([]Recipe, error)
 	GetRecipesByRecipeID(int) (Recipe, error)
 	GetFavoriteRecipes(string) ([]Recipe, error)
+	PostPantryIngredient(string, Ingredient) error
 	// Deals
 	GetDeals() ([]Ingredient, error)
 	GetDealsByStore(string) ([]Ingredient, error)

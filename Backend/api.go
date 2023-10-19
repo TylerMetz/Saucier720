@@ -249,12 +249,12 @@ func (s *APIServer) handlePostPantryIngredient(w http.ResponseWriter, r *http.Re
 		return err
 	}
 
-	if err := s.store.PostPantryIngredient(account); err != nil {
+	if err := s.store.PostPantryIngredient(req.UserName, req.Ingredient); err != nil {
 		return err
 	}
 
-	resp := SignupResponse{
-		Response: "User Successfully Created!",
+	resp := PostPantryResponse{
+		Response: "Ingredient Successfully Posted!",
 	}
 
 	return WriteJSON(w, http.StatusOK, resp)

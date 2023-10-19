@@ -20,7 +20,7 @@ type SignupRequest struct {
 }
 
 type SignupResponse struct {
-	Response	string `json:"Response"`
+	Response	string 	`json:"Response"`
 }
 
 type LoginRequest struct{
@@ -29,7 +29,7 @@ type LoginRequest struct{
 }
 
 type LoginResponse struct {
-	Cookie		string `json:"Cookie"`
+	Cookie		string 		`json:"Cookie"`
 }
 
 type RecipeFilter struct {
@@ -44,7 +44,7 @@ type RecipesRequest struct {
 }
 
 type FavoriteRecipesRequest struct {
-	UserName   	string `json:"UserName"`
+	UserName   	string 		`json:"UserName"`
 }
 
 type RecipesResponse struct {
@@ -52,12 +52,12 @@ type RecipesResponse struct {
 }
 
 type DealsRequest struct { 
-	Zipcode 	int 	`json:"Zipcode"`
+	Zipcode 	int 		`json:"Zipcode"`
 }
 
 type DealsByStoreRequest struct { 
-	StoreName 	string 	`json:"StoreName"`
-	Zipcode 	int 	`json:"Zipcode"`
+	StoreName 	string 		`json:"StoreName"`
+	Zipcode 	int 		`json:"Zipcode"`
 }
 
 type DealsResponse struct {
@@ -65,7 +65,7 @@ type DealsResponse struct {
 }
 
 type ListRequest struct {
-	UserName 	string 	`json:"UserName"`
+	UserName 	string 		`json:"UserName"`
 }
 
 type ListResponse struct {
@@ -73,15 +73,19 @@ type ListResponse struct {
 }
 
 type PostPantryRequest struct {
-	UserName 	string 	`json:"UserName"`
-	Ingredient 	Ingredient `json:"Ingredient"`
+	UserName 	string 		`json:"UserName"`
+	Ingredient 	Ingredient 	`json:"Ingredient"`
+}
+
+type PostPantryResponse struct { 
+	Response 	string 		`json:"Response"`
 }
 
 type Ingredient struct {
-	Name 		string 	`json:"Name"`
-	FoodType 	string 	`json:"FoodType"`
-	SaleDetails string 	`json:"SaleDetails"`
-	Quantity 	int 	`json:"Quantity"`
+	Name 		string 		`json:"Name"`
+	FoodType 	string 		`json:"FoodType"`
+	SaleDetails string 		`json:"SaleDetails"`
+	Quantity 	int 		`json:"Quantity"`
 }
 
 type Pantry struct {
