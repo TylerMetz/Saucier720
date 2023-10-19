@@ -70,6 +70,8 @@ func NewAzureDatabase() (*AzureDatabase, error) {
 	}, nil
 }
 
+// GETS
+
 func (s *AzureDatabase) GetPantry() (Pantry, error) {	
 		// Create the pantry object
 		pantry := Pantry{
@@ -152,33 +154,6 @@ func (s *AzureDatabase) GetPantryByUser(username string) (Pantry, error) {
 	}
 
 	return pantry, nil
-}
-
-func (s *AzureDatabase) PostSignup(user *Account) error{
-	ctx := context.Background()
-
-	tsql := `
-		INSERT INTO dbo.user_data (FirstName, LastName, Email, UserName, Password, DateJoined)
-		VALUES (@FirstName, @LastName, @Email, @UserName, @Password, @DateJoined);
-	`
-
-	stmt, err := s.db.Prepare(tsql)
-	if err != nil {
-		
-		return err
-	}
-	defer stmt.Close()
-
-	_, err = stmt.ExecContext(ctx,
-		sql.Named("FirstName", user.FirstName),
-		sql.Named("LastName", user.LastName),
-		sql.Named("Email", user.Email),
-		sql.Named("UserName", user.UserName),
-		sql.Named("Password", user.Password),
-		sql.Named("DateJoined", time.Now()),
-	)
-
-	return nil
 }
 
 func (s *AzureDatabase) GetPasswordByUserName(userName string) (string, error){
@@ -596,6 +571,35 @@ func (s *AzureDatabase) GetCookieByUserName(username string) (string, error) {
 	}
 
 	return cookie, nil
+}
+
+// POSTS
+
+func (s *AzureDatabase) PostSignup(user *Account) error{
+	ctx := context.Background()
+
+	tsql := `
+		INSERT INTO dbo.user_data (FirstName, LastName, Email, UserName, Password, DateJoined)
+		VALUES (@FirstName, @LastName, @Email, @UserName, @Password, @DateJoined);
+	`
+
+	stmt, err := s.db.Prepare(tsql)
+	if err != nil {
+		
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx,
+		sql.Named("FirstName", user.FirstName),
+		sql.Named("LastName", user.LastName),
+		sql.Named("Email", user.Email),
+		sql.Named("UserName", user.UserName),
+		sql.Named("Password", user.Password),
+		sql.Named("DateJoined", time.Now()),
+	)
+
+	return nil
 }
 
 func (s *AzureDatabase) PostPantryIngredient(username string, newPantryItem Ingredient) error {
