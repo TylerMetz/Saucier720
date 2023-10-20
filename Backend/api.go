@@ -46,8 +46,9 @@ func (s *APIServer) Run() {
 	router.HandleFunc("/DeleteFavoriteRecipe", makeHTTPHandleFunc(s.handleDeleteFavoriteRecipe))
 	router.HandleFunc("/DeleteUserRecipe", makeHTTPHandleFunc(s.handleDeleteUserRecipe))
 	// (UPDATES WILL PROB HAPPEN WITH PUTS)
-
-	
+	router.HandleFunc("/UpdatePantry", makeHTTPHandleFunc(s.handleUpdatePantry))
+	router.HandleFunc("/UpdateList", makeHTTPHandleFunc(s.handleUpdateList))
+	router.HandleFunc("/UpdateRecipe", makeHTTPHandleFunc(s.handleUpdateRecipe))
 
 	http.ListenAndServe(s.listenAddr, router)
 }
@@ -437,6 +438,57 @@ func (s *APIServer) handleLogout(w http.ResponseWriter, r *http.Request) error {
 
 	resp := LogoutResponse {
 		Response: "Successfully Logged Out",
+	}
+
+	return WriteJSON(w, http.StatusOK, resp)
+}
+
+func (s *APIServer) handleUpdatePantry(w http.ResponseWriter, r *http.Request) error {
+	req := new(UpdatePantryRequest)
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil{ 
+		return err
+	}
+
+	if err := s.store.UpdatePantryByUserName(req.UserName, req.Pantry); err != nil{
+		return err
+	}
+
+	resp := UpdatePantryResponse {
+		Response: "Successfully Updated Pantry",
+	}
+
+	return WriteJSON(w, http.StatusOK, resp)
+}
+
+func (s *APIServer) handleUpdateList(w http.ResponseWriter, r *http.Request) error {
+	req := new(UpdateListRequest)
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil{ 
+		return err
+	}
+
+	if err := s.store.UpdateListByUserName(req.UserName, req.Pantry); err != nil{
+		return err
+	}
+
+	resp := UpdateListResponse {
+		Response: "Successfully Updated List",
+	}
+
+	return WriteJSON(w, http.StatusOK, resp)
+}
+
+func (s *APIServer) handleUpdateRecipe(w http.ResponseWriter, r *http.Request) error {
+	req := new(UpdateRecipeRequest)
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil{ 
+		return err
+	}
+
+	if err := s.store.UpdateRecipeByUserName(req.UserName, req.Recipe); err != nil{
+		return err
+	}
+
+	resp := UpdateRecipeResponse {
+		Response: "Successfully Updated Recipe",
 	}
 
 	return WriteJSON(w, http.StatusOK, resp)
