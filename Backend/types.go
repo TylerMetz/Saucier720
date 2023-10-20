@@ -191,8 +191,6 @@ type UpdateListResponse struct {
 	Response	string		`json:"Response"`
 }
 
-
-
 type Ingredient struct {
 	Name 		string 		`json:"Name"`
 	FoodType 	string 		`json:"FoodType"`
