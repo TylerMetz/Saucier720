@@ -172,6 +172,33 @@ type DeleteRecipeResponse struct {
 	Response	string		`json:"Response"`
 }
 
+type UpdatePantryRequest struct {
+	UserName	string		`json:"UserName"`
+	Pantry 		Pantry		`json:"Pantry"`
+}
+
+type UpdatePantryResponse struct {
+	Response	string		`json:"Response"`
+}
+
+type UpdateRecipeRequest struct { 
+	UserName	string		`json:"UserName"`
+	Recipe		Recipe		`json:"Recipe"`
+}
+
+type UpdateRecipeResponse struct { 
+	Response	string		`json:"Response"`
+}
+
+type UpdateListRequest struct { 
+	UserName	string		`json:"UserName"`
+	List		Pantry		`json:"List"`
+}
+
+type UpdateListResponse struct { 
+	Response	string		`json:"Response"`
+}
+
 type Ingredient struct {
 	Name 		string 		`json:"Name"`
 	FoodType 	string 		`json:"FoodType"`
