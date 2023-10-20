@@ -26,6 +26,7 @@ type Storage interface {
 	GetPantry() (Pantry, error)
 	GetPantryByUser(string) (Pantry, error)
 	PostPantryIngredient(string, Ingredient) error
+	UpdatePantryByUser(string, Pantry) error
 	DeletePantryIngredient(string, Ingredient) error
 	// Recipes
 	GetRecipes() ([]Recipe, error)
@@ -886,6 +887,38 @@ func (s *AzureDatabase) DeleteCookieByUserName(username string) error {
 	)
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// UPDATES
+func (s *AzureDatabase) UpdatePantryByUser(username string, pantry Pantry) error {
+	ctx := context.Background()
+
+	tsql := fmt.Sprintf(`
+		UPDATE dbo.user_ingredients
+		SET Quantity = @Quantity
+		WHERE UserName = @UserName
+		AND FoodName = @FoodName;
+	`)
+
+	stmt, err := s.db.Prepare(tsql)
+	if err != nil {
+		
+		return err
+	}
+	defer stmt.Close()
+
+	for _, ingredient := range pantry.Ingredients {
+		_, err = stmt.ExecContext(ctx,
+			sql.Named("UserName", username),
+			sql.Named("FoodName", ingredient.Name),
+			sql.Named("Quantity", ingredient.Quantity),
+		)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
