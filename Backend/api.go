@@ -466,7 +466,7 @@ func (s *APIServer) handleUpdateList(w http.ResponseWriter, r *http.Request) err
 		return err
 	}
 
-	if err := s.store.UpdateListByUserName(req.UserName, req.Pantry); err != nil{
+	if err := s.store.UpdateListByUserName(req.UserName, req.List); err != nil{
 		return err
 	}
 
