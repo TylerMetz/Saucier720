@@ -24,7 +24,7 @@ type Storage interface {
 	GetPasswordByUserName(string) (string, error)
 	// Pantry
 	GetPantry() (Pantry, error)
-	GetPantryByUser(string) (Pantry, error)
+	GetPantryByUserName(string) (Pantry, error)
 	PostPantryIngredient(string, Ingredient) error
 	UpdatePantryByUserName(string, Pantry) error
 	DeletePantryIngredient(string, Ingredient) error

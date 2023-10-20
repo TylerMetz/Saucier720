@@ -32,7 +32,7 @@ type PantryRequest struct {
 }
 
 type PantryResponse struct { 
-	Pantry 		[]Ingredient `json:"Pantry"`
+	Pantry 		Pantry `json:"Pantry"`
 }
 
 type LoginRequest struct{

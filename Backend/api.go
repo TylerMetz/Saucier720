@@ -151,7 +151,7 @@ func (s *APIServer) handleGetRecipes(w http.ResponseWriter, r *http.Request) err
 	}
 
 	//Get User Pantry
-	pantry, err := s.store.GetPantryByUser(req.UserName)
+	pantry, err := s.store.GetPantryByUserName(req.UserName)
 	if err != nil {
 		fmt.Println("error getting pantry")
 	}
@@ -184,7 +184,7 @@ func (s *APIServer) handleGetFavRecipes(w http.ResponseWriter, r *http.Request) 
 		return err
 	}
 	//Get User Pantry
-	pantry, err := s.store.GetPantryByUser(req.UserName)
+	pantry, err := s.store.GetPantryByUserName(req.UserName)
 	if err != nil {
 		fmt.Println("error getting pantry")
 	}
