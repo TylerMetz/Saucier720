@@ -32,10 +32,12 @@ type Storage interface {
 	GetUserCreatedRecipes() ([]Recipe, error)
 	GetRecipesByUserName(string) ([]Recipe, error)
 	GetRecipesByRecipeID(int) (Recipe, error)
-	GetFavoriteRecipes(string) ([]Recipe, error)
 	PostRecipe(string, Recipe) error
-	DeleteFavorite(string, int) error
 	DeleteRecipe(string, int) error
+	// Favorite Recipes
+	GetFavoriteRecipes(string) ([]Recipe, error)
+	PostFavoriteRecipe(string, int) error
+	DeleteFavorite(string, int) error
 	// Deals
 	GetDeals() ([]Ingredient, error)
 	GetDealsByStore(string) ([]Ingredient, error)
@@ -45,6 +47,8 @@ type Storage interface {
 	DeleteListIngredient(string, Ingredient) error
 	// Cookies
 	GetCookieByUserName(string) (string, error)
+	PostCookieByUserName(string, string) error
+	DeleteCookieByUserName(string) error
 }
 
 type AzureDatabase struct {
@@ -399,6 +403,8 @@ func (s *AzureDatabase) GetFavoriteRecipes(username string) ([]Recipe, error) {
 		return []Recipe{}, err
 	}
 
+	//handleLogin
+
 	var title, ingredientsStr, instructions, userName string
 	var recipeID int
 	for rows.Next() {
@@ -692,6 +698,60 @@ func (s *AzureDatabase) PostListIngredient(username string, ingredient Ingredien
 	return nil
 }
 
+func (s *AzureDatabase) PostFavoriteRecipe(username string, id int) error {
+	ctx := context.Background()
+
+	tsql := fmt.Sprintf(`
+	INSERT INTO dbo.user_favorite_recipes (UserName, RecipeID)
+	VALUES (@UserName, @RecipeID);
+	`)
+
+	stmt, err := s.db.Prepare(tsql)
+	if err != nil {
+		
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx,
+		sql.Named("UserName", username),
+		sql.Named("RecipeID", id),
+	)
+	if err != nil {
+		fmt.Println("error on favorite recipe post")
+		return err
+	}
+
+	return nil
+}
+
+func (s *AzureDatabase) PostCookieByUserName(username string, cookie string) error {
+	ctx := context.Background()
+
+	tsql := fmt.Sprintf(`
+	INSERT INTO dbo.user_cookies (UserName, Cookie)
+	VALUES (@UserName, @Cookie);
+	`)
+
+	stmt, err := s.db.Prepare(tsql)
+	if err != nil {
+		
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx,
+		sql.Named("UserName", username),
+		sql.Named("Cookie", cookie),
+	)
+	if err != nil {
+		fmt.Println("error on cookie post")
+		return err
+	}
+
+	return nil
+}
+
 // DELETES
 func (s *AzureDatabase) DeletePantryIngredient(username string, ingredient Ingredient) error {
 	ctx := context.Background()
@@ -805,3 +865,28 @@ func (s *AzureDatabase)	DeleteRecipe(username string, id int) error {
 	return nil
 }
 
+func (s *AzureDatabase) DeleteCookieByUserName(username string) error {
+	ctx := context.Background()
+
+	tsql := fmt.Sprintf(`
+		DELETE FROM dbo.user_cookies
+	   	WHERE UserName = @UserName;
+	`)
+
+	stmt, err := s.db.Prepare(tsql)
+	if err != nil {
+		
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(
+		ctx,
+		sql.Named("UserName", username),
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

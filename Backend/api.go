@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	_ "fmt"
+	"time"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -25,7 +25,7 @@ func (s *APIServer) Run() {
 	router := mux.NewRouter()
 
 	//GETS
-	router.HandleFunc("/Login", makeHTTPHandleFunc(s.handleLogin))
+	router.HandleFunc("/Login", makeHTTPHandleFunc(s.handleLogin)) // we need to generate the cookie here ?
 	router.HandleFunc("/Pantry", makeHTTPHandleFunc(s.handleGetPantry))
 	router.HandleFunc("/Recipes", makeHTTPHandleFunc(s.handleGetRecipes))
 	router.HandleFunc("/Recipes/Favorite", makeHTTPHandleFunc((s.handleGetFavRecipes)))
@@ -33,11 +33,14 @@ func (s *APIServer) Run() {
 	router.HandleFunc("/Deals/Store", makeHTTPHandleFunc((s.handleGetDealsByStore)))
 	router.HandleFunc("/List", makeHTTPHandleFunc((s.handleGetList)))
 	// PUTS WILL BE NEXT
-	router.HandleFunc("/Signup", makeHTTPHandleFunc(s.handleSignup))
+	router.HandleFunc("/Signup", makeHTTPHandleFunc(s.handleSignup)) // we need to generate the cookie here ?
 	router.HandleFunc("/NewPantryItem", makeHTTPHandleFunc(s.handlePostPantryIngredient))
 	router.HandleFunc("/NewRecipe", makeHTTPHandleFunc(s.handlePostRecipe))
 	router.HandleFunc("/NewListIngredient", makeHTTPHandleFunc(s.handlePostList))
+	router.HandleFunc("/NewFavoriteRecipe", makeHTTPHandleFunc(s.handlePostFavoriteRecipe))
+	router.HandleFunc("/PostCookie", makeHTTPHandleFunc(s.handlePostCookie))
 	// THEN DELETE 
+	router.HandleFunc("/Logout", makeHTTPHandleFunc(s.handleLogout)) // we delete the cookie here ?
 	router.HandleFunc("/DeletePantryIngredient", makeHTTPHandleFunc(s.handleDeletePantryIngredient))
 	router.HandleFunc("/DeleteListIngredient", makeHTTPHandleFunc(s.handleDeleteListIngredient))
 	router.HandleFunc("/DeleteFavoriteRecipe", makeHTTPHandleFunc(s.handleDeleteFavoriteRecipe))
@@ -249,6 +252,8 @@ func (s *APIServer) handleGetList(w http.ResponseWriter, r *http.Request) error 
 	return WriteJSON(w, http.StatusOK, resp)
 }
 
+
+// POSTS
 func (s *APIServer) handlePostPantryIngredient(w http.ResponseWriter, r *http.Request) error { 
 	req := new(PostPantryRequest)
 	if err := json.NewDecoder(r.Body).Decode(req); err != nil{
@@ -316,6 +321,57 @@ func (s *APIServer) handleDeletePantryIngredient(w http.ResponseWriter, r *http.
 	return WriteJSON(w, http.StatusOK, resp)
 }
 
+func (s *APIServer) handlePostFavoriteRecipe(w http.ResponseWriter, r *http.Request) error { 
+	req := new(PostFavoriteRequest)
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil{ 
+		return err
+	}
+
+	if err := s.store.PostFavoriteRecipe(req.UserName, req.RecipeID); err != nil {
+		return err
+	}
+
+	resp := PostFavoriteResponse {
+		Response: "Recipe Successfully Posted!",
+	}
+
+	return WriteJSON(w, http.StatusOK, resp)
+}
+
+func (s *APIServer) handlePostCookie(w http.ResponseWriter, r *http.Request) error { 
+	req := new(PostCookieRequest)
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil{ 
+		return err
+	}
+
+	//Generate Cookie Here
+	//helper function calling CreateCookieForUser
+	cookieToken, err := CreateCookieForUser(req.UserName); if err != nil { 
+		fmt.Println("error creating cookie")
+		return err
+	}
+
+	httpCookie := &http.Cookie{
+		Name:     "Jason's Cookie",
+		Value:    cookieToken,
+		Expires:  time.Now().Add(7 * 24 * time.Hour), // Set expiration to 7 days in the future.
+		HttpOnly: true,
+	}
+
+	http.SetCookie(w, httpCookie)
+
+	if err := s.store.PostCookieByUserName(req.UserName, cookieToken); err != nil {
+		fmt.Println("error posting cookie")
+		return err
+	}
+
+	resp := PostCookieResponse {
+		Response: "Cookie Successfully Posted!",
+	}
+
+	return WriteJSON(w, http.StatusOK, resp)
+}
+
 // Deletes
 
 func (s *APIServer) handleDeleteListIngredient(w http.ResponseWriter, r *http.Request) error {
@@ -369,6 +425,23 @@ func (s *APIServer) handleDeleteUserRecipe(w http.ResponseWriter, r *http.Reques
 	return WriteJSON(w, http.StatusOK, resp)
 }
 
+func (s *APIServer) handleLogout(w http.ResponseWriter, r *http.Request) error {
+	req := new(LogoutRequest)
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil{ 
+		return err
+	}
+
+	if err := s.store.DeleteCookieByUserName(req.UserName); err != nil{
+		return err
+	}
+
+	resp := LogoutResponse {
+		Response: "Successfully Logged Out",
+	}
+
+	return WriteJSON(w, http.StatusOK, resp)
+}
+
 func CheckPassword(s Storage, username, password string) bool {
 	dbPassword, _ := s.GetPasswordByUserName(username)
 	if(password == dbPassword){
@@ -379,6 +452,7 @@ func CheckPassword(s Storage, username, password string) bool {
 
 func WriteJSON(w http.ResponseWriter, status int, v any) error {
 	w.Header().Add("Content-Type", "application/json")
+	// do we need those other CORS headers?
 	w.WriteHeader(status)
 
 	return json.NewEncoder(w).Encode(v)
