@@ -37,6 +37,8 @@ func (s *APIServer) Run() {
 	router.HandleFunc("/NewPantryItem", makeHTTPHandleFunc(s.handlePostPantryIngredient))
 	router.HandleFunc("/NewRecipe", makeHTTPHandleFunc(s.handlePostRecipe))
 	router.HandleFunc("/NewListIngredient", makeHTTPHandleFunc(s.handlePostList))
+	router.HandleFunc("/NewFavoriteRecipe", makeHTTPHandleFunc(s.handlePostFavoriteRecipe))
+	router.HandleFunc("/PostCookie", makeHTTPHandleFunc(s.handlePostCookie))
 	// THEN DELETE 
 	router.HandleFunc("/DeletePantryIngredient", makeHTTPHandleFunc(s.handleDeletePantryIngredient))
 	router.HandleFunc("/DeleteListIngredient", makeHTTPHandleFunc(s.handleDeleteListIngredient))
