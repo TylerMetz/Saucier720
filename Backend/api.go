@@ -37,10 +37,9 @@ func (s *APIServer) Run() {
 	router.HandleFunc("/NewPantryItem", makeHTTPHandleFunc(s.handlePostPantryIngredient))
 	router.HandleFunc("/NewRecipe", makeHTTPHandleFunc(s.handlePostRecipe))
 	router.HandleFunc("/NewListIngredient", makeHTTPHandleFunc(s.handlePostList))
-	// THEN DELETE
-	// - Remove from Pantry 
+	// THEN DELETE 
 	router.HandleFunc("/DeletePantryIngredient", makeHTTPHandleFunc(s.handleDeletePantryIngredient))
-	// router.HandleFunc("/DeleteListIngredient", makeHTTPHandleFunc(s.handleDeleteListIngredient))
+	router.HandleFunc("/DeleteListIngredient", makeHTTPHandleFunc(s.handleDeleteListIngredient))
 	// router.HandleFunc("/DeleteFavoriteRecipe", makeHTTPHandleFunc(s.handleDeleteFavoriteRecipe))
 	// router.HandleFunc("/DeleteUserRecipe", makeHTTPHandleFunc(s.handleDeleteUserRecipe))
 	// (UPDATES WILL PROB HAPPEN WITH PUTS)
@@ -311,16 +310,29 @@ func (s *APIServer) handleDeletePantryIngredient(w http.ResponseWriter, r *http.
 	}
 
 	resp := DeletePantryResponse {
-		Response: "Ingredient Successfully Removed",
+		Response: "Ingredient Successfully Removed From Pantry",
 	}
 
 	return WriteJSON(w, http.StatusOK, resp)
 }
 
 
-// func (s *APIServer) handleDeleteListIngredient(w http.ResponseWriter, r *http.Request) error {
-	
-// }
+func (s *APIServer) handleDeleteListIngredient(w http.ResponseWriter, r *http.Request) error {
+	req := new(DeleteListRequest)
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil{ 
+		return err
+	}
+
+	if err := s.store.DeleteListIngredient(req.UserName, req.Ingredient); err != nil{
+		return err
+	}
+
+	resp := DeletePantryResponse {
+		Response: "Ingredient Successfully Removed From List",
+	}
+
+	return WriteJSON(w, http.StatusOK, resp)
+}
 
 
 // func (s *APIServer) handleDeleteFavoriteRecipe(w http.ResponseWriter, r *http.Request) error {

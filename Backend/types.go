@@ -108,6 +108,15 @@ type DeletePantryResponse struct {
 	Response	string		`json:"Response"`
 }
 
+type DeleteListRequest struct {
+	UserName	string 		`json:"UserName"`
+	Ingredient	Ingredient	`json:"Ingredient"`
+}
+
+type DeleteListResponse struct {
+	Response	string		`json:"Response"`
+}
+
 type Ingredient struct {
 	Name 		string 		`json:"Name"`
 	FoodType 	string 		`json:"FoodType"`

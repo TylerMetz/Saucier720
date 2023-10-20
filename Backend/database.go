@@ -40,6 +40,7 @@ type Storage interface {
 	//List
 	GetShoppingListByUserName(string) ([]Ingredient, error)
 	PostListIngredient(string, Ingredient) error
+	DeleteListIngredient(string, Ingredient) error
 	// Cookies
 	GetCookieByUserName(string) (string, error)
 }
@@ -695,6 +696,34 @@ func (s *AzureDatabase) DeletePantryIngredient(username string, ingredient Ingre
 
     tsql := fmt.Sprintf(`
 	DELETE from dbo.user_ingredients
+	WHERE UserName = @UserName
+	AND FoodName = @FoodName;
+	`)
+
+	stmt, err := s.db.Prepare(tsql)
+    if err != nil {
+        
+        return err
+    }
+    defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx,
+		sql.Named("UserName", username),
+        sql.Named("FoodName", ingredient.Name),
+    )
+
+	if err != nil {
+        return err
+    }
+
+	return nil
+}
+
+func (s *AzureDatabase) DeleteListIngredient(username string, ingredient Ingredient) error {
+	ctx := context.Background()
+
+    tsql := fmt.Sprintf(`
+	DELETE from dbo.user_lists
 	WHERE UserName = @UserName
 	AND FoodName = @FoodName;
 	`)
