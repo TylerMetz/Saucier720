@@ -1,6 +1,10 @@
 package main
 
-import "time"
+import (
+	"time"
+	"fmt"
+)
+	
 
 type Account struct {
 	UserName   	string `json:"UserName"`
@@ -99,6 +103,14 @@ type PostListResponse struct {
 	Response 	string 		`json:"Response"`
 }
 
+type PostCookieRequest struct { 
+	UserName 		string 		`json:"UserName"`
+}
+
+type PostCookieResponse struct { 
+	Response 	string 		`json:"Response"`
+}
+
 type DeletePantryRequest struct {
 	UserName	string		`json:"UserName"`
 	Ingredient	Ingredient	`json:"Ingredient"`
@@ -155,4 +167,11 @@ func NewAccount(userName, firstName, lastName, email, password string) (*Account
 		Password: password,
 		DateJoined: time.Now(),
 	}, nil
+}
+
+func CreateCookieForUser(userName string) (string, error){
+	//create hash from username and time and store in database and THEN have it expire after 7 days
+	uniqueToken := fmt.Sprintf("%s-%s", userName, time.Now().String())
+
+	return uniqueToken, nil
 }

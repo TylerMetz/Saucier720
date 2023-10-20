@@ -724,6 +724,33 @@ func (s *AzureDatabase) PostFavoriteRecipe(username string, id int) error {
 	return nil
 }
 
+func (s *AzureDatabase) PostCookieByUserName(username string, cookie string) error {
+	ctx := context.Background()
+
+	tsql := fmt.Sprintf(`
+	INSERT INTO dbo.user_cookies (UserName, Cookie)
+	VALUES (@UserName, @Cookie);
+	`)
+
+	stmt, err := s.db.Prepare(tsql)
+	if err != nil {
+		
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx,
+		sql.Named("UserName", username),
+		sql.Named("Cookie", cookie),
+	)
+	if err != nil {
+		fmt.Println("error on cookie post")
+		return err
+	}
+
+	return nil
+}
+
 // DELETES
 func (s *AzureDatabase) DeletePantryIngredient(username string, ingredient Ingredient) error {
 	ctx := context.Background()

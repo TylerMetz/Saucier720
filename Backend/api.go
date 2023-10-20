@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	_ "fmt"
+	"time"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -251,6 +251,8 @@ func (s *APIServer) handleGetList(w http.ResponseWriter, r *http.Request) error 
 	return WriteJSON(w, http.StatusOK, resp)
 }
 
+
+// POSTS
 func (s *APIServer) handlePostPantryIngredient(w http.ResponseWriter, r *http.Request) error { 
 	req := new(PostPantryRequest)
 	if err := json.NewDecoder(r.Body).Decode(req); err != nil{
@@ -313,6 +315,57 @@ func (s *APIServer) handleDeletePantryIngredient(w http.ResponseWriter, r *http.
 
 	resp := DeletePantryResponse {
 		Response: "Ingredient Successfully Removed From Pantry",
+	}
+
+	return WriteJSON(w, http.StatusOK, resp)
+}
+
+func (s *APIServer) handlePostFavoriteRecipe(w http.ResponseWriter, r *http.Request) error { 
+	req := new(PostFavoriteRequest)
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil{ 
+		return err
+	}
+
+	if err := s.store.PostFavoriteRecipe(req.UserName, req.RecipeID); err != nil {
+		return err
+	}
+
+	resp := PostFavoriteResponse {
+		Response: "Recipe Successfully Posted!",
+	}
+
+	return WriteJSON(w, http.StatusOK, resp)
+}
+
+func (s *APIServer) handlePostCookie(w http.ResponseWriter, r *http.Request) error { 
+	req := new(PostCookieRequest)
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil{ 
+		return err
+	}
+
+	//Generate Cookie Here
+	//helper function calling CreateCookieForUser
+	cookieToken, err := CreateCookieForUser(req.UserName); if err != nil { 
+		fmt.Println("error creating cookie")
+		return err
+	}
+
+	httpCookie := &http.Cookie{
+		Name:     "Jason's Cookie",
+		Value:    cookieToken,
+		Expires:  time.Now().Add(7 * 24 * time.Hour), // Set expiration to 7 days in the future.
+		HttpOnly: true,
+	}
+
+	http.SetCookie(w, httpCookie)
+
+	if err := s.store.PostCookieByUserName(req.UserName, cookieToken); err != nil {
+		fmt.Println("error posting cookie")
+		return err
+	}
+
+	resp := PostCookieResponse {
+		Response: "Cookie Successfully Posted!",
 	}
 
 	return WriteJSON(w, http.StatusOK, resp)
