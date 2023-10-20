@@ -26,7 +26,7 @@ type Storage interface {
 	GetPantry() (Pantry, error)
 	GetPantryByUser(string) (Pantry, error)
 	PostPantryIngredient(string, Ingredient) error
-	UpdatePantryByUser(string, Pantry) error
+	UpdatePantryByUserName(string, Pantry) error
 	DeletePantryIngredient(string, Ingredient) error
 	// Recipes
 	GetRecipes() ([]Recipe, error)
@@ -34,6 +34,7 @@ type Storage interface {
 	GetRecipesByUserName(string) ([]Recipe, error)
 	GetRecipesByRecipeID(int) (Recipe, error)
 	PostRecipe(string, Recipe) error
+	UpdateRecipeByUserName(string, Recipe) error
 	DeleteRecipe(string, int) error
 	// Favorite Recipes
 	GetFavoriteRecipes(string) ([]Recipe, error)
@@ -45,10 +46,12 @@ type Storage interface {
 	//List
 	GetShoppingListByUserName(string) ([]Ingredient, error)
 	PostListIngredient(string, Ingredient) error
+	UpdateListByUserName(string, Pantry) error
 	DeleteListIngredient(string, Ingredient) error
 	// Cookies
 	GetCookieByUserName(string) (string, error)
 	PostCookieByUserName(string, string) error
+	UpdateCookieByUserName(string, string) error
 	DeleteCookieByUserName(string) error
 }
 
@@ -893,7 +896,7 @@ func (s *AzureDatabase) DeleteCookieByUserName(username string) error {
 }
 
 // UPDATES
-func (s *AzureDatabase) UpdatePantryByUser(username string, pantry Pantry) error {
+func (s *AzureDatabase) UpdatePantryByUserName(username string, pantry Pantry) error {
 	ctx := context.Background()
 
 	tsql := fmt.Sprintf(`
@@ -919,6 +922,68 @@ func (s *AzureDatabase) UpdatePantryByUser(username string, pantry Pantry) error
 		if err != nil {
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (s *AzureDatabase) UpdateListByUserName(username string, pantry Pantry) error {
+	ctx := context.Background()
+
+	tsql := fmt.Sprintf(`
+		UPDATE dbo.user_lists
+		SET Quantity = @Quantity
+		WHERE UserName = @UserName
+		AND FoodName = @FoodName;
+	`)
+
+	stmt, err := s.db.Prepare(tsql)
+	if err != nil {
+		
+		return err
+	}
+	defer stmt.Close()
+
+	for _, ingredient := range pantry.Ingredients {
+		_, err = stmt.ExecContext(ctx,
+			sql.Named("UserName", username),
+			sql.Named("FoodName", ingredient.Name),
+			sql.Named("Quantity", ingredient.Quantity),
+		)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (s *AzureDatabase) UpdateRecipeByUserName(username string, recipe Recipe) error {
+	ctx := context.Background()
+
+	tsql := fmt.Sprintf(`
+		UPDATE dbo.recipes
+		SET Title = @Title, Ingredients = @Ingredients, Instructions = @Instructions
+		WHERE UserName = @UserName
+		AND RecipeID = @RecipeID;
+	`)
+
+	stmt, err := s.db.Prepare(tsql)
+	if err != nil {
+		
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx,
+		sql.Named("Title", recipe.Title),
+		sql.Named("Ingredients", recipe.Ingredients),
+		sql.Named("Instructions", recipe.Instructions),
+		sql.Named("UserName", username),
+		sql.Named("RecipeID", recipe.RecipeID),
+	)
+	if err != nil {
+		return err
 	}
 
 	return nil
