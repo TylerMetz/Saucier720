@@ -5,6 +5,7 @@ go 1.19
 require (
 	github.com/gorilla/mux v1.8.0
 	github.com/microsoft/go-mssqldb v1.6.0
+	golang.org/x/exp v0.0.0-20231006140011-7918f672742d
 )
 
 require (
@@ -20,6 +21,6 @@ require (
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8 // indirect
 	golang.org/x/crypto v0.12.0 // indirect
 	golang.org/x/net v0.14.0 // indirect
-	golang.org/x/sys v0.11.0 // indirect
+	golang.org/x/sys v0.13.0 // indirect
 	golang.org/x/text v0.12.0 // indirect
 )
