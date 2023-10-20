@@ -988,3 +988,30 @@ func (s *AzureDatabase) UpdateRecipeByUserName(username string, recipe Recipe) e
 
 	return nil
 }
+
+func (s *AzureDatabase) UpdateCookieByUserName(username string, cookie string) error {
+	ctx := context.Background()
+
+	tsql := fmt.Sprintf(`
+		UPDATE dbo.user_cookies
+		SET Cookie = @Cookie
+		WHERE UserName = @UserName;
+	`)
+
+	stmt, err := s.db.Prepare(tsql)
+	if err != nil {
+		
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx,
+		sql.Named("Cookie", cookie),
+		sql.Named("UserName", username),
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
