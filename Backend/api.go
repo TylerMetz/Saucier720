@@ -496,10 +496,7 @@ func (s *APIServer) handleUpdateRecipe(w http.ResponseWriter, r *http.Request) e
 
 func CheckPassword(s Storage, username, password string) bool {
 	dbPassword, _ := s.GetPasswordByUserName(username)
-	if(password == dbPassword){
-		return true
-	}
-	return false
+	return password == dbPassword
 }
 
 func WriteJSON(w http.ResponseWriter, status int, v any) error {
