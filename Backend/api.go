@@ -105,7 +105,6 @@ func (s *APIServer) handleGetRecipes(w http.ResponseWriter, r *http.Request) err
 	if err := json.NewDecoder(r.Body).Decode(req); err != nil{
 		return err
 	}
-
 	var recipes []Recipe
 
 	//get recipes based on filters
@@ -121,7 +120,7 @@ func (s *APIServer) handleGetRecipes(w http.ResponseWriter, r *http.Request) err
 	}
 	if req.RecipeFilter.MealDealzRecipes {
 		//get meal dealz recipes
-		mealDealzRecipes, err := s.store.GetRecipesByUserName("MealDealz Classic Recipes")
+		mealDealzRecipes, err := s.store.GetRecipesByUserName("MealDealz Classic Recipe")
 		if err != nil { 
 			fmt.Println("error getting mealdealz classic recipes")
 			return err
@@ -148,7 +147,6 @@ func (s *APIServer) handleGetRecipes(w http.ResponseWriter, r *http.Request) err
 	}
 
 	//rate them based on recomendation funcs
-
 	recomendedRecipes := ReturnRecipesWithHighestPercentageOfOwnedIngredients(pantry, recipes, 50, []Ingredient{})
 
 	//return recipes request
