@@ -286,6 +286,9 @@ func (s *APIServer) handlePostRecipe(w http.ResponseWriter, r *http.Request) err
 
 func (s *APIServer) handlePostList(w http.ResponseWriter, r *http.Request) error { 
 	req := new(PostListRequest)
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil{ 
+		return err
+	}
 
 	if err := s.store.PostListIngredient(req.UserName, req.Ingredient); err != nil {
 		return err
@@ -299,13 +302,16 @@ func (s *APIServer) handlePostList(w http.ResponseWriter, r *http.Request) error
 
 func (s *APIServer) handleDeletePantryIngredient(w http.ResponseWriter, r *http.Request) error {
 	req := new(DeletePantryRequest)
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil{ 
+		return err
+	}
 
 	if err := s.store.DeletePantryIngredient(req.UserName, req.Ingredient); err != nil{
 		return err
 	}
 
 	resp := DeletePantryResponse {
-		Response: "Ingredient " + req.Ingredient.Name +  " Successfully Removed",
+		Response: "Ingredient Successfully Removed",
 	}
 
 	return WriteJSON(w, http.StatusOK, resp)
