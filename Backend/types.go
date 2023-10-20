@@ -107,6 +107,15 @@ type PostCookieRequest struct {
 	UserName 		string 		`json:"UserName"`
 }
 
+type PostFavoriteRequest struct { 
+	UserName 		string 		`json:"UserName"`
+	RecipeID 		int 		`json:"RecipeID"`
+}
+
+type PostFavoriteResponse struct {
+	Response 	string 		`json:"Response"`
+}
+
 type PostCookieResponse struct { 
 	Response 	string 		`json:"Response"`
 }
