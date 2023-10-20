@@ -25,19 +25,30 @@ type Storage interface {
 	// Pantry
 	GetPantry() (Pantry, error)
 	GetPantryByUser(string) (Pantry, error)
+	PostPantryIngredient(string, Ingredient) error
+	DeletePantryIngredient(string, Ingredient) error
 	// Recipes
 	GetRecipes() ([]Recipe, error)
 	GetUserCreatedRecipes() ([]Recipe, error)
 	GetRecipesByUserName(string) ([]Recipe, error)
 	GetRecipesByRecipeID(int) (Recipe, error)
+	PostRecipe(string, Recipe) error
+	DeleteRecipe(string, int) error
+	// Favorite Recipes
 	GetFavoriteRecipes(string) ([]Recipe, error)
+	PostFavoriteRecipe(string, int) error
+	DeleteFavorite(string, int) error
 	// Deals
 	GetDeals() ([]Ingredient, error)
 	GetDealsByStore(string) ([]Ingredient, error)
 	//List
 	GetShoppingListByUserName(string) ([]Ingredient, error)
+	PostListIngredient(string, Ingredient) error
+	DeleteListIngredient(string, Ingredient) error
 	// Cookies
 	GetCookieByUserName(string) (string, error)
+	PostCookieByUserName(string, string) error
+	DeleteCookieByUserName(string) error
 }
 
 type AzureDatabase struct {
@@ -66,6 +77,8 @@ func NewAzureDatabase() (*AzureDatabase, error) {
 		db: db,
 	}, nil
 }
+
+// GETS
 
 func (s *AzureDatabase) GetPantry() (Pantry, error) {	
 		// Create the pantry object
@@ -149,33 +162,6 @@ func (s *AzureDatabase) GetPantryByUser(username string) (Pantry, error) {
 	}
 
 	return pantry, nil
-}
-
-func (s *AzureDatabase) PostSignup(user *Account) error{
-	ctx := context.Background()
-
-	tsql := `
-		INSERT INTO dbo.user_data (FirstName, LastName, Email, UserName, Password, DateJoined)
-		VALUES (@FirstName, @LastName, @Email, @UserName, @Password, @DateJoined);
-	`
-
-	stmt, err := s.db.Prepare(tsql)
-	if err != nil {
-		
-		return err
-	}
-	defer stmt.Close()
-
-	_, err = stmt.ExecContext(ctx,
-		sql.Named("FirstName", user.FirstName),
-		sql.Named("LastName", user.LastName),
-		sql.Named("Email", user.Email),
-		sql.Named("UserName", user.UserName),
-		sql.Named("Password", user.Password),
-		sql.Named("DateJoined", time.Now()),
-	)
-
-	return nil
 }
 
 func (s *AzureDatabase) GetPasswordByUserName(userName string) (string, error){
@@ -417,6 +403,8 @@ func (s *AzureDatabase) GetFavoriteRecipes(username string) ([]Recipe, error) {
 		return []Recipe{}, err
 	}
 
+	//handleLogin
+
 	var title, ingredientsStr, instructions, userName string
 	var recipeID int
 	for rows.Next() {
@@ -593,4 +581,312 @@ func (s *AzureDatabase) GetCookieByUserName(username string) (string, error) {
 	}
 
 	return cookie, nil
+}
+
+// POSTS
+
+func (s *AzureDatabase) PostSignup(user *Account) error{
+	ctx := context.Background()
+
+	tsql := `
+		INSERT INTO dbo.user_data (FirstName, LastName, Email, UserName, Password, DateJoined)
+		VALUES (@FirstName, @LastName, @Email, @UserName, @Password, @DateJoined);
+	`
+
+	stmt, err := s.db.Prepare(tsql)
+	if err != nil {
+		
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx,
+		sql.Named("FirstName", user.FirstName),
+		sql.Named("LastName", user.LastName),
+		sql.Named("Email", user.Email),
+		sql.Named("UserName", user.UserName),
+		sql.Named("Password", user.Password),
+		sql.Named("DateJoined", time.Now()),
+	)
+
+	return nil
+}
+
+func (s *AzureDatabase) PostPantryIngredient(username string, newPantryItem Ingredient) error {
+	ctx := context.Background()
+
+	tsql := fmt.Sprintf(`
+		INSERT INTO dbo.user_ingredients (UserName, FoodName, FoodType, Quantity)
+		VALUES (@UserName, @FoodName, @FoodType, @Quantity);
+	`)
+
+	stmt, err := s.db.Prepare(tsql)
+	if err != nil {
+		
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx,
+		sql.Named("UserName", username),
+		sql.Named("FoodName", newPantryItem.Name),
+		sql.Named("FoodType", newPantryItem.FoodType),
+		sql.Named("Quantity", newPantryItem.Quantity),
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *AzureDatabase) PostRecipe(username string, recipe Recipe) error {
+	ctx := context.Background()
+
+	tsql := fmt.Sprintf(`
+	INSERT INTO dbo.recipes (Title, Ingredients, Instructions, UserName)
+	VALUES (@Title, @Ingredients, @Instructions, @UserName);
+	`)
+
+	stmt, err := s.db.Prepare(tsql)
+	if err != nil {
+		
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx,
+		sql.Named("Title", recipe.Title),
+		sql.Named("Ingredients", recipe.Ingredients),
+		sql.Named("Instructions", recipe.Ingredients),
+		sql.Named("UserName", username),
+	)
+	if err != nil {
+		fmt.Println("error on recipe post")
+		return err
+	}
+
+	return nil
+}
+
+func (s *AzureDatabase) PostListIngredient(username string, ingredient Ingredient) error {
+	ctx := context.Background()
+
+	tsql := fmt.Sprintf(`
+	INSERT INTO dbo.user_lists (UserName, FoodName, FoodType, Quantity)
+	VALUES (@UserName, @FoodName, @FoodType, @Quantity);
+	`)
+
+	stmt, err := s.db.Prepare(tsql)
+	if err != nil {
+		
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx,
+		sql.Named("UserName", username),
+		sql.Named("FoodName", ingredient.Name),
+		sql.Named("FoodType", ingredient.FoodType),
+		sql.Named("Quantity", ingredient.Quantity),
+	)
+	if err != nil {
+		fmt.Println("error on list post")
+		return err
+	}
+
+	return nil
+}
+
+func (s *AzureDatabase) PostFavoriteRecipe(username string, id int) error {
+	ctx := context.Background()
+
+	tsql := fmt.Sprintf(`
+	INSERT INTO dbo.user_favorite_recipes (UserName, RecipeID)
+	VALUES (@UserName, @RecipeID);
+	`)
+
+	stmt, err := s.db.Prepare(tsql)
+	if err != nil {
+		
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx,
+		sql.Named("UserName", username),
+		sql.Named("RecipeID", id),
+	)
+	if err != nil {
+		fmt.Println("error on favorite recipe post")
+		return err
+	}
+
+	return nil
+}
+
+func (s *AzureDatabase) PostCookieByUserName(username string, cookie string) error {
+	ctx := context.Background()
+
+	tsql := fmt.Sprintf(`
+	INSERT INTO dbo.user_cookies (UserName, Cookie)
+	VALUES (@UserName, @Cookie);
+	`)
+
+	stmt, err := s.db.Prepare(tsql)
+	if err != nil {
+		
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx,
+		sql.Named("UserName", username),
+		sql.Named("Cookie", cookie),
+	)
+	if err != nil {
+		fmt.Println("error on cookie post")
+		return err
+	}
+
+	return nil
+}
+
+// DELETES
+func (s *AzureDatabase) DeletePantryIngredient(username string, ingredient Ingredient) error {
+	ctx := context.Background()
+
+    tsql := fmt.Sprintf(`
+	DELETE from dbo.user_ingredients
+	WHERE UserName = @UserName
+	AND FoodName = @FoodName;
+	`)
+
+	stmt, err := s.db.Prepare(tsql)
+    if err != nil {
+        
+        return err
+    }
+    defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx,
+		sql.Named("UserName", username),
+        sql.Named("FoodName", ingredient.Name),
+    )
+
+	if err != nil {
+        return err
+    }
+
+	return nil
+}
+
+func (s *AzureDatabase) DeleteListIngredient(username string, ingredient Ingredient) error {
+	ctx := context.Background()
+
+    tsql := fmt.Sprintf(`
+	DELETE from dbo.user_lists
+	WHERE UserName = @UserName
+	AND FoodName = @FoodName;
+	`)
+
+	stmt, err := s.db.Prepare(tsql)
+    if err != nil {
+        
+        return err
+    }
+    defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx,
+		sql.Named("UserName", username),
+        sql.Named("FoodName", ingredient.Name),
+    )
+
+	if err != nil {
+        return err
+    }
+
+	return nil
+}
+
+func (s *AzureDatabase)	DeleteFavorite(username string, id int) error {
+	ctx := context.Background()
+
+    tsql := fmt.Sprintf(`
+    	DELETE FROM dbo.user_favorite_recipes
+       	WHERE UserName = @UserName 
+		AND RecipeID = @RecipeID;
+    `)
+
+	stmt, err := s.db.Prepare(tsql)
+    if err != nil {
+        
+        return err
+    }
+    defer stmt.Close()
+
+	_, err = stmt.ExecContext(
+		ctx,
+		sql.Named("RecipeID", id),
+		sql.Named("UserName", username),
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *AzureDatabase)	DeleteRecipe(username string, id int) error {
+	ctx := context.Background()
+
+    tsql := fmt.Sprintf(`
+    	DELETE FROM dbo.recipes
+       	WHERE UserName = @UserName 
+		AND RecipeID = @RecipeID;
+    `)
+
+	stmt, err := s.db.Prepare(tsql)
+    if err != nil {
+        
+        return err
+    }
+    defer stmt.Close()
+
+	_, err = stmt.ExecContext(
+		ctx,
+		sql.Named("RecipeID", id),
+		sql.Named("UserName", username),
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *AzureDatabase) DeleteCookieByUserName(username string) error {
+	ctx := context.Background()
+
+	tsql := fmt.Sprintf(`
+		DELETE FROM dbo.user_cookies
+	   	WHERE UserName = @UserName;
+	`)
+
+	stmt, err := s.db.Prepare(tsql)
+	if err != nil {
+		
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(
+		ctx,
+		sql.Named("UserName", username),
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
