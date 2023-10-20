@@ -92,12 +92,21 @@ func (s *APIServer) handleLogin(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (s *APIServer) handleGetPantry(w http.ResponseWriter, r *http.Request) error {
-	pantry, err := s.store.GetPantry()
+	req := new(PantryRequest)
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil{
+		return err
+	}
+
+	pantry, err := s.store.GetPantryByUserName(req.UserName)
 	if err != nil {
 		return err
 	}
 
-	return WriteJSON(w, http.StatusOK, pantry)
+	resp := PantryResponse {
+		Pantry: pantry,
+	}
+
+	return WriteJSON(w, http.StatusOK, resp)
 }
 
 func (s *APIServer) handleGetRecipes(w http.ResponseWriter, r *http.Request) error{

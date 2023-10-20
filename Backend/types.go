@@ -7,29 +7,37 @@ import (
 	
 
 type Account struct {
-	UserName   	string `json:"UserName"`
-	FirstName  	string `json:"FirstName"`
-	LastName   	string `json:"LastName"`
-	Email      	string `json:"Email"`
-	Password   	string `json:"Password"`
+	UserName   	string 		`json:"UserName"`
+	FirstName  	string 		`json:"FirstName"`
+	LastName   	string 		`json:"LastName"`
+	Email      	string 		`json:"Email"`
+	Password   	string 		`json:"Password"`
 	DateJoined 	time.Time
 }
 
 type SignupRequest struct {
-	UserName   	string `json:"UserName"`
-	FirstName  	string `json:"FirstName"`
-	LastName   	string `json:"LastName"`
-	Email      	string `json:"Email"`
-	Password   	string `json:"Password"`
+	UserName   	string 		`json:"UserName"`
+	FirstName  	string 		`json:"FirstName"`
+	LastName   	string 		`json:"LastName"`
+	Email      	string 		`json:"Email"`
+	Password   	string 		`json:"Password"`
 }
 
 type SignupResponse struct {
-	Response	string 	`json:"Response"`
+	Response	string 		`json:"Response"`
+}
+
+type PantryRequest struct {
+	UserName   	string 		`json:"UserName"`
+}
+
+type PantryResponse struct { 
+	Pantry 		[]Ingredient `json:"Pantry"`
 }
 
 type LoginRequest struct{
-	UserName	string `json:"UserName"`
-	Password 	string `json:"Password"`
+	UserName	string 		`json:"UserName"`
+	Password 	string 		`json:"Password"`
 }
 
 type LoginResponse struct {
@@ -112,12 +120,12 @@ type PostListResponse struct {
 }
 
 type PostCookieRequest struct { 
-	UserName 		string 		`json:"UserName"`
+	UserName 		string 	`json:"UserName"`
 }
 
 type PostFavoriteRequest struct { 
-	UserName 		string 		`json:"UserName"`
-	RecipeID 		int 		`json:"RecipeID"`
+	UserName 		string 	`json:"UserName"`
+	RecipeID 		int 	`json:"RecipeID"`
 }
 
 type PostFavoriteResponse struct {

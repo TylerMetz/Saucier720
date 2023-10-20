@@ -121,7 +121,7 @@ func (s *AzureDatabase) GetPantry() (Pantry, error) {
 		return pantry, nil
 }
 
-func (s *AzureDatabase) GetPantryByUser(username string) (Pantry, error) {	
+func (s *AzureDatabase) GetPantryByUserName(username string) (Pantry, error) {	
 	// Create the pantry object
 	pantry := Pantry{
 		Ingredients:    []Ingredient{},
