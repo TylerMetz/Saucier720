@@ -901,7 +901,7 @@ func (s *AzureDatabase) UpdatePantryByUserName(username string, pantry Pantry) e
 
 	tsql := fmt.Sprintf(`
 		UPDATE dbo.user_ingredients
-		SET Quantity = @Quantity
+		SET Quantity = @Quantity AND FoodType = @FoodType
 		WHERE UserName = @UserName
 		AND FoodName = @FoodName;
 	`)
@@ -917,6 +917,7 @@ func (s *AzureDatabase) UpdatePantryByUserName(username string, pantry Pantry) e
 		_, err = stmt.ExecContext(ctx,
 			sql.Named("UserName", username),
 			sql.Named("FoodName", ingredient.Name),
+			sql.Named("FoodType", ingredient.FoodType),
 			sql.Named("Quantity", ingredient.Quantity),
 		)
 		if err != nil {
