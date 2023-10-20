@@ -99,6 +99,11 @@ type PostListResponse struct {
 	Response 	string 		`json:"Response"`
 }
 
+type DeletePantryRequest struct {
+	UserName	string		`json:"UserName"`
+	Ingredient	Ingredient	`json:"Ingredient"`
+}
+
 type Ingredient struct {
 	Name 		string 		`json:"Name"`
 	FoodType 	string 		`json:"FoodType"`

@@ -39,10 +39,10 @@ func (s *APIServer) Run() {
 	router.HandleFunc("/NewListIngredient", makeHTTPHandleFunc(s.handlePostList))
 	// THEN DELETE
 	// - Remove from Pantry 
-	// - Remove from List
-	// - Remove from Favorites
-	// - Remove from Recipes (User Created)
-	
+	router.HandleFunc("/DeletePantryIngredient", makeHTTPHandleFunc(s.handleDeletePantryIngredient))
+	// router.HandleFunc("/DeleteListIngredient", makeHTTPHandleFunc(s.handleDeleteListIngredient))
+	// router.HandleFunc("/DeleteFavoriteRecipe", makeHTTPHandleFunc(s.handleDeleteFavoriteRecipe))
+	// router.HandleFunc("/DeleteUserRecipe", makeHTTPHandleFunc(s.handleDeleteUserRecipe))
 	// (UPDATES WILL PROB HAPPEN WITH PUTS)
 
 	
@@ -296,6 +296,28 @@ func (s *APIServer) handlePostList(w http.ResponseWriter, r *http.Request) error
 	}
 	return WriteJSON(w, http.StatusOK, resp)
 }
+
+func (s *APIServer) handleDeletePantryIngredient(w http.ResponseWriter, r *http.Request) error {
+	//req := new(DeletePantryRequest)
+
+	return WriteJSON(w, http.StatusOK, 0)
+}
+
+
+// func (s *APIServer) handleDeleteListIngredient(w http.ResponseWriter, r *http.Request) error {
+	
+// }
+
+
+// func (s *APIServer) handleDeleteFavoriteRecipe(w http.ResponseWriter, r *http.Request) error {
+	
+// }
+
+
+// func (s *APIServer) handleDeleteUserRecipe(w http.ResponseWriter, r *http.Request) error {
+	
+// }
+
 
 func CheckPassword(s Storage, username, password string) bool {
 	dbPassword, _ := s.GetPasswordByUserName(username)
