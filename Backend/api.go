@@ -38,6 +38,11 @@ func (s *APIServer) Run() {
 	router.HandleFunc("/NewRecipe", makeHTTPHandleFunc(s.handlePostRecipe))
 	router.HandleFunc("/NewListIngredient", makeHTTPHandleFunc(s.handlePostList))
 	// THEN DELETE
+	// - Remove from Pantry 
+	// - Remove from List
+	// - Remove from Favorites
+	// - Remove from Recipes (User Created)
+	
 	// (UPDATES WILL PROB HAPPEN WITH PUTS)
 
 	
