@@ -35,6 +35,7 @@ type Storage interface {
 	GetFavoriteRecipes(string) ([]Recipe, error)
 	PostRecipe(string, Recipe) error
 	DeleteFavorite(string, int) error
+	DeleteRecipe(string, int) error
 	// Deals
 	GetDeals() ([]Ingredient, error)
 	GetDealsByStore(string) ([]Ingredient, error)
@@ -753,6 +754,34 @@ func (s *AzureDatabase)	DeleteFavorite(username string, id int) error {
 
     tsql := fmt.Sprintf(`
     	DELETE FROM dbo.user_favorite_recipes
+       	WHERE UserName = @UserName 
+		AND RecipeID = @RecipeID;
+    `)
+
+	stmt, err := s.db.Prepare(tsql)
+    if err != nil {
+        
+        return err
+    }
+    defer stmt.Close()
+
+	_, err = stmt.ExecContext(
+		ctx,
+		sql.Named("RecipeID", id),
+		sql.Named("UserName", username),
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *AzureDatabase)	DeleteRecipe(username string, id int) error {
+	ctx := context.Background()
+
+    tsql := fmt.Sprintf(`
+    	DELETE FROM dbo.recipes
        	WHERE UserName = @UserName 
 		AND RecipeID = @RecipeID;
     `)

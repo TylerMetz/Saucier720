@@ -41,7 +41,7 @@ func (s *APIServer) Run() {
 	router.HandleFunc("/DeletePantryIngredient", makeHTTPHandleFunc(s.handleDeletePantryIngredient))
 	router.HandleFunc("/DeleteListIngredient", makeHTTPHandleFunc(s.handleDeleteListIngredient))
 	router.HandleFunc("/DeleteFavoriteRecipe", makeHTTPHandleFunc(s.handleDeleteFavoriteRecipe))
-	// router.HandleFunc("/DeleteUserRecipe", makeHTTPHandleFunc(s.handleDeleteUserRecipe))
+	router.HandleFunc("/DeleteUserRecipe", makeHTTPHandleFunc(s.handleDeleteUserRecipe))
 	// (UPDATES WILL PROB HAPPEN WITH PUTS)
 
 	
@@ -316,6 +316,7 @@ func (s *APIServer) handleDeletePantryIngredient(w http.ResponseWriter, r *http.
 	return WriteJSON(w, http.StatusOK, resp)
 }
 
+// Deletes
 
 func (s *APIServer) handleDeleteListIngredient(w http.ResponseWriter, r *http.Request) error {
 	req := new(DeleteListRequest)
@@ -334,7 +335,6 @@ func (s *APIServer) handleDeleteListIngredient(w http.ResponseWriter, r *http.Re
 	return WriteJSON(w, http.StatusOK, resp)
 }
 
-
 func (s *APIServer) handleDeleteFavoriteRecipe(w http.ResponseWriter, r *http.Request) error {
 	req := new(DeleteFavoriteRequest)
 	if err := json.NewDecoder(r.Body).Decode(req); err != nil{ 
@@ -352,11 +352,22 @@ func (s *APIServer) handleDeleteFavoriteRecipe(w http.ResponseWriter, r *http.Re
 	return WriteJSON(w, http.StatusOK, resp)
 }
 
+func (s *APIServer) handleDeleteUserRecipe(w http.ResponseWriter, r *http.Request) error {
+	req := new(DeleteRecipeRequest)
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil{ 
+		return err
+	}
 
-// func (s *APIServer) handleDeleteUserRecipe(w http.ResponseWriter, r *http.Request) error {
-	
-// }
+	if err := s.store.DeleteRecipe(req.UserName, req.RecipeID); err != nil{
+		return err
+	}
 
+	resp := DeleteRecipeResponse {
+		Response: "Successfully Removed Recipe",
+	}
+
+	return WriteJSON(w, http.StatusOK, resp)
+}
 
 func CheckPassword(s Storage, username, password string) bool {
 	dbPassword, _ := s.GetPasswordByUserName(username)

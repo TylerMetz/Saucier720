@@ -126,6 +126,15 @@ type DeleteFavoriteResponse struct {
 	Response	string		`json:"Response"`
 }
 
+type DeleteRecipeRequest struct {
+	UserName	string		`json:"UserName"`
+	RecipeID	int			`json:"RecipeID"`
+}
+
+type DeleteRecipeResponse struct {
+	Response	string		`json:"Response"`
+}
+
 type Ingredient struct {
 	Name 		string 		`json:"Name"`
 	FoodType 	string 		`json:"FoodType"`
