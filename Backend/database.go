@@ -48,6 +48,7 @@ type Storage interface {
 	// Cookies
 	GetCookieByUserName(string) (string, error)
 	PostCookieByUserName(string, string) error
+	DeleteCookieByUserName(string) error
 }
 
 type AzureDatabase struct {
@@ -864,3 +865,28 @@ func (s *AzureDatabase)	DeleteRecipe(username string, id int) error {
 	return nil
 }
 
+func (s *AzureDatabase) DeleteCookieByUserName(username string) error {
+	ctx := context.Background()
+
+	tsql := fmt.Sprintf(`
+		DELETE FROM dbo.user_cookies
+	   	WHERE UserName = @UserName;
+	`)
+
+	stmt, err := s.db.Prepare(tsql)
+	if err != nil {
+		
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(
+		ctx,
+		sql.Named("UserName", username),
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -36,6 +36,14 @@ type LoginResponse struct {
 	Cookie		string 		`json:"Cookie"`
 }
 
+type LogoutRequest struct { 
+	UserName	string 		`json:"UserName"`
+}
+
+type LogoutResponse struct { 
+	Response	string 		`json:"Response"`
+}
+
 type RecipeFilter struct {
 	UserCreatedRecipes 	bool `json:"UserCreatedRecipes"`
 	MealDealzRecipes 	bool `json:"MealDealzRecipes"`
