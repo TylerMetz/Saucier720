@@ -104,6 +104,10 @@ type DeletePantryRequest struct {
 	Ingredient	Ingredient	`json:"Ingredient"`
 }
 
+type DeletePantryResponse struct {
+	Response	string		`json:"Response"`
+}
+
 type Ingredient struct {
 	Name 		string 		`json:"Name"`
 	FoodType 	string 		`json:"FoodType"`
