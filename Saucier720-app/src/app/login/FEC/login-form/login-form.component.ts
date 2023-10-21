@@ -56,7 +56,7 @@ export class LoginFormComponent {
       };
       console.log(user.UserName);
       console.log(user.Password);
-      const body = { username: user.UserName, password: user.Password };
+      const body = { UserName: user.UserName, Password: user.Password };
       const options = { withCredentials: true };
       try {
         const response = await lastValueFrom(this.authService.login(this.username, this.password));

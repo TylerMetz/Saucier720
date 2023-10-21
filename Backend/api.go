@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 )
 
 type APIServer struct {
@@ -49,7 +50,16 @@ func (s *APIServer) Run() {
 	router.HandleFunc("/UpdateList", makeHTTPHandleFunc(s.handleUpdateList))
 	router.HandleFunc("/UpdateRecipe", makeHTTPHandleFunc(s.handleUpdateRecipe))
 
-	http.ListenAndServe(s.listenAddr, router)
+	c := cors.New(cors.Options{
+        AllowedOrigins: []string{"http://your-frontend-url.com", "http://localhost:3000"}, // Add your frontend URLs
+        AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
+        AllowedHeaders: []string{"*"},
+        AllowCredentials: true,
+    })
+
+	handler := c.Handler(router)
+
+	http.ListenAndServe(s.listenAddr, handler)
 }
 
 func (s *APIServer) handleSignup(w http.ResponseWriter, r *http.Request) error {
@@ -74,11 +84,14 @@ func (s *APIServer) handleSignup(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (s *APIServer) handleLogin(w http.ResponseWriter, r *http.Request) error {
+	fmt.Println("made it here")
 	req := new(LoginRequest)
 	if err := json.NewDecoder(r.Body).Decode(req); err != nil{
+		fmt.Println(r.Body)
 		return err
 	}
 
+	fmt.Println("made it here")
 	verify := CheckPassword(s.store, req.UserName, req.Password)
 	if(verify){
 		//Generate Cookie Here
@@ -89,13 +102,17 @@ func (s *APIServer) handleLogin(w http.ResponseWriter, r *http.Request) error {
 		}
 
 		httpCookie := &http.Cookie{
-			Name:     "Jason's Cookie",
+			Name:     "Cookie",
 			Value:    cookieToken,
+			Path:     "/",
 			Expires:  time.Now().Add(7 * 24 * time.Hour), // Set expiration to 7 days in the future.
 			HttpOnly: true,
+			Secure:   false,
+			SameSite: http.SameSiteLaxMode,
+			Domain: "localhost",
 		}
 
-		http.SetCookie(w, httpCookie)
+		// http.SetCookie(w, httpCookie)
 
 		if err := s.store.PostCookieByUserName(req.UserName, cookieToken); err != nil {
 			fmt.Println("error posting cookie")
@@ -103,7 +120,7 @@ func (s *APIServer) handleLogin(w http.ResponseWriter, r *http.Request) error {
 		}
 
 		resp := LoginResponse{
-			Response: "Cookie Set",
+			Response: httpCookie.Value,
 		}
 		return WriteJSON(w, http.StatusOK, resp)
 	}

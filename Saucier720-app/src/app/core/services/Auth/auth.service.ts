@@ -22,6 +22,7 @@ export class AuthService {
 
   public login(UserName: string, Password: string): Observable<any> {
     const body = { UserName, Password };
+    console.log(body)
     return this.http.post(MealDealzRoutes.loginUrl, body, { observe: 'response', responseType: 'json', withCredentials: true });
   }
 
