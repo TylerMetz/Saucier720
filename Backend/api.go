@@ -51,7 +51,7 @@ func (s *APIServer) Run() {
 	router.HandleFunc("/UpdateRecipe", makeHTTPHandleFunc(s.handleUpdateRecipe))
 
 	c := cors.New(cors.Options{
-        AllowedOrigins: []string{"http://your-frontend-url.com", "http://localhost:3000"}, // Add your frontend URLs
+        AllowedOrigins: []string{"http://localhost:4200", "http://localhost:4200/Login"}, // Add your frontend URLs
         AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
         AllowedHeaders: []string{"*"},
         AllowCredentials: true,
