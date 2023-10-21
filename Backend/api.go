@@ -86,12 +86,12 @@ func (s *APIServer) handleSignup(w http.ResponseWriter, r *http.Request) error {
 func (s *APIServer) handleLogin(w http.ResponseWriter, r *http.Request) error {
 	fmt.Println("made it here")
 	req := new(LoginRequest)
-	fmt.Println(r.Body)
 	if err := json.NewDecoder(r.Body).Decode(req); err != nil{
 		return err
 	}
 
-	fmt.Println("made it here")
+	fmt.Println("decoded body")
+	fmt.Println(req)
 	verify := CheckPassword(s.store, req.UserName, req.Password)
 	if(verify){
 		//Generate Cookie Here

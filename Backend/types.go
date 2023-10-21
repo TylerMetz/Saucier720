@@ -223,7 +223,8 @@ func NewAccount(userName, firstName, lastName, email, password string) (*Account
 
 func CreateCookieForUser(userName string) (string, error){
 	//create hash from username and time and store in database and THEN have it expire after 7 days
-	uniqueToken := fmt.Sprintf("%s-%s", userName, time.Now().String())
-
+	timeStamp := time.Now().Round(time.Second)
+	uniqueToken := fmt.Sprintf("%s-%s", userName, (timeStamp.Format("2006-01-02 15:04")))
+	fmt.Println("Unique Token: ", uniqueToken)
 	return uniqueToken, nil
 }
