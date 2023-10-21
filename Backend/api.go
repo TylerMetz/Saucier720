@@ -112,7 +112,7 @@ func (s *APIServer) handleLogin(w http.ResponseWriter, r *http.Request) error {
 			Domain: "localhost",
 		}
 
-		// http.SetCookie(w, httpCookie)
+		http.SetCookie(w, httpCookie)
 
 		if err := s.store.PostCookieByUserName(req.UserName, cookieToken); err != nil {
 			fmt.Println("error posting cookie")
