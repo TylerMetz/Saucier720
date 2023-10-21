@@ -2,6 +2,7 @@ import { Injectable, OnInit } from '@angular/core';
 import { HttpClient, HttpRequest, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
+import MealDealzRoutes from '../../interfaces/routes';
 
 @Injectable()
 export class AuthService {
@@ -9,9 +10,6 @@ export class AuthService {
   public loggedIn: boolean = false;
   private validCookie: boolean = false;
 
-
-  private loginUrl: string = 'http://localhost:8081/api/Login';
-  private logoutUrl: string = 'http://localhost:8081/api/Logout';
 
   constructor(private http: HttpClient, private cookieService: CookieService) {
     this.validCookie = this.cookieService.check('sessionID');
@@ -22,16 +20,16 @@ export class AuthService {
    }
    
 
-  public login(username: string, password: string): Observable<any> {
-    const body = { username, password };
-    return this.http.post(this.loginUrl, body, { observe: 'response', responseType: 'json', withCredentials: true });
+  public login(UserName: string, Password: string): Observable<any> {
+    const body = { UserName, Password };
+    return this.http.post(MealDealzRoutes.loginUrl, body, { observe: 'response', responseType: 'json', withCredentials: true });
   }
 
   public logout(): Observable<any> {
     this.loggedIn = false;
     this.cookieService.delete('sessionID');
     console.log("post req sending");
-    return this.http.post(this.logoutUrl, { });
+    return this.http.post(MealDealzRoutes.logoutUrl, { });
   }
 
   public isLoggedIn(): boolean {
