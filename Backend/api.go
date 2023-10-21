@@ -82,9 +82,10 @@ func (s *APIServer) handleLogin(w http.ResponseWriter, r *http.Request) error {
 
 	verify := CheckPassword(s.store, req.UserName, req.Password)
 	if(verify){
+		// Create the cookie for the user
+		cookie,_ := CreateCookieForUser(req.UserName)
 		resp := LoginResponse{
-			// WE ACTUALLY NEED TO GENERATE A COOKIE
-			Cookie: "GeneratedCookie",
+			Cookie: cookie,
 		}
 		return WriteJSON(w, http.StatusOK, resp)
 	}
