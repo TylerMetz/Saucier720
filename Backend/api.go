@@ -86,8 +86,8 @@ func (s *APIServer) handleSignup(w http.ResponseWriter, r *http.Request) error {
 func (s *APIServer) handleLogin(w http.ResponseWriter, r *http.Request) error {
 	fmt.Println("made it here")
 	req := new(LoginRequest)
+	fmt.Println(r.Body)
 	if err := json.NewDecoder(r.Body).Decode(req); err != nil{
-		fmt.Println(r.Body)
 		return err
 	}
 
