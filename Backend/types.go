@@ -41,7 +41,7 @@ type LoginRequest struct{
 }
 
 type LoginResponse struct {
-	Cookie		string 		`json:"Cookie"`
+	Response		string 		`json:"Cookie"`
 }
 
 type LogoutRequest struct { 

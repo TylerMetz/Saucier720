@@ -38,7 +38,6 @@ func (s *APIServer) Run() {
 	router.HandleFunc("/NewRecipe", makeHTTPHandleFunc(s.handlePostRecipe))
 	router.HandleFunc("/NewListIngredient", makeHTTPHandleFunc(s.handlePostList))
 	router.HandleFunc("/NewFavoriteRecipe", makeHTTPHandleFunc(s.handlePostFavoriteRecipe))
-	router.HandleFunc("/PostCookie", makeHTTPHandleFunc(s.handlePostCookie))
 	// THEN DELETE 
 	router.HandleFunc("/Logout", makeHTTPHandleFunc(s.handleLogout)) // we delete the cookie here ?
 	router.HandleFunc("/DeletePantryIngredient", makeHTTPHandleFunc(s.handleDeletePantryIngredient))
@@ -82,10 +81,29 @@ func (s *APIServer) handleLogin(w http.ResponseWriter, r *http.Request) error {
 
 	verify := CheckPassword(s.store, req.UserName, req.Password)
 	if(verify){
-		// Create the cookie for the user
-		cookie,_ := CreateCookieForUser(req.UserName)
+		//Generate Cookie Here
+		//helper function calling CreateCookieForUser
+		cookieToken, err := CreateCookieForUser(req.UserName); if err != nil { 
+			fmt.Println("error creating cookie")
+			return err
+		}
+
+		httpCookie := &http.Cookie{
+			Name:     "Jason's Cookie",
+			Value:    cookieToken,
+			Expires:  time.Now().Add(7 * 24 * time.Hour), // Set expiration to 7 days in the future.
+			HttpOnly: true,
+		}
+
+		http.SetCookie(w, httpCookie)
+
+		if err := s.store.PostCookieByUserName(req.UserName, cookieToken); err != nil {
+			fmt.Println("error posting cookie")
+			return err
+		}
+
 		resp := LoginResponse{
-			Cookie: cookie,
+			Response: "Cookie Set",
 		}
 		return WriteJSON(w, http.StatusOK, resp)
 	}
@@ -342,40 +360,6 @@ func (s *APIServer) handlePostFavoriteRecipe(w http.ResponseWriter, r *http.Requ
 
 	resp := PostFavoriteResponse {
 		Response: "Recipe Successfully Posted!",
-	}
-
-	return WriteJSON(w, http.StatusOK, resp)
-}
-
-func (s *APIServer) handlePostCookie(w http.ResponseWriter, r *http.Request) error { 
-	req := new(PostCookieRequest)
-	if err := json.NewDecoder(r.Body).Decode(req); err != nil{ 
-		return err
-	}
-
-	//Generate Cookie Here
-	//helper function calling CreateCookieForUser
-	cookieToken, err := CreateCookieForUser(req.UserName); if err != nil { 
-		fmt.Println("error creating cookie")
-		return err
-	}
-
-	httpCookie := &http.Cookie{
-		Name:     "Jason's Cookie",
-		Value:    cookieToken,
-		Expires:  time.Now().Add(7 * 24 * time.Hour), // Set expiration to 7 days in the future.
-		HttpOnly: true,
-	}
-
-	http.SetCookie(w, httpCookie)
-
-	if err := s.store.PostCookieByUserName(req.UserName, cookieToken); err != nil {
-		fmt.Println("error posting cookie")
-		return err
-	}
-
-	resp := PostCookieResponse {
-		Response: "Cookie Successfully Posted!",
 	}
 
 	return WriteJSON(w, http.StatusOK, resp)
