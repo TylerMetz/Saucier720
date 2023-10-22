@@ -1,6 +1,6 @@
 import logging
 import azure.functions as func
-from . import PublixScraper
+import PublixScraper
 
 app = func.FunctionApp()
 

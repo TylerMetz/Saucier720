@@ -9,6 +9,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from webdriver_manager.chrome import ChromeDriverManager
+import logging
 
 class Deal:
     def __init__(self, deal_details, product_name):
@@ -17,6 +18,9 @@ class Deal:
 
 
 def scrape_publix():
+
+    logging.info('Made it to the scrape function')
+
     # Get to publix website 
     url = "https://www.publix.com/savings/weekly-ad/view-all"
     
@@ -33,7 +37,7 @@ def scrape_publix():
 
     # Installs driver depending on browser
     driver = webdriver.Chrome(options=options)
-    
+
     # Open page
     driver.get(url) 
     time.sleep(10)
@@ -41,6 +45,11 @@ def scrape_publix():
     # Select location 
     location_button = driver.find_element(By.CSS_SELECTOR, "#main > div.savings-content-wrapper.skeleton-spacer > div > div.savings-container.full-bleed > div > div > button > span")
     
+    if location_button:
+        logging.info('found location button')
+    else:
+        logging.info('did not find location button')
+
     # Click button and allow time to load 
     location_button.click()
     time.sleep(5)
