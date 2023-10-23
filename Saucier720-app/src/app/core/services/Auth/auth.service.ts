@@ -29,7 +29,8 @@ export class AuthService {
 
   public logout(): Observable<any> {
     this.loggedIn = false;
-    this.cookieService.delete('sessionID');
+    this.cookieService.delete('Cookie');
+    console.log('cookies deleted');
     console.log("post req sending");
     return this.http.post(MealDealzRoutes.logoutUrl, { });
   }

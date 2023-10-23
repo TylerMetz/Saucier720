@@ -32,15 +32,9 @@ export class LoginFormComponent {
     private cookieService: CookieService
     ) { }
 
-    async setSessionIDAndNavigateToHome(sessionID: string): Promise<void> {
-      await new Promise<void>((resolve) => {
-        this.cookieService.set('sessionID', sessionID, 7, '/', 'localhost', false, 'Lax');
-        resolve();
-      });
-      
+    async navigateHome() {
       // time delay before going home
       setTimeout(() => {
-        this.isLoading = false;
         this.router.navigate(['/Home']);
       }, 1000);
     }
@@ -52,7 +46,8 @@ export class LoginFormComponent {
       };
       this.authService.login(request).subscribe({
         next: (response: any) => {
-          console.log(response, 'response')
+          console.log(response, 'navigating to home page')
+          this.navigateHome();
         },
         error: (err: any) => {
           console.log(err, 'errors')
