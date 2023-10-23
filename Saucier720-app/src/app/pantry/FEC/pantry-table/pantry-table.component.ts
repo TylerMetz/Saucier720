@@ -3,6 +3,8 @@ import { Component, OnInit, Input } from '@angular/core';
 import { PantryService } from 'src/app/core/services/pantry/pantry.service';
 import { lastValueFrom } from 'rxjs';
 import { Ingredient } from "src/app/core/interfaces/ingredient";
+import { GetPantryRequest } from "src/app/core/interfaces/types";
+import { AuthService } from "src/app/core/services/Auth/auth.service";
 
 @Component({
   selector: 'app-pantry-table',
@@ -14,34 +16,27 @@ export class PantryTableComponent implements OnInit {
 
   pantry: Ingredient[] = [];
 
-  constructor(private pantryService: PantryService) { }
+  constructor(private pantryService: PantryService, private authService: AuthService) { }
 
   async ngOnInit(){
     await this.populatePantry();
   }
 
   public async populatePantry(): Promise<void> {
-    try {
-      const event: HttpEvent<any> = await lastValueFrom(this.pantryService.getPantry());
-      switch(event.type) {
-        case HttpEventType.Sent:
-          console.log('Request sent!');
-          break;
-        case HttpEventType.ResponseHeader:
-          console.log('Response header received!');
-          break;
-        case HttpEventType.DownloadProgress:
-          const kbLoaded = Math.round(event.loaded / 1024);
-          console.log(`Download in progress! ${kbLoaded}Kb loaded`);
-          break;
-        case HttpEventType.Response:
-          console.log('Done!', event.body);
-          this.pantry = event.body;
-          break;
+    const request: GetPantryRequest = {
+      UserName: this.authService.getUsername(),
+    };
+    console.log('request: ', request)
+    this.pantryService.getPantry(request.UserName).subscribe({
+      next: (response: any) => {
+        console.log('GetPantryResponse: ', response)
+        this.pantry = response;
+        console.log('pantry updated: ', this.pantry)
+      },
+      error: (err: any) => {
+        console.log(err, 'errors')
       }
-    } catch (error) {
-      console.error(error);
-    }
+    });
   }
 
   async updatePantry() {

@@ -6,3 +6,6 @@ export interface LoginRequest {
 export interface LogoutRequest {
     UserName: string;
 }
+export interface GetPantryRequest {
+    UserName: string;
+}

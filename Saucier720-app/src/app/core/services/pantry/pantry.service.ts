@@ -1,8 +1,12 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpRequest, HttpHeaders } from '@angular/common/http';
-import { Ingredient } from '../../interfaces/ingredient';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
+import { Ingredient, Pantry } from '../../interfaces/ingredient';
 import { PANTRY } from 'src/app/mocks/pantry.mock';
 import { CookieService } from 'ngx-cookie-service';
+import MealDealzRoutes from '../../interfaces/routes';
+import { GetPantryRequest } from '../../interfaces/types';
+import { AuthService } from '../Auth/auth.service';
+import { catchError, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -12,14 +16,16 @@ export class PantryService {
   private pantryPostUrl = 'http://localhost:8082/api/NewPantryItem';
   private pantryUpdateUrl = 'http://localhost:8082/api/UpdatePantry'
 
-  constructor(private http: HttpClient, private cookieService: CookieService) { }
+  constructor(private http: HttpClient, 
+    private cookieService: CookieService,
+    private authService: AuthService) { }
 
-  getPantry() {
-    const req = new HttpRequest('GET', this.pantryUrl, { 
-      reportProgress: true
-    });
-    
-    return this.http.request(req);
+  getPantry(username: string): Observable<Pantry> {
+    console.log('username: ', username);
+    const options = username ?
+    { params: new HttpParams().set('name', username) } : {};
+    console.log(options);
+    return this.http.get<Pantry>(MealDealzRoutes.getPantryUrl, options);
   }
 
   updatePantry(pantry: Ingredient[]) {

@@ -13,11 +13,16 @@ export class AuthService {
 
 
   constructor(private http: HttpClient, private cookieService: CookieService) {
-    this.validCookie = this.cookieService.check('sessionID');
+    this.validCookie = this.cookieService.check('Cookie');
     console.log('cookie status: ', this.validCookie);
     if (this.validCookie) {
       this.loggedIn = true;
     }
+   }
+
+   public getUsername(): string {
+      console.log('cookie value: ', this.cookieService.get('Cookie'))
+      return this.cookieService.get('Cookie').slice(0, 4); // If there's no dash, return the whole value
    }
    
 

@@ -752,11 +752,11 @@ func (s *AzureDatabase) PostCookieByUserName(username string, cookie string) err
 		sql.Named("Cookie", cookie),
 	)
 	if err != nil {
-		fmt.Println("error on cookie post")
 		updateCookieerr := s.UpdateCookieByUserName(username, cookie)
 		if updateCookieerr == nil {
 			return nil
 		}
+		fmt.Println("error on cookie post")
 		return err
 	}
 
