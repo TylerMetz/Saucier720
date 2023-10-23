@@ -3,6 +3,7 @@ import { HttpClient, HttpRequest, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 import MealDealzRoutes from '../../interfaces/routes';
+import { LoginRequest } from '../../interfaces/types';
 
 @Injectable()
 export class AuthService {
@@ -20,8 +21,8 @@ export class AuthService {
    }
    
 
-  public login(UserName: string, Password: string): Observable<any> {
-    const body = { UserName, Password };
+  public login(request: LoginRequest): Observable<any> {
+    const body = request;
     console.log(body)
     return this.http.post(MealDealzRoutes.loginUrl, body, { observe: 'response', responseType: 'json', withCredentials: true });
   }
