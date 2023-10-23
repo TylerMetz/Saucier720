@@ -17,7 +17,7 @@ export class AppComponent implements OnInit {
   username: string;
 
   constructor(private cookieService: CookieService, private authService: AuthService, private router: Router) {
-    const sessionId = this.cookieService.get('sessionID');
+    const sessionId = this.cookieService.get('Cookie');
     this.username = sessionId.slice(0, -3);
   }
 
@@ -50,11 +50,11 @@ export class AppComponent implements OnInit {
   }
 
   //i really dont know what this is doing
-  // getAuthService() {
-  //   // const sessionId = this.cookieService.get('Cookie');
-  //   // this.username = sessionId.slice(0, -3);
-  //   return this.authService;
-  // }
+  getAuthService() {
+    // const sessionId = this.cookieService.get('Cookie');
+    // this.username = sessionId.slice(0, -3);
+    return this.authService;
+  }
 
 }
 
