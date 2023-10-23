@@ -3,7 +3,7 @@ import { HttpClient, HttpRequest, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 import MealDealzRoutes from '../../interfaces/routes';
-import { LoginRequest } from '../../interfaces/types';
+import { LoginRequest, LogoutRequest } from '../../interfaces/types';
 
 @Injectable()
 export class AuthService {
@@ -23,16 +23,18 @@ export class AuthService {
 
   public login(request: LoginRequest): Observable<any> {
     const body = request;
-    console.log(body)
+    console.log('LoginRequest', body)
     return this.http.post(MealDealzRoutes.loginUrl, body, { observe: 'response', responseType: 'json', withCredentials: true });
   }
 
-  public logout(): Observable<any> {
+  public logout(request: LogoutRequest): Observable<any> {
     this.loggedIn = false;
     this.cookieService.delete('Cookie');
-    console.log('cookies deleted');
+    console.log('cookie deleted');
     console.log("post req sending");
-    return this.http.post(MealDealzRoutes.logoutUrl, { });
+    const body = request;
+    console.log('LogoutRequest', body)
+    return this.http.post(MealDealzRoutes.logoutUrl, body, { observe: 'response', responseType: 'json', withCredentials: true });
   }
 
   public isLoggedIn(): boolean {

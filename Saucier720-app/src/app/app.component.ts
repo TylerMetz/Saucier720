@@ -4,6 +4,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { AuthService } from 'src/app/core/services/Auth/auth.service';
 import { Router } from '@angular/router';
 import { lastValueFrom } from 'rxjs';
+import { LogoutRequest } from './core/interfaces/types';
 
 @Component({
   selector: 'app-root',
@@ -25,25 +26,27 @@ export class AppComponent implements OnInit {
   }
 
   async logout() {
-    try {
-      const response = await lastValueFrom(this.authService.logout());
-      console.log('response', response);
-
-      // clear button/checkbox states from session
-      localStorage.removeItem('recipeNavBarButtonState');
-      localStorage.removeItem('myRecipesValue');
-      localStorage.removeItem('userRecipesValue');
-      localStorage.removeItem('mdRecipesValue');
-
-      if (this.router.url === '/Home'){
-        window.location.reload();
-      } else{
-        this.router.navigate(['/Home']);
+    const request: LogoutRequest = {
+      UserName: this.username
+    };
+    this.authService.logout(request).subscribe({
+      next: (response: any) => {
+        this.authService.loggedIn = false; // we really should change this but this is out the login button knows to switch to the logout so i am keeping for now
+        console.log(response, 'user logged out')
+        localStorage.removeItem('recipeNavBarButtonState');
+        localStorage.removeItem('myRecipesValue');
+        localStorage.removeItem('userRecipesValue');
+        localStorage.removeItem('mdRecipesValue');
+        if (this.router.url === '/Home'){
+          window.location.reload();
+        } else{
+          this.router.navigate(['/Home']);
+        }
+      },
+      error: (err: any) => {
+        console.log(err, 'errors')
       }
-
-    } catch (error: any) {
-      console.log(error.message);
-    }
+    });
   }
 
   getAuthService() {
