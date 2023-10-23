@@ -6,3 +6,4 @@ Backend/bin/
 Backend/pkg/
 Backend/src/
 pkg
+.vscode/*
