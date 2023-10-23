@@ -8,7 +8,7 @@ import { LoginRequest } from '../../interfaces/types';
 @Injectable()
 export class AuthService {
 
-  public loggedIn: boolean = false;
+  public loggedIn: boolean = false; 
   private validCookie: boolean = false;
 
 

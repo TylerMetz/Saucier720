@@ -46,6 +46,7 @@ export class LoginFormComponent {
       };
       this.authService.login(request).subscribe({
         next: (response: any) => {
+          this.authService.loggedIn = true; // we really should change this but this is out the login button knows to switch to the logout so i am keeping for now
           console.log(response, 'navigating to home page')
           this.navigateHome();
         },
