@@ -20,7 +20,7 @@ export class SubRecipeComponent {
   }
 
   addToList(ingredient: string) {
-    this.listComponent.addIngredient(ingredient);
+    //this.listComponent.addIngredient(ingredient);
   }
 
   sanitizeHtmlId(inputStr: string): string {

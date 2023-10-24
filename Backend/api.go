@@ -126,7 +126,7 @@ func (s *APIServer) handleLogin(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (s *APIServer) handleGetPantry(w http.ResponseWriter, r *http.Request) error {
-	username := r.URL.Query().Get("user");
+	username := r.URL.Query().Get("username");
 
 	pantry, err := s.store.GetPantryByUserName(username)
 	if err != nil {
@@ -273,21 +273,20 @@ func (s *APIServer) handleGetDealsByStore(w http.ResponseWriter, r *http.Request
 
 // handleGetList
 func (s *APIServer) handleGetList(w http.ResponseWriter, r *http.Request) error {
-	req := new(ListRequest)
-	if err := json.NewDecoder(r.Body).Decode(req); err != nil{
-		return err
-	}
+	username := r.URL.Query().Get("username");
 
-	deals, err := s.store.GetShoppingListByUserName(req.UserName)
+	list, err := s.store.GetShoppingListByUserName(username)
 	if err != nil { 
 		fmt.Println("error getting deals")
 		return err
 	}
 
-	resp := new(ListResponse)
-	resp.List = deals
+	resp := ListResponse {
+		List: list,
+	}
 
 	return WriteJSON(w, http.StatusOK, resp)
+
 }
 
 
@@ -478,6 +477,13 @@ func (s *APIServer) handleUpdateList(w http.ResponseWriter, r *http.Request) err
 
 	if err := s.store.UpdateListByUserName(req.UserName, req.List); err != nil{
 		return err
+	}
+
+	for _, ingredient := range req.ItemsToDelete { 
+		fmt.Println(ingredient)
+		if err := s.store.DeleteListIngredient(req.UserName, ingredient); err != nil{
+			return err
+		}
 	}
 
 	resp := UpdateListResponse {

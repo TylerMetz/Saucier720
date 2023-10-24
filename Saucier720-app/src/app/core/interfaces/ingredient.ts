@@ -8,3 +8,7 @@ export interface Ingredient {
 export interface Pantry {
     Ingredients: Ingredient[]
 }
+
+export interface List {
+    Ingredients: Ingredient[]
+}

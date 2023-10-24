@@ -89,7 +89,7 @@ type ListRequest struct {
 }
 
 type ListResponse struct {
-	List 		[]Ingredient `json:"List"`
+	List 		List	 `json:"List"`
 }
 
 type PostPantryRequest struct {
@@ -193,7 +193,8 @@ type UpdateRecipeResponse struct {
 
 type UpdateListRequest struct { 
 	UserName	string		`json:"UserName"`
-	List		Pantry		`json:"List"`
+	List		List		`json:"List"`
+	ItemsToDelete []Ingredient	`json:"ItemsToDelete"`
 }
 
 type UpdateListResponse struct { 
@@ -208,6 +209,10 @@ type Ingredient struct {
 }
 
 type Pantry struct {
+	Ingredients []Ingredient
+}
+
+type List struct {
 	Ingredients []Ingredient
 }
 
