@@ -4,6 +4,8 @@ import { PANTRY } from 'src/app/mocks/pantry.mock';
 import { lastValueFrom } from 'rxjs';
 import { Ingredient } from 'src/app/core/interfaces/ingredient';
 import { PantryTableComponent } from '../pantry-table/pantry-table.component';
+import { PostPantryRequest } from 'src/app/core/interfaces/types';
+import { AuthService } from 'src/app/core/services/Auth/auth.service';
 
 @Component({
   selector: 'app-new-pantry-item-button',
@@ -20,31 +22,29 @@ export class NewPantryItemButtonComponent {
 
   @Output() newItemAdded: EventEmitter<{ name: string, quantity: number }> = new EventEmitter<{ name: string, quantity: number }>();
 
-  constructor(private pantryService: PantryService) { }
+  constructor(private pantryService: PantryService, private authService: AuthService) { }
 
   async postPantryItem() {
     if(!this.name){
-      return; // Won't post if empty 
+      return
     }
-    const newPantryItem: Ingredient = {
-      Name: this.name,
-      FoodType: this.foodtype,
-      SaleDetails: this.saleDetails,
-      Quantity: this.quantity,
+    const request: PostPantryRequest = { 
+      UserName: this.authService.getUsername(),
+      Ingredient: {
+        Name: this.name,
+        FoodType: this.foodtype,
+        SaleDetails: this.saleDetails,
+        Quantity: this.quantity,
+      }
     };
-    console.log(newPantryItem)
-    try {
-      const response = await lastValueFrom(this.pantryService.postPantryItem(newPantryItem));
-      console.log(response);
-      const newItem = {
-        name: newPantryItem.Name,
-        quantity: newPantryItem.Quantity,
-      };
-      this.newItemAdded.emit(newItem);
-      this.name = '';
-      this.quantity = 1;
-    } catch (error) {
-      console.error(error);
-    }
+    this.pantryService.postPantryItem(request).subscribe({
+      next: (response: any) => {
+        console.log('New Pantry Item Posted: ', response)
+        this.name = '';
+      },
+      error: (err: any) => {
+        console.log(err, 'errors')
+      }
+    });
   }
 }

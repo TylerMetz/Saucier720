@@ -2,8 +2,8 @@ import { HttpEvent, HttpEventType } from "@angular/common/http"
 import { Component, OnInit, Input } from '@angular/core';
 import { PantryService } from 'src/app/core/services/pantry/pantry.service';
 import { lastValueFrom } from 'rxjs';
-import { Ingredient } from "src/app/core/interfaces/ingredient";
-import { GetPantryRequest } from "src/app/core/interfaces/types";
+import { Ingredient, Pantry } from "src/app/core/interfaces/ingredient";
+import { GetPantryRequest, UpdatePantryRequest } from "src/app/core/interfaces/types";
 import { AuthService } from "src/app/core/services/Auth/auth.service";
 
 @Component({
@@ -14,7 +14,9 @@ import { AuthService } from "src/app/core/services/Auth/auth.service";
 })
 export class PantryTableComponent implements OnInit {
 
-  pantry: Ingredient[] = [];
+  pantry: Pantry = {
+    Ingredients: [],
+  };
 
   constructor(private pantryService: PantryService, private authService: AuthService) { }
 
@@ -23,15 +25,11 @@ export class PantryTableComponent implements OnInit {
   }
 
   public async populatePantry(): Promise<void> {
-    const request: GetPantryRequest = {
-      UserName: this.authService.getUsername(),
-    };
-    console.log('request: ', request)
-    this.pantryService.getPantry(request.UserName).subscribe({
+    console.log('username: ', this.authService.getUsername())
+    this.pantryService.getPantry(this.authService.getUsername()).subscribe({
       next: (response: any) => {
         console.log('GetPantryResponse: ', response)
-        //this.pantry = response;
-        this.pantry = response.Pantry.Ingredients;
+        this.pantry = response.Pantry;
         console.log('pantry updated: ', this.pantry)
       },
       error: (err: any) => {
@@ -41,16 +39,15 @@ export class PantryTableComponent implements OnInit {
   }
 
   async updatePantry() {
-    try {
-      // Check and remove items with quantity 0
-      this.pantry = this.pantry.filter((item: Ingredient) => item.Quantity !== 0);
-      
-      // Call pantryService to update pantry
-      const response = await lastValueFrom(this.pantryService.updatePantry(this.pantry));
-      console.log(response);
-    } catch (error) {
-      console.error(error);
-    }
+    this.pantry.Ingredients = this.pantry.Ingredients.filter((item: Ingredient) => item.Quantity !== 0);
+    const request: UpdatePantryRequest = { 
+      UserName: this.authService.getUsername(),
+      Pantry: this.pantry
+    };
+    // Check and remove items with quantity 0
+    // Call pantryService to update pantry
+    const response = await lastValueFrom(this.pantryService.updatePantry(request));
+    console.log(response);
   } 
 
   addTempValue(name: string, quantity: number){
@@ -60,10 +57,10 @@ export class PantryTableComponent implements OnInit {
       SaleDetails: '',
       Quantity: quantity,
     };
-    if(this.pantry === null){
-      this.pantry = []
+    if(this.pantry.Ingredients === null){
+      this.pantry.Ingredients = [];
     }
-    this.pantry.push(newIngredient)
+    this.pantry.Ingredients.push(newIngredient);
   }
 
   

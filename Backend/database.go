@@ -905,10 +905,10 @@ func (s *AzureDatabase) DeleteCookieByUserName(username string) error {
 // UPDATES
 func (s *AzureDatabase) UpdatePantryByUserName(username string, pantry Pantry) error {
 	ctx := context.Background()
-
+	
 	tsql := fmt.Sprintf(`
 		UPDATE dbo.user_ingredients
-		SET Quantity = @Quantity AND FoodType = @FoodType
+		SET Quantity = @Quantity, FoodType = @FoodType
 		WHERE UserName = @UserName
 		AND FoodName = @FoodName;
 	`)
