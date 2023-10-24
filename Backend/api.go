@@ -483,6 +483,13 @@ func (s *APIServer) handleUpdateList(w http.ResponseWriter, r *http.Request) err
 		return err
 	}
 
+	for _, ingredient := range req.ItemsToDelete { 
+		fmt.Println(ingredient)
+		if err := s.store.DeleteListIngredient(req.UserName, ingredient); err != nil{
+			return err
+		}
+	}
+
 	resp := UpdateListResponse {
 		Response: "Successfully Updated List",
 	}

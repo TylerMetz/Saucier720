@@ -46,7 +46,7 @@ type Storage interface {
 	//List
 	GetShoppingListByUserName(string) (List, error)
 	PostListIngredient(string, Ingredient) error
-	UpdateListByUserName(string, Pantry) error
+	UpdateListByUserName(string, List) error
 	DeleteListIngredient(string, Ingredient) error
 	// Cookies
 	GetCookieByUserName(string) (string, error)
@@ -935,7 +935,7 @@ func (s *AzureDatabase) UpdatePantryByUserName(username string, pantry Pantry) e
 	return nil
 }
 
-func (s *AzureDatabase) UpdateListByUserName(username string, pantry Pantry) error {
+func (s *AzureDatabase) UpdateListByUserName(username string, list List) error {
 	ctx := context.Background()
 
 	tsql := fmt.Sprintf(`
@@ -952,7 +952,7 @@ func (s *AzureDatabase) UpdateListByUserName(username string, pantry Pantry) err
 	}
 	defer stmt.Close()
 
-	for _, ingredient := range pantry.Ingredients {
+	for _, ingredient := range list.Ingredients {
 		_, err = stmt.ExecContext(ctx,
 			sql.Named("UserName", username),
 			sql.Named("FoodName", ingredient.Name),

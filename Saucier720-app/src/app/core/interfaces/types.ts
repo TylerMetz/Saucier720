@@ -28,3 +28,9 @@ export interface PostListRequest {
     UserName: string;
     Ingredient: Ingredient;
 }
+
+export interface UpdateListRequest{
+    UserName: string;
+    List: List; 
+    ItemsToDelete: Ingredient[];
+}

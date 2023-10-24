@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { HttpEvent, HttpEventType } from "@angular/common/http"
 import { lastValueFrom } from 'rxjs';
 import { AuthService } from '../core/services/Auth/auth.service';
-import { GetListRequest, PostListRequest } from '../core/interfaces/types';
+import { GetListRequest, PostListRequest, UpdateListRequest } from '../core/interfaces/types';
 
 @Component({
   selector: 'app-list',
@@ -89,6 +89,19 @@ export class ListComponent implements OnInit {
         console.log(err, 'errors')
       }
     });
+  }
+
+  async updateList(){
+    const zeroQuantityItems = this.list.Ingredients.filter((item: Ingredient) => item.Quantity === 0); 
+    this.list.Ingredients = this.list.Ingredients.filter((item: Ingredient) => item.Quantity !== 0);
+    const request: UpdateListRequest = { 
+      UserName: this.authService.getUsername(),
+      List: this.list,
+      ItemsToDelete: zeroQuantityItems,
+    };
+    const response = await lastValueFrom(this.listService.updateList(request));
+    console.log('UpdateListResponse: ', response);
+    this.populateList();
   }
 
   // adjustQuantity(ingredient: Ingredient, action: string) {

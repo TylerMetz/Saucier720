@@ -4,7 +4,7 @@ import { Ingredient, List } from '../../interfaces/ingredient';
 import { CookieService } from 'ngx-cookie-service';
 import { from, lastValueFrom, Observable } from 'rxjs';
 import MealDealzRoutes from '../../interfaces/routes';
-import { PostListRequest } from '../../interfaces/types';
+import { PostListRequest, UpdateListRequest } from '../../interfaces/types';
 
 @Injectable({
   providedIn: 'root'
@@ -44,6 +44,11 @@ export class ListService {
   postListItem(request: PostListRequest) {
     console.log('request', request)
     return this.http.post<any>(MealDealzRoutes.postListUrl, request, { observe: 'response', responseType: 'json', withCredentials: true });
+  }
+
+  updateList(request: UpdateListRequest) {
+    console.log('UpdateListRequest', request)
+    return this.http.put<any>(MealDealzRoutes.updateListUrl, request, { observe: 'response', responseType: "json", withCredentials: true});
   }
   
 
