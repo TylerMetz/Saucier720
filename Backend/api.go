@@ -279,21 +279,25 @@ func (s *APIServer) handleGetDealsByStore(w http.ResponseWriter, r *http.Request
 
 // handleGetList
 func (s *APIServer) handleGetList(w http.ResponseWriter, r *http.Request) error {
-	req := new(ListRequest)
-	if err := json.NewDecoder(r.Body).Decode(req); err != nil{
-		return err
-	}
+	// req := new(ListRequest)
+	// if err := json.NewDecoder(r.Body).Decode(req); err != nil{
+	// 	return err
+	// }
 
-	deals, err := s.store.GetShoppingListByUserName(req.UserName)
+	username := r.URL.Query().Get("username");
+
+	list, err := s.store.GetShoppingListByUserName(username)
 	if err != nil { 
 		fmt.Println("error getting deals")
 		return err
 	}
 
-	resp := new(ListResponse)
-	resp.List = deals
+	resp := ListResponse {
+		List: list,
+	}
 
 	return WriteJSON(w, http.StatusOK, resp)
+
 }
 
 

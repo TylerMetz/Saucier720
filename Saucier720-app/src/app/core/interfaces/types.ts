@@ -17,3 +17,7 @@ export interface SignupRequest {
     Email:      string; 
     Password:   string; 
 }
+
+export interface GetListRequest {
+    UserName:   string; 
+}

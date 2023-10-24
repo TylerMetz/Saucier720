@@ -89,7 +89,7 @@ type ListRequest struct {
 }
 
 type ListResponse struct {
-	List 		[]Ingredient `json:"List"`
+	List 		List	 `json:"List"`
 }
 
 type PostPantryRequest struct {
@@ -210,6 +210,10 @@ type Pantry struct {
 	Ingredients []Ingredient
 }
 
+type List struct {
+	Ingredients []Ingredient
+}
+
 func NewAccount(userName, firstName, lastName, email, password string) (*Account, error){
 	return &Account{
 		UserName: userName,
@@ -223,8 +227,7 @@ func NewAccount(userName, firstName, lastName, email, password string) (*Account
 
 func CreateCookieForUser(userName string) (string, error){
 	//create hash from username and time and store in database and THEN have it expire after 7 days
-	timeStamp := time.Now().Round(time.Second)
-	uniqueToken := fmt.Sprintf("%s-%s", userName, (timeStamp.Format("2006-01-02 15:04")))
-	fmt.Println("Unique Token: ", uniqueToken)
+	uniqueToken := fmt.Sprintf("%s-%s", userName, time.Now().String())
+
 	return uniqueToken, nil
 }

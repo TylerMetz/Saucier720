@@ -13,23 +13,23 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let ingredient of ingredients">
+            <tr *ngFor="let ingredient of list.Ingredients">
               <td>{{ ingredient.Name }}</td>
               <td>{{ ingredient.Quantity }}</td>
-              <td>
+              <!--td>
                 <button (click)="adjustQuantity(ingredient, 'increment')">+</button>
                 <button (click)="adjustQuantity(ingredient, 'decrement')">-</button>
                 <button (click)="deleteIngredient(ingredient)"><i class="fa fa-trash" aria-hidden="true"></i>Delete</button>
-              </td>
+              </td-->
             </tr>
           </tbody>
         </table>
   
-        <div class="add-ingredient">
+        <!--<div class="add-ingredient">
           <input type="text" placeholder="Ingredient Name" [(ngModel)]="newIngredientName">
           <input type="number" placeholder="Quantity" [(ngModel)]="newIngredientQuantity">
           <button (click)="addIngredient()">Add</button>
-        </div>
+        </div>-->
       </div>
     </div>
   </div>
