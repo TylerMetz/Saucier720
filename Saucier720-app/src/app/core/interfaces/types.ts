@@ -1,3 +1,5 @@
+import { Ingredient, Pantry, List} from "./ingredient";
+
 export interface LoginRequest {
     UserName: string;
     Password: string;
@@ -20,4 +22,9 @@ export interface SignupRequest {
 
 export interface GetListRequest {
     UserName:   string; 
+}
+
+export interface PostListRequest {
+    UserName: string;
+    Ingredient: Ingredient;
 }

@@ -4,6 +4,7 @@ import { Ingredient, List } from '../../interfaces/ingredient';
 import { CookieService } from 'ngx-cookie-service';
 import { from, lastValueFrom, Observable } from 'rxjs';
 import MealDealzRoutes from '../../interfaces/routes';
+import { PostListRequest } from '../../interfaces/types';
 
 @Injectable({
   providedIn: 'root'
@@ -30,15 +31,21 @@ export class ListService {
     return this.http.get<List>(MealDealzRoutes.getListUrl, options);
   }
 
-  postListItem(ingredient: Ingredient) {
-    const headers = new HttpHeaders({ 
-      'Content-Type': 'application/json', 
-    });
-  
-    const body = { ingredient };
-    console.log(body)
-    return this.http.post<any>(this.postListUrl, body, { headers, withCredentials: true });
+  // postListItem(ingredient: Ingredient) {
+  //   const headers = new HttpHeaders({ 
+  //     'Content-Type': 'application/json', 
+  //   });
+
+  //   const body = { ingredient };
+  //   console.log(body)
+  //   return this.http.post<any>(this.postListUrl, body, { headers, withCredentials: true });
+  // }
+
+  postListItem(request: PostListRequest) {
+    console.log('request', request)
+    return this.http.post<any>(MealDealzRoutes.postListUrl, request, { observe: 'response', responseType: 'json', withCredentials: true });
   }
+  
 
   // Function checks against current list to see if an item is already in the user list 
   async checkIfExists(ingredient: Ingredient, username: string): Promise<boolean> {

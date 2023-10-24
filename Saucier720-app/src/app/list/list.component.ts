@@ -13,6 +13,8 @@ import { GetListRequest } from '../core/interfaces/types';
   styleUrls: ['./list.component.scss']
 })
 export class ListComponent implements OnInit {
+  name: string = '';
+  quantity: string = '';
 
   list: List = {
     Ingredients: []
@@ -63,6 +65,10 @@ export class ListComponent implements OnInit {
         console.log(err, 'errors')
       }
     });
+  }
+
+  async postListItem() {
+    console.log(this.name, this.quantity)
   }
 
   // adjustQuantity(ingredient: Ingredient, action: string) {
