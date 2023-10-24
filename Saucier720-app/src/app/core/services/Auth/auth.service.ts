@@ -1,6 +1,6 @@
 import { Injectable, OnInit } from '@angular/core';
 import { HttpClient, HttpRequest, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, first } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 import MealDealzRoutes from '../../interfaces/routes';
 import { LoginRequest, LogoutRequest } from '../../interfaces/types';
@@ -22,7 +22,8 @@ export class AuthService {
 
    public getUsername(): string {
       console.log('cookie value: ', this.cookieService.get('Cookie'))
-      return this.cookieService.get('Cookie').slice(1, 5); // If there's no dash, return the whole value
+      const firstDash = this.cookieService.get('Cookie').indexOf('-');
+      return this.cookieService.get('Cookie').slice(1, firstDash); // If there's no dash, return the whole value
    }
    
 
