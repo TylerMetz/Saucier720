@@ -22,13 +22,6 @@ export class SignupService {
 
   constructor(private http: HttpClient) {}
 
-  // public signup(user: User): Observable<any>{
-  //   const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-  //   const body = { user };
-  //   console.log(body)
-  //   return this.http.post<any>(this.signupUrl, body, { headers, withCredentials: true });
-  // }
-
   public signup(request: SignupRequest): Observable<any> {
     const body = request;
     console.log('SignupRequest', body);

@@ -18,26 +18,7 @@ export class SignupFormComponent {
   password: string = '';
 
   constructor(private signupService: SignupService, private router: Router) {}
-  
-  // async signup() {
-  //   const user: User = {
-  //     FirstName: this.firstName,
-  //     LastName: this.lastName,
-  //     Email: this.email,
-  //     UserName: this.userName,
-  //     Password: this.password,
-  //   };
-  //   try {
-  //     console.log(user.UserName)
-  //     const response = await lastValueFrom(this.signupService.signup(user));
-  //     console.log(response);
-  //     this.router.navigate(['/Login']); // navigate to login page on successful user creation
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
 
-    
-  // }
   signup(){
     const request: SignupRequest = {
       UserName: this.userName,
