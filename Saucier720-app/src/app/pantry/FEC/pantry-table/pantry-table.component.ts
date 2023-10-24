@@ -47,7 +47,8 @@ export class PantryTableComponent implements OnInit {
       ItemsToDelete: zeroQuantityItems,
     };
     const response = await lastValueFrom(this.pantryService.updatePantry(request));
-    console.log(response);
+    console.log('UpdatePantryResponse: ', response);
+    this.populatePantry();
   } 
 
   addTempValue(name: string, quantity: number){
