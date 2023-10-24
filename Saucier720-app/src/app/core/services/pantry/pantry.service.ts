@@ -22,7 +22,7 @@ export class PantryService {
   getPantry(username: string): Observable<Pantry> {
     console.log('username: ', username);
     const options = username ?
-    { params: new HttpParams().set('user', username) } : {};
+    { params: new HttpParams().set('username', username) } : {};
     console.log('pantry request username: ', username);
     console.log('pantry request options: ', options);
     return this.http.get<Pantry>(MealDealzRoutes.getPantryUrl, options);

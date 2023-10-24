@@ -126,7 +126,7 @@ func (s *APIServer) handleLogin(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (s *APIServer) handleGetPantry(w http.ResponseWriter, r *http.Request) error {
-	username := r.URL.Query().Get("user");
+	username := r.URL.Query().Get("username");
 
 	pantry, err := s.store.GetPantryByUserName(username)
 	if err != nil {
@@ -273,11 +273,6 @@ func (s *APIServer) handleGetDealsByStore(w http.ResponseWriter, r *http.Request
 
 // handleGetList
 func (s *APIServer) handleGetList(w http.ResponseWriter, r *http.Request) error {
-	// req := new(ListRequest)
-	// if err := json.NewDecoder(r.Body).Decode(req); err != nil{
-	// 	return err
-	// }
-
 	username := r.URL.Query().Get("username");
 
 	list, err := s.store.GetShoppingListByUserName(username)
