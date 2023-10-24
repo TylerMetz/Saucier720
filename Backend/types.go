@@ -173,8 +173,9 @@ type DeleteRecipeResponse struct {
 }
 
 type UpdatePantryRequest struct {
-	UserName	string		`json:"UserName"`
-	Pantry 		Pantry		`json:"Pantry"`
+	UserName	string			`json:"UserName"`
+	Pantry 		Pantry			`json:"Pantry"`
+	ItemsToDelete []Ingredient 	`json:"ItemsToDelete"`
 }
 
 type UpdatePantryResponse struct {

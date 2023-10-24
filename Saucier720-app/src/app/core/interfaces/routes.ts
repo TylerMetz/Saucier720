@@ -4,6 +4,7 @@ const MealDealzRoutes: Routes = {
   getPantryUrl: 'http://localhost:8080/Pantry',
   postPantryUrl: 'http://localhost:8080/NewPantryItem',
   updatePantryUrl:  'http://localhost:8080/UpdatePantry',
+  deletePantryUrl: 'http://localhost:8080/DeletePantryIngredient',
   signupUrl:  'http://localhost:8080/Signup',
   // Add more routes as needed
 };
@@ -16,6 +17,7 @@ export interface Routes {
     getPantryUrl: string;
     updatePantryUrl: string; 
     postPantryUrl: string;
+    deletePantryUrl: string;
     signupUrl: string;
     // Add more routes as needed
 }

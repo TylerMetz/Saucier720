@@ -456,6 +456,13 @@ func (s *APIServer) handleUpdatePantry(w http.ResponseWriter, r *http.Request) e
 		return err
 	}
 
+	for _, ingredient := range req.ItemsToDelete { 
+		fmt.Println(ingredient)
+		if err := s.store.DeletePantryIngredient(req.UserName, ingredient); err != nil{
+			return err
+		}
+	}
+
 	resp := UpdatePantryResponse {
 		Response: "Successfully Updated Pantry",
 	}

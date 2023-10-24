@@ -39,13 +39,13 @@ export class PantryTableComponent implements OnInit {
   }
 
   async updatePantry() {
+    const zeroQuantityItems = this.pantry.Ingredients.filter((item: Ingredient) => item.Quantity === 0); 
     this.pantry.Ingredients = this.pantry.Ingredients.filter((item: Ingredient) => item.Quantity !== 0);
     const request: UpdatePantryRequest = { 
       UserName: this.authService.getUsername(),
-      Pantry: this.pantry
+      Pantry: this.pantry,
+      ItemsToDelete: zeroQuantityItems,
     };
-    // Check and remove items with quantity 0
-    // Call pantryService to update pantry
     const response = await lastValueFrom(this.pantryService.updatePantry(request));
     console.log(response);
   } 
@@ -62,7 +62,4 @@ export class PantryTableComponent implements OnInit {
     }
     this.pantry.Ingredients.push(newIngredient);
   }
-
-  
-
 }

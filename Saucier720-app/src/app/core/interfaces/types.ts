@@ -19,6 +19,7 @@ export interface GetPantryResponse {
 export interface UpdatePantryRequest {
     UserName: string;
     Pantry: Pantry;
+    ItemsToDelete: Ingredient[];
 }
 
 export interface PostPantryRequest { 
