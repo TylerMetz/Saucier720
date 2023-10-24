@@ -11,12 +11,14 @@ export interface Recipe {
     [key: string]: any; // index signature
 }
 
-export interface RecipePost {
+
+export interface Recommendation {
     R: Recipe;
     ItemsInPantry: Ingredient[];
     ItemsOnSale: Ingredient[];
 }
 
-export interface RecipesResponse {
-    RecipeToPost: RecipePost[];
+export interface RecommendedRecipes {
+    Recommendations: Recommendation[];
 }
+

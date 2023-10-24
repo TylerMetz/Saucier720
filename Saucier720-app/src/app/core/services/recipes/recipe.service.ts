@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpRequest, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Recipe } from 'src/app/core/interfaces/recipe';
+import { GetPantryRequest, GetRecipesRequest } from '../../interfaces/types';
+import MealDealzRoutes from '../../interfaces/routes';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RecipeService {
-  private recipeUrl = 'http://localhost:8080/api/Recipes';
   private userRecipeUrl = 'http://localhost:8082/api/UserRecipesSelect';
   private favoriteRecipeUrl = 'http://localhost:8082/api/FavoriteRecipesSelect';
   private recommendedRecipeUrl = 'http://localhost:8082/api/RecommendedRecipesSelect';
@@ -18,12 +19,18 @@ export class RecipeService {
 
   constructor(private http: HttpClient) { }
 
-  getRecipes() {
-    const req = new HttpRequest('GET', this.recipeUrl, { 
-      reportProgress: true
-    });
-    
-    return this.http.request(req);
+  getRecipes(request: GetRecipesRequest) {
+    console.log('recipe req username ',request.UserName)
+    console.log('recipe req filter', request.RecipeFilter)
+
+    const options = (request.UserName) ?
+    { params: new HttpParams().set('username', request.UserName) } : {};
+
+    options.params = options.params?.append('self', request.RecipeFilter.SelfCreatedRecipes)
+    options.params = options.params?.append('mdRecipes', request.RecipeFilter.MealDealzRecipes)
+    options.params = options.params?.append('others', request.RecipeFilter.UserCreatedRecipes)
+    console.log('recipes get options', options)
+    return this.http.get<any>(MealDealzRoutes.getRecipesUrl, options);
   }
 
   postFavoriteRecipesSelect() {
