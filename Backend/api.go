@@ -141,14 +141,19 @@ func (s *APIServer) handleGetPantry(w http.ResponseWriter, r *http.Request) erro
 }
 
 func (s *APIServer) handleGetRecipes(w http.ResponseWriter, r *http.Request) error{
-	req := new(RecipesRequest)
-	if err := json.NewDecoder(r.Body).Decode(req); err != nil{
-		return err
-	}
+	username := r.URL.Query().Get("username");
+	SelfCreatedRecipes := r.URL.Query().Get("self");
+	MealDealzRecipes := r.URL.Query().Get("mdRecipes");
+	UserCreatedRecipes := r.URL.Query().Get("others");
 	var recipes []Recipe
+	fmt.Println("getting recipes")
+	fmt.Println("username: ", username)
+	fmt.Println("self: ", SelfCreatedRecipes)
+	fmt.Println("md: ", MealDealzRecipes)
+	fmt.Println("others: ", UserCreatedRecipes)
 
 	//get recipes based on filters
-	if req.RecipeFilter.UserCreatedRecipes {
+	if UserCreatedRecipes == "true" {
 		//get user created recipes
 		userCreatedRecipes, err := s.store.GetUserCreatedRecipes()
 		if err != nil { 
@@ -158,7 +163,7 @@ func (s *APIServer) handleGetRecipes(w http.ResponseWriter, r *http.Request) err
 		// add to recipes array
 		recipes = append(recipes, userCreatedRecipes...)
 	}
-	if req.RecipeFilter.MealDealzRecipes {
+	if MealDealzRecipes == "true"{
 		//get meal dealz recipes
 		mealDealzRecipes, err := s.store.GetRecipesByUserName("MealDealz Classic Recipe")
 		if err != nil { 
@@ -168,9 +173,9 @@ func (s *APIServer) handleGetRecipes(w http.ResponseWriter, r *http.Request) err
 		// add to recipes array
 		recipes = append(recipes, mealDealzRecipes...)
 	}
-	if req.RecipeFilter.SelfCreatedRecipes {	
+	if SelfCreatedRecipes == "true" {	
 		//get self created recipes
-		selfCreatedRecipes, err := s.store.GetRecipesByUserName(req.UserName)
+		selfCreatedRecipes, err := s.store.GetRecipesByUserName(username)
 		// add to recipes array
 		if err != nil { 
 			fmt.Println("error getting own users recipes")
@@ -181,7 +186,7 @@ func (s *APIServer) handleGetRecipes(w http.ResponseWriter, r *http.Request) err
 	}
 
 	//Get User Pantry
-	pantry, err := s.store.GetPantryByUserName(req.UserName)
+	pantry, err := s.store.GetPantryByUserName(username)
 	if err != nil {
 		fmt.Println("error getting pantry")
 	}
@@ -193,10 +198,10 @@ func (s *APIServer) handleGetRecipes(w http.ResponseWriter, r *http.Request) err
 
 	resp := new(RecipesResponse)
 
-	resp.R = RecomendedRecipes{ 
+	resp.R = RecommendedRecipes{ 
 		Recommendations: recomendedRecipes,
 	}
-
+	fmt.Println("returning recipes")
 	return WriteJSON(w, http.StatusOK, resp)
 }
 

@@ -20,7 +20,7 @@ import { GetRecipesRequest } from 'src/app/core/interfaces/types';
 })
 export class RecipeCardComponent implements OnInit {
 
-  recipes!: RecommendedRecipes;
+  recipes: RecommendedRecipes = { Recommendations: [] };
   currentRecipeIndex: number = 0;
   currentRecipe!: Recommendation;
   @Input() currentIngredients: string[] = [];
@@ -56,11 +56,19 @@ export class RecipeCardComponent implements OnInit {
         UserCreatedRecipes: true,
       }
     }
-    const response = await lastValueFrom(this.recipeService.getRecipes(request));
-    this.currentRecipe = this.recipes.Recommendations[this.currentRecipeIndex];
-    this.currentIngredients = this.removeQuotesAndBrackets(this.currentRecipe.R.ingredients);
-    this.validteRecipeItems();
-    console.log('get recipe response', response)
+  this.recipeService.getRecipes(request).subscribe({
+    next: (response: any) => {
+      console.log('response', response)
+      this.recipes = response.RecommendedRecipes;
+      this.currentRecipe = this.recipes.Recommendations[this.currentRecipeIndex];
+      this.currentIngredients = this.removeQuotesAndBrackets(this.currentRecipe.R.ingredients);
+      this.validteRecipeItems();
+      console.log('get recipe response', response)
+    },
+    error: (err: any) => {
+      console.log(err, 'errors')
+    }
+  });
   }
 
   public getAuthorCredit(): string {

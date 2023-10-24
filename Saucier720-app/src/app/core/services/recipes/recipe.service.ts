@@ -3,6 +3,7 @@ import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Recipe } from 'src/app/core/interfaces/recipe';
 import { GetPantryRequest, GetRecipesRequest } from '../../interfaces/types';
 import MealDealzRoutes from '../../interfaces/routes';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +20,7 @@ export class RecipeService {
 
   constructor(private http: HttpClient) { }
 
-  getRecipes(request: GetRecipesRequest) {
+  getRecipes(request: GetRecipesRequest): Observable<any> {
     console.log('recipe req username ',request.UserName)
     console.log('recipe req filter', request.RecipeFilter)
 
