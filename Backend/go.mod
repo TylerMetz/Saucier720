@@ -5,6 +5,7 @@ go 1.19
 require (
 	github.com/gorilla/mux v1.8.0
 	github.com/microsoft/go-mssqldb v1.6.0
+	github.com/rs/cors v1.10.1
 	golang.org/x/exp v0.0.0-20231006140011-7918f672742d
 )
 

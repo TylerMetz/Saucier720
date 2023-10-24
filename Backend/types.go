@@ -41,7 +41,7 @@ type LoginRequest struct{
 }
 
 type LoginResponse struct {
-	Cookie		string 		`json:"Cookie"`
+	Response		string 		`json:"Cookie"`
 }
 
 type LogoutRequest struct { 
@@ -89,7 +89,7 @@ type ListRequest struct {
 }
 
 type ListResponse struct {
-	List 		[]Ingredient `json:"List"`
+	List 		List	 `json:"List"`
 }
 
 type PostPantryRequest struct {
@@ -173,8 +173,9 @@ type DeleteRecipeResponse struct {
 }
 
 type UpdatePantryRequest struct {
-	UserName	string		`json:"UserName"`
-	Pantry 		Pantry		`json:"Pantry"`
+	UserName	string			`json:"UserName"`
+	Pantry 		Pantry			`json:"Pantry"`
+	ItemsToDelete []Ingredient 	`json:"ItemsToDelete"`
 }
 
 type UpdatePantryResponse struct {
@@ -192,7 +193,8 @@ type UpdateRecipeResponse struct {
 
 type UpdateListRequest struct { 
 	UserName	string		`json:"UserName"`
-	List		Pantry		`json:"List"`
+	List		List		`json:"List"`
+	ItemsToDelete []Ingredient	`json:"ItemsToDelete"`
 }
 
 type UpdateListResponse struct { 
@@ -210,6 +212,10 @@ type Pantry struct {
 	Ingredients []Ingredient
 }
 
+type List struct {
+	Ingredients []Ingredient
+}
+
 func NewAccount(userName, firstName, lastName, email, password string) (*Account, error){
 	return &Account{
 		UserName: userName,
@@ -223,7 +229,8 @@ func NewAccount(userName, firstName, lastName, email, password string) (*Account
 
 func CreateCookieForUser(userName string) (string, error){
 	//create hash from username and time and store in database and THEN have it expire after 7 days
-	uniqueToken := fmt.Sprintf("%s-%s", userName, time.Now().String())
-
+	timeStamp := time.Now().Round(time.Second)
+	uniqueToken := fmt.Sprintf("%s-%s", userName, (timeStamp.Format("2006-01-02 15:04")))
+	fmt.Println("Cookie Generated: ", uniqueToken)
 	return uniqueToken, nil
 }

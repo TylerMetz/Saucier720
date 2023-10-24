@@ -1,37 +1,46 @@
 import { Injectable, OnInit } from '@angular/core';
 import { HttpClient, HttpRequest, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, first } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
+import MealDealzRoutes from '../../interfaces/routes';
+import { LoginRequest, LogoutRequest } from '../../interfaces/types';
 
 @Injectable()
 export class AuthService {
 
-  public loggedIn: boolean = false;
+  public loggedIn: boolean = false; 
   private validCookie: boolean = false;
 
 
-  private loginUrl: string = 'http://localhost:8081/api/Login';
-  private logoutUrl: string = 'http://localhost:8081/api/Logout';
-
   constructor(private http: HttpClient, private cookieService: CookieService) {
-    this.validCookie = this.cookieService.check('sessionID');
+    this.validCookie = this.cookieService.check('Cookie');
     console.log('cookie status: ', this.validCookie);
     if (this.validCookie) {
       this.loggedIn = true;
     }
    }
+
+   public getUsername(): string {
+      console.log('cookie value: ', this.cookieService.get('Cookie'))
+      const firstDash = this.cookieService.get('Cookie').indexOf('-');
+      return this.cookieService.get('Cookie').slice(1, firstDash); // If there's no dash, return the whole value
+   }
    
 
-  public login(username: string, password: string): Observable<any> {
-    const body = { username, password };
-    return this.http.post(this.loginUrl, body, { observe: 'response', responseType: 'json', withCredentials: true });
+  public login(request: LoginRequest): Observable<any> {
+    const body = request;
+    console.log('LoginRequest', body)
+    return this.http.post(MealDealzRoutes.loginUrl, body, { observe: 'response', responseType: 'json', withCredentials: true });
   }
 
-  public logout(): Observable<any> {
+  public logout(request: LogoutRequest): Observable<any> {
     this.loggedIn = false;
-    this.cookieService.delete('sessionID');
+    this.cookieService.delete('Cookie');
+    console.log('cookie deleted');
     console.log("post req sending");
-    return this.http.post(this.logoutUrl, { });
+    const body = request;
+    console.log('LogoutRequest', body)
+    return this.http.post(MealDealzRoutes.logoutUrl, body, { observe: 'response', responseType: 'json', withCredentials: true });
   }
 
   public isLoggedIn(): boolean {

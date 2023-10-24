@@ -26,17 +26,17 @@ export class DealsTableComponent implements OnInit {
   async ngOnInit() {
     await this.populateDeals();
     var count = 0;
-    for (const deal of this.pantry){
-      const isValid = await this.listComponent.validateIngredient(deal);
-      if(isValid){
-        const selector = `#row` + count;
-        const element = document.querySelector(selector) as HTMLElement
-        if(element){
-          this.toggleInList(element)
-        }
-      }
-      ++count;
-    }
+    // for (const deal of this.pantry){
+    //   const isValid = await this.listComponent.validateIngredient(deal);
+    //   if(isValid){
+    //     const selector = `#row` + count;
+    //     const element = document.querySelector(selector) as HTMLElement
+    //     if(element){
+    //       this.toggleInList(element)
+    //     }
+    //   }
+    //   ++count;
+    // }
   }
 
   async populateDeals() {
@@ -73,7 +73,7 @@ export class DealsTableComponent implements OnInit {
     const addBtn = event.target as HTMLElement;
     this.toggleInList(addBtn)
     // Nav to actual list function 
-    this.listComponent.addIngredient(ingredient);
+    //this.listComponent.addIngredient(ingredient);
   }
 
   toggleInList(element: HTMLElement){

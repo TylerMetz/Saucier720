@@ -2,7 +2,9 @@ import { HttpEvent, HttpEventType } from "@angular/common/http"
 import { Component, OnInit, Input } from '@angular/core';
 import { PantryService } from 'src/app/core/services/pantry/pantry.service';
 import { lastValueFrom } from 'rxjs';
-import { Ingredient } from "src/app/core/interfaces/ingredient";
+import { Ingredient, Pantry } from "src/app/core/interfaces/ingredient";
+import { GetPantryRequest, UpdatePantryRequest } from "src/app/core/interfaces/types";
+import { AuthService } from "src/app/core/services/Auth/auth.service";
 
 @Component({
   selector: 'app-pantry-table',
@@ -12,49 +14,41 @@ import { Ingredient } from "src/app/core/interfaces/ingredient";
 })
 export class PantryTableComponent implements OnInit {
 
-  pantry: Ingredient[] = [];
+  pantry: Pantry = {
+    Ingredients: [],
+  };
 
-  constructor(private pantryService: PantryService) { }
+  constructor(private pantryService: PantryService, private authService: AuthService) { }
 
   async ngOnInit(){
     await this.populatePantry();
   }
 
   public async populatePantry(): Promise<void> {
-    try {
-      const event: HttpEvent<any> = await lastValueFrom(this.pantryService.getPantry());
-      switch(event.type) {
-        case HttpEventType.Sent:
-          console.log('Request sent!');
-          break;
-        case HttpEventType.ResponseHeader:
-          console.log('Response header received!');
-          break;
-        case HttpEventType.DownloadProgress:
-          const kbLoaded = Math.round(event.loaded / 1024);
-          console.log(`Download in progress! ${kbLoaded}Kb loaded`);
-          break;
-        case HttpEventType.Response:
-          console.log('Done!', event.body);
-          this.pantry = event.body;
-          break;
+    console.log('username: ', this.authService.getUsername())
+    this.pantryService.getPantry(this.authService.getUsername()).subscribe({
+      next: (response: any) => {
+        console.log('GetPantryResponse: ', response)
+        this.pantry = response.Pantry;
+        console.log('pantry updated: ', this.pantry)
+      },
+      error: (err: any) => {
+        console.log(err, 'errors')
       }
-    } catch (error) {
-      console.error(error);
-    }
+    });
   }
 
   async updatePantry() {
-    try {
-      // Check and remove items with quantity 0
-      this.pantry = this.pantry.filter((item: Ingredient) => item.Quantity !== 0);
-  
-      // Call pantryService to update pantry
-      const response = await lastValueFrom(this.pantryService.updatePantry(this.pantry));
-      console.log(response);
-    } catch (error) {
-      console.error(error);
-    }
+    const zeroQuantityItems = this.pantry.Ingredients.filter((item: Ingredient) => item.Quantity === 0); 
+    this.pantry.Ingredients = this.pantry.Ingredients.filter((item: Ingredient) => item.Quantity !== 0);
+    const request: UpdatePantryRequest = { 
+      UserName: this.authService.getUsername(),
+      Pantry: this.pantry,
+      ItemsToDelete: zeroQuantityItems,
+    };
+    const response = await lastValueFrom(this.pantryService.updatePantry(request));
+    console.log('UpdatePantryResponse: ', response);
+    this.populatePantry();
   } 
 
   addTempValue(name: string, quantity: number){
@@ -64,12 +58,9 @@ export class PantryTableComponent implements OnInit {
       SaleDetails: '',
       Quantity: quantity,
     };
-    if(this.pantry === null){
-      this.pantry = []
+    if(this.pantry.Ingredients === null){
+      this.pantry.Ingredients = [];
     }
-    this.pantry.push(newIngredient)
+    this.pantry.Ingredients.push(newIngredient);
   }
-
-  
-
 }

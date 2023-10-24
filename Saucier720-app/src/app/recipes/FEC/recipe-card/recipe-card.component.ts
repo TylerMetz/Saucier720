@@ -255,7 +255,7 @@ export class RecipeCardComponent implements OnInit {
   addToList(ingredient: string, event: Event) {
     const addBtn = event.target as HTMLElement;
     this.toggleInList(addBtn)
-    this.listComponent.addIngredient(ingredient);
+    //this.listComponent.addIngredient(ingredient);
   }
 
   // Creates temporary ingredients so we can check if they exsit in list 
@@ -271,20 +271,20 @@ export class RecipeCardComponent implements OnInit {
       }
 
       // Navs to list component function to check 
-      const isValid = await this.listComponent.validateIngredient(tempIngredient)
-      if (isValid){
+      // const isValid = await this.listComponent.validateIngredient(tempIngredient)
+      // if (isValid){
 
-        if(isSub){
-          this.subRecipeComponent.checkIngredient(rowId);
-        }
-        else {
-          const element = document.querySelector(rowId) as HTMLElement
-          if(element){
-            //console.log("Valid id: " + rowId)
-            this.toggleInList(element)
-          }
-        }
-      }
+      //   if(isSub){
+      //     this.subRecipeComponent.checkIngredient(rowId);
+      //   }
+      //   else {
+      //     const element = document.querySelector(rowId) as HTMLElement
+      //     if(element){
+      //       //console.log("Valid id: " + rowId)
+      //       this.toggleInList(element)
+      //     }
+      //   }
+      // }
     }
   }
 

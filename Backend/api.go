@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 )
 
 type APIServer struct {
@@ -38,7 +39,6 @@ func (s *APIServer) Run() {
 	router.HandleFunc("/NewRecipe", makeHTTPHandleFunc(s.handlePostRecipe))
 	router.HandleFunc("/NewListIngredient", makeHTTPHandleFunc(s.handlePostList))
 	router.HandleFunc("/NewFavoriteRecipe", makeHTTPHandleFunc(s.handlePostFavoriteRecipe))
-	router.HandleFunc("/PostCookie", makeHTTPHandleFunc(s.handlePostCookie))
 	// THEN DELETE 
 	router.HandleFunc("/Logout", makeHTTPHandleFunc(s.handleLogout)) // we delete the cookie here ?
 	router.HandleFunc("/DeletePantryIngredient", makeHTTPHandleFunc(s.handleDeletePantryIngredient))
@@ -50,7 +50,16 @@ func (s *APIServer) Run() {
 	router.HandleFunc("/UpdateList", makeHTTPHandleFunc(s.handleUpdateList))
 	router.HandleFunc("/UpdateRecipe", makeHTTPHandleFunc(s.handleUpdateRecipe))
 
-	http.ListenAndServe(s.listenAddr, router)
+	c := cors.New(cors.Options{
+        AllowedOrigins: []string{"http://localhost:4200", "http://localhost:4200/Login"}, // Add your frontend URLs
+        AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
+        AllowedHeaders: []string{"*"},
+        AllowCredentials: true,
+    })
+
+	handler := c.Handler(router)
+
+	http.ListenAndServe(s.listenAddr, handler)
 }
 
 func (s *APIServer) handleSignup(w http.ResponseWriter, r *http.Request) error {
@@ -82,9 +91,33 @@ func (s *APIServer) handleLogin(w http.ResponseWriter, r *http.Request) error {
 
 	verify := CheckPassword(s.store, req.UserName, req.Password)
 	if(verify){
+		//Generate Cookie Here
+		//helper function calling CreateCookieForUser
+		cookieToken, err := CreateCookieForUser(req.UserName); if err != nil { 
+			fmt.Println("error creating cookie")
+			return err
+		}
+
+		httpCookie := &http.Cookie{
+			Name:     "Cookie",
+			Value:    cookieToken,
+			Path:     "/",
+			Expires:  time.Now().Add(7 * 24 * time.Hour), // Set expiration to 7 days in the future.
+			HttpOnly: false,
+			Secure:   false,
+			SameSite: http.SameSiteLaxMode,
+			Domain: "localhost",
+		}
+
+		http.SetCookie(w, httpCookie)
+
+		if err := s.store.PostCookieByUserName(req.UserName, cookieToken); err != nil {
+			fmt.Println("error posting cookie")
+			return err
+		}
+
 		resp := LoginResponse{
-			// WE ACTUALLY NEED TO GENERATE A COOKIE
-			Cookie: "GeneratedCookie",
+			Response: httpCookie.Value,
 		}
 		return WriteJSON(w, http.StatusOK, resp)
 	}
@@ -93,12 +126,9 @@ func (s *APIServer) handleLogin(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (s *APIServer) handleGetPantry(w http.ResponseWriter, r *http.Request) error {
-	req := new(PantryRequest)
-	if err := json.NewDecoder(r.Body).Decode(req); err != nil{
-		return err
-	}
+	username := r.URL.Query().Get("username");
 
-	pantry, err := s.store.GetPantryByUserName(req.UserName)
+	pantry, err := s.store.GetPantryByUserName(username)
 	if err != nil {
 		return err
 	}
@@ -243,21 +273,20 @@ func (s *APIServer) handleGetDealsByStore(w http.ResponseWriter, r *http.Request
 
 // handleGetList
 func (s *APIServer) handleGetList(w http.ResponseWriter, r *http.Request) error {
-	req := new(ListRequest)
-	if err := json.NewDecoder(r.Body).Decode(req); err != nil{
-		return err
-	}
+	username := r.URL.Query().Get("username");
 
-	deals, err := s.store.GetShoppingListByUserName(req.UserName)
+	list, err := s.store.GetShoppingListByUserName(username)
 	if err != nil { 
 		fmt.Println("error getting deals")
 		return err
 	}
 
-	resp := new(ListResponse)
-	resp.List = deals
+	resp := ListResponse {
+		List: list,
+	}
 
 	return WriteJSON(w, http.StatusOK, resp)
+
 }
 
 
@@ -346,40 +375,6 @@ func (s *APIServer) handlePostFavoriteRecipe(w http.ResponseWriter, r *http.Requ
 	return WriteJSON(w, http.StatusOK, resp)
 }
 
-func (s *APIServer) handlePostCookie(w http.ResponseWriter, r *http.Request) error { 
-	req := new(PostCookieRequest)
-	if err := json.NewDecoder(r.Body).Decode(req); err != nil{ 
-		return err
-	}
-
-	//Generate Cookie Here
-	//helper function calling CreateCookieForUser
-	cookieToken, err := CreateCookieForUser(req.UserName); if err != nil { 
-		fmt.Println("error creating cookie")
-		return err
-	}
-
-	httpCookie := &http.Cookie{
-		Name:     "Jason's Cookie",
-		Value:    cookieToken,
-		Expires:  time.Now().Add(7 * 24 * time.Hour), // Set expiration to 7 days in the future.
-		HttpOnly: true,
-	}
-
-	http.SetCookie(w, httpCookie)
-
-	if err := s.store.PostCookieByUserName(req.UserName, cookieToken); err != nil {
-		fmt.Println("error posting cookie")
-		return err
-	}
-
-	resp := PostCookieResponse {
-		Response: "Cookie Successfully Posted!",
-	}
-
-	return WriteJSON(w, http.StatusOK, resp)
-}
-
 // Deletes
 
 func (s *APIServer) handleDeleteListIngredient(w http.ResponseWriter, r *http.Request) error {
@@ -460,6 +455,13 @@ func (s *APIServer) handleUpdatePantry(w http.ResponseWriter, r *http.Request) e
 		return err
 	}
 
+	for _, ingredient := range req.ItemsToDelete { 
+		fmt.Println(ingredient)
+		if err := s.store.DeletePantryIngredient(req.UserName, ingredient); err != nil{
+			return err
+		}
+	}
+
 	resp := UpdatePantryResponse {
 		Response: "Successfully Updated Pantry",
 	}
@@ -475,6 +477,13 @@ func (s *APIServer) handleUpdateList(w http.ResponseWriter, r *http.Request) err
 
 	if err := s.store.UpdateListByUserName(req.UserName, req.List); err != nil{
 		return err
+	}
+
+	for _, ingredient := range req.ItemsToDelete { 
+		fmt.Println(ingredient)
+		if err := s.store.DeleteListIngredient(req.UserName, ingredient); err != nil{
+			return err
+		}
 	}
 
 	resp := UpdateListResponse {
@@ -507,8 +516,12 @@ func CheckPassword(s Storage, username, password string) bool {
 }
 
 func WriteJSON(w http.ResponseWriter, status int, v any) error {
-	w.Header().Add("Content-Type", "application/json")
-	// do we need those other CORS headers?
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+	w.Header().Set("Access-Control-Allow-Methods", "GET")
+	w.Header().Set("Access-Control-Allow-Methods", "POST")
+
 	w.WriteHeader(status)
 
 	return json.NewEncoder(w).Encode(v)

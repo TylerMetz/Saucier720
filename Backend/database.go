@@ -44,9 +44,9 @@ type Storage interface {
 	GetDeals() ([]Ingredient, error)
 	GetDealsByStore(string) ([]Ingredient, error)
 	//List
-	GetShoppingListByUserName(string) ([]Ingredient, error)
+	GetShoppingListByUserName(string) (List, error)
 	PostListIngredient(string, Ingredient) error
-	UpdateListByUserName(string, Pantry) error
+	UpdateListByUserName(string, List) error
 	DeleteListIngredient(string, Ingredient) error
 	// Cookies
 	GetCookieByUserName(string) (string, error)
@@ -517,11 +517,13 @@ func (s *AzureDatabase) GetDealsByStore(storeName string) ([]Ingredient, error) 
 	return []Ingredient{}, nil
 }
 
-func (s *AzureDatabase) GetShoppingListByUserName(username string) ([]Ingredient, error) {
-	shoppingList := []Ingredient{}
+func (s *AzureDatabase) GetShoppingListByUserName(username string) (List, error) {
+	shoppingList := List{
+		Ingredients: []Ingredient{},
+	}
 
 	tsql := fmt.Sprintf(`
-	SELECT UserName, FoodName, FoodType, Quantity FROM dbo.list
+	SELECT UserName, FoodName, FoodType, Quantity FROM dbo.user_lists
 	WHERE UserName = @UserName;
 	`)
 
@@ -532,27 +534,25 @@ func (s *AzureDatabase) GetShoppingListByUserName(username string) ([]Ingredient
 		sql.Named("UserName", username),
 	)
 	if err != nil {
-		fmt.Println("error on shopping list query")
-		return []Ingredient{}, err
+		log.Fatal(err)
 	}
 
-	var name, foodName, foodType string
-	var quantity int
 	for rows.Next() {
 		//append to recipe to get all
+		var name, foodName, foodType string
+		var quantity int
+
 		err = rows.Scan(&name, &foodName, &foodType, &quantity)
 		if err != nil {
-			return []Ingredient{}, err
+			return List{}, err
 		}
 
-		ingredient := Ingredient{
-			Name: 	  foodName,
+		shoppingList.Ingredients = append(shoppingList.Ingredients, Ingredient{
+			Name:        foodName,
 			FoodType: foodType,
-			Quantity: quantity,
 			SaleDetails: "",
-		}
-
-		shoppingList = append(shoppingList, ingredient)
+			Quantity: quantity,
+		})
 	}
 
 	return shoppingList, nil
@@ -749,6 +749,10 @@ func (s *AzureDatabase) PostCookieByUserName(username string, cookie string) err
 		sql.Named("Cookie", cookie),
 	)
 	if err != nil {
+		updateCookieerr := s.UpdateCookieByUserName(username, cookie)
+		if updateCookieerr == nil {
+			return nil
+		}
 		fmt.Println("error on cookie post")
 		return err
 	}
@@ -898,10 +902,10 @@ func (s *AzureDatabase) DeleteCookieByUserName(username string) error {
 // UPDATES
 func (s *AzureDatabase) UpdatePantryByUserName(username string, pantry Pantry) error {
 	ctx := context.Background()
-
+	
 	tsql := fmt.Sprintf(`
 		UPDATE dbo.user_ingredients
-		SET Quantity = @Quantity AND FoodType = @FoodType
+		SET Quantity = @Quantity, FoodType = @FoodType
 		WHERE UserName = @UserName
 		AND FoodName = @FoodName;
 	`)
@@ -928,7 +932,7 @@ func (s *AzureDatabase) UpdatePantryByUserName(username string, pantry Pantry) e
 	return nil
 }
 
-func (s *AzureDatabase) UpdateListByUserName(username string, pantry Pantry) error {
+func (s *AzureDatabase) UpdateListByUserName(username string, list List) error {
 	ctx := context.Background()
 
 	tsql := fmt.Sprintf(`
@@ -945,7 +949,7 @@ func (s *AzureDatabase) UpdateListByUserName(username string, pantry Pantry) err
 	}
 	defer stmt.Close()
 
-	for _, ingredient := range pantry.Ingredients {
+	for _, ingredient := range list.Ingredients {
 		_, err = stmt.ExecContext(ctx,
 			sql.Named("UserName", username),
 			sql.Named("FoodName", ingredient.Name),
