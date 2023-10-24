@@ -126,12 +126,15 @@ func (s *APIServer) handleLogin(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (s *APIServer) handleGetPantry(w http.ResponseWriter, r *http.Request) error {
-	req := new(PantryRequest)
-	if err := json.NewDecoder(r.Body).Decode(req); err != nil{
-		return err
-	}
+	// Keeping this commented for now, we may no longer need the request objects
+	// req := new(PantryRequest)
+	// if err := json.NewDecoder(r.Body).Decode(req); err != nil{
+	// 	return err
+	// }
 
-	pantry, err := s.store.GetPantryByUserName(req.UserName)
+	username := r.URL.Query().Get("name");
+
+	pantry, err := s.store.GetPantryByUserName(username)
 	if err != nil {
 		return err
 	}

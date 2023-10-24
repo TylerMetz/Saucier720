@@ -30,7 +30,8 @@ export class PantryTableComponent implements OnInit {
     this.pantryService.getPantry(request.UserName).subscribe({
       next: (response: any) => {
         console.log('GetPantryResponse: ', response)
-        this.pantry = response;
+        //this.pantry = response;
+        this.pantry = response.Pantry.Ingredients;
         console.log('pantry updated: ', this.pantry)
       },
       error: (err: any) => {
@@ -43,7 +44,7 @@ export class PantryTableComponent implements OnInit {
     try {
       // Check and remove items with quantity 0
       this.pantry = this.pantry.filter((item: Ingredient) => item.Quantity !== 0);
-  
+      
       // Call pantryService to update pantry
       const response = await lastValueFrom(this.pantryService.updatePantry(this.pantry));
       console.log(response);
