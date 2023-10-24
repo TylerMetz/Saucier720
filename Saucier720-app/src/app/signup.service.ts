@@ -18,8 +18,6 @@ let mockUser: any = {
 })
 export class SignupService {
 
-  private signupUrl: string = 'http://localhost:8081/api/Signup';
-
   constructor(private http: HttpClient) {}
 
   public signup(request: SignupRequest): Observable<any> {

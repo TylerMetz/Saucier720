@@ -22,7 +22,7 @@ export class AuthService {
 
    public getUsername(): string {
       console.log('cookie value: ', this.cookieService.get('Cookie'))
-      return this.cookieService.get('Cookie').slice(0, 4); // If there's no dash, return the whole value
+      return this.cookieService.get('Cookie').slice(1, 5); // If there's no dash, return the whole value
    }
    
 

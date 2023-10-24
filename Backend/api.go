@@ -103,7 +103,7 @@ func (s *APIServer) handleLogin(w http.ResponseWriter, r *http.Request) error {
 			Value:    cookieToken,
 			Path:     "/",
 			Expires:  time.Now().Add(7 * 24 * time.Hour), // Set expiration to 7 days in the future.
-			HttpOnly: true,
+			HttpOnly: false,
 			Secure:   false,
 			SameSite: http.SameSiteLaxMode,
 			Domain: "localhost",
