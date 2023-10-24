@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { HttpEvent, HttpEventType } from "@angular/common/http"
 import { lastValueFrom } from 'rxjs';
 import { AuthService } from '../core/services/Auth/auth.service';
-import { GetListRequest } from '../core/interfaces/types';
+import { GetListRequest, PostListRequest } from '../core/interfaces/types';
 
 @Component({
   selector: 'app-list',
@@ -14,7 +14,7 @@ import { GetListRequest } from '../core/interfaces/types';
 })
 export class ListComponent implements OnInit {
   name: string = '';
-  quantity: string = '';
+  quantity: number = 0;
 
   list: List = {
     Ingredients: []
@@ -68,7 +68,27 @@ export class ListComponent implements OnInit {
   }
 
   async postListItem() {
-    console.log(this.name, this.quantity)
+    if(!this.name){
+      return; 
+    }
+    const request: PostListRequest = {
+      UserName: this.authService.getUsername(),
+      Ingredient: {
+        Name: this.name,
+        FoodType: '',
+        SaleDetails: '',
+        Quantity: this.quantity,
+      }
+    };
+    this.listService.postListItem(request).subscribe({
+      next: (response: any) => {
+        console.log('New Shopping List Item Posted: ', response)
+        this.name = '';
+      },
+      error: (err: any) => {
+        console.log(err, 'errors')
+      }
+    });
   }
 
   // adjustQuantity(ingredient: Ingredient, action: string) {
