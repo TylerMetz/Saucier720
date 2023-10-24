@@ -15,14 +15,6 @@ export class ListService {
 
   constructor(private http: HttpClient, private cookieService: CookieService) { }
 
-  // getList() {
-  //   const req = new HttpRequest('GET', this.listUrl, {
-  //   reportProgress: true
-  // });
-
-  // return this.http.request(req);
-  // }
-
   getList(username: string): Observable<List> {
     console.log('username: ', username);
     const options = username ?
@@ -30,16 +22,6 @@ export class ListService {
     console.log(options);
     return this.http.get<List>(MealDealzRoutes.getListUrl, options);
   }
-
-  // postListItem(ingredient: Ingredient) {
-  //   const headers = new HttpHeaders({ 
-  //     'Content-Type': 'application/json', 
-  //   });
-
-  //   const body = { ingredient };
-  //   console.log(body)
-  //   return this.http.post<any>(this.postListUrl, body, { headers, withCredentials: true });
-  // }
 
   postListItem(request: PostListRequest) {
     console.log('request', request)

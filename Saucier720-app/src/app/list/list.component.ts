@@ -26,30 +26,6 @@ export class ListComponent implements OnInit {
     await this.populateList();
   }
 
-  // public async populateList(): Promise<void> {
-  //   try {
-  //     const event: HttpEvent<any> = await lastValueFrom(this.listService.getList());
-  //     switch(event.type) {
-  //       case HttpEventType.Sent:
-  //         console.log('Request sent!');
-  //         break;
-  //       case HttpEventType.ResponseHeader:
-  //         console.log('Response header received!');
-  //         break;
-  //       case HttpEventType.DownloadProgress:
-  //         const kbLoaded = Math.round(event.loaded / 1024);
-  //         console.log(`Download in progress! ${kbLoaded}Kb loaded`);
-  //         break;
-  //       case HttpEventType.Response:
-  //         console.log('Done!', event.body);
-  //         this.ingredients = event.body;
-  //         break;
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // }
-
   public async populateList(): Promise<void> {
     const request: GetListRequest = {
       UserName: this.authService.getUsername(),
@@ -103,21 +79,6 @@ export class ListComponent implements OnInit {
     console.log('UpdateListResponse: ', response);
     this.populateList();
   }
-
-  // adjustQuantity(ingredient: Ingredient, action: string) {
-  //   if (action === 'increment') {
-  //     ingredient.Quantity += 1;
-  //   } else if (action === 'decrement' && ingredient.Quantity > 0) {
-  //     ingredient.Quantity -= 1;
-  //   }
-  // }
-
-  // deleteIngredient(ingredient: Ingredient) {
-  //   const index = this.ingredients.indexOf(ingredient);
-  //   if (index > -1) {
-  //     this.ingredients.splice(index, 1);
-  //   }
-  // }
 
   // // Optional parameter so that we can call it from deals and recipes pages 
   // addIngredient(ingredient?: Ingredient | string) {
