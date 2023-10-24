@@ -24,7 +24,7 @@ export class DealsTableComponent implements OnInit {
   constructor(private dealsService: DealsService, private listComponent: ListComponent) { }
 
   async ngOnInit() {
-    await this.populateDeals();
+    //await this.populateDeals();
     var count = 0;
     // for (const deal of this.pantry){
     //   const isValid = await this.listComponent.validateIngredient(deal);
@@ -39,33 +39,33 @@ export class DealsTableComponent implements OnInit {
     // }
   }
 
-  async populateDeals() {
-     try {
-      const event: HttpEvent<any> = await lastValueFrom(this.dealsService.getDeals());
-      switch(event.type) {
-        case HttpEventType.Sent:
-          console.log('Request sent!');
-          break;
-        case HttpEventType.ResponseHeader:
-          console.log('Response header received!');
-          break;
-        case HttpEventType.DownloadProgress:
-          const kbLoaded = Math.round(event.loaded / 1024);
-          console.log(`Download in progress! ${kbLoaded}Kb loaded`);
-          break;
-        case HttpEventType.Response:
-          console.log('Done!', event.body);
-          this.pantry = event.body;
-          this.currentStore = this.pantry[0].Name
-          //console.log(this.currentStore)
-          this.sendButtonData.emit(this.currentStore)
-          this.pantry.shift()
-          break;
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
+  // async populateDeals() {
+  //    try {
+  //     const event: HttpEvent<any> = await lastValueFrom(this.dealsService.getDeals());
+  //     switch(event.type) {
+  //       case HttpEventType.Sent:
+  //         console.log('Request sent!');
+  //         break;
+  //       case HttpEventType.ResponseHeader:
+  //         console.log('Response header received!');
+  //         break;
+  //       case HttpEventType.DownloadProgress:
+  //         const kbLoaded = Math.round(event.loaded / 1024);
+  //         console.log(`Download in progress! ${kbLoaded}Kb loaded`);
+  //         break;
+  //       case HttpEventType.Response:
+  //         console.log('Done!', event.body);
+  //         this.pantry = event.body;
+  //         this.currentStore = this.pantry[0].Name
+  //         //console.log(this.currentStore)
+  //         this.sendButtonData.emit(this.currentStore)
+  //         this.pantry.shift()
+  //         break;
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }
 
   // Add to shopping list 
   addToList(ingredient: Ingredient, event: Event) {

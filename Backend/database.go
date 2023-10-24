@@ -42,7 +42,7 @@ type Storage interface {
 	DeleteFavorite(string, int) error
 	// Deals
 	GetDeals() ([]Ingredient, error)
-	GetDealsByStore(string) ([]Ingredient, error)
+	GetDealsByStore(string) (Deals, error)
 	//List
 	GetShoppingListByUserName(string) (List, error)
 	PostListIngredient(string, Ingredient) error
@@ -477,8 +477,10 @@ func (s *AzureDatabase) GetDeals() ([]Ingredient, error) {
 	return []Ingredient{}, nil
 }
 
-func (s *AzureDatabase) GetDealsByStore(storeName string) ([]Ingredient, error) {
-	deals := []Ingredient{}
+func (s *AzureDatabase) GetDealsByStore(storeName string) (Deals, error) {
+	deals := Deals{
+		Ingredients: []Ingredient{},
+	}
 
 	tsql := fmt.Sprintf(`
 	SELECT Store, FoodName, SaleDetails from dbo.deals_data
@@ -493,28 +495,27 @@ func (s *AzureDatabase) GetDealsByStore(storeName string) ([]Ingredient, error) 
 	)
 	if err != nil {
 		fmt.Println("error on deals by store query")
-		return []Ingredient{}, err
+		log.Fatal(err)
 	}
 
-	var store, foodName, saleDetails string
 	for rows.Next() {
+		var store, foodName, saleDetails string
 		//append to recipe to get all
 		err = rows.Scan(&store, &foodName, &saleDetails)
 		if err != nil {
-			return []Ingredient{}, err
+			return Deals{}, err
 		}
 
-		ingredient := Ingredient{
+		deals.Ingredients = append(deals.Ingredients, Ingredient{
 			Name: 	  foodName,
 			SaleDetails: saleDetails,
 			FoodType: "Food", // will need to be updated when food typing introduced
 			Quantity: 1,
-		}
+		})
 
-		deals = append(deals, ingredient)
 	}
 
-	return []Ingredient{}, nil
+	return deals, nil
 }
 
 func (s *AzureDatabase) GetShoppingListByUserName(username string) (List, error) {

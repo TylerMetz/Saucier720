@@ -22,29 +22,43 @@ export class DealsStoreButtonComponent {
   constructor(private dealsService: DealsService) {
   }
 
-  async postStore(storeName: string) {
-    const newStore: Store = {
-      Name: storeName,
-    };
-    console.log(newStore)
-    try {
-      const response = await lastValueFrom(this.dealsService.postStore(newStore));
-      console.log(response);
-
-      this.refreshDealsTable.emit()
-      const buttons = document.querySelectorAll('button');
-      buttons.forEach((button: HTMLElement) => {
-        if (button.innerText === storeName) {
-          button.classList.add('clicked');
-        } else {
-          button.classList.remove('clicked');
-        }
-     });
-      
-    } catch (error) {
-      console.error(error);
-    }
+  public async populateDeals(store: string): Promise<void> {
+    console.log('store: ', store);
+    this.dealsService.getDeals(store).subscribe({
+      next: (response: any) => {
+        console.log('GetDealsbyStoreResponse: ', response);
+      },
+      error: (err: any) => {
+        console.log(err, 'errors')
+      }
+    });
   }
+
+
+
+  // async postStore(storeName: string) {
+  //   const newStore: Store = {
+  //     Name: storeName,
+  //   };
+  //   console.log(newStore)
+  //   try {
+  //     const response = await lastValueFrom(this.dealsService.postStore(newStore));
+  //     console.log(response);
+
+  //     this.refreshDealsTable.emit()
+  //     const buttons = document.querySelectorAll('button');
+  //     buttons.forEach((button: HTMLElement) => {
+  //       if (button.innerText === storeName) {
+  //         button.classList.add('clicked');
+  //       } else {
+  //         button.classList.remove('clicked');
+  //       }
+  //    });
+      
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }
 
   setButton() {
     const buttons = document.querySelectorAll('button');

@@ -11,7 +11,7 @@ export class DealsComponent {
 
   @ViewChild('dealsTable') private dealsTable!: DealsTableComponent;
   handleDealsRefresh(){
-    this.dealsTable.populateDeals();
+    //this.dealsTable.populateDeals();
   }
 
   @ViewChild('storeButton') private storeButton!: DealsStoreButtonComponent;
