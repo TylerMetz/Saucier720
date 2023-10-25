@@ -16,9 +16,6 @@ import { OutletContext } from '@angular/router';
 export class DealsStoreButtonComponent {
   lastClicked: string = '';
 
-  // Output 
-  //@Output() refreshDealsTable: EventEmitter<void> = new EventEmitter<void>();
-
   @Output() storeClickEvent: EventEmitter<string> = new EventEmitter<string>();
 
   constructor(private dealsService: DealsService) {}
@@ -33,39 +30,4 @@ export class DealsStoreButtonComponent {
   isButtonDisabled(store: string): boolean {
     return store === this.lastClicked;
   }
-  // async postStore(storeName: string) {
-  //   const newStore: Store = {
-  //     Name: storeName,
-  //   };
-  //   console.log(newStore)
-  //   try {
-  //     const response = await lastValueFrom(this.dealsService.postStore(newStore));
-  //     console.log(response);
-
-  //     this.refreshDealsTable.emit()
-  //     const buttons = document.querySelectorAll('button');
-  //     buttons.forEach((button: HTMLElement) => {
-  //       if (button.innerText === storeName) {
-  //         button.classList.add('clicked');
-  //       } else {
-  //         button.classList.remove('clicked');
-  //       }
-  //    });
-      
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // }
-
-  // setButton() {
-  //   const buttons = document.querySelectorAll('button');
-  //   buttons.forEach((button: HTMLElement) => {
-  //     if (button.innerText === this.activeButton) {
-  //       button.classList.add('clicked');
-  //     } else {
-  //       button.classList.remove('clicked');
-  //     }
-  //  });
-  // }
-
 }

@@ -24,26 +24,4 @@ export class DealsService {
     console.log('deals request options: ', options);
     return this.http.get<Deals>(MealDealzRoutes.getDealsbyStoreUrl, options);
   }
-  
-  // getDeals() {
-  //   const req = new HttpRequest('GET', this.dealsUrl, { 
-  //     reportProgress: true
-  //   });
-    
-  //   return this.http.request(req);
-  // }
-
-  // postStore(store: Store) {
-  //   const headers = new HttpHeaders({ 
-  //     'Content-Type': 'application/json', 
-  //   });
-  
-  //   const body = { store };
-  //   console.log(body)
-  //   return this.http.post<any>(this.storePostUrl, body, { headers, withCredentials: true });
-  // }
-
-  // getMockDeals(): Array<Ingredient> {
-  //   return DEALS;
-  // }
 }

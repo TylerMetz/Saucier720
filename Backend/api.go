@@ -255,10 +255,6 @@ func (s *APIServer) handleGetFavRecipes(w http.ResponseWriter, r *http.Request) 
 
 //handleGetDealsByStore
 func (s *APIServer) handleGetDealsByStore(w http.ResponseWriter, r *http.Request) error { 
-	// req := new(DealsByStoreRequest)
-	// if err := json.NewDecoder(r.Body).Decode(req); err != nil{
-	// 	return err
-	// }
 	store := r.URL.Query().Get("store");
 
 
