@@ -1,8 +1,8 @@
 <div class="page">
     <div class="page-body">
         <div class="container">
-            <app-deals-store-button #storeButton (refreshDealsTable)="handleDealsRefresh()"></app-deals-store-button>
-            <app-deals-table #dealsTable (sendButtonData)="handleSendButton($event)" ></app-deals-table>
+            <app-deals-store-button (storeClickEvent)="handleDealsRefresh($event)" #storeButton></app-deals-store-button>
+            <app-deals-table #dealsTable></app-deals-table>
         </div>
     </div>
 </div>

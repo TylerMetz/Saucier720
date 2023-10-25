@@ -5,6 +5,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { from, lastValueFrom, Observable } from 'rxjs';
 import MealDealzRoutes from '../../interfaces/routes';
 import { PostListRequest, UpdateListRequest } from '../../interfaces/types';
+import { AuthService } from '../Auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class ListService {
   private listUrl = 'http://localhost:8080/api/List';
   private postListUrl = 'http://localhost:8082/api/NewItem'
 
-  constructor(private http: HttpClient, private cookieService: CookieService) { }
+  constructor(private http: HttpClient, private cookieService: CookieService, private authService: AuthService) { }
 
   getList(username: string): Observable<List> {
     console.log('username: ', username);
@@ -32,26 +33,6 @@ export class ListService {
     console.log('UpdateListRequest', request)
     return this.http.put<any>(MealDealzRoutes.updateListUrl, request, { observe: 'response', responseType: "json", withCredentials: true});
   }
-  
 
-  // Function checks against current list to see if an item is already in the user list 
-  async checkIfExists(ingredient: Ingredient, username: string): Promise<boolean> {
-    try {
-      const response = await lastValueFrom(this.getList(username));
-      //console.log('API Response:', response);
-      if (response instanceof HttpResponse) {
-        const responseBody: any = response.body;
-        //console.log('API Response:', responseBody);
-        if (Array.isArray(responseBody)){
-          const currentList: Ingredient[] = responseBody;
-          return currentList.some(foodItem => foodItem.Name === ingredient.Name);
-        }
-      }
 
-      return false; 
-      } catch (error) {
-        console.error(error);
-        return false; 
-      }
-    }
   }

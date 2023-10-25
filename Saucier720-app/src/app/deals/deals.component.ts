@@ -10,13 +10,8 @@ import { DealsStoreButtonComponent } from './FEC/deals-store-button/deals-store-
 export class DealsComponent {
 
   @ViewChild('dealsTable') private dealsTable!: DealsTableComponent;
-  handleDealsRefresh(){
-    this.dealsTable.populateDeals();
+  handleDealsRefresh(store: string){
+    this.dealsTable.populateDeals(store);
   }
 
-  @ViewChild('storeButton') private storeButton!: DealsStoreButtonComponent;
-  handleSendButton(name: string){
-    this.storeButton.activeButton = name
-    this.storeButton.setButton()
-  }
 }

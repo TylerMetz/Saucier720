@@ -81,7 +81,7 @@ type DealsByStoreRequest struct {
 }
 
 type DealsResponse struct {
-	Deals 		[]Ingredient `json:"Deals"`
+	Deals 		Deals `json:"Deals"`
 }
 
 type ListRequest struct {
@@ -213,6 +213,10 @@ type Pantry struct {
 }
 
 type List struct {
+	Ingredients []Ingredient
+}
+
+type Deals struct {
 	Ingredients []Ingredient
 }
 

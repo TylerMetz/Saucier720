@@ -30,7 +30,7 @@ func (s *APIServer) Run() {
 	router.HandleFunc("/Pantry", makeHTTPHandleFunc(s.handleGetPantry))
 	router.HandleFunc("/Recipes", makeHTTPHandleFunc(s.handleGetRecipes))
 	router.HandleFunc("/Recipes/Favorite", makeHTTPHandleFunc((s.handleGetFavRecipes)))
-	router.HandleFunc("/Deals", makeHTTPHandleFunc((s.handleGetDeals)))
+	//router.HandleFunc("/Deals", makeHTTPHandleFunc((s.handleGetDeals)))
 	router.HandleFunc("/Deals/Store", makeHTTPHandleFunc((s.handleGetDealsByStore)))
 	router.HandleFunc("/List", makeHTTPHandleFunc((s.handleGetList)))
 	// PUTS WILL BE NEXT
@@ -233,40 +233,40 @@ func (s *APIServer) handleGetFavRecipes(w http.ResponseWriter, r *http.Request) 
 	return WriteJSON(w, http.StatusOK, resp)
 }
 
-// handleGetDeals - we should add a zipcode type to this? or go off the current user's zipcode setting (we also need to implement settings)
-func (s *APIServer) handleGetDeals(w http.ResponseWriter, r *http.Request) error { 
-	req := new(DealsRequest)
-	if err := json.NewDecoder(r.Body).Decode(req); err != nil{
-		return err
-	}
+// // handleGetDeals - we should add a zipcode type to this? or go off the current user's zipcode setting (we also need to implement settings)
+// func (s *APIServer) handleGetDeals(w http.ResponseWriter, r *http.Request) error { 
+// 	req := new(DealsRequest)
+// 	if err := json.NewDecoder(r.Body).Decode(req); err != nil{
+// 		return err
+// 	}
 
-	deals, err := s.store.GetDeals()
-	if err != nil { 
-		fmt.Println("error getting deals")
-		return err
-	}
+// 	deals, err := s.store.GetDeals()
+// 	if err != nil { 
+// 		fmt.Println("error getting deals")
+// 		return err
+// 	}
 
-	resp := new(DealsResponse)
-	resp.Deals = deals
+// 	resp := DealsResponse{
+// 		Deals: deals,
+// 	}
 
-	return WriteJSON(w, http.StatusOK, resp)
-}
+// 	return WriteJSON(w, http.StatusOK, resp)
+// }
 
 //handleGetDealsByStore
 func (s *APIServer) handleGetDealsByStore(w http.ResponseWriter, r *http.Request) error { 
-	req := new(DealsByStoreRequest)
-	if err := json.NewDecoder(r.Body).Decode(req); err != nil{
-		return err
-	}
+	store := r.URL.Query().Get("store");
 
-	deals, err := s.store.GetDealsByStore(req.StoreName)
+
+	deals, err := s.store.GetDealsByStore(store)
 	if err != nil { 
 		fmt.Println("error getting deals")
 		return err
 	}
 
-	resp := new(DealsResponse)
-	resp.Deals = deals
+	resp := DealsResponse{
+		Deals: deals,
+	}
 
 	return WriteJSON(w, http.StatusOK, resp)
 }

@@ -12,3 +12,7 @@ export interface Pantry {
 export interface List {
     Ingredients: Ingredient[]
 }
+
+export interface Deals {
+    Ingredients: Ingredient[]
+}

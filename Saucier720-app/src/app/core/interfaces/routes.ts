@@ -9,6 +9,7 @@ const MealDealzRoutes: Routes = {
   getListUrl: 'http://localhost:8080/List',
   postListUrl: 'http://localhost:8080/NewListIngredient',
   updateListUrl: 'http://localhost:8080/UpdateList',
+  getDealsbyStoreUrl: 'http://localhost:8080/Deals/Store',
   // Add more routes as needed
 };
 
@@ -25,6 +26,7 @@ export interface Routes {
     getListUrl: string; 
     postListUrl: string; 
     updateListUrl: string;
+    getDealsbyStoreUrl: string;
     // Add more routes as needed
 }
   

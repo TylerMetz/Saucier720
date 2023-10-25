@@ -50,3 +50,8 @@ export interface UpdateListRequest{
     List: List; 
     ItemsToDelete: Ingredient[];
 }
+
+export interface GetDealsRequest{
+    StoreName: string; 
+    Zipcode: number; 
+}
