@@ -1,5 +1,5 @@
 import { HttpClient, HttpEvent, HttpEventType} from "@angular/common/http"
-import { Component, OnInit, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
 import { DealsService } from 'src/app/core/services/deals/deals.service';
 import { count, lastValueFrom } from "rxjs";
 import { ListComponent } from "src/app/list/list.component";
@@ -7,6 +7,7 @@ import { Ingredient } from "src/app/core/interfaces/ingredient";
 import { delay } from "cypress/types/bluebird";
 import { forEach } from "cypress/types/lodash";
 import { createUrlTreeFromSnapshot } from "@angular/router";
+import { Deals } from "src/app/core/interfaces/ingredient";
 
 @Component({
   selector: 'app-deals-table',
@@ -16,16 +17,22 @@ import { createUrlTreeFromSnapshot } from "@angular/router";
 })
 export class DealsTableComponent implements OnInit {
 
-  pantry: any;
-  currentStore: string = ''
+  currentStore: string = '';
+  deals: Deals = {
+    Ingredients: []
+  }; 
 
   @Output() sendButtonData: EventEmitter<string> = new EventEmitter<string>();
+  @Input() selectedStore!: string;
 
   constructor(private dealsService: DealsService, private listComponent: ListComponent) { }
 
-  async ngOnInit() {
+  ngOnInit() {
+    if(this.selectedStore){
+      this.populateDeals(this.selectedStore)
+    }
     //await this.populateDeals();
-    var count = 0;
+    //var count = 0;
     // for (const deal of this.pantry){
     //   const isValid = await this.listComponent.validateIngredient(deal);
     //   if(isValid){
@@ -37,6 +44,19 @@ export class DealsTableComponent implements OnInit {
     //   }
     //   ++count;
     // }
+  }
+
+  public async populateDeals(store: string): Promise<void> {
+    console.log('store: ', store);
+    this.dealsService.getDeals(store).subscribe({
+      next: (response: any) => {
+        console.log('GetDealsbyStoreResponse: ', response);
+        this.deals = response.Deals
+      },
+      error: (err: any) => {
+        console.log(err, 'errors')
+      }
+    });
   }
 
   // async populateDeals() {

@@ -24,6 +24,7 @@ export class DealsService {
     console.log('deals request options: ', options);
     return this.http.get<Deals>(MealDealzRoutes.getDealsbyStoreUrl, options);
   }
+  
   // getDeals() {
   //   const req = new HttpRequest('GET', this.dealsUrl, { 
   //     reportProgress: true

@@ -19,23 +19,13 @@ export class DealsStoreButtonComponent {
   // Output 
   @Output() refreshDealsTable: EventEmitter<void> = new EventEmitter<void>();
 
-  constructor(private dealsService: DealsService) {
+  @Output() storeClickEvent: EventEmitter<string> = new EventEmitter<string>();
+
+  constructor(private dealsService: DealsService) {}
+
+  sendStore(store: string){
+    this.storeClickEvent.emit(store);
   }
-
-  public async populateDeals(store: string): Promise<void> {
-    console.log('store: ', store);
-    this.dealsService.getDeals(store).subscribe({
-      next: (response: any) => {
-        console.log('GetDealsbyStoreResponse: ', response);
-      },
-      error: (err: any) => {
-        console.log(err, 'errors')
-      }
-    });
-  }
-
-
-
   // async postStore(storeName: string) {
   //   const newStore: Store = {
   //     Name: storeName,
