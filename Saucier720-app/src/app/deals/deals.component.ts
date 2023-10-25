@@ -15,11 +15,7 @@ export class DealsComponent {
     this.dealsTable.populateDeals(store);
   }
 
-  @ViewChild('storeButton') private storeButton!: DealsStoreButtonComponent;
-  handleSendButton(name: string){
-    this.storeButton.activeButton = name
-    this.storeButton.setButton()
-  }
+
 
 
 }

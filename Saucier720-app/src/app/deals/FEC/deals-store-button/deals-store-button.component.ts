@@ -14,17 +14,24 @@ import { OutletContext } from '@angular/router';
 })
 
 export class DealsStoreButtonComponent {
-  activeButton: string = '';
+  lastClicked: string = '';
 
   // Output 
-  @Output() refreshDealsTable: EventEmitter<void> = new EventEmitter<void>();
+  //@Output() refreshDealsTable: EventEmitter<void> = new EventEmitter<void>();
 
   @Output() storeClickEvent: EventEmitter<string> = new EventEmitter<string>();
 
   constructor(private dealsService: DealsService) {}
 
   sendStore(store: string){
-    this.storeClickEvent.emit(store);
+    if (store !== this.lastClicked) { 
+      this.lastClicked = store;
+      this.storeClickEvent.emit(store);
+    }
+  }
+
+  isButtonDisabled(store: string): boolean {
+    return store === this.lastClicked;
   }
   // async postStore(storeName: string) {
   //   const newStore: Store = {
@@ -50,15 +57,15 @@ export class DealsStoreButtonComponent {
   //   }
   // }
 
-  setButton() {
-    const buttons = document.querySelectorAll('button');
-    buttons.forEach((button: HTMLElement) => {
-      if (button.innerText === this.activeButton) {
-        button.classList.add('clicked');
-      } else {
-        button.classList.remove('clicked');
-      }
-   });
-  }
+  // setButton() {
+  //   const buttons = document.querySelectorAll('button');
+  //   buttons.forEach((button: HTMLElement) => {
+  //     if (button.innerText === this.activeButton) {
+  //       button.classList.add('clicked');
+  //     } else {
+  //       button.classList.remove('clicked');
+  //     }
+  //  });
+  // }
 
 }
