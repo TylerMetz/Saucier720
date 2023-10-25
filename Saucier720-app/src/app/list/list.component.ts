@@ -122,7 +122,7 @@ export class ListComponent implements OnInit {
 
   // async validateIngredient(ingredient: Ingredient): Promise<boolean> {
   //   //console.log("Checking " + ingredient.Name);
-  //   const response = await this.listService.checkIfExists(ingredient)
+  //   const response = await this.listService.checkIfExists(ingredient, this.authService.getUsername())
   //   if (response){
   //     //console.log(ingredient.Name + " was found in list!")
   //   } else {

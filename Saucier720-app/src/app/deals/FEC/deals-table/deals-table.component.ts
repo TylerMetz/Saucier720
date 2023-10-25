@@ -8,10 +8,12 @@ import { delay } from "cypress/types/bluebird";
 import { forEach } from "cypress/types/lodash";
 import { createUrlTreeFromSnapshot } from "@angular/router";
 import { Deals } from "src/app/core/interfaces/ingredient";
+import { ListService } from "src/app/core/services/list/list.service";
+import { AuthService } from "src/app/core/services/Auth/auth.service";
 
 @Component({
   selector: 'app-deals-table',
-  providers: [DealsService,ListComponent],
+  providers: [DealsService,ListComponent,ListService],
   templateUrl: 'deals-table.component.html',
   styleUrls: ['deals-table.component.scss']
 })
@@ -25,7 +27,7 @@ export class DealsTableComponent implements OnInit {
   @Output() sendButtonData: EventEmitter<string> = new EventEmitter<string>();
   @Input() selectedStore!: string;
 
-  constructor(private dealsService: DealsService, private listComponent: ListComponent) { }
+  constructor(private dealsService: DealsService, private listService: ListService, private authService: AuthService) { }
 
   ngOnInit() {
     if(this.selectedStore){
@@ -52,6 +54,22 @@ export class DealsTableComponent implements OnInit {
       next: (response: any) => {
         console.log('GetDealsbyStoreResponse: ', response);
         this.deals = response.Deals
+        this.listService.getList(this.authService.getUsername()).subscribe({
+          next: (listResponse: any) => {
+            for (const deal of this.deals.Ingredients) {
+              // Iterate through the list of ingredients to check for name matches
+              for (const ingredient of listResponse.List.Ingredients) {
+                if (deal.Name === ingredient.Name) {
+                  console.log(`'${deal.Name}' was found in your list!`);
+                }
+              }
+            }
+          },
+          error: (err: any) => {
+            console.log(err, 'errors')
+          }
+        })
+        console.log(this.listService.getList(this.authService.getUsername()))
       },
       error: (err: any) => {
         console.log(err, 'errors')
@@ -87,19 +105,19 @@ export class DealsTableComponent implements OnInit {
   //   }
   // }
 
-  // Add to shopping list 
-  addToList(ingredient: Ingredient, event: Event) {
-    // Change button state
-    const addBtn = event.target as HTMLElement;
-    this.toggleInList(addBtn)
-    // Nav to actual list function 
-    //this.listComponent.addIngredient(ingredient);
-  }
+  // // Add to shopping list 
+  // addToList(ingredient: Ingredient, event: Event) {
+  //   // Change button state
+  //   const addBtn = event.target as HTMLElement;
+  //   this.toggleInList(addBtn)
+  //   // Nav to actual list function 
+  //   //this.listComponent.addIngredient(ingredient);
+  // }
 
-  toggleInList(element: HTMLElement){
-    element.classList.remove("not-in-list")
-    element.classList.add("in-list");
-    element.title = "Already in list!"
-  }
+  // toggleInList(element: HTMLElement){
+  //   element.classList.remove("not-in-list")
+  //   element.classList.add("in-list");
+  //   element.title = "Already in list!"
+  // }
 
 }
