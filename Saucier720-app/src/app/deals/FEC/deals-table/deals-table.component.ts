@@ -10,6 +10,7 @@ import { createUrlTreeFromSnapshot } from "@angular/router";
 import { Deals } from "src/app/core/interfaces/ingredient";
 import { ListService } from "src/app/core/services/list/list.service";
 import { AuthService } from "src/app/core/services/Auth/auth.service";
+import { PostListRequest } from "src/app/core/interfaces/types";
 
 @Component({
   selector: 'app-deals-table',
@@ -27,7 +28,7 @@ export class DealsTableComponent implements OnInit {
   @Output() sendButtonData: EventEmitter<string> = new EventEmitter<string>();
   @Input() selectedStore!: string;
 
-  constructor(private dealsService: DealsService, private listService: ListService, private authService: AuthService) { }
+  constructor(private dealsService: DealsService, private listComponent: ListComponent, private listService: ListService, private authService: AuthService) { }
 
   ngOnInit() {
     if(this.selectedStore){
@@ -56,11 +57,17 @@ export class DealsTableComponent implements OnInit {
         this.deals = response.Deals
         this.listService.getList(this.authService.getUsername()).subscribe({
           next: (listResponse: any) => {
+            var rowCount = 0; 
             for (const deal of this.deals.Ingredients) {
               // Iterate through the list of ingredients to check for name matches
               for (const ingredient of listResponse.List.Ingredients) {
                 if (deal.Name === ingredient.Name) {
                   console.log(`'${deal.Name}' was found in your list!`);
+                  const selector = `#row` + rowCount;
+                  const element = document.querySelector(selector) as HTMLElement
+                  if(element){
+                    this.toggleInList(element)
+                  }
                 }
               }
             }
@@ -114,10 +121,30 @@ export class DealsTableComponent implements OnInit {
   //   //this.listComponent.addIngredient(ingredient);
   // }
 
-  // toggleInList(element: HTMLElement){
-  //   element.classList.remove("not-in-list")
-  //   element.classList.add("in-list");
-  //   element.title = "Already in list!"
-  // }
+  async postListItem(ingredient: Ingredient){
+    const request: PostListRequest = {
+      UserName: this.authService.getUsername(),
+      Ingredient: {
+        Name: ingredient.Name,
+        FoodType: ingredient.FoodType,
+        SaleDetails: ingredient.SaleDetails,
+        Quantity: 1,
+      }
+    };
+    this.listService.postListItem(request).subscribe({
+      next: (response: any) => {
+        console.log('New Shopping List Item Posted: ', response)
+      },
+      error: (err: any) => {
+        console.log(err, 'errors')
+      }
+    });
+  }
+
+  toggleInList(element: HTMLElement){
+    element.classList.remove("not-in-list")
+    element.classList.add("in-list");
+    element.title = "Already in list!"
+  }
 
 }
