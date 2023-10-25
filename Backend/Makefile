@@ -1,5 +1,12 @@
+# Set the Go executable name based on the OS
+ifeq ($(OS),Windows_NT)
+	EXECUTABLE = bin/mealdealz.exe
+else
+	EXECUTABLE = bin/mealdealz
+endif
+
 build:
-	@go build -o bin/mealdealz
+	@go build -o $(EXECUTABLE)
 
 run: build
-	@./bin/mealdealz
+	@$(EXECUTABLE)
