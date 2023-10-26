@@ -39,14 +39,14 @@ export class RecipeService {
     return this.http.post(MealDealzRoutes.postRecipesUrl, request, { observe: 'response', responseType: 'json', withCredentials: true });
   }
 
-  postFavoriteRecipe(recipeID: string){
+  postFavoriteRecipe(recipeID: number){
     const headers = new HttpHeaders({ 
       'Content-Type': 'application/json', 
     });
     return this.http.post<any>(this.addFavoriteRecipeUrl, recipeID, { headers, withCredentials: true });
   }
 
-  postRemoveFavoriteRecipe(recipeID: string){ //delete favorite recipe 
+  postRemoveFavoriteRecipe(recipeID: number){ //delete favorite recipe 
     const headers = new HttpHeaders({ 
       'Content-Type': 'application/json', 
     });
@@ -60,7 +60,7 @@ export class RecipeService {
     return this.http.post<any>(this.filtersUrl, filterValues, { headers, withCredentials: true });
   }
 
-  postDeleteUserRecipe(recipeID: string){
+  postDeleteUserRecipe(recipeID: number){
     const headers = new HttpHeaders({ 
       'Content-Type': 'application/json', 
     });

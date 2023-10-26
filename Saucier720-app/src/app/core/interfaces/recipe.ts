@@ -5,7 +5,7 @@ export interface Recipe {
     ingredients: string[];
     title: string;
     // pictureLink: string | null; we should do this later but im commenting out for now
-    recipeID: string;
+    recipeID: number;
     userFavorite: boolean;
     recipeAuthor: string;
     [key: string]: any; // index signature

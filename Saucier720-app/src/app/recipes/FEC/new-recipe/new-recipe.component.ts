@@ -74,7 +74,7 @@ export class NewRecipeComponent {
         ingredients,
         title: this.titleTextbox.nativeElement.value.trim(),
         pictureLink: null, // Provide the appropriate picture link here
-        recipeID: 'test', // Provide the appropriate recipe ID here
+        recipeID: 69, // Provide the appropriate recipe ID here
         userFavorite: false,
         recipeAuthor: this.cookieService.get("sessionID").replace(/\d+/g, '') // pass in the current user's username, but doesn't matter because we store in backend anyways, just adding this incase we change it in backend
       };
