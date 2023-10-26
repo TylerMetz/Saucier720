@@ -1,5 +1,5 @@
 import { Ingredient, Pantry, List} from "./ingredient";
-import { RecommendedRecipes } from "./recipe";
+import { Recipe, RecommendedRecipes } from "./recipe";
 
 export interface LoginRequest {
     UserName: string;
@@ -65,4 +65,9 @@ export interface RecipeFilter {
     UserCreatedRecipes: boolean;
     MealDealzRecipes: boolean;
     SelfCreatedRecipes: boolean;
+}
+
+export interface PostRecipeRequest {
+    UserName: string;
+    Recipe: Recipe;
 }

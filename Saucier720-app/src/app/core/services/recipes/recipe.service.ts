@@ -34,31 +34,7 @@ export class RecipeService {
     return this.http.get<any>(MealDealzRoutes.getRecipesUrl, options);
   }
 
-  postFavoriteRecipesSelect() {
-    const headers = new HttpHeaders({ 
-      'Content-Type': 'application/json', 
-    });
-    return this.http.post<any>(this.favoriteRecipeUrl, "", { headers, withCredentials: true });
-  }
-
-  postMyRecipesSelect() {
-    const headers = new HttpHeaders({ 
-      'Content-Type': 'application/json', 
-    });
-    return this.http.post<any>(this.userRecipeUrl, "", { headers, withCredentials: true });
-  }
-
-  postRecommendedRecipesSelect() {
-    const headers = new HttpHeaders({ 
-      'Content-Type': 'application/json', 
-    });
-    return this.http.post<any>(this.recommendedRecipeUrl, "", { headers, withCredentials: true });
-  }
-
   postNewRecipe(recipe: Recipe){
-    const headers = new HttpHeaders({ 
-      'Content-Type': 'application/json', 
-    });
     return this.http.post<any>(this.newRecipeUrl, recipe, { headers, withCredentials: true });
   }
 
@@ -69,7 +45,7 @@ export class RecipeService {
     return this.http.post<any>(this.addFavoriteRecipeUrl, recipeID, { headers, withCredentials: true });
   }
 
-  postRemoveFavoriteRecipe(recipeID: string){
+  postRemoveFavoriteRecipe(recipeID: string){ //delete favorite recipe 
     const headers = new HttpHeaders({ 
       'Content-Type': 'application/json', 
     });
@@ -89,6 +65,5 @@ export class RecipeService {
     });
     return this.http.post<any>(this.deleteUserRecipeUrl, recipeID, { headers, withCredentials: true });
   }
-
 }
 

@@ -62,36 +62,6 @@ export class RecipeNavBarComponent implements OnInit {
     return this.recipeService;
   }
 
-  async postFavoriteRecipesSelect() {
-    try {
-      const response = await lastValueFrom(this.recipeService.postFavoriteRecipesSelect());
-      console.log(response);
-      this.refreshRecipeCard.emit();
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  async postMyRecipesSelect() {
-    try {
-      const response = await lastValueFrom(this.recipeService.postMyRecipesSelect());
-      console.log(response);
-      this.refreshRecipeCard.emit();
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  async postRecommendedRecipesSelect() {
-    try {
-      const response = await lastValueFrom(this.recipeService.postRecommendedRecipesSelect());
-      console.log(response);
-      this.refreshRecipeCard.emit();
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
   loadButtonState() {
     const buttonState = localStorage.getItem('recipeNavBarButtonState');
     if (buttonState) {

@@ -4,7 +4,7 @@ export interface Recipe {
     instructions: string;
     ingredients: string[];
     title: string;
-    pictureLink: string | null;
+    // pictureLink: string | null; we should do this later but im commenting out for now
     recipeID: string;
     userFavorite: boolean;
     recipeAuthor: string;

@@ -28,9 +28,8 @@ export class AuthService {
    
 
   public login(request: LoginRequest): Observable<any> {
-    const body = request;
-    console.log('LoginRequest', body)
-    return this.http.post(MealDealzRoutes.loginUrl, body, { observe: 'response', responseType: 'json', withCredentials: true });
+    console.log('LoginRequest', request)
+    return this.http.post(MealDealzRoutes.loginUrl, request, { observe: 'response', responseType: 'json', withCredentials: true });
   }
 
   public logout(request: LogoutRequest): Observable<any> {
@@ -38,9 +37,8 @@ export class AuthService {
     this.cookieService.delete('Cookie');
     console.log('cookie deleted');
     console.log("post req sending");
-    const body = request;
-    console.log('LogoutRequest', body)
-    return this.http.post(MealDealzRoutes.logoutUrl, body, { observe: 'response', responseType: 'json', withCredentials: true });
+    console.log('LogoutRequest', request)
+    return this.http.post(MealDealzRoutes.logoutUrl, request, { observe: 'response', responseType: 'json', withCredentials: true });
   }
 
   public isLoggedIn(): boolean {
