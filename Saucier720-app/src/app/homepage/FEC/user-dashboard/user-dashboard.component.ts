@@ -133,11 +133,11 @@ const right = [
       return imageUrl;
     }
 
-    getImages(recipes: Recommendation[]): void {
-      recipes.forEach(recipe => {
-        recipe.R.pictureLink = this.searchImage(recipe.R.title);
-      });
-    }
+    // getImages(recipes: Recommendation[]): void {
+    //   recipes.forEach(recipe => {
+    //     recipe.R.pictureLink = this.searchImage(recipe.R.title);
+    //   });
+    // } yikes
 
     sizeRecipePreviewWindow() {
       const recipeCardPreview = this.elementRef.nativeElement.querySelector('.highlighted-recipes-box');

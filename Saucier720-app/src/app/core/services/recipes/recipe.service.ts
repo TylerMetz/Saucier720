@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Recipe } from 'src/app/core/interfaces/recipe';
-import { GetPantryRequest, GetRecipesRequest } from '../../interfaces/types';
+import { GetPantryRequest, GetRecipesRequest, PostRecipeRequest } from '../../interfaces/types';
 import MealDealzRoutes from '../../interfaces/routes';
 import { Observable } from 'rxjs';
 
@@ -34,8 +34,9 @@ export class RecipeService {
     return this.http.get<any>(MealDealzRoutes.getRecipesUrl, options);
   }
 
-  postNewRecipe(recipe: Recipe){
-    return this.http.post<any>(this.newRecipeUrl, recipe, { headers, withCredentials: true });
+  postNewRecipe(request: PostRecipeRequest){
+    console.log('LoginRequest', request)
+    return this.http.post(MealDealzRoutes.postRecipesUrl, request, { observe: 'response', responseType: 'json', withCredentials: true });
   }
 
   postFavoriteRecipe(recipeID: string){

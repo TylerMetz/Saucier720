@@ -3,6 +3,8 @@ import { RecipeService } from 'src/app/core/services/recipes/recipe.service';
 import { Recipe } from 'src/app/core/interfaces/recipe';
 import { lastValueFrom } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
+import { PostRecipeRequest } from 'src/app/core/interfaces/types';
+import { AuthService } from 'src/app/core/services/Auth/auth.service';
 
 @Component({
   selector: 'app-new-recipe',
@@ -20,7 +22,10 @@ export class NewRecipeComponent {
   // No Refresh
   @Output() refreshRecipeCard: EventEmitter<void> = new EventEmitter<void>(); 
 
-  constructor(private renderer: Renderer2, private recipeService: RecipeService, private cookieService: CookieService) {}
+  constructor(private renderer: Renderer2, 
+    private recipeService: RecipeService, 
+    private cookieService: CookieService,
+    private authService: AuthService) {}
 
   addIngredientTextbox() {
     const ingredientTextboxes = this.ingredientTextboxesRef.nativeElement;
@@ -73,15 +78,19 @@ export class NewRecipeComponent {
         userFavorite: false,
         recipeAuthor: this.cookieService.get("sessionID").replace(/\d+/g, '') // pass in the current user's username, but doesn't matter because we store in backend anyways, just adding this incase we change it in backend
       };
-
-      try {
-        const response = await lastValueFrom(this.recipeService.postNewRecipe(recipe));
-        console.log(response);
-        this.refreshRecipeCard.emit()
-      } catch (error) {
-        console.error(error);
-      }
-
+      const request: PostRecipeRequest = {
+        UserName: this.authService.getUsername(),
+        Recipe: recipe
+      };
+      this.recipeService.postNewRecipe(request).subscribe({
+        next: (response: any) => {
+          console.log('post new recipe response', response);
+          this.refreshRecipeCard.emit();
+        },
+        error: (err: any) => {
+          console.log(err, 'errors')
+        }
+      });
     }
   }
 }

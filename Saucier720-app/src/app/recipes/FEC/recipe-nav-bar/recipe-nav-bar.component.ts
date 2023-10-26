@@ -59,7 +59,7 @@ export class RecipeNavBarComponent implements OnInit {
   }
 
   getService() {
-    return this.recipeService;
+    return this.recipeService; // why would we ever need this and no just import from the own ts file???
   }
 
   loadButtonState() {

@@ -13,7 +13,9 @@ const MealDealzRoutes: Routes = {
   postListUrl: 'http://localhost:8080/NewListIngredient',
   updateListUrl: 'http://localhost:8080/UpdateList',
   //recipes
-  getRecipesUrl: 'http://localhost:8080/Recipes'
+  getRecipesUrl: 'http://localhost:8080/Recipes',
+  postRecipesUrl: 'http://localhost:8080/NewRecipe',
+  
 };
 
 
@@ -34,6 +36,7 @@ export interface Routes {
     updateListUrl: string;
   // recipes
     getRecipesUrl: string;
+    postRecipesUrl: string;
 }
   
   
