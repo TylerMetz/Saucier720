@@ -42,7 +42,7 @@ type Storage interface {
 	PostFavoriteRecipe(string, int) error
 	DeleteFavorite(string, int) error
 	// Recipe Ingredients
-	PostIngredientsByRecipeID(int, []string, chan struct{}) error
+	PostIngredientsByRecipeID(int, []string, chan struct{})
 	// Deals
 	GetDeals() ([]Ingredient, error)
 	GetDealsByStore(string) ([]Ingredient, error)
@@ -249,26 +249,17 @@ func (s *AzureDatabase) GetRecipes() ([]Recipe, error){
 
 		wg.Add(1)
 		go func(r Recipe) {
-			const maxRetries = 50
-			retries := 0
-			for retries < maxRetries {
-				semaphore <- struct{}{}
-				//post in subroutine
-				err := s.PostIngredientsByRecipeID(r.RecipeID, r.Ingredients, semaphore)
-				if err == nil {
-					// Successfully inserted ingredients, exit the loop
-					wg.Done()
-					break
-				// if err != nil {
-				// 	fmt.Println("error on post ingredient")
-				// 	fmt.Println(err)
-				// 	return []Recipe{}, err
-				// }
-			} else {
-				retries++
-				fmt.Printf("Retry %d on RecipeID %d: %v\n", retries, r.RecipeID, err)
-			}
-		}
+			semaphore <- struct{}{}
+			//post in subroutine
+			s.PostIngredientsByRecipeID(r.RecipeID, r.Ingredients, semaphore)
+			
+			// Successfully inserted ingredients, exit the loop
+			wg.Done()
+			// if err != nil {
+			// 	fmt.Println("error on post ingredient")
+			// 	fmt.Println(err)
+			// 	return []Recipe{}, err
+			// }
 		}(r)
 
 		recipes = append(recipes, recipe)
@@ -794,8 +785,8 @@ func (s *AzureDatabase) PostCookieByUserName(username string, cookie string) err
 	return nil
 }
 
-func (s *AzureDatabase) PostIngredientsByRecipeID(recipeID int, ingredients []string, semaphore chan struct{}) error {
-	defer func() error {
+func (s *AzureDatabase) PostIngredientsByRecipeID(recipeID int, ingredients []string, semaphore chan struct{}) {
+	defer func()  {
 		ctx := context.Background()
 		// fmt.Println("posting ingredients", recipeID)
 
@@ -809,7 +800,7 @@ func (s *AzureDatabase) PostIngredientsByRecipeID(recipeID int, ingredients []st
 			fmt.Println(err, recipeID)
 			fmt.Println("error on ingredient insert")
 			<-semaphore
-			return err
+			return
 		}
 		defer stmt.Close()
 
@@ -823,13 +814,12 @@ func (s *AzureDatabase) PostIngredientsByRecipeID(recipeID int, ingredients []st
 				fmt.Println(err, recipeID)
 				fmt.Println("error on ingredient insert")
 				<-semaphore
-				return err
+				return
 			}
 		}
 		<-semaphore
-		return nil
+		return 
 		}()
-		return nil
 	}
 
 
