@@ -218,7 +218,7 @@ func (s *AzureDatabase) GetRecipes() ([]Recipe, error){
 	}
 
 	//semaphore
-	semaphore := make(chan struct{}, 25)
+	semaphore := make(chan struct{}, 60)
 	var wg sync.WaitGroup
 
 	//Create Recipe
