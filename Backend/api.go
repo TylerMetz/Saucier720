@@ -153,36 +153,42 @@ func (s *APIServer) handleGetRecipes(w http.ResponseWriter, r *http.Request) err
 	fmt.Println("others: ", UserCreatedRecipes)
 
 	//get recipes based on filters
-	if UserCreatedRecipes == "true" {
-		//get user created recipes
-		userCreatedRecipes, err := s.store.GetUserCreatedRecipes()
-		if err != nil { 
-			fmt.Println("error getting user created recipes")
-			return err
-		}
-		// add to recipes array
-		recipes = append(recipes, userCreatedRecipes...)
-	}
-	if MealDealzRecipes == "true"{
-		//get meal dealz recipes
-		mealDealzRecipes, err := s.store.GetRecipesByUserName("MealDealz Classic Recipe")
-		if err != nil { 
-			fmt.Println("error getting mealdealz classic recipes")
-			return err
-		}
-		// add to recipes array
-		recipes = append(recipes, mealDealzRecipes...)
-	}
-	if SelfCreatedRecipes == "true" {	
-		//get self created recipes
-		selfCreatedRecipes, err := s.store.GetRecipesByUserName(username)
-		// add to recipes array
-		if err != nil { 
-			fmt.Println("error getting own users recipes")
-			return err
-		}
-		// add to recipes array
-		recipes = append(recipes, selfCreatedRecipes...)
+	// if UserCreatedRecipes == "true" {
+	// 	//get user created recipes
+	// 	userCreatedRecipes, err := s.store.GetUserCreatedRecipes()
+	// 	if err != nil { 
+	// 		fmt.Println("error getting user created recipes")
+	// 		return err
+	// 	}
+	// 	// add to recipes array
+	// 	recipes = append(recipes, userCreatedRecipes...)
+	// }
+	// if MealDealzRecipes == "true"{
+	// 	//get meal dealz recipes
+	// 	mealDealzRecipes, err := s.store.GetRecipesByUserName("MealDealz Classic Recipe")
+	// 	if err != nil { 
+	// 		fmt.Println("error getting mealdealz classic recipes")
+	// 		return err
+	// 	}
+	// 	// add to recipes array
+	// 	recipes = append(recipes, mealDealzRecipes...)
+	// }
+	// if SelfCreatedRecipes == "true" {	
+	// 	//get self created recipes
+	// 	selfCreatedRecipes, err := s.store.GetRecipesByUserName(username)
+	// 	// add to recipes array
+	// 	if err != nil { 
+	// 		fmt.Println("error getting own users recipes")
+	// 		return err
+	// 	}
+	// 	// add to recipes array
+	// 	recipes = append(recipes, selfCreatedRecipes...)
+	// }
+	
+	//get all recipes
+	recipes, err := s.store.GetRecipes()
+	if err != nil {
+		return err
 	}
 
 	//Get User Pantry

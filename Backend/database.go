@@ -1,15 +1,16 @@
 package main
 
 import (
-	"github.com/microsoft/go-mssqldb/azuread"
-	"database/sql"
 	"context"
-    "log"
-    "fmt"
-	"time"
+	"database/sql"
 	"encoding/json"
-    _"errors"
+	_ "errors"
+	"fmt"
+	"log"
+	"sync"
+	"time"
 
+	"github.com/microsoft/go-mssqldb/azuread"
 )
 
 var server = "mealdealz.database.windows.net"
@@ -40,6 +41,8 @@ type Storage interface {
 	GetFavoriteRecipes(string) ([]Recipe, error)
 	PostFavoriteRecipe(string, int) error
 	DeleteFavorite(string, int) error
+	// Recipe Ingredients
+	PostIngredientsByRecipeID(int, []string, chan struct{}) error
 	// Deals
 	GetDeals() ([]Ingredient, error)
 	GetDealsByStore(string) ([]Ingredient, error)
@@ -195,14 +198,13 @@ func (s *AzureDatabase) GetPasswordByUserName(userName string) (string, error){
 }
 
 func (s *AzureDatabase) GetRecipes() ([]Recipe, error){
-
+	startTime := time.Now()
 	recipes := []Recipe{
 	}
 
 	tsql := fmt.Sprintf(`
 	SELECT RecipeID, Title, Ingredients, Instructions, UserName from dbo.recipes;
 	`)
-
 
 	ctx := context.Background()
 	rows, err := s.db.QueryContext(
@@ -211,13 +213,19 @@ func (s *AzureDatabase) GetRecipes() ([]Recipe, error){
 	)
 	if err != nil {
 		fmt.Println("error on recipe query")
+		fmt.Println(err)
 		return []Recipe{}, err
 	}
+
+	//semaphore
+	semaphore := make(chan struct{}, 25)
+	var wg sync.WaitGroup
 
 	//Create Recipe
 	var title, ingredientsStr, instructions, userName string
 	var recipeID int
 	for rows.Next() {
+
 		//append to recipe to get all
 		err = rows.Scan(&recipeID, &title, &ingredientsStr, &instructions, &userName)
 		if err != nil {
@@ -237,11 +245,37 @@ func (s *AzureDatabase) GetRecipes() ([]Recipe, error){
 			RecipeID:     recipeID,
 			RecipeAuthor: userName,
 		}
+		r := recipe
+
+		wg.Add(1)
+		go func(r Recipe) {
+			const maxRetries = 50
+			retries := 0
+			for retries < maxRetries {
+				semaphore <- struct{}{}
+				//post in subroutine
+				err := s.PostIngredientsByRecipeID(r.RecipeID, r.Ingredients, semaphore)
+				if err == nil {
+					// Successfully inserted ingredients, exit the loop
+					wg.Done()
+					break
+				// if err != nil {
+				// 	fmt.Println("error on post ingredient")
+				// 	fmt.Println(err)
+				// 	return []Recipe{}, err
+				// }
+			} else {
+				retries++
+				fmt.Printf("Retry %d on RecipeID %d: %v\n", retries, r.RecipeID, err)
+			}
+		}
+		}(r)
 
 		recipes = append(recipes, recipe)
 	}
-
+	wg.Wait() //wait for wait group
 	// return recipes
+	fmt.Println("took: ", time.Since(startTime))
 	return recipes, nil
 }
 
@@ -759,6 +793,45 @@ func (s *AzureDatabase) PostCookieByUserName(username string, cookie string) err
 
 	return nil
 }
+
+func (s *AzureDatabase) PostIngredientsByRecipeID(recipeID int, ingredients []string, semaphore chan struct{}) error {
+	defer func() error {
+		ctx := context.Background()
+		// fmt.Println("posting ingredients", recipeID)
+
+		// Define the SQL query to insert ingredients for a given RecipeID
+		tsql := fmt.Sprintf(`
+			INSERT INTO dbo.recipes_ingredients (RecipeID, Ingredient)
+			VALUES (@RecipeID, @Ingredient);
+		`)
+		stmt, err := s.db.Prepare(tsql)
+		if err != nil {
+			fmt.Println(err, recipeID)
+			fmt.Println("error on ingredient insert")
+			<-semaphore
+			return err
+		}
+		defer stmt.Close()
+
+		// Iterate through the ingredients and execute the query for each ingredient
+		for _, ingredient := range ingredients {
+			_, err := stmt.ExecContext(ctx,
+				sql.Named("RecipeID", recipeID),
+				sql.Named("Ingredient", ingredient),
+			)
+			if err != nil {
+				fmt.Println(err, recipeID)
+				fmt.Println("error on ingredient insert")
+				<-semaphore
+				return err
+			}
+		}
+		<-semaphore
+		return nil
+		}()
+		return nil
+	}
+
 
 // DELETES
 func (s *AzureDatabase) DeletePantryIngredient(username string, ingredient Ingredient) error {
