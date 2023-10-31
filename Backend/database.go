@@ -29,7 +29,10 @@ type Storage interface {
 	PostPantryIngredient(string, Ingredient) error
 	UpdatePantryByUserName(string, Pantry) error
 	DeletePantryIngredient(string, Ingredient) error
+	// Pantry Update Time
 	GetLastPantryUpdateByUserName(string) (time.Time, error)
+	PostLastPantryUpdateByUserName(string) error
+	UpdateLastPantryUpdateByUserName(string) error
 	// Recipes
 	GetRecipes() ([]Recipe, error)
 	GetUserCreatedRecipes() ([]Recipe, error)
@@ -174,7 +177,7 @@ func (s *AzureDatabase) GetPantryByUserName(username string) (Pantry, error) {
 
 func (s* AzureDatabase) GetLastPantryUpdateByUserName(username string) (time.Time, error) {
 	ctx := context.Background()
-	
+
 	tsql := fmt.Sprintf(`
 	SELECT UserName, TimeUpdate FROM dbo.user_pantry_updates
 	WHERE UserName = @UserName;
@@ -850,7 +853,38 @@ func (s *AzureDatabase) PostIngredientsByRecipeID(recipeID int, ingredients []st
 		<-semaphore
 		return 
 		}()
+}
+
+func (s* AzureDatabase) PostLastPantryUpdateByUserName(username string) error {
+	ctx := context.Background()
+
+	tsql := fmt.Sprintf(`
+	INSERT INTO dbo.user_pantry_updates (UserName, TimeUpdated)
+	VALUES (@UserName, @TimeUpdated);
+	`)
+
+	stmt, err := s.db.Prepare(tsql)
+	if err != nil {
+		
+		return err
 	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx,
+		sql.Named("UserName", username),
+		sql.Named("TimeUpdated", time.Now()),
+	)
+	if err != nil {
+		updateTimeErr := s.UpdateLastPantryUpdateByUserName(username)
+		if updateTimeErr == nil {
+			return nil
+		}
+		fmt.Println("error on cookie post")
+		return err
+	}
+
+	return nil
+}
 
 // DELETES
 func (s *AzureDatabase) DeletePantryIngredient(username string, ingredient Ingredient) error {
@@ -1104,6 +1138,33 @@ func (s *AzureDatabase) UpdateCookieByUserName(username string, cookie string) e
 
 	_, err = stmt.ExecContext(ctx,
 		sql.Named("Cookie", cookie),
+		sql.Named("UserName", username),
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s* AzureDatabase) UpdateLastPantryUpdateByUserName(username string) error {
+	ctx := context.Background()
+
+	tsql := fmt.Sprintf(`
+		UPDATE dbo.user_cookies
+		SET TimeUpdated = @TimeUpdated
+		WHERE UserName = @UserName;
+	`)
+
+	stmt, err := s.db.Prepare(tsql)
+	if err != nil {
+		
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx,
+		sql.Named("TimeUpdated", time.Now()),
 		sql.Named("UserName", username),
 	)
 	if err != nil {
