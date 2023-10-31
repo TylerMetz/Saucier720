@@ -312,6 +312,9 @@ func (s *APIServer) handlePostPantryIngredient(w http.ResponseWriter, r *http.Re
 	if err := s.store.PostPantryIngredient(req.UserName, req.Ingredient); err != nil {
 		return err
 	}
+	if err := s.store.PostLastPantryUpdateByUserName(req.UserName); err != nil {
+		return err
+	}
 
 	resp := PostPantryResponse{
 		Response: "Ingredient Successfully Posted!",
@@ -474,6 +477,10 @@ func (s *APIServer) handleUpdatePantry(w http.ResponseWriter, r *http.Request) e
 		if err := s.store.DeletePantryIngredient(req.UserName, ingredient); err != nil{
 			return err
 		}
+	}
+
+	if err := s.store.PostLastPantryUpdateByUserName(req.UserName); err != nil {
+		return err
 	}
 
 	resp := UpdatePantryResponse {

@@ -879,7 +879,7 @@ func (s* AzureDatabase) PostLastPantryUpdateByUserName(username string) error {
 		if updateTimeErr == nil {
 			return nil
 		}
-		fmt.Println("error on cookie post")
+		fmt.Println("error on pantry update time post")
 		return err
 	}
 
