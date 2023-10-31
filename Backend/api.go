@@ -3,8 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"time"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
@@ -12,13 +12,13 @@ import (
 
 type APIServer struct {
 	listenAddr string
-	store Storage
+	store      Storage
 }
 
-func NewMealDealzServer(listenAddr string, store Storage) *APIServer{
+func NewMealDealzServer(listenAddr string, store Storage) *APIServer {
 	return &APIServer{
 		listenAddr: listenAddr,
-		store: store,
+		store:      store,
 	}
 }
 
@@ -39,7 +39,7 @@ func (s *APIServer) Run() {
 	router.HandleFunc("/NewRecipe", makeHTTPHandleFunc(s.handlePostRecipe))
 	router.HandleFunc("/NewListIngredient", makeHTTPHandleFunc(s.handlePostList))
 	router.HandleFunc("/NewFavoriteRecipe", makeHTTPHandleFunc(s.handlePostFavoriteRecipe))
-	// THEN DELETE 
+	// THEN DELETE
 	router.HandleFunc("/Logout", makeHTTPHandleFunc(s.handleLogout)) // we delete the cookie here ?
 	router.HandleFunc("/DeletePantryIngredient", makeHTTPHandleFunc(s.handleDeletePantryIngredient))
 	router.HandleFunc("/DeleteListIngredient", makeHTTPHandleFunc(s.handleDeleteListIngredient))
@@ -51,11 +51,11 @@ func (s *APIServer) Run() {
 	router.HandleFunc("/UpdateRecipe", makeHTTPHandleFunc(s.handleUpdateRecipe))
 
 	c := cors.New(cors.Options{
-        AllowedOrigins: []string{"http://localhost:4200", "http://localhost:4200/Login"}, // Add your frontend URLs
-        AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
-        AllowedHeaders: []string{"*"},
-        AllowCredentials: true,
-    })
+		AllowedOrigins:   []string{"http://localhost:4200", "http://localhost:4200/Login"}, // Add your frontend URLs
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
+		AllowedHeaders:   []string{"*"},
+		AllowCredentials: true,
+	})
 
 	handler := c.Handler(router)
 
@@ -64,12 +64,12 @@ func (s *APIServer) Run() {
 
 func (s *APIServer) handleSignup(w http.ResponseWriter, r *http.Request) error {
 	req := new(SignupRequest)
-	if err := json.NewDecoder(r.Body).Decode(req); err != nil{
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 		return err
 	}
 
 	account, err := NewAccount(req.UserName, req.FirstName, req.LastName, req.Email, req.Password)
-	if err != nil{
+	if err != nil {
 		return err
 	}
 	if err := s.store.PostSignup(account); err != nil {
@@ -85,15 +85,16 @@ func (s *APIServer) handleSignup(w http.ResponseWriter, r *http.Request) error {
 
 func (s *APIServer) handleLogin(w http.ResponseWriter, r *http.Request) error {
 	req := new(LoginRequest)
-	if err := json.NewDecoder(r.Body).Decode(req); err != nil{
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 		return err
 	}
 
 	verify := CheckPassword(s.store, req.UserName, req.Password)
-	if(verify){
+	if verify {
 		//Generate Cookie Here
 		//helper function calling CreateCookieForUser
-		cookieToken, err := CreateCookieForUser(req.UserName); if err != nil { 
+		cookieToken, err := CreateCookieForUser(req.UserName)
+		if err != nil {
 			fmt.Println("error creating cookie")
 			return err
 		}
@@ -106,7 +107,7 @@ func (s *APIServer) handleLogin(w http.ResponseWriter, r *http.Request) error {
 			HttpOnly: false,
 			Secure:   false,
 			SameSite: http.SameSiteLaxMode,
-			Domain: "localhost",
+			Domain:   "localhost",
 		}
 
 		http.SetCookie(w, httpCookie)
@@ -126,74 +127,78 @@ func (s *APIServer) handleLogin(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (s *APIServer) handleGetPantry(w http.ResponseWriter, r *http.Request) error {
-	username := r.URL.Query().Get("username");
+	username := r.URL.Query().Get("username")
 
 	pantry, err := s.store.GetPantryByUserName(username)
 	if err != nil {
 		return err
 	}
 
-	resp := PantryResponse {
+	resp := PantryResponse{
 		Pantry: pantry,
 	}
 
 	return WriteJSON(w, http.StatusOK, resp)
 }
 
-func (s *APIServer) handleGetRecipes(w http.ResponseWriter, r *http.Request) error{
-	username := r.URL.Query().Get("username");
-	SelfCreatedRecipes := r.URL.Query().Get("self");
-	MealDealzRecipes := r.URL.Query().Get("mdRecipes");
-	UserCreatedRecipes := r.URL.Query().Get("others");
+func (s *APIServer) handleGetRecipes(w http.ResponseWriter, r *http.Request) error {
+	username := r.URL.Query().Get("username")
+	SelfCreatedRecipes := r.URL.Query().Get("self")
+	MealDealzRecipes := r.URL.Query().Get("mdRecipes")
+	UserCreatedRecipes := r.URL.Query().Get("others")
 	var recipes []Recipe
 	fmt.Println("getting recipes for", username)
+	var recomendedRecipes []Recommendation
 
 	// check if pantry has changed
 	// we will also need to add a check for deals scrape times but thats not needed yet
-	// lastUpdateTime, err := s.store.GetLastPantryTimeByUserName(username)
-	// if err != nil {
-	// 	return err
-	// }
+	lastPantryUpdateTime, err := s.store.GetLastPantryTimeByUserName(username)
+	if err != nil {
+		return err
+	}
+	lastRecipeUpdateTime, err := s.store.GetLastRecipeTimeByUserName(username)
+	if err != nil {
+		return err
+	}
+
+	if lastRecipeUpdateTime.Before(lastPantryUpdateTime) {
+		recomendedRecipes, err = s.store.GetRecommendedRecipesByUserName(username)
+	} else {
+		
+	}
 
 	// get recipes based on filters
 	if UserCreatedRecipes == "true" {
 		//get user created recipes
 		userCreatedRecipes, err := s.store.GetUserCreatedRecipes()
-		if err != nil { 
+		if err != nil {
 			fmt.Println("error getting user created recipes")
 			return err
 		}
 		// add to recipes array
 		recipes = append(recipes, userCreatedRecipes...)
 	}
-	if MealDealzRecipes == "true"{
+	if MealDealzRecipes == "true" {
 		//get meal dealz recipes
 		mealDealzRecipes, err := s.store.GetRecipesByUserName("MealDealz Classic Recipe")
-		if err != nil { 
+		if err != nil {
 			fmt.Println("error getting mealdealz classic recipes")
 			return err
 		}
 		// add to recipes array
 		recipes = append(recipes, mealDealzRecipes...)
 	}
-	if SelfCreatedRecipes == "true" {	
+	if SelfCreatedRecipes == "true" {
 		//get self created recipes
 		selfCreatedRecipes, err := s.store.GetRecipesByUserName(username)
 		// add to recipes array
-		if err != nil { 
+		if err != nil {
 			fmt.Println("error getting own users recipes")
 			return err
 		}
 		// add to recipes array
 		recipes = append(recipes, selfCreatedRecipes...)
 	}
-	
-	// //get all recipes
-	// recipes, err := s.store.GetRecipesByUserName()
-	// if err != nil {
-	// 	return err
-	// }
-
 
 	// we should figure out how to do data agggregration here
 	//Get User Pantry
@@ -208,7 +213,7 @@ func (s *APIServer) handleGetRecipes(w http.ResponseWriter, r *http.Request) err
 	//return recipes request
 	resp := new(RecipesResponse)
 
-	resp.R = RecommendedRecipes{ 
+	resp.R = RecommendedRecipes{
 		Recommendations: recomendedRecipes,
 	}
 	fmt.Println("returning recipes")
@@ -216,15 +221,15 @@ func (s *APIServer) handleGetRecipes(w http.ResponseWriter, r *http.Request) err
 }
 
 // handleGetFavRecipes
-func (s *APIServer) handleGetFavRecipes(w http.ResponseWriter, r *http.Request) error{ 
+func (s *APIServer) handleGetFavRecipes(w http.ResponseWriter, r *http.Request) error {
 	req := new(FavoriteRecipesRequest)
-	if err := json.NewDecoder(r.Body).Decode(req); err != nil{
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 		return err
 	}
 
 	//get fav recipes
 	favRecipes, err := s.store.GetFavoriteRecipes(req.UserName)
-	if err != nil { 
+	if err != nil {
 		fmt.Println("error getting fav recipes")
 		return err
 	}
@@ -236,7 +241,7 @@ func (s *APIServer) handleGetFavRecipes(w http.ResponseWriter, r *http.Request) 
 
 	//getting deals to pass in, i think we could make all of these go func things and have them run concurrently?
 	deals, err := s.store.GetDeals()
-	if err != nil { 
+	if err != nil {
 		fmt.Println("error getting deals")
 		return err
 	}
@@ -249,14 +254,14 @@ func (s *APIServer) handleGetFavRecipes(w http.ResponseWriter, r *http.Request) 
 }
 
 // handleGetDeals - we should add a zipcode type to this? or go off the current user's zipcode setting (we also need to implement settings)
-func (s *APIServer) handleGetDeals(w http.ResponseWriter, r *http.Request) error { 
+func (s *APIServer) handleGetDeals(w http.ResponseWriter, r *http.Request) error {
 	req := new(DealsRequest)
-	if err := json.NewDecoder(r.Body).Decode(req); err != nil{
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 		return err
 	}
 
 	deals, err := s.store.GetDeals()
-	if err != nil { 
+	if err != nil {
 		fmt.Println("error getting deals")
 		return err
 	}
@@ -267,15 +272,15 @@ func (s *APIServer) handleGetDeals(w http.ResponseWriter, r *http.Request) error
 	return WriteJSON(w, http.StatusOK, resp)
 }
 
-//handleGetDealsByStore
-func (s *APIServer) handleGetDealsByStore(w http.ResponseWriter, r *http.Request) error { 
+// handleGetDealsByStore
+func (s *APIServer) handleGetDealsByStore(w http.ResponseWriter, r *http.Request) error {
 	req := new(DealsByStoreRequest)
-	if err := json.NewDecoder(r.Body).Decode(req); err != nil{
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 		return err
 	}
 
 	deals, err := s.store.GetDealsByStore(req.StoreName)
-	if err != nil { 
+	if err != nil {
 		fmt.Println("error getting deals")
 		return err
 	}
@@ -288,15 +293,15 @@ func (s *APIServer) handleGetDealsByStore(w http.ResponseWriter, r *http.Request
 
 // handleGetList
 func (s *APIServer) handleGetList(w http.ResponseWriter, r *http.Request) error {
-	username := r.URL.Query().Get("username");
+	username := r.URL.Query().Get("username")
 
 	list, err := s.store.GetShoppingListByUserName(username)
-	if err != nil { 
+	if err != nil {
 		fmt.Println("error getting deals")
 		return err
 	}
 
-	resp := ListResponse {
+	resp := ListResponse{
 		List: list,
 	}
 
@@ -305,9 +310,9 @@ func (s *APIServer) handleGetList(w http.ResponseWriter, r *http.Request) error 
 }
 
 // POSTS
-func (s *APIServer) handlePostPantryIngredient(w http.ResponseWriter, r *http.Request) error { 
+func (s *APIServer) handlePostPantryIngredient(w http.ResponseWriter, r *http.Request) error {
 	req := new(PostPantryRequest)
-	if err := json.NewDecoder(r.Body).Decode(req); err != nil{
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 		return err
 	}
 
@@ -327,9 +332,9 @@ func (s *APIServer) handlePostPantryIngredient(w http.ResponseWriter, r *http.Re
 	return WriteJSON(w, http.StatusOK, resp)
 }
 
-func (s *APIServer) handlePostRecipe(w http.ResponseWriter, r *http.Request) error { 
+func (s *APIServer) handlePostRecipe(w http.ResponseWriter, r *http.Request) error {
 	req := new(PostRecipeRequest)
-	if err := json.NewDecoder(r.Body).Decode(req); err != nil{ 
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 		return err
 	}
 
@@ -344,9 +349,9 @@ func (s *APIServer) handlePostRecipe(w http.ResponseWriter, r *http.Request) err
 	return WriteJSON(w, http.StatusOK, resp)
 }
 
-func (s *APIServer) handlePostList(w http.ResponseWriter, r *http.Request) error { 
+func (s *APIServer) handlePostList(w http.ResponseWriter, r *http.Request) error {
 	req := new(PostListRequest)
-	if err := json.NewDecoder(r.Body).Decode(req); err != nil{ 
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 		return err
 	}
 
@@ -354,7 +359,7 @@ func (s *APIServer) handlePostList(w http.ResponseWriter, r *http.Request) error
 		return err
 	}
 
-	resp := PostListResponse {
+	resp := PostListResponse{
 		Response: "Ingredient Successfully Posted!",
 	}
 	return WriteJSON(w, http.StatusOK, resp)
@@ -362,24 +367,24 @@ func (s *APIServer) handlePostList(w http.ResponseWriter, r *http.Request) error
 
 func (s *APIServer) handleDeletePantryIngredient(w http.ResponseWriter, r *http.Request) error {
 	req := new(DeletePantryRequest)
-	if err := json.NewDecoder(r.Body).Decode(req); err != nil{ 
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 		return err
 	}
 
-	if err := s.store.DeletePantryIngredient(req.UserName, req.Ingredient); err != nil{
+	if err := s.store.DeletePantryIngredient(req.UserName, req.Ingredient); err != nil {
 		return err
 	}
 
-	resp := DeletePantryResponse {
+	resp := DeletePantryResponse{
 		Response: "Ingredient Successfully Removed From Pantry",
 	}
 
 	return WriteJSON(w, http.StatusOK, resp)
 }
 
-func (s *APIServer) handlePostFavoriteRecipe(w http.ResponseWriter, r *http.Request) error { 
+func (s *APIServer) handlePostFavoriteRecipe(w http.ResponseWriter, r *http.Request) error {
 	req := new(PostFavoriteRequest)
-	if err := json.NewDecoder(r.Body).Decode(req); err != nil{ 
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 		return err
 	}
 
@@ -387,7 +392,7 @@ func (s *APIServer) handlePostFavoriteRecipe(w http.ResponseWriter, r *http.Requ
 		return err
 	}
 
-	resp := PostFavoriteResponse {
+	resp := PostFavoriteResponse{
 		Response: "Recipe Successfully Posted!",
 	}
 
@@ -398,15 +403,15 @@ func (s *APIServer) handlePostFavoriteRecipe(w http.ResponseWriter, r *http.Requ
 
 func (s *APIServer) handleDeleteListIngredient(w http.ResponseWriter, r *http.Request) error {
 	req := new(DeleteListRequest)
-	if err := json.NewDecoder(r.Body).Decode(req); err != nil{ 
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 		return err
 	}
 
-	if err := s.store.DeleteListIngredient(req.UserName, req.Ingredient); err != nil{
+	if err := s.store.DeleteListIngredient(req.UserName, req.Ingredient); err != nil {
 		return err
 	}
 
-	resp := DeletePantryResponse {
+	resp := DeletePantryResponse{
 		Response: "Ingredient Successfully Removed From List",
 	}
 
@@ -415,15 +420,15 @@ func (s *APIServer) handleDeleteListIngredient(w http.ResponseWriter, r *http.Re
 
 func (s *APIServer) handleDeleteFavoriteRecipe(w http.ResponseWriter, r *http.Request) error {
 	req := new(DeleteFavoriteRequest)
-	if err := json.NewDecoder(r.Body).Decode(req); err != nil{ 
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 		return err
 	}
 
-	if err := s.store.DeleteFavorite(req.UserName, req.RecipeID); err != nil{
+	if err := s.store.DeleteFavorite(req.UserName, req.RecipeID); err != nil {
 		return err
 	}
 
-	resp := DeleteFavoriteResponse {
+	resp := DeleteFavoriteResponse{
 		Response: "Successfully Removed From Favorites",
 	}
 
@@ -432,15 +437,15 @@ func (s *APIServer) handleDeleteFavoriteRecipe(w http.ResponseWriter, r *http.Re
 
 func (s *APIServer) handleDeleteUserRecipe(w http.ResponseWriter, r *http.Request) error {
 	req := new(DeleteRecipeRequest)
-	if err := json.NewDecoder(r.Body).Decode(req); err != nil{ 
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 		return err
 	}
 
-	if err := s.store.DeleteRecipe(req.UserName, req.RecipeID); err != nil{
+	if err := s.store.DeleteRecipe(req.UserName, req.RecipeID); err != nil {
 		return err
 	}
 
-	resp := DeleteRecipeResponse {
+	resp := DeleteRecipeResponse{
 		Response: "Successfully Removed Recipe",
 	}
 
@@ -449,15 +454,15 @@ func (s *APIServer) handleDeleteUserRecipe(w http.ResponseWriter, r *http.Reques
 
 func (s *APIServer) handleLogout(w http.ResponseWriter, r *http.Request) error {
 	req := new(LogoutRequest)
-	if err := json.NewDecoder(r.Body).Decode(req); err != nil{ 
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 		return err
 	}
 
-	if err := s.store.DeleteCookieByUserName(req.UserName); err != nil{
+	if err := s.store.DeleteCookieByUserName(req.UserName); err != nil {
 		return err
 	}
 
-	resp := LogoutResponse {
+	resp := LogoutResponse{
 		Response: "Successfully Logged Out",
 	}
 
@@ -466,17 +471,17 @@ func (s *APIServer) handleLogout(w http.ResponseWriter, r *http.Request) error {
 
 func (s *APIServer) handleUpdatePantry(w http.ResponseWriter, r *http.Request) error {
 	req := new(UpdatePantryRequest)
-	if err := json.NewDecoder(r.Body).Decode(req); err != nil{ 
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 		return err
 	}
 
-	if err := s.store.UpdatePantryByUserName(req.UserName, req.Pantry); err != nil{
+	if err := s.store.UpdatePantryByUserName(req.UserName, req.Pantry); err != nil {
 		return err
 	}
 
-	for _, ingredient := range req.ItemsToDelete { 
+	for _, ingredient := range req.ItemsToDelete {
 		fmt.Println(ingredient)
-		if err := s.store.DeletePantryIngredient(req.UserName, ingredient); err != nil{
+		if err := s.store.DeletePantryIngredient(req.UserName, ingredient); err != nil {
 			return err
 		}
 	}
@@ -485,7 +490,7 @@ func (s *APIServer) handleUpdatePantry(w http.ResponseWriter, r *http.Request) e
 		return err
 	}
 
-	resp := UpdatePantryResponse {
+	resp := UpdatePantryResponse{
 		Response: "Successfully Updated Pantry",
 	}
 
@@ -494,22 +499,22 @@ func (s *APIServer) handleUpdatePantry(w http.ResponseWriter, r *http.Request) e
 
 func (s *APIServer) handleUpdateList(w http.ResponseWriter, r *http.Request) error {
 	req := new(UpdateListRequest)
-	if err := json.NewDecoder(r.Body).Decode(req); err != nil{ 
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 		return err
 	}
 
-	if err := s.store.UpdateListByUserName(req.UserName, req.List); err != nil{
+	if err := s.store.UpdateListByUserName(req.UserName, req.List); err != nil {
 		return err
 	}
 
-	for _, ingredient := range req.ItemsToDelete { 
+	for _, ingredient := range req.ItemsToDelete {
 		fmt.Println(ingredient)
-		if err := s.store.DeleteListIngredient(req.UserName, ingredient); err != nil{
+		if err := s.store.DeleteListIngredient(req.UserName, ingredient); err != nil {
 			return err
 		}
 	}
 
-	resp := UpdateListResponse {
+	resp := UpdateListResponse{
 		Response: "Successfully Updated List",
 	}
 
@@ -518,15 +523,15 @@ func (s *APIServer) handleUpdateList(w http.ResponseWriter, r *http.Request) err
 
 func (s *APIServer) handleUpdateRecipe(w http.ResponseWriter, r *http.Request) error {
 	req := new(UpdateRecipeRequest)
-	if err := json.NewDecoder(r.Body).Decode(req); err != nil{ 
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 		return err
 	}
 
-	if err := s.store.UpdateRecipeByUserName(req.UserName, req.Recipe); err != nil{
+	if err := s.store.UpdateRecipeByUserName(req.UserName, req.Recipe); err != nil {
 		return err
 	}
 
-	resp := UpdateRecipeResponse {
+	resp := UpdateRecipeResponse{
 		Response: "Successfully Updated Recipe",
 	}
 

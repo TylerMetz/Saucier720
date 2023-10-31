@@ -7,6 +7,7 @@ import (
 	_ "errors"
 	"fmt"
 	"log"
+
 	// "sync"
 	"time"
 
@@ -50,8 +51,8 @@ type Storage interface {
 	PostFavoriteRecipe(string, int) error
 	DeleteFavorite(string, int) error
 	// Recommended Recipes
-	GetRecommendedRecipeIDsByUserName(string) ([]int, error)
-	PostRecommendedRecipeIDsByUserName(string, []int) error
+	GetRecommendedRecipesByUserName(string) ([]Recommendation, error)
+	PostRecommendedRecipesByUserName(string, []int) error
 	DeleteRecommendedRecipesByUserName(string) error
 	// Recipe Ingredients
 	PostIngredientsByRecipeID(int, []string, chan struct{})
@@ -76,21 +77,21 @@ type AzureDatabase struct {
 
 func NewAzureDatabase() (*AzureDatabase, error) {
 	connString := fmt.Sprintf("server=%s;user id=%s;password=%s;port=%d;database=%s;",
-	server, user, password, port, database)
+		server, user, password, port, database)
 
 	var db *sql.DB
 	var err error
 
 	db, err = sql.Open(azuread.DriverName, connString)
 	if err != nil {
-        log.Fatal("Error creating connection pool: ", err.Error())
-    }
-    ctx := context.Background()
-    err = db.PingContext(ctx)
-    if err != nil {
-        log.Fatal(err.Error())
-    }
-    fmt.Printf("Connected!\n")
+		log.Fatal("Error creating connection pool: ", err.Error())
+	}
+	ctx := context.Background()
+	err = db.PingContext(ctx)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	fmt.Printf("Connected!\n")
 
 	return &AzureDatabase{
 		db: db,
@@ -99,51 +100,51 @@ func NewAzureDatabase() (*AzureDatabase, error) {
 
 // GETS
 
-func (s *AzureDatabase) GetPantry() (Pantry, error) {	
-		// Create the pantry object
-		pantry := Pantry{
-			Ingredients:    []Ingredient{},
-		}
-	
-		tsql := fmt.Sprintf(`
-		SELECT UserName, FoodName, FoodType, Quantity FROM dbo.user_ingredients
-		`)
-	
-		ctx := context.Background()
-		rows, err := s.db.QueryContext(
-			ctx,
-			tsql,
-		)
-		if err != nil {
-			log.Fatal(err)
-		}
-	
-		// Loop through each row and add the food item to the pantry
-		for rows.Next() {
-			var name, foodName, foodType string
-			var quantity int
-	
-			err := rows.Scan(&name, &foodName, &foodType, &quantity)
-			if err != nil {
-				return Pantry{}, err
-			}
-	
-			pantry.Ingredients = append(pantry.Ingredients, Ingredient{
-				Name:        foodName,
-				FoodType: foodType,
-				SaleDetails: "",
-				Quantity: quantity,
-			})
-	
-		}
-	
-		return pantry, nil
-}
-
-func (s *AzureDatabase) GetPantryByUserName(username string) (Pantry, error) {	
+func (s *AzureDatabase) GetPantry() (Pantry, error) {
 	// Create the pantry object
 	pantry := Pantry{
-		Ingredients:    []Ingredient{},
+		Ingredients: []Ingredient{},
+	}
+
+	tsql := fmt.Sprintf(`
+		SELECT UserName, FoodName, FoodType, Quantity FROM dbo.user_ingredients
+		`)
+
+	ctx := context.Background()
+	rows, err := s.db.QueryContext(
+		ctx,
+		tsql,
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Loop through each row and add the food item to the pantry
+	for rows.Next() {
+		var name, foodName, foodType string
+		var quantity int
+
+		err := rows.Scan(&name, &foodName, &foodType, &quantity)
+		if err != nil {
+			return Pantry{}, err
+		}
+
+		pantry.Ingredients = append(pantry.Ingredients, Ingredient{
+			Name:        foodName,
+			FoodType:    foodType,
+			SaleDetails: "",
+			Quantity:    quantity,
+		})
+
+	}
+
+	return pantry, nil
+}
+
+func (s *AzureDatabase) GetPantryByUserName(username string) (Pantry, error) {
+	// Create the pantry object
+	pantry := Pantry{
+		Ingredients: []Ingredient{},
 	}
 
 	tsql := fmt.Sprintf(`
@@ -173,9 +174,9 @@ func (s *AzureDatabase) GetPantryByUserName(username string) (Pantry, error) {
 
 		pantry.Ingredients = append(pantry.Ingredients, Ingredient{
 			Name:        foodName,
-			FoodType: foodType,
+			FoodType:    foodType,
 			SaleDetails: "",
-			Quantity: quantity,
+			Quantity:    quantity,
 		})
 
 	}
@@ -183,7 +184,7 @@ func (s *AzureDatabase) GetPantryByUserName(username string) (Pantry, error) {
 	return pantry, nil
 }
 
-func (s* AzureDatabase) GetLastPantryUpdateByUserName(username string) (time.Time, error) {
+func (s *AzureDatabase) GetLastPantryUpdateByUserName(username string) (time.Time, error) {
 	ctx := context.Background()
 
 	tsql := fmt.Sprintf(`
@@ -208,14 +209,14 @@ func (s* AzureDatabase) GetLastPantryUpdateByUserName(username string) (time.Tim
 		err := rows.Scan(&name, &timeUpdated)
 		if err != nil {
 			fmt.Println("error on pantry update time query")
-		return time.Time{}, err
+			return time.Time{}, err
 		}
 	}
 	fmt.Println("returing time updated")
 	return timeUpdated, nil
 }
 
-func (s* AzureDatabase) GetLastRecipeUpdateByUserName(username string) (time.Time, error) {
+func (s *AzureDatabase) GetLastRecipeUpdateByUserName(username string) (time.Time, error) {
 	ctx := context.Background()
 
 	tsql := fmt.Sprintf(`
@@ -240,14 +241,14 @@ func (s* AzureDatabase) GetLastRecipeUpdateByUserName(username string) (time.Tim
 		err := rows.Scan(&name, &timeUpdated)
 		if err != nil {
 			fmt.Println("error on recipe update time query")
-		return time.Time{}, err
+			return time.Time{}, err
 		}
 	}
 	fmt.Println("returing time updated")
 	return timeUpdated, nil
 }
 
-func (s *AzureDatabase) GetPasswordByUserName(userName string) (string, error){
+func (s *AzureDatabase) GetPasswordByUserName(userName string) (string, error) {
 	var password string
 
 	tsql := fmt.Sprintf(`
@@ -256,16 +257,16 @@ func (s *AzureDatabase) GetPasswordByUserName(userName string) (string, error){
 	`)
 
 	ctx := context.Background()
-    // Execute query
-    rows, err := s.db.QueryContext(
+	// Execute query
+	rows, err := s.db.QueryContext(
 		ctx,
 		tsql,
 		sql.Named("UserName", userName))
-	
-    if err != nil {
+
+	if err != nil {
 		fmt.Println("error on user password query")
-        return "", err
-    }
+		return "", err
+	}
 	for rows.Next() {
 		err = rows.Scan(&password)
 	}
@@ -273,9 +274,8 @@ func (s *AzureDatabase) GetPasswordByUserName(userName string) (string, error){
 	return password, nil
 }
 
-func (s *AzureDatabase) GetRecipes() ([]Recipe, error){
-	recipes := []Recipe{
-	}
+func (s *AzureDatabase) GetRecipes() ([]Recipe, error) {
+	recipes := []Recipe{}
 
 	tsql := fmt.Sprintf(`
 	SELECT RecipeID, Title, Ingredients, Instructions, UserName from dbo.recipes;
@@ -326,7 +326,7 @@ func (s *AzureDatabase) GetRecipes() ([]Recipe, error){
 		// 	semaphore <- struct{}{}
 		// 	//post in subroutine
 		// 	s.PostIngredientsByRecipeID(r.RecipeID, r.Ingredients, semaphore)
-			
+
 		// 	// Successfully inserted ingredients, exit the loop
 		// 	wg.Done()
 		// 	// if err != nil {
@@ -343,15 +343,13 @@ func (s *AzureDatabase) GetRecipes() ([]Recipe, error){
 	return recipes, nil
 }
 
-func (s *AzureDatabase) GetUserCreatedRecipes() ([]Recipe, error){
-	recipes := []Recipe{
-	}
+func (s *AzureDatabase) GetUserCreatedRecipes() ([]Recipe, error) {
+	recipes := []Recipe{}
 
 	tsql := fmt.Sprintf(`
 	SELECT RecipeID, Title, Ingredients, Instructions, UserName from dbo.recipes
 	WHERE UserName != @UserName;
 	`)
-
 
 	ctx := context.Background()
 	rows, err := s.db.QueryContext(
@@ -392,14 +390,12 @@ func (s *AzureDatabase) GetUserCreatedRecipes() ([]Recipe, error){
 }
 
 func (s *AzureDatabase) GetRecipesByUserName(username string) ([]Recipe, error) {
-	recipes := []Recipe{
-	}
+	recipes := []Recipe{}
 
 	tsql := fmt.Sprintf(`
 	SELECT RecipeID, Title, Ingredients, Instructions, UserName from dbo.recipes
 	WHERE UserName = @UserName;
 	`)
-
 
 	ctx := context.Background()
 	rows, err := s.db.QueryContext(
@@ -482,11 +478,13 @@ func (s *AzureDatabase) GetRecipesByRecipeID(id int) (Recipe, error) {
 	return recipe, nil
 }
 
-func (s *AzureDatabase) GetRecommendedRecipeIDsByUserName(username string) ([]int, error) {
-	var recommendedRecipes []int
+func (s *AzureDatabase) GetRecommendedRecipesByUserName(username string) ([]Recommendation, error) {
+	var recommendedRecipes []Recommendation
 	tsql := fmt.Sprintf(`
-	SELECT RecipeID from dbo.recmmonded_recipes
-	WHERE UserName = @UserName;
+	SELECT r.RecipeID, r.Title, r.Ingredients, r.Instructions, r.UserName, RR.ItemsInPantry, RR.ItemsOnSale
+	FROM dbo.recipes r
+	JOIN dbo.recommended_recipes RR ON r.RecipeID = RR.RecipeID
+	WHERE r.UserName = @UserName;
 	`)
 
 	ctx := context.Background()
@@ -495,17 +493,32 @@ func (s *AzureDatabase) GetRecommendedRecipeIDsByUserName(username string) ([]in
 		tsql,
 		sql.Named("UserName", username),
 	)
+	if err != nil {
+		return recommendedRecipes, err
+	}
+
+	defer rows.Close()
 
 	//Create Recipe
 	for rows.Next() {
-		var recipeID int
+		var recipeRecommendation Recommendation
+		var recipe Recipe
+		var ingredientsStr string
 		//append to recipe to get all
-		err = rows.Scan(&recipeID)
+		err = rows.Scan(&recipe.RecipeID, &recipe.Title, &ingredientsStr, &recipe.Instructions, &recipe.RecipeAuthor, &recipeRecommendation.ItemsInPantry, &recipeRecommendation.ItemsOnSale)
 		if err != nil {
 			return recommendedRecipes, err
 		}
 
-		recommendedRecipes = append(recommendedRecipes, recipeID)
+		var ingredients []string
+		err = json.Unmarshal([]byte(ingredientsStr), &ingredients)
+		if err != nil {
+			return recommendedRecipes, err
+		}
+
+		recipe.Ingredients = ingredients
+		recipeRecommendation.R = recipe;
+		recommendedRecipes = append(recommendedRecipes, recipeRecommendation)
 	}
 
 	// return recipes
@@ -513,8 +526,7 @@ func (s *AzureDatabase) GetRecommendedRecipeIDsByUserName(username string) ([]in
 }
 
 func (s *AzureDatabase) GetFavoriteRecipes(username string) ([]Recipe, error) {
-	recipes := []Recipe{
-	}
+	recipes := []Recipe{}
 
 	tsql := fmt.Sprintf(`
 	SELECT RecipeID, Title, Ingredients, Instructions, UserName from dbo.recipes
@@ -593,10 +605,10 @@ func (s *AzureDatabase) GetDeals() ([]Ingredient, error) {
 		}
 
 		ingredient := Ingredient{
-			Name: 	  foodName,
+			Name:        foodName,
 			SaleDetails: saleDetails,
-			FoodType: "Food", // will need to be updated when food typing introduced
-			Quantity: 1,
+			FoodType:    "Food", // will need to be updated when food typing introduced
+			Quantity:    1,
 		}
 
 		deals = append(deals, ingredient)
@@ -633,10 +645,10 @@ func (s *AzureDatabase) GetDealsByStore(storeName string) ([]Ingredient, error) 
 		}
 
 		ingredient := Ingredient{
-			Name: 	  foodName,
+			Name:        foodName,
 			SaleDetails: saleDetails,
-			FoodType: "Food", // will need to be updated when food typing introduced
-			Quantity: 1,
+			FoodType:    "Food", // will need to be updated when food typing introduced
+			Quantity:    1,
 		}
 
 		deals = append(deals, ingredient)
@@ -677,9 +689,9 @@ func (s *AzureDatabase) GetShoppingListByUserName(username string) (List, error)
 
 		shoppingList.Ingredients = append(shoppingList.Ingredients, Ingredient{
 			Name:        foodName,
-			FoodType: foodType,
+			FoodType:    foodType,
 			SaleDetails: "",
-			Quantity: quantity,
+			Quantity:    quantity,
 		})
 	}
 
@@ -717,7 +729,7 @@ func (s *AzureDatabase) GetCookieByUserName(username string) (string, error) {
 
 // POSTS
 
-func (s *AzureDatabase) PostSignup(user *Account) error{
+func (s *AzureDatabase) PostSignup(user *Account) error {
 	ctx := context.Background()
 
 	tsql := `
@@ -727,7 +739,7 @@ func (s *AzureDatabase) PostSignup(user *Account) error{
 
 	stmt, err := s.db.Prepare(tsql)
 	if err != nil {
-		
+
 		return err
 	}
 	defer stmt.Close()
@@ -754,7 +766,7 @@ func (s *AzureDatabase) PostPantryIngredient(username string, newPantryItem Ingr
 
 	stmt, err := s.db.Prepare(tsql)
 	if err != nil {
-		
+
 		return err
 	}
 	defer stmt.Close()
@@ -782,7 +794,7 @@ func (s *AzureDatabase) PostRecipe(username string, recipe Recipe) error {
 
 	stmt, err := s.db.Prepare(tsql)
 	if err != nil {
-		
+
 		return err
 	}
 	defer stmt.Close()
@@ -811,7 +823,7 @@ func (s *AzureDatabase) PostListIngredient(username string, ingredient Ingredien
 
 	stmt, err := s.db.Prepare(tsql)
 	if err != nil {
-		
+
 		return err
 	}
 	defer stmt.Close()
@@ -830,6 +842,37 @@ func (s *AzureDatabase) PostListIngredient(username string, ingredient Ingredien
 	return nil
 }
 
+func (s *AzureDatabase) PostRecommendedRecipesByUserName(username string, recommendations []Recommendation) error {
+	ctx := context.Background()
+
+	tsql := fmt.Sprintf(`
+	INSERT INTO dbo.recommended_recipes (UserName, RecipeID, ItemsInPantry, ItemsOnSale)
+	VALUES (@UserName, @RecipeID, @ItemsInPantry, @ItemsOnSale);
+	`)
+
+	stmt, err := s.db.Prepare(tsql)
+	if err != nil {
+
+		return err
+	}
+	defer stmt.Close()
+
+	for _, rec := range recommendations {
+		_, err = stmt.ExecContext(ctx,
+			sql.Named("UserName", username),
+			sql.Named("RecipeID", rec.R.RecipeID),
+			sql.Named("ItemsInPantry", rec.ItemsInPantry),
+			sql.Named("ItemsOnSale", rec.ItemsOnSale),
+		)
+		if err != nil {
+			fmt.Println("error on rec recipe post")
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (s *AzureDatabase) PostFavoriteRecipe(username string, id int) error {
 	ctx := context.Background()
 
@@ -840,7 +883,7 @@ func (s *AzureDatabase) PostFavoriteRecipe(username string, id int) error {
 
 	stmt, err := s.db.Prepare(tsql)
 	if err != nil {
-		
+
 		return err
 	}
 	defer stmt.Close()
@@ -867,7 +910,7 @@ func (s *AzureDatabase) PostCookieByUserName(username string, cookie string) err
 
 	stmt, err := s.db.Prepare(tsql)
 	if err != nil {
-		
+
 		return err
 	}
 	defer stmt.Close()
@@ -889,7 +932,7 @@ func (s *AzureDatabase) PostCookieByUserName(username string, cookie string) err
 }
 
 func (s *AzureDatabase) PostIngredientsByRecipeID(recipeID int, ingredients []string, semaphore chan struct{}) {
-	defer func()  {
+	defer func() {
 		ctx := context.Background()
 		// fmt.Println("posting ingredients", recipeID)
 
@@ -921,11 +964,11 @@ func (s *AzureDatabase) PostIngredientsByRecipeID(recipeID int, ingredients []st
 			}
 		}
 		<-semaphore
-		return 
-		}()
+		return
+	}()
 }
 
-func (s* AzureDatabase) PostLastPantryUpdateByUserName(username string) error {
+func (s *AzureDatabase) PostLastPantryUpdateByUserName(username string) error {
 	ctx := context.Background()
 
 	tsql := fmt.Sprintf(`
@@ -935,7 +978,7 @@ func (s* AzureDatabase) PostLastPantryUpdateByUserName(username string) error {
 
 	stmt, err := s.db.Prepare(tsql)
 	if err != nil {
-		
+
 		return err
 	}
 	defer stmt.Close()
@@ -957,7 +1000,7 @@ func (s* AzureDatabase) PostLastPantryUpdateByUserName(username string) error {
 	return nil
 }
 
-func (s* AzureDatabase) PostLastRecipeUpdateByUserName(username string) error {
+func (s *AzureDatabase) PostLastRecipeUpdateByUserName(username string) error {
 	ctx := context.Background()
 
 	tsql := fmt.Sprintf(`
@@ -967,7 +1010,7 @@ func (s* AzureDatabase) PostLastRecipeUpdateByUserName(username string) error {
 
 	stmt, err := s.db.Prepare(tsql)
 	if err != nil {
-		
+
 		return err
 	}
 	defer stmt.Close()
@@ -993,27 +1036,27 @@ func (s* AzureDatabase) PostLastRecipeUpdateByUserName(username string) error {
 func (s *AzureDatabase) DeletePantryIngredient(username string, ingredient Ingredient) error {
 	ctx := context.Background()
 
-    tsql := fmt.Sprintf(`
+	tsql := fmt.Sprintf(`
 	DELETE from dbo.user_ingredients
 	WHERE UserName = @UserName
 	AND FoodName = @FoodName;
 	`)
 
 	stmt, err := s.db.Prepare(tsql)
-    if err != nil {
-        
-        return err
-    }
-    defer stmt.Close()
+	if err != nil {
+
+		return err
+	}
+	defer stmt.Close()
 
 	_, err = stmt.ExecContext(ctx,
 		sql.Named("UserName", username),
-        sql.Named("FoodName", ingredient.Name),
-    )
+		sql.Named("FoodName", ingredient.Name),
+	)
 
 	if err != nil {
-        return err
-    }
+		return err
+	}
 
 	return nil
 }
@@ -1021,46 +1064,46 @@ func (s *AzureDatabase) DeletePantryIngredient(username string, ingredient Ingre
 func (s *AzureDatabase) DeleteListIngredient(username string, ingredient Ingredient) error {
 	ctx := context.Background()
 
-    tsql := fmt.Sprintf(`
+	tsql := fmt.Sprintf(`
 	DELETE from dbo.user_lists
 	WHERE UserName = @UserName
 	AND FoodName = @FoodName;
 	`)
 
 	stmt, err := s.db.Prepare(tsql)
-    if err != nil {
-        
-        return err
-    }
-    defer stmt.Close()
+	if err != nil {
+
+		return err
+	}
+	defer stmt.Close()
 
 	_, err = stmt.ExecContext(ctx,
 		sql.Named("UserName", username),
-        sql.Named("FoodName", ingredient.Name),
-    )
+		sql.Named("FoodName", ingredient.Name),
+	)
 
 	if err != nil {
-        return err
-    }
+		return err
+	}
 
 	return nil
 }
 
-func (s *AzureDatabase)	DeleteFavorite(username string, id int) error {
+func (s *AzureDatabase) DeleteFavorite(username string, id int) error {
 	ctx := context.Background()
 
-    tsql := fmt.Sprintf(`
+	tsql := fmt.Sprintf(`
     	DELETE FROM dbo.user_favorite_recipes
        	WHERE UserName = @UserName 
 		AND RecipeID = @RecipeID;
     `)
 
 	stmt, err := s.db.Prepare(tsql)
-    if err != nil {
-        
-        return err
-    }
-    defer stmt.Close()
+	if err != nil {
+
+		return err
+	}
+	defer stmt.Close()
 
 	_, err = stmt.ExecContext(
 		ctx,
@@ -1074,21 +1117,21 @@ func (s *AzureDatabase)	DeleteFavorite(username string, id int) error {
 	return nil
 }
 
-func (s *AzureDatabase)	DeleteRecipe(username string, id int) error {
+func (s *AzureDatabase) DeleteRecipe(username string, id int) error {
 	ctx := context.Background()
 
-    tsql := fmt.Sprintf(`
+	tsql := fmt.Sprintf(`
     	DELETE FROM dbo.recipes
        	WHERE UserName = @UserName 
 		AND RecipeID = @RecipeID;
     `)
 
 	stmt, err := s.db.Prepare(tsql)
-    if err != nil {
-        
-        return err
-    }
-    defer stmt.Close()
+	if err != nil {
+
+		return err
+	}
+	defer stmt.Close()
 
 	_, err = stmt.ExecContext(
 		ctx,
@@ -1112,7 +1155,33 @@ func (s *AzureDatabase) DeleteCookieByUserName(username string) error {
 
 	stmt, err := s.db.Prepare(tsql)
 	if err != nil {
-		
+
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(
+		ctx,
+		sql.Named("UserName", username),
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *AzureDatabase) DeleteRecommendedRecipesByUserName(username string) error {
+	ctx := context.Background()
+
+	tsql := fmt.Sprintf(`
+		DELETE FROM dbo.recommended_recipes
+	   	WHERE UserName = @UserName;
+	`)
+
+	stmt, err := s.db.Prepare(tsql)
+	if err != nil {
+
 		return err
 	}
 	defer stmt.Close()
@@ -1131,7 +1200,7 @@ func (s *AzureDatabase) DeleteCookieByUserName(username string) error {
 // UPDATES
 func (s *AzureDatabase) UpdatePantryByUserName(username string, pantry Pantry) error {
 	ctx := context.Background()
-	
+
 	tsql := fmt.Sprintf(`
 		UPDATE dbo.user_ingredients
 		SET Quantity = @Quantity, FoodType = @FoodType
@@ -1141,7 +1210,7 @@ func (s *AzureDatabase) UpdatePantryByUserName(username string, pantry Pantry) e
 
 	stmt, err := s.db.Prepare(tsql)
 	if err != nil {
-		
+
 		return err
 	}
 	defer stmt.Close()
@@ -1173,7 +1242,7 @@ func (s *AzureDatabase) UpdateListByUserName(username string, list List) error {
 
 	stmt, err := s.db.Prepare(tsql)
 	if err != nil {
-		
+
 		return err
 	}
 	defer stmt.Close()
@@ -1204,7 +1273,7 @@ func (s *AzureDatabase) UpdateRecipeByUserName(username string, recipe Recipe) e
 
 	stmt, err := s.db.Prepare(tsql)
 	if err != nil {
-		
+
 		return err
 	}
 	defer stmt.Close()
@@ -1234,7 +1303,7 @@ func (s *AzureDatabase) UpdateCookieByUserName(username string, cookie string) e
 
 	stmt, err := s.db.Prepare(tsql)
 	if err != nil {
-		
+
 		return err
 	}
 	defer stmt.Close()
@@ -1250,7 +1319,7 @@ func (s *AzureDatabase) UpdateCookieByUserName(username string, cookie string) e
 	return nil
 }
 
-func (s* AzureDatabase) UpdateLastPantryTimeByUserName(username string) error {
+func (s *AzureDatabase) UpdateLastPantryTimeByUserName(username string) error {
 	ctx := context.Background()
 
 	tsql := fmt.Sprintf(`
@@ -1261,7 +1330,7 @@ func (s* AzureDatabase) UpdateLastPantryTimeByUserName(username string) error {
 
 	stmt, err := s.db.Prepare(tsql)
 	if err != nil {
-		
+
 		return err
 	}
 	defer stmt.Close()
@@ -1278,7 +1347,7 @@ func (s* AzureDatabase) UpdateLastPantryTimeByUserName(username string) error {
 	return nil
 }
 
-func (s* AzureDatabase) UpdateLastRecipeTimeByUserName(username string) error {
+func (s *AzureDatabase) UpdateLastRecipeTimeByUserName(username string) error {
 	ctx := context.Background()
 
 	tsql := fmt.Sprintf(`
@@ -1289,7 +1358,7 @@ func (s* AzureDatabase) UpdateLastRecipeTimeByUserName(username string) error {
 
 	stmt, err := s.db.Prepare(tsql)
 	if err != nil {
-		
+
 		return err
 	}
 	defer stmt.Close()
