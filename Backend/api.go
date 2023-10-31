@@ -150,7 +150,10 @@ func (s *APIServer) handleGetRecipes(w http.ResponseWriter, r *http.Request) err
 
 	// check if pantry has changed
 	// we will also need to add a check for deals scrape times but thats not needed yet
-
+	// lastUpdateTime, err := s.store.GetLastPantryTimeByUserName(username)
+	// if err != nil {
+	// 	return err
+	// }
 
 	// get recipes based on filters
 	if UserCreatedRecipes == "true" {
@@ -203,7 +206,6 @@ func (s *APIServer) handleGetRecipes(w http.ResponseWriter, r *http.Request) err
 	recomendedRecipes := ReturnRecipesWithHighestPercentageOfOwnedIngredients(pantry, recipes, 50, []Ingredient{})
 
 	//return recipes request
-
 	resp := new(RecipesResponse)
 
 	resp.R = RecommendedRecipes{ 

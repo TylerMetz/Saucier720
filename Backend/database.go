@@ -30,9 +30,13 @@ type Storage interface {
 	UpdatePantryByUserName(string, Pantry) error
 	DeletePantryIngredient(string, Ingredient) error
 	// Pantry Update Time
-	GetLastPantryUpdateByUserName(string) (time.Time, error)
+	GetLastPantryTimeByUserName(string) (time.Time, error)
 	PostLastPantryUpdateByUserName(string) error
-	UpdateLastPantryUpdateByUserName(string) error
+	UpdateLastPantryTimeeByUserName(string) error
+	// Recipe Update Time
+	GetLastRecipeTimeByUserName(string) (time.Time, error)
+	PostLastRecipeUpdateByUserName(string) error
+	UpdateLastRecipeTimeByUserName(string) error
 	// Recipes
 	GetRecipes() ([]Recipe, error)
 	GetUserCreatedRecipes() ([]Recipe, error)
@@ -45,6 +49,10 @@ type Storage interface {
 	GetFavoriteRecipes(string) ([]Recipe, error)
 	PostFavoriteRecipe(string, int) error
 	DeleteFavorite(string, int) error
+	// Recommended Recipes
+	GetRecommendedRecipeIDsByUserName(string) ([]int, error)
+	PostRecommendedRecipeIDsByUserName(string, []int) error
+	DeleteRecommendedRecipesByUserName(string) error
 	// Recipe Ingredients
 	PostIngredientsByRecipeID(int, []string, chan struct{})
 	// Deals
@@ -179,7 +187,7 @@ func (s* AzureDatabase) GetLastPantryUpdateByUserName(username string) (time.Tim
 	ctx := context.Background()
 
 	tsql := fmt.Sprintf(`
-	SELECT UserName, TimeUpdate FROM dbo.user_pantry_updates
+	SELECT UserName, PantryTime FROM dbo.user_last_times
 	WHERE UserName = @UserName;
 	`)
 
@@ -200,6 +208,38 @@ func (s* AzureDatabase) GetLastPantryUpdateByUserName(username string) (time.Tim
 		err := rows.Scan(&name, &timeUpdated)
 		if err != nil {
 			fmt.Println("error on pantry update time query")
+		return time.Time{}, err
+		}
+	}
+	fmt.Println("returing time updated")
+	return timeUpdated, nil
+}
+
+func (s* AzureDatabase) GetLastRecipeUpdateByUserName(username string) (time.Time, error) {
+	ctx := context.Background()
+
+	tsql := fmt.Sprintf(`
+	SELECT UserName, RecipeTime FROM dbo.user_last_times
+	WHERE UserName = @UserName;
+	`)
+
+	rows, err := s.db.QueryContext(
+		ctx,
+		tsql,
+		sql.Named("UserName", username),
+	)
+	if err != nil {
+		fmt.Println("error on recipe update time query")
+		log.Fatal(err)
+	}
+
+	var name string
+	var timeUpdated time.Time
+
+	for rows.Next() {
+		err := rows.Scan(&name, &timeUpdated)
+		if err != nil {
+			fmt.Println("error on recipe update time query")
 		return time.Time{}, err
 		}
 	}
@@ -440,6 +480,36 @@ func (s *AzureDatabase) GetRecipesByRecipeID(id int) (Recipe, error) {
 
 	// return recipes
 	return recipe, nil
+}
+
+func (s *AzureDatabase) GetRecommendedRecipeIDsByUserName(username string) ([]int, error) {
+	var recommendedRecipes []int
+	tsql := fmt.Sprintf(`
+	SELECT RecipeID from dbo.recmmonded_recipes
+	WHERE UserName = @UserName;
+	`)
+
+	ctx := context.Background()
+	rows, err := s.db.QueryContext(
+		ctx,
+		tsql,
+		sql.Named("UserName", username),
+	)
+
+	//Create Recipe
+	for rows.Next() {
+		var recipeID int
+		//append to recipe to get all
+		err = rows.Scan(&recipeID)
+		if err != nil {
+			return recommendedRecipes, err
+		}
+
+		recommendedRecipes = append(recommendedRecipes, recipeID)
+	}
+
+	// return recipes
+	return recommendedRecipes, err
 }
 
 func (s *AzureDatabase) GetFavoriteRecipes(username string) ([]Recipe, error) {
@@ -859,8 +929,8 @@ func (s* AzureDatabase) PostLastPantryUpdateByUserName(username string) error {
 	ctx := context.Background()
 
 	tsql := fmt.Sprintf(`
-	INSERT INTO dbo.user_pantry_updates (UserName, TimeUpdated)
-	VALUES (@UserName, @TimeUpdated);
+	INSERT INTO dbo.user_last_times (UserName, PantryTime)
+	VALUES (@UserName, @PantryTime);
 	`)
 
 	stmt, err := s.db.Prepare(tsql)
@@ -872,14 +942,47 @@ func (s* AzureDatabase) PostLastPantryUpdateByUserName(username string) error {
 
 	_, err = stmt.ExecContext(ctx,
 		sql.Named("UserName", username),
-		sql.Named("TimeUpdated", time.Now()),
+		sql.Named("PantryTime", time.Now()),
 	)
 	if err != nil {
-		updateTimeErr := s.UpdateLastPantryUpdateByUserName(username)
+		updateTimeErr := s.UpdateLastRecipeTimeByUserName(username)
 		if updateTimeErr == nil {
 			return nil
 		}
+		fmt.Println(err)
 		fmt.Println("error on pantry update time post")
+		return err
+	}
+
+	return nil
+}
+
+func (s* AzureDatabase) PostLastRecipeUpdateByUserName(username string) error {
+	ctx := context.Background()
+
+	tsql := fmt.Sprintf(`
+	INSERT INTO dbo.user_last_times (UserName, RecipeTime)
+	VALUES (@UserName, @RecipeTime);
+	`)
+
+	stmt, err := s.db.Prepare(tsql)
+	if err != nil {
+		
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx,
+		sql.Named("UserName", username),
+		sql.Named("RecipeTime", time.Now()),
+	)
+	if err != nil {
+		updateTimeErr := s.UpdateLastRecipeTimeByUserName(username)
+		if updateTimeErr == nil {
+			return nil
+		}
+		fmt.Println(err)
+		fmt.Println("error on recipe update time post")
 		return err
 	}
 
@@ -1147,12 +1250,12 @@ func (s *AzureDatabase) UpdateCookieByUserName(username string, cookie string) e
 	return nil
 }
 
-func (s* AzureDatabase) UpdateLastPantryUpdateByUserName(username string) error {
+func (s* AzureDatabase) UpdateLastPantryTimeByUserName(username string) error {
 	ctx := context.Background()
 
 	tsql := fmt.Sprintf(`
-		UPDATE dbo.user_cookies
-		SET TimeUpdated = @TimeUpdated
+		UPDATE dbo.user_last_times
+		SET PantryTime = @PantryTime
 		WHERE UserName = @UserName;
 	`)
 
@@ -1164,10 +1267,39 @@ func (s* AzureDatabase) UpdateLastPantryUpdateByUserName(username string) error 
 	defer stmt.Close()
 
 	_, err = stmt.ExecContext(ctx,
-		sql.Named("TimeUpdated", time.Now()),
+		sql.Named("PantryTime", time.Now()),
 		sql.Named("UserName", username),
 	)
 	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	return nil
+}
+
+func (s* AzureDatabase) UpdateLastRecipeTimeByUserName(username string) error {
+	ctx := context.Background()
+
+	tsql := fmt.Sprintf(`
+		UPDATE dbo.user_last_times
+		SET RecipeTime = @RecipeTime
+		WHERE UserName = @UserName;
+	`)
+
+	stmt, err := s.db.Prepare(tsql)
+	if err != nil {
+		
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx,
+		sql.Named("RecipeTime", time.Now()),
+		sql.Named("UserName", username),
+	)
+	if err != nil {
+		fmt.Println(err)
 		return err
 	}
 
