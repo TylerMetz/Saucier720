@@ -146,51 +146,53 @@ func (s *APIServer) handleGetRecipes(w http.ResponseWriter, r *http.Request) err
 	MealDealzRecipes := r.URL.Query().Get("mdRecipes");
 	UserCreatedRecipes := r.URL.Query().Get("others");
 	var recipes []Recipe
-	fmt.Println("getting recipes")
-	fmt.Println("username: ", username)
-	fmt.Println("self: ", SelfCreatedRecipes)
-	fmt.Println("md: ", MealDealzRecipes)
-	fmt.Println("others: ", UserCreatedRecipes)
+	fmt.Println("getting recipes for", username)
 
-	//get recipes based on filters
-	// if UserCreatedRecipes == "true" {
-	// 	//get user created recipes
-	// 	userCreatedRecipes, err := s.store.GetUserCreatedRecipes()
-	// 	if err != nil { 
-	// 		fmt.Println("error getting user created recipes")
-	// 		return err
-	// 	}
-	// 	// add to recipes array
-	// 	recipes = append(recipes, userCreatedRecipes...)
-	// }
-	// if MealDealzRecipes == "true"{
-	// 	//get meal dealz recipes
-	// 	mealDealzRecipes, err := s.store.GetRecipesByUserName("MealDealz Classic Recipe")
-	// 	if err != nil { 
-	// 		fmt.Println("error getting mealdealz classic recipes")
-	// 		return err
-	// 	}
-	// 	// add to recipes array
-	// 	recipes = append(recipes, mealDealzRecipes...)
-	// }
-	// if SelfCreatedRecipes == "true" {	
-	// 	//get self created recipes
-	// 	selfCreatedRecipes, err := s.store.GetRecipesByUserName(username)
-	// 	// add to recipes array
-	// 	if err != nil { 
-	// 		fmt.Println("error getting own users recipes")
-	// 		return err
-	// 	}
-	// 	// add to recipes array
-	// 	recipes = append(recipes, selfCreatedRecipes...)
-	// }
-	
-	//get all recipes
-	recipes, err := s.store.GetRecipes()
-	if err != nil {
-		return err
+	// check if pantry has changed
+	// we will also need to add a check for deals scrape times but thats not needed yet
+
+
+	// get recipes based on filters
+	if UserCreatedRecipes == "true" {
+		//get user created recipes
+		userCreatedRecipes, err := s.store.GetUserCreatedRecipes()
+		if err != nil { 
+			fmt.Println("error getting user created recipes")
+			return err
+		}
+		// add to recipes array
+		recipes = append(recipes, userCreatedRecipes...)
 	}
+	if MealDealzRecipes == "true"{
+		//get meal dealz recipes
+		mealDealzRecipes, err := s.store.GetRecipesByUserName("MealDealz Classic Recipe")
+		if err != nil { 
+			fmt.Println("error getting mealdealz classic recipes")
+			return err
+		}
+		// add to recipes array
+		recipes = append(recipes, mealDealzRecipes...)
+	}
+	if SelfCreatedRecipes == "true" {	
+		//get self created recipes
+		selfCreatedRecipes, err := s.store.GetRecipesByUserName(username)
+		// add to recipes array
+		if err != nil { 
+			fmt.Println("error getting own users recipes")
+			return err
+		}
+		// add to recipes array
+		recipes = append(recipes, selfCreatedRecipes...)
+	}
+	
+	// //get all recipes
+	// recipes, err := s.store.GetRecipesByUserName()
+	// if err != nil {
+	// 	return err
+	// }
 
+
+	// we should figure out how to do data agggregration here
 	//Get User Pantry
 	pantry, err := s.store.GetPantryByUserName(username)
 	if err != nil {
@@ -300,7 +302,6 @@ func (s *APIServer) handleGetList(w http.ResponseWriter, r *http.Request) error 
 
 }
 
-
 // POSTS
 func (s *APIServer) handlePostPantryIngredient(w http.ResponseWriter, r *http.Request) error { 
 	req := new(PostPantryRequest)
@@ -315,6 +316,8 @@ func (s *APIServer) handlePostPantryIngredient(w http.ResponseWriter, r *http.Re
 	resp := PostPantryResponse{
 		Response: "Ingredient Successfully Posted!",
 	}
+
+	//post to pantry update table
 
 	return WriteJSON(w, http.StatusOK, resp)
 }

@@ -7,7 +7,7 @@ import (
 	_ "errors"
 	"fmt"
 	"log"
-	"sync"
+	// "sync"
 	"time"
 
 	"github.com/microsoft/go-mssqldb/azuread"
@@ -29,6 +29,7 @@ type Storage interface {
 	PostPantryIngredient(string, Ingredient) error
 	UpdatePantryByUserName(string, Pantry) error
 	DeletePantryIngredient(string, Ingredient) error
+	GetLastPantryUpdateByUserName(string) (time.Time, error)
 	// Recipes
 	GetRecipes() ([]Recipe, error)
 	GetUserCreatedRecipes() ([]Recipe, error)
@@ -171,6 +172,38 @@ func (s *AzureDatabase) GetPantryByUserName(username string) (Pantry, error) {
 	return pantry, nil
 }
 
+func (s* AzureDatabase) GetLastPantryUpdateByUserName(username string) (time.Time, error) {
+	ctx := context.Background()
+	
+	tsql := fmt.Sprintf(`
+	SELECT UserName, TimeUpdate FROM dbo.user_pantry_updates
+	WHERE UserName = @UserName;
+	`)
+
+	rows, err := s.db.QueryContext(
+		ctx,
+		tsql,
+		sql.Named("UserName", username),
+	)
+	if err != nil {
+		fmt.Println("error on pantry update time query")
+		log.Fatal(err)
+	}
+
+	var name string
+	var timeUpdated time.Time
+
+	for rows.Next() {
+		err := rows.Scan(&name, &timeUpdated)
+		if err != nil {
+			fmt.Println("error on pantry update time query")
+		return time.Time{}, err
+		}
+	}
+	fmt.Println("returing time updated")
+	return timeUpdated, nil
+}
+
 func (s *AzureDatabase) GetPasswordByUserName(userName string) (string, error){
 	var password string
 
@@ -198,7 +231,6 @@ func (s *AzureDatabase) GetPasswordByUserName(userName string) (string, error){
 }
 
 func (s *AzureDatabase) GetRecipes() ([]Recipe, error){
-	startTime := time.Now()
 	recipes := []Recipe{
 	}
 
@@ -217,9 +249,9 @@ func (s *AzureDatabase) GetRecipes() ([]Recipe, error){
 		return []Recipe{}, err
 	}
 
-	//semaphore
-	semaphore := make(chan struct{}, 60)
-	var wg sync.WaitGroup
+	// //semaphore
+	// semaphore := make(chan struct{}, 60)
+	// var wg sync.WaitGroup
 
 	//Create Recipe
 	var title, ingredientsStr, instructions, userName string
@@ -245,28 +277,26 @@ func (s *AzureDatabase) GetRecipes() ([]Recipe, error){
 			RecipeID:     recipeID,
 			RecipeAuthor: userName,
 		}
-		r := recipe
 
-		wg.Add(1)
-		go func(r Recipe) {
-			semaphore <- struct{}{}
-			//post in subroutine
-			s.PostIngredientsByRecipeID(r.RecipeID, r.Ingredients, semaphore)
+		// wg.Add(1)
+		// go func(r Recipe) {
+		// 	semaphore <- struct{}{}
+		// 	//post in subroutine
+		// 	s.PostIngredientsByRecipeID(r.RecipeID, r.Ingredients, semaphore)
 			
-			// Successfully inserted ingredients, exit the loop
-			wg.Done()
-			// if err != nil {
-			// 	fmt.Println("error on post ingredient")
-			// 	fmt.Println(err)
-			// 	return []Recipe{}, err
-			// }
-		}(r)
+		// 	// Successfully inserted ingredients, exit the loop
+		// 	wg.Done()
+		// 	// if err != nil {
+		// 	// 	fmt.Println("error on post ingredient")
+		// 	// 	fmt.Println(err)
+		// 	// 	return []Recipe{}, err
+		// 	// }
+		// }(r)
 
 		recipes = append(recipes, recipe)
 	}
-	wg.Wait() //wait for wait group
+	// wg.Wait() //wait for wait group
 	// return recipes
-	fmt.Println("took: ", time.Since(startTime))
 	return recipes, nil
 }
 
@@ -821,7 +851,6 @@ func (s *AzureDatabase) PostIngredientsByRecipeID(recipeID int, ingredients []st
 		return 
 		}()
 	}
-
 
 // DELETES
 func (s *AzureDatabase) DeletePantryIngredient(username string, ingredient Ingredient) error {
