@@ -148,7 +148,7 @@ func (s *APIServer) handleGetRecipes(w http.ResponseWriter, r *http.Request) err
 	UserCreatedRecipes := r.URL.Query().Get("others")
 	var recipes []Recipe
 	fmt.Println("getting recipes for", username)
-	var recomendedRecipes []Recommendation
+	var recommendedRecipes []Recommendation
 
 	// check if pantry has changed
 	// we will also need to add a check for deals scrape times but thats not needed yet
@@ -162,59 +162,88 @@ func (s *APIServer) handleGetRecipes(w http.ResponseWriter, r *http.Request) err
 	}
 
 	if lastRecipeUpdateTime.Before(lastPantryUpdateTime) {
-		recomendedRecipes, err = s.store.GetRecommendedRecipesByUserName(username)
+		fmt.Println("Time Was Before")
+		//check that count is == 50
+		countOfRecipes, _ := s.store.GetCountOfRecommendedRecipesByUserName(username);
+		if countOfRecipes != 50 {
+			fmt.Println("count was: ", countOfRecipes)
+			return nil
+		}
+		recommendedRecipes, err = s.store.GetRecommendedRecipesByUserName(username)
 	} else {
-		
-	}
-
-	// get recipes based on filters
-	if UserCreatedRecipes == "true" {
-		//get user created recipes
-		userCreatedRecipes, err := s.store.GetUserCreatedRecipes()
-		if err != nil {
-			fmt.Println("error getting user created recipes")
-			return err
+		fmt.Println("Time Was After")
+		// get recipes based on filters
+		if UserCreatedRecipes == "true" { 
+			//get user created recipes
+			userCreatedRecipes, err := s.store.GetUserCreatedRecipes()
+			if err != nil {
+				fmt.Println("error getting user created recipes")
+				return err
+			}
+			// add to recipes array
+			recipes = append(recipes, userCreatedRecipes...)
 		}
-		// add to recipes array
-		recipes = append(recipes, userCreatedRecipes...)
-	}
-	if MealDealzRecipes == "true" {
-		//get meal dealz recipes
-		mealDealzRecipes, err := s.store.GetRecipesByUserName("MealDealz Classic Recipe")
-		if err != nil {
-			fmt.Println("error getting mealdealz classic recipes")
-			return err
+		if MealDealzRecipes == "true" {
+			//get meal dealz recipes
+			mealDealzRecipes, err := s.store.GetRecipesByUserName("MealDealz Classic Recipe")
+			if err != nil {
+				fmt.Println("error getting mealdealz classic recipes")
+				return err
+			}
+			// add to recipes array
+			recipes = append(recipes, mealDealzRecipes...)
 		}
-		// add to recipes array
-		recipes = append(recipes, mealDealzRecipes...)
-	}
-	if SelfCreatedRecipes == "true" {
-		//get self created recipes
-		selfCreatedRecipes, err := s.store.GetRecipesByUserName(username)
-		// add to recipes array
-		if err != nil {
-			fmt.Println("error getting own users recipes")
-			return err
+		if SelfCreatedRecipes == "true" {
+			//get self created recipes
+			selfCreatedRecipes, err := s.store.GetRecipesByUserName(username)
+			// add to recipes array
+			if err != nil {
+				fmt.Println("error getting own users recipes")
+				return err
+			}
+			// add to recipes array
+			recipes = append(recipes, selfCreatedRecipes...)
 		}
-		// add to recipes array
-		recipes = append(recipes, selfCreatedRecipes...)
-	}
 
-	// we should figure out how to do data agggregration here
-	//Get User Pantry
-	pantry, err := s.store.GetPantryByUserName(username)
-	if err != nil {
-		fmt.Println("error getting pantry")
-	}
+		// we should figure out how to do data agggregration here
+		//Get User Pantry
+		pantry, err := s.store.GetPantryByUserName(username)
+		if err != nil {
+			fmt.Println("error getting pantry")
+		}
 
-	//rate them based on recomendation funcs
-	recomendedRecipes := ReturnRecipesWithHighestPercentageOfOwnedIngredients(pantry, recipes, 50, []Ingredient{})
+		//rate them based on recomendation funcs
+		recommendedRecipes = ReturnRecipesWithHighestPercentageOfOwnedIngredients(pantry, recipes, 50, []Ingredient{})
+
+		//delete old items
+		_ = s.store.DeleteRecommendedRecipesRelatedPantryItems(username)
+		_ = s.store.DeleteRecommendedRecipesRelatedDealItems(username)
+
+		//post new related items
+
+		for _, recipe := range recommendedRecipes {
+			var relatedItemsInPantry, relatedItemsOnSale []string
+			for _, pantryItem := range recipe.ItemsInPantry {
+				relatedItemsInPantry = append(relatedItemsInPantry, pantryItem.Name)
+			}
+			relatedItemsInPantry = removeDuplicates(relatedItemsInPantry)
+			for _, dealsItem := range recipe.ItemsOnSale {
+				relatedItemsOnSale = append(relatedItemsOnSale, dealsItem.Name)
+			}
+			relatedItemsOnSale = removeDuplicates(relatedItemsInPantry)
+			_ = s.store.PostRecommendedRecipesRelatedPantryItems(username, relatedItemsInPantry, recipe.R.RecipeID)
+			_ = s.store.PostRecommendedRecipesRelatedDealItems(username, relatedItemsOnSale, recipe.R.RecipeID)
+			_ = s.store.PostRecommendedRecipesByUserName(username, recipe.R.RecipeID)
+		}
+	
+
+	}
 
 	//return recipes request
 	resp := new(RecipesResponse)
 
 	resp.R = RecommendedRecipes{
-		Recommendations: recomendedRecipes,
+		Recommendations: recommendedRecipes,
 	}
 	fmt.Println("returning recipes")
 	return WriteJSON(w, http.StatusOK, resp)
@@ -306,7 +335,6 @@ func (s *APIServer) handleGetList(w http.ResponseWriter, r *http.Request) error 
 	}
 
 	return WriteJSON(w, http.StatusOK, resp)
-
 }
 
 // POSTS
@@ -567,4 +595,19 @@ func makeHTTPHandleFunc(f apiFunc) http.HandlerFunc {
 			WriteJSON(w, http.StatusBadRequest, ApiError{Error: err.Error()})
 		}
 	}
+}
+
+// Function to remove duplicate strings from a slice
+func removeDuplicates(elements []string) []string {
+    encountered := map[string]struct{}{}
+    result := []string{}
+
+    for _, element := range elements {
+        if _, ok := encountered[element]; !ok {
+            encountered[element] = struct{}{}
+            result = append(result, element)
+        }
+    }
+
+    return result
 }
