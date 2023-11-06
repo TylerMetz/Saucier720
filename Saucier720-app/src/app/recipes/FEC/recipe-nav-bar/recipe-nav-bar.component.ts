@@ -59,37 +59,7 @@ export class RecipeNavBarComponent implements OnInit {
   }
 
   getService() {
-    return this.recipeService;
-  }
-
-  async postFavoriteRecipesSelect() {
-    try {
-      const response = await lastValueFrom(this.recipeService.postFavoriteRecipesSelect());
-      console.log(response);
-      this.refreshRecipeCard.emit();
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  async postMyRecipesSelect() {
-    try {
-      const response = await lastValueFrom(this.recipeService.postMyRecipesSelect());
-      console.log(response);
-      this.refreshRecipeCard.emit();
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  async postRecommendedRecipesSelect() {
-    try {
-      const response = await lastValueFrom(this.recipeService.postRecommendedRecipesSelect());
-      console.log(response);
-      this.refreshRecipeCard.emit();
-    } catch (error) {
-      console.error(error);
-    }
+    return this.recipeService; // why would we ever need this and no just import from the own ts file???
   }
 
   loadButtonState() {

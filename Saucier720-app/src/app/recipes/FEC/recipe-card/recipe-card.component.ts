@@ -2,12 +2,14 @@ import { Component, OnInit, Input, ChangeDetectionStrategy, ChangeDetectorRef} f
 import { HttpEvent, HttpEventType } from '@angular/common/http';
 import { RecipeService } from 'src/app/core/services/recipes/recipe.service';
 import { lastValueFrom } from 'rxjs';
-import { Recipe, RecipePost, RecipesResponse } from 'src/app/core/interfaces/recipe';
+import { Recipe, Recommendation, RecommendedRecipes } from 'src/app/core/interfaces/recipe';
 import { CookieService } from 'ngx-cookie-service';
 import { ListComponent } from 'src/app/list/list.component';
 import { Ingredient } from 'src/app/core/interfaces/ingredient';
 import { SubRecipeComponent } from '../sub-recipe/sub-recipe.component';
 import { RecipesComponent } from '../../recipes.component';
+import { AuthService } from 'src/app/core/services/Auth/auth.service';
+import { GetRecipesRequest } from 'src/app/core/interfaces/types';
 
 @Component({
   selector: 'app-recipe-card',
@@ -18,9 +20,9 @@ import { RecipesComponent } from '../../recipes.component';
 })
 export class RecipeCardComponent implements OnInit {
 
-  recipes!: RecipesResponse;
+  recipes: RecommendedRecipes = { Recommendations: [] };
   currentRecipeIndex: number = 0;
-  currentRecipe!: RecipePost;
+  currentRecipe!: Recommendation;
   @Input() currentIngredients: string[] = [];
   nextRecipeFollows: any;
   printedSubRecipeLines: string[] = [];
@@ -32,6 +34,7 @@ export class RecipeCardComponent implements OnInit {
     private cookieService: CookieService,
     private listComponent: ListComponent,
     private subRecipeComponent: SubRecipeComponent,
+    private authService: AuthService,
   ) {}
 
   ngOnInit(): void {
@@ -44,40 +47,28 @@ export class RecipeCardComponent implements OnInit {
   }
 
   public async populateRecipes(): Promise<void> {
-    try {
-      const event: HttpEvent<any> = await lastValueFrom(this.recipeService.getRecipes());
-
-      switch(event.type) {
-        case HttpEventType.Sent:
-          console.log('Request sent!');
-          break;
-        case HttpEventType.ResponseHeader:
-          console.log('Response header received!');
-          break;
-        case HttpEventType.DownloadProgress:
-          const kbLoaded = Math.round(event.loaded / 1024);
-          console.log(`Download in progress! ${kbLoaded}Kb loaded`);
-          break;
-        case HttpEventType.Response:
-          console.log('Done!', event.body);
-          let recipeStr = JSON.stringify(event.body);
-          let parsedRecipes = JSON.parse(recipeStr);
-          this.recipes = parsedRecipes;
-
-          if (!this.recipes) {
-            this.hasError = true; // Set the error flag
-          } else {
-            this.hasError = false; // Clear the error flag
-            this.currentRecipe = this.recipes.RecipeToPost[this.currentRecipeIndex];
-            this.currentIngredients = this.removeQuotesAndBrackets(this.currentRecipe.R.ingredients);
-            console.log(this.currentIngredients);
-            this.validteRecipeItems();
-          }
-          break;
+    console.log('username: ', this.authService.getUsername())
+    const request: GetRecipesRequest = {
+      UserName: this.authService.getUsername(),
+      RecipeFilter: {
+        SelfCreatedRecipes: true,
+        MealDealzRecipes: true,
+        UserCreatedRecipes: true,
       }
-    } catch (error) {
-      console.error(error);
     }
+  this.recipeService.getRecipes(request).subscribe({
+    next: (response: any) => {
+      console.log('response', response)
+      this.recipes = response.RecommendedRecipes;
+      this.currentRecipe = this.recipes.Recommendations[this.currentRecipeIndex];
+      this.currentIngredients = this.removeQuotesAndBrackets(this.currentRecipe.R.ingredients);
+      this.validteRecipeItems();
+      console.log('get recipe response', response)
+    },
+    error: (err: any) => {
+      console.log(err, 'errors')
+    }
+  });
   }
 
   public getAuthorCredit(): string {
@@ -117,10 +108,10 @@ export class RecipeCardComponent implements OnInit {
 
   goToNextRecipe() {
     this.currentRecipeIndex++;
-    if (this.currentRecipeIndex >= this.recipes.RecipeToPost.length) {
+    if (this.currentRecipeIndex >= this.recipes.Recommendations.length) {
       this.currentRecipeIndex = 0;
     }
-    this.currentRecipe = this.recipes.RecipeToPost[this.currentRecipeIndex];
+    this.currentRecipe = this.recipes.Recommendations[this.currentRecipeIndex];
     this.currentIngredients = this.removeQuotesAndBrackets(this.currentRecipe.R.ingredients);
     console.log(this.currentRecipe.R.title)
     this.validteRecipeItems()
@@ -129,9 +120,9 @@ export class RecipeCardComponent implements OnInit {
   goToPrevRecipe() {
     this.currentRecipeIndex--;
     if (this.currentRecipeIndex < 0) {
-      this.currentRecipeIndex = this.recipes.RecipeToPost.length - 1;
+      this.currentRecipeIndex = this.recipes.Recommendations.length - 1;
     }
-    this.currentRecipe = this.recipes.RecipeToPost[this.currentRecipeIndex];
+    this.currentRecipe = this.recipes.Recommendations[this.currentRecipeIndex];
     this.currentIngredients = this.removeQuotesAndBrackets(this.currentRecipe.R.ingredients);
     console.log(this.currentRecipe.R.title)
     this.validteRecipeItems()
@@ -177,9 +168,9 @@ export class RecipeCardComponent implements OnInit {
   async toggleFavorite() {
 
     // switch favorite val
-    this.recipes.RecipeToPost[this.currentRecipeIndex].R.userFavorite = !this.recipes.RecipeToPost[this.currentRecipeIndex].R.userFavorite;
+    this.recipes.Recommendations[this.currentRecipeIndex].R.userFavorite = !this.recipes.Recommendations[this.currentRecipeIndex].R.userFavorite;
 
-    if(this.recipes.RecipeToPost[this.currentRecipeIndex].R.userFavorite) {
+    if(this.recipes.Recommendations[this.currentRecipeIndex].R.userFavorite) {
       try {
         const response = await lastValueFrom(this.recipeService.postFavoriteRecipe(this.currentRecipe.R.recipeID));
         console.log(response);
@@ -187,7 +178,7 @@ export class RecipeCardComponent implements OnInit {
         console.error(error);
       }
     }
-    else if (!this.recipes.RecipeToPost[this.currentRecipeIndex].R.userFavorite){
+    else if (!this.recipes.Recommendations[this.currentRecipeIndex].R.userFavorite){
       try {
         const response = await lastValueFrom(this.recipeService.postRemoveFavoriteRecipe(this.currentRecipe.R.recipeID));
         console.log(response);
@@ -236,7 +227,7 @@ export class RecipeCardComponent implements OnInit {
       console.log(response);
 
       // delete this recipe card and move to the next
-      this.recipes.RecipeToPost.splice(this.currentRecipeIndex, 1);
+      this.recipes.Recommendations.splice(this.currentRecipeIndex, 1);
 
       // need to reload if there are no recipes left
       if(this.currentRecipeIndex === 0){

@@ -53,7 +53,7 @@ export class LoginFormComponent {
         error: (err: any) => {
           console.log(err, 'errors')
         }
-      })
+      });
     }
 
 

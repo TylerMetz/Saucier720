@@ -13,7 +13,7 @@ type Recommendation struct {
 	ItemsOnSale   []Ingredient
 }
 
-type RecomendedRecipes struct {
+type RecommendedRecipes struct {
 	Recommendations []Recommendation
 }
 
@@ -23,12 +23,13 @@ type Recipe struct {
     Ingredients    	[]string 	`json:"ingredients"`
     Instructions   	string   	`json:"instructions"`
     RecipeAuthor   	string 		`json:"recipeAuthor"`
+	UserFavorite 	bool   		`json:"userFavorite"`
 }
 
-func GetRecomendedRecipes(username string) (RecomendedRecipes, error) {
+func GetRecomendedRecipes(username string) (RecommendedRecipes, error) {
 	
 	
-	return RecomendedRecipes{}, nil
+	return RecommendedRecipes{}, nil
 }
 
 

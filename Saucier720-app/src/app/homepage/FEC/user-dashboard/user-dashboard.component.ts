@@ -4,7 +4,7 @@ import { trigger, transition, query, style, animate, group } from '@angular/anim
 import { HttpEvent, HttpEventType } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs';
 import { RecipeService } from 'src/app/core/services/recipes/recipe.service';
-import { RecipePost } from 'src/app/core/interfaces/recipe';
+import { Recommendation } from 'src/app/core/interfaces/recipe';
 import { UserDashboardService } from 'src/app/core/services/user-dashboard/user-dashboard.service';
 import { ImagesService } from 'src/app/core/services/images/images.service';
 
@@ -68,8 +68,8 @@ const right = [
     }
 
     showTitle: boolean = false;
-    recipes: RecipePost[] = [];
-    currentRecipe!: RecipePost;
+    recipes: Recommendation[] = [];
+    currentRecipe!: Recommendation;
     counter: number = 0;
     hasError: boolean = false;
     showRecipe: boolean = false;
@@ -133,11 +133,11 @@ const right = [
       return imageUrl;
     }
 
-    getImages(recipes: RecipePost[]): void {
-      recipes.forEach(recipe => {
-        recipe.R.pictureLink = this.searchImage(recipe.R.title);
-      });
-    }
+    // getImages(recipes: Recommendation[]): void {
+    //   recipes.forEach(recipe => {
+    //     recipe.R.pictureLink = this.searchImage(recipe.R.title);
+    //   });
+    // } yikes
 
     sizeRecipePreviewWindow() {
       const recipeCardPreview = this.elementRef.nativeElement.querySelector('.highlighted-recipes-box');

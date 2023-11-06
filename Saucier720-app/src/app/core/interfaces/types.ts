@@ -1,4 +1,5 @@
 import { Ingredient, Pantry, List} from "./ingredient";
+import { Recipe, RecommendedRecipes } from "./recipe";
 
 export interface LoginRequest {
     UserName: string;
@@ -49,4 +50,24 @@ export interface UpdateListRequest{
     UserName: string;
     List: List; 
     ItemsToDelete: Ingredient[];
+}
+
+export interface GetRecipesRequest {
+    UserName: string;
+    RecipeFilter: RecipeFilter;
+}
+
+export interface GetRecipesResponse {
+    R: RecommendedRecipes
+}
+
+export interface RecipeFilter {
+    UserCreatedRecipes: boolean;
+    MealDealzRecipes: boolean;
+    SelfCreatedRecipes: boolean;
+}
+
+export interface PostRecipeRequest {
+    UserName: string;
+    Recipe: Recipe;
 }
