@@ -161,15 +161,23 @@ func (s *APIServer) handleGetRecipes(w http.ResponseWriter, r *http.Request) err
 		return err
 	}
 
-	if lastRecipeUpdateTime.Before(lastPantryUpdateTime) {
+	fmt.Println("last pantry update time: ", lastPantryUpdateTime)
+	fmt.Println("last recipe update time: ", lastRecipeUpdateTime)
+
+	if !lastRecipeUpdateTime.Before(lastPantryUpdateTime) {
 		fmt.Println("Time Was Before")
 		//check that count is == 50
 		countOfRecipes, _ := s.store.GetCountOfRecommendedRecipesByUserName(username);
 		if countOfRecipes != 50 {
 			fmt.Println("count was: ", countOfRecipes)
-			return nil
+			// return nil
 		}
 		recommendedRecipes, err = s.store.GetRecommendedRecipesByUserName(username)
+		fmt.Println("got recommended recipes")
+		fmt.Println(recommendedRecipes)
+		if err != nil { 
+			return err
+		}
 	} else {
 		fmt.Println("Time Was After")
 		// get recipes based on filters
@@ -216,8 +224,8 @@ func (s *APIServer) handleGetRecipes(w http.ResponseWriter, r *http.Request) err
 		recommendedRecipes = ReturnRecipesWithHighestPercentageOfOwnedIngredients(pantry, recipes, 50, []Ingredient{})
 
 		//delete old items
-		_ = s.store.DeleteRecommendedRecipesRelatedPantryItems(username)
-		_ = s.store.DeleteRecommendedRecipesRelatedDealItems(username)
+		s.store.DeleteRecommendedRecipesRelatedPantryItems(username)
+		s.store.DeleteRecommendedRecipesRelatedDealItems(username)
 
 		//post new related items
 
@@ -226,17 +234,16 @@ func (s *APIServer) handleGetRecipes(w http.ResponseWriter, r *http.Request) err
 			for _, pantryItem := range recipe.ItemsInPantry {
 				relatedItemsInPantry = append(relatedItemsInPantry, pantryItem.Name)
 			}
-			relatedItemsInPantry = removeDuplicates(relatedItemsInPantry)
 			for _, dealsItem := range recipe.ItemsOnSale {
 				relatedItemsOnSale = append(relatedItemsOnSale, dealsItem.Name)
 			}
-			relatedItemsOnSale = removeDuplicates(relatedItemsInPantry)
+			
+			
 			_ = s.store.PostRecommendedRecipesRelatedPantryItems(username, relatedItemsInPantry, recipe.R.RecipeID)
 			_ = s.store.PostRecommendedRecipesRelatedDealItems(username, relatedItemsOnSale, recipe.R.RecipeID)
 			_ = s.store.PostRecommendedRecipesByUserName(username, recipe.R.RecipeID)
 		}
-	
-
+		_ = s.store.PostLastRecipeTimeByUserName(username)
 	}
 
 	//return recipes request
@@ -597,17 +604,3 @@ func makeHTTPHandleFunc(f apiFunc) http.HandlerFunc {
 	}
 }
 
-// Function to remove duplicate strings from a slice
-func removeDuplicates(elements []string) []string {
-    encountered := map[string]struct{}{}
-    result := []string{}
-
-    for _, element := range elements {
-        if _, ok := encountered[element]; !ok {
-            encountered[element] = struct{}{}
-            result = append(result, element)
-        }
-    }
-
-    return result
-}

@@ -485,85 +485,66 @@ func (s *AzureDatabase) GetRecipesByRecipeID(id int) (Recipe, error) {
 }
 
 func (s *AzureDatabase) GetRecommendedRecipesByUserName(username string) ([]Recommendation, error) {
-    fmt.Println("Getting recommended_recipes by username")
+	recommendations := []Recommendation{}
 
+	// get recommended recipes by username from recommended_recipes table
 	tsql := fmt.Sprintf(`
-        SELECT 
-            r.RecipeID, 
-            r.Title, 
-            r.Ingredients, 
-            r.Instructions, 
-            r.UserName, 
-            STRING_AGG(RRPI.FoodName, ', ') AS RecommendedPantryItems, 
-            STRING_AGG(RRSI.FoodName, ', ') AS RecommendedDealsItems
-        FROM dbo.recipes r
-        JOIN dbo.recommended_recipes_pantry_items RRPI ON r.RecipeID = RRPI.RecipeID
-        JOIN dbo.recommended_recipes_sale_items RRSI ON r.RecipeID = RRSI.RecipeID
-        WHERE r.UserName = @UserName
-        GROUP BY r.RecipeID, r.Title, r.Ingredients, r.Instructions, r.UserName;
-    `)
+	SELECT r.RecipeID, r.Title, r.Ingredients, r.Instructions, r.UserName,
+	STRING_AGG(rrp.FoodName, ', ') as PantryItems, STRING_AGG(rrs.FoodName, ', ') as SaleItems
+	FROM dbo.recipes r
+	JOIN dbo.recommended_recipes rr ON r.RecipeID = rr.RecipeID
+	JOIN dbo.recommended_recipes_pantry_items rrp ON rr.UserName = rrp.UserName AND rr.RecipeID = rrp.RecipeID
+	LEFT JOIN dbo.recommended_recipes_sale_items rrs ON r.RecipeID = rrp.RecipeID AND r.UserName = rrs.UserName
+	WHERE rr.UserName = @UserName
+	GROUP BY r.RecipeID, r.Title, r.Ingredients, r.Instructions, r.UserName
+	`)
+	ctx := context.Background()
+	rows, err := s.db.QueryContext(
+		ctx,
+		tsql,
+		sql.Named("UserName", username),
+	)
+	defer rows.Close()
+	if err != nil { 
+		fmt.Println("error on recommended recipe query")
+		return []Recommendation{}, err
+	}
 
-    ctx := context.Background()
-    rows, err := s.db.QueryContext(ctx, tsql, sql.Named("UserName", username))
-    if err != nil {
-        return nil, err
-    }
-    defer rows.Close()
+	for rows.Next() {
+		var title, ingredientsStr, instructions, recipeAuthor, pantryItemsStr, saleItemsStr string
+		var recipeID int
+		rows.Scan(&recipeID, &title, &ingredientsStr, &instructions, &recipeAuthor, &pantryItemsStr, &saleItemsStr)
+		//add items in pantry and on sale to ingredients
+		itemsInPantry := []Ingredient{}
+		for _, item := range strings.Split(pantryItemsStr, ", ") { 
+			pantryIngredient := Ingredient{ 
+				Name: item,
+			}
+			itemsInPantry = append(itemsInPantry, pantryIngredient)
+		}
 
-    var recommendations []Recommendation
-    for rows.Next() {
-        var recommendation Recommendation
+		itemsOnSale := []Ingredient{}
+		for _, item := range strings.Split(saleItemsStr, ", ") { 
+			dealIngredient := Ingredient{ 
+				Name: item,
+			}
+			itemsOnSale = append(itemsOnSale, dealIngredient)
+		}
 
-        var recipe Recipe
-        var pantryItems, dealsItems, ingredientString string
-
-        err = rows.Scan(
-            &recipe.RecipeID,
-            &recipe.Title,
-            ingredientString, // Assuming Ingredients is a string in the database
-            &recipe.Instructions,
-            &recipe.RecipeAuthor, // Assuming r.UserName is the Recipe Author
-            &pantryItems,
-            &dealsItems,
-        )
-        if err != nil {
-			fmt.Println(err)
-			fmt.Println("error getting rec recipes")
-            return nil, err
-        }
-
-        // Unmarshal the Ingredients string from the database into a slice of strings
-        var ingredients []string
-        err = json.Unmarshal([]byte(ingredientString), &ingredients)
-        if err != nil {
-            return nil, err
-        }
-        recipe.Ingredients = ingredients
-
-        // Split the concatenated string of items into slices
-        pantryItemsSlice := strings.Split(pantryItems, ", ")
-        dealsItemsSlice := strings.Split(dealsItems, ", ")
-
-        // Initialize slices to hold parsed Ingredient structs
-        var pantryIngredients []Ingredient
-        var dealsIngredients []Ingredient
-
-        // Populate Ingredient slices
-        for _, item := range pantryItemsSlice {
-            pantryIngredients = append(pantryIngredients, Ingredient{Name: item, FoodType: "Pantry"}) // Assumed FoodType for pantry items
-        }
-        for _, item := range dealsItemsSlice {
-            dealsIngredients = append(dealsIngredients, Ingredient{Name: item, FoodType: "Deals"}) // Assumed FoodType for deals items
-        }
-
-        recommendation.R = recipe
-        recommendation.ItemsInPantry = pantryIngredients
-        recommendation.ItemsOnSale = dealsIngredients
-
-        recommendations = append(recommendations, recommendation)
-    }
-
-    return recommendations, nil
+		recommendation := Recommendation{ 
+				R: Recipe{ 
+					Title: title,
+					Ingredients: strings.Split(ingredientsStr, ", "),
+					Instructions: instructions,
+					RecipeID: recipeID,
+					RecipeAuthor: recipeAuthor,
+			},
+				ItemsInPantry: itemsInPantry,
+				ItemsOnSale: itemsOnSale,
+			}
+		recommendations = append(recommendations, recommendation)
+	}
+	return recommendations, nil
 }
 
 func (s *AzureDatabase) GetCountOfRecommendedRecipesByUserName(username string) (int, error) {
@@ -1036,7 +1017,6 @@ func (s *AzureDatabase) PostLastPantryUpdateByUserName(username string) error {
 
 	stmt, err := s.db.Prepare(tsql)
 	if err != nil {
-
 		return err
 	}
 	defer stmt.Close()
@@ -1046,7 +1026,7 @@ func (s *AzureDatabase) PostLastPantryUpdateByUserName(username string) error {
 		sql.Named("PantryTime", time.Now()),
 	)
 	if err != nil {
-		updateTimeErr := s.UpdateLastRecipeTimeByUserName(username)
+		updateTimeErr := s.UpdateLastPantryTimeByUserName(username)
 		if updateTimeErr == nil {
 			return nil
 		}
@@ -1143,7 +1123,7 @@ func (s *AzureDatabase) PostRecommendedRecipesRelatedDealItems(username string, 
 			sql.Named("FoodName", food),
 		)
 		if err != nil {
-			fmt.Println("error posting recommended pantry items")
+			fmt.Println("error posting related recommended sale items")
 			fmt.Println(err)
 			return err
 		}
@@ -1335,6 +1315,7 @@ func (s *AzureDatabase) DeleteRecommendedRecipesRelatedPantryItems(username stri
 		sql.Named("UserName", username),
 	)
 	if err != nil {
+		fmt.Println("error deleting from rec pantry items")
 		return err
 	}
 
@@ -1359,6 +1340,7 @@ func (s *AzureDatabase) DeleteRecommendedRecipesRelatedDealItems(username string
 		sql.Named("UserName", username),
 	)
 	if err != nil {
+		fmt.Println("error deleting from rec sale items")
 		return err
 	}
 
