@@ -1,35 +1,36 @@
-.pantry-form-wrapper {
-    align-items: center;
-    display: flex;
-    flex-direction: row;
-}
-.form {
-    align-items: center;
-    padding: 10px;
-    margin-bottom: 10px;
-    background-color: var(--secondary-color);
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .form-group {
-    display: flex;
-    flex-direction: row;
-    
-  }
-  
-  .form-container {
-    display: flex;
-    align-items: center;
-    margin: 20px;
-    flex-wrap: nowrap;
-    flex-direction: column;
+    .pantry-form-wrapper {
+        align-items: center;
+        display: flex;
+        flex-direction: row;
     }
+
+    .form {
+        align-items: center;
+        padding: 10px;
+        margin-bottom: 10px;
+        background-color: var(--secondary-color);
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: row;
+
+    }
+  
+    .form-container {
+        display: flex;
+        align-items: center;
+        margin: 20px;
+        flex-wrap: nowrap;
+        flex-direction: column;
+        }
   
   
     .form-header {
-      text-align: center;
+        text-align: center;
     }
   
   .input {
@@ -66,6 +67,12 @@
       color: var(--button-hover-text-color);
   }
 
+  .pantry-table-wrapper { //when it is 100% it justifies to left
+    // width: 100%;
+    // display: flex;
+    // justify-items: center;
+  }
+
   .table-container {
     display: flex;
     align-items: center;
@@ -79,6 +86,7 @@
     border-radius: 15px;
     display: flex;
     flex-direction: column;
+    width: 100%;
 }
 
 thead {

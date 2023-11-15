@@ -18,25 +18,27 @@
             </div>
             <button type="button" (click)="postPantryItem()">Post</button>
           </div>
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Ingredients</th>
-              <th>Quantity</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let ingredient of pantry.Ingredients">
-              <td>{{ ingredient.Name }}</td>
-              <td>{{ ingredient.Quantity }}</td>
-              <td>
-                <button (click)="ingredient.Quantity = ingredient.Quantity + 1">+</button>
-                <button (click)="ingredient.Quantity = ingredient.Quantity - 1">-</button>
-                <button (click)="ingredient.Quantity = 0"><i class="fa fa-trash" aria-hidden="true"></i>Delete</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="pantry-table-wrapper">
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th>Ingredients</th>
+                    <th>Quantity</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let ingredient of pantry.Ingredients">
+                    <td>{{ ingredient.Name }}</td>
+                    <td>{{ ingredient.Quantity }}</td>
+                    <td>
+                      <button (click)="ingredient.Quantity = ingredient.Quantity + 1">+</button>
+                      <button (click)="ingredient.Quantity = ingredient.Quantity - 1">-</button>
+                      <button (click)="ingredient.Quantity = 0"><i class="fa fa-trash" aria-hidden="true"></i>Delete</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+        </div>
         <button type="button" id="update-pantry-button" (click)="updatePantry()">Update Pantry</button>
       </div>
 </div>
