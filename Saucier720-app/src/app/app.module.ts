@@ -30,6 +30,7 @@ import { FeedbackComponent } from './homepage/FEC/feedback/feedback.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SettingsComponent } from './settings/settings.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
+import { PantryFormComponent } from './pantry/FEC/pantry-form/pantry-form.component';
 
 @NgModule({
   declarations: [
@@ -59,7 +60,8 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
     FaqsComponent,
     FeedbackComponent,
     SettingsComponent,
-    UserProfileComponent
+    UserProfileComponent,
+    PantryFormComponent
   ],
   imports: [
     AppRoutingModule,
