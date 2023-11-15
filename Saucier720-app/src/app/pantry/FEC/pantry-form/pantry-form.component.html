@@ -1,53 +1,42 @@
-<div class="table-container">
-    <div class="table-header">
-      <h2>Pantry</h2>
-    </div>
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Ingredients</th>
-          <th>Quantity</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let ingredient of pantry.Ingredients">
-          <td>{{ ingredient.Name }}</td>
-          <td>{{ ingredient.Quantity }}</td>
-          <td>
-            <button (click)="ingredient.Quantity = ingredient.Quantity + 1">+</button>
-            <button (click)="ingredient.Quantity = ingredient.Quantity - 1">-</button>
-            <button (click)="ingredient.Quantity = 0"><i class="fa fa-trash" aria-hidden="true"></i>Delete</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <button type="button" id="update-pantry-button" (click)="updatePantry()">Update Pantry</button>
-  </div>
-  
-  <div class="form-container">
-    <div class="form">
-      <div class="form-header">
-        <h2>New Pantry Item</h2>
-      </div>
-      <div class="form-body">
-        <div class="form-group">
-          <div class="input-field">
-            <label for="name">Name:</label>
-            <div class="input-wrapper">
-              <input type="text" placeholder="Name" id="name" name="username" [(ngModel)]="name">
-            </div>
-          </div>
+<div class="pantry-form-wrapper">
+    <div class="table-container">
+        <div class="table-header">
+          <h2>Pantry</h2>
         </div>
         <div class="form-group">
-          <div class="input-field">
-            <label for="quantity">Quantity:</label>
-            <div class="input-wrapper">
-              <input type="number" placeholder="Quantity" id="quantity" name="quantity" [(ngModel)]="quantity">
+            <div class="input-field">
+              <label for="name">Name:</label>
+              <div class="input-wrapper">
+                <input type="text" placeholder="Name" id="name" name="username" [(ngModel)]="name">
+              </div>
             </div>
+            <div class="input-field">
+              <label for="quantity">Quantity:</label>
+              <div class="input-wrapper">
+                <input type="number" placeholder="Quantity" id="quantity" name="quantity" [(ngModel)]="quantity">
+              </div>
+            </div>
+            <button type="button" (click)="postPantryItem()">Post</button>
           </div>
-        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Ingredients</th>
+              <th>Quantity</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let ingredient of pantry.Ingredients">
+              <td>{{ ingredient.Name }}</td>
+              <td>{{ ingredient.Quantity }}</td>
+              <td>
+                <button (click)="ingredient.Quantity = ingredient.Quantity + 1">+</button>
+                <button (click)="ingredient.Quantity = ingredient.Quantity - 1">-</button>
+                <button (click)="ingredient.Quantity = 0"><i class="fa fa-trash" aria-hidden="true"></i>Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <button type="button" id="update-pantry-button" (click)="updatePantry()">Update Pantry</button>
       </div>
-      <button type="button" (click)="postPantryItem()">Post</button>
-    </div>
-  </div>
-  
+</div>

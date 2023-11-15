@@ -1,3 +1,8 @@
+.pantry-form-wrapper {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+}
 .form {
     align-items: center;
     padding: 10px;
@@ -6,6 +11,12 @@
     border-radius: 10px;
     display: flex;
     flex-direction: column;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: row;
+    
   }
   
   .form-container {
