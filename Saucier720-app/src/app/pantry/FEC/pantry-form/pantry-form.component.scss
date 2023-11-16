@@ -17,7 +17,6 @@
     .form-group {
         display: flex;
         flex-direction: row;
-
     }
   
     .form-container {
@@ -32,24 +31,23 @@
     .form-header {
         text-align: center;
     }
-  
-  .input {
-    padding-right: 40px;
-  
-    &-wrapper {
+
+    .input-field{
+      gap: 10px;
       display: flex;
       align-items: center;
-      position: relative;
+      justify-content: center;
     }
-  
-    &-field {
-      position: relative;
+    
+    input[type="number"],
+    input[type="text"]{
+      width: 20%;
+      padding: 8px;
+      border: 1px solid var(--text-color);
       border-radius: 5px;
-      padding: 5px;
-      align-items: center;
+      outline: none;
     }
   
-    }
 
     button {
       background-color: var(--button-hover-text-color);
@@ -68,9 +66,10 @@
   }
 
   .pantry-table-wrapper { //when it is 100% it justifies to left
-    // width: 100%;
-    // display: flex;
-    // justify-items: center;
+    width: 100%;
+    display: flex;
+    justify-items: center;
+    align-items: center;
   }
 
   .table-container {
@@ -87,11 +86,22 @@
     display: flex;
     flex-direction: column;
     width: 100%;
+    padding: 10px;
 }
 
 thead {
   display: flex;
   align-items: center;
+  width: 100%;
+  justify-content: center;
+}
+
+tbody{
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: center;
+  flex-direction: column;
 }
 
 th {
@@ -99,24 +109,27 @@ th {
     font-size: large;
     background-color: var(--secondary-color);
     padding: 10px;
-    text-align: left;
+    text-align: center;
   }
   
   tr {
     border-bottom: 1px solid var(--primary-color);
     border-color: var(--primary-color);
-    vertical-align: middle;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: space-evenly;
   }
 
-  td {
+  td{
+    border: none;
+    display: flex;
     align-items: center;
-    vertical-align: middle;
+    justify-content: center;
   }
   
   
-  tr:last-child {
-    border-bottom: none;
-  }
+
   
 
 button {
@@ -148,4 +161,8 @@ button:hover {
   #update-pantry-button:hover {
     background-color: var(--button-hover-color);
     color: var(--button-hover-text-color);
+  }
+
+  h2{
+    padding: 10px;
   }

@@ -6,17 +6,15 @@
         <div class="form-group">
             <div class="input-field">
               <label for="name">Name:</label>
-              <div class="input-wrapper">
-                <input type="text" placeholder="Name" id="name" name="username" [(ngModel)]="name">
-              </div>
-            </div>
-            <div class="input-field">
+              <input type="text" placeholder="Name" id="name" name="username" [(ngModel)]="name">
               <label for="quantity">Quantity:</label>
-              <div class="input-wrapper">
-                <input type="number" placeholder="Quantity" id="quantity" name="quantity" [(ngModel)]="quantity">
-              </div>
+              <input type="number" placeholder="Quantity" id="quantity" name="quantity" [(ngModel)]="quantity">
+              <label for="foodtype">Food Type:</label>
+              <input type="text" placeholder="FoodType" id="foodtype" name="foodtype" [(ngModel)]="foodtype">
+              <button type="button" (click)="postPantryItem()">Add</button>
             </div>
-            <button type="button" (click)="postPantryItem()">Post</button>
+
+
           </div>
         <div class="pantry-table-wrapper">
             <table class="table">
@@ -24,13 +22,14 @@
                   <tr>
                     <th>Ingredients</th>
                     <th>Quantity</th>
+                    <th>Options</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr *ngFor="let ingredient of pantry.Ingredients">
-                    <td>{{ ingredient.Name }}</td>
-                    <td>{{ ingredient.Quantity }}</td>
-                    <td>
+                    <td style="width:33%">{{ ingredient.Name }}</td>
+                    <td style="width:33%">{{ ingredient.Quantity }}</td>
+                    <td style="width:34%">
                       <button (click)="ingredient.Quantity = ingredient.Quantity + 1">+</button>
                       <button (click)="ingredient.Quantity = ingredient.Quantity - 1">-</button>
                       <button (click)="ingredient.Quantity = 0"><i class="fa fa-trash" aria-hidden="true"></i>Delete</button>
